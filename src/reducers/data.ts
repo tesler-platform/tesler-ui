@@ -1,0 +1,83 @@
+import {AnyAction, types} from '../actions/actions'
+import {DataState, DataItem} from '../interfaces/data'
+
+const initialState: DataState  = {}
+const emptyData: DataItem[] = []
+
+export function view(state = initialState, action: AnyAction) {
+    switch (action.type) {
+        case types.bcFetchDataSuccess: {
+            return (action.payload.depth && action.payload.depth > 1)
+                ? state
+                : {
+                    ...state,
+                    [action.payload.bcName]: action.payload.data
+                }
+        }
+        case types.bcNewDataSuccess: {
+            return {
+                ...state,
+                [action.payload.bcName]: [ ...(state[action.payload.bcName] || emptyData), action.payload.dataItem ]
+            }
+        }
+        case types.bcSaveDataSuccess: {
+            const nextDataItem = action.payload.dataItem
+            return {
+                ...state,
+                [action.payload.bcName]: (state[action.payload.bcName] || emptyData).map(item => item.id === nextDataItem.id
+                    ? nextDataItem
+                    : item
+                )
+            }
+        }
+        case types.bcFetchRowMetaSuccess: {
+            const cursor = action.payload.cursor
+            if (!cursor) {
+                return state
+            }
+            const prevDataItem = (state[action.payload.bcName] || emptyData).find(item => item.id === cursor)
+            const nextDataItem: DataItem = {
+                ...prevDataItem,
+                id: cursor,
+                vstamp: -1,
+                _associate: prevDataItem && prevDataItem._associate
+            }
+            // BC is unable to update value from row meta if id is null
+            const valueUpdateUnsupported = action.payload.rowMeta.fields
+            .find(item => item.key === 'id' && !item.currentValue)
+            if (valueUpdateUnsupported) {
+                return state
+            }
+            action.payload.rowMeta.fields.filter(field => {
+                // TODO: check if previous condition covered that case
+                return field.key !== '_associate'
+            })
+            .forEach(field => nextDataItem[field.key] = field.currentValue)
+            if (!prevDataItem) {
+                return {
+                    ...state,
+                    [action.payload.bcName]: [ ...(state[action.payload.bcName] || emptyData), nextDataItem ]
+                }
+            }
+            return {
+                ...state,
+                [action.payload.bcName]: (state[action.payload.bcName] || emptyData).map(item => item === prevDataItem
+                    ? nextDataItem
+                    : item
+                )
+            }
+        }
+        case types.changeAssociations:
+            return {
+                ...state,
+                [`${action.payload.bcName}Delta`]: action.payload.records
+            }
+        case types.selectView: {
+            return initialState
+        }
+        default:
+            return state
+    }
+}
+
+export default view

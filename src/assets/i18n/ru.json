@@ -1,0 +1,9 @@
+{
+    "translation": {
+        "Apply": "Применить",
+        "Clear": "Сбросить",
+        "Required fields are missing": "Незаполнены обязательные поля",
+        "There are pending changes. Please save them or cancel.": "Остались несохраненные данные. Сохраните или отмените изменения.",
+        "Cancel changes": "Отменить изменения"
+    }
+}
