@@ -120,7 +120,7 @@ const Provider = <ClientState extends Partial<CoreStore>, ClientActions extends 
 }
 
 // TODO: Вынести
-function defaultParseLocation(loc: Location<any>): Route {
+export function defaultParseLocation(loc: Location<any>): Route {
     let path: string = loc.pathname
     if (path.startsWith('/')) {
         path = path.substring(1)

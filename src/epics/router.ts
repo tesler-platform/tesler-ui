@@ -10,6 +10,11 @@ import {ObjectMap} from '../interfaces/objectMap'
 import {makeRelativeUrl, parseBcCursors} from '../utils/history'
 import {buildBcUrl} from '../utils/strings'
 import {DrillDownType, RouteType} from '../interfaces/router'
+import qs from 'query-string'
+import {BcFilter, FilterType} from '../interfaces/filters'
+import {defaultParseLocation} from '../Provider'
+import {shallowCompare} from '../utils/redux'
+import {parsePath} from 'history'
 
 /**
  * Эпик смены текущего маршрута
@@ -130,12 +135,47 @@ const changeView: Epic = (action$, store) => action$.ofType(types.selectView)
 
 const drillDown: Epic = (action$, store) => action$.ofType(types.drillDown)
 .switchMap(action => {
-    // const state = store.getState() as Store
+    const state = store.getState()
     const url = action.payload.url
     switch (action.payload.drillDownType) {
-        case 'inner':
+        case DrillDownType.external:
+            window.location.href = url
+            break
+        case DrillDownType.externalNew:
+            if (/^[a-z0-9]+:\/\//i.test(url)) {
+                window.open(url)
+            }
+            break
+        case DrillDownType.relative:
+            window.location.href = `${window.location.origin}/${url}`
+            break
+        case DrillDownType.relativeNew:
+            window.open(`${window.location.origin}/${url}`, '_blank')
+            break
+        case DrillDownType.inner:
         default:
-            historyObj.push(makeRelativeUrl(url))
+            const [urlBase, urlParams] = url.split('?')
+            const urlFilters = qs.parse(urlParams).filters
+            if (urlFilters) {
+                const prevState = state.router
+                const nextState = defaultParseLocation(parsePath(urlBase))
+                const diff = shallowCompare(prevState, nextState, ['params'])
+                try {
+                    const filters = JSON.parse(urlFilters)
+                    Object.keys(filters).map((bcName) => {
+                        const parsedFilters = parseFiltersFromString(filters[bcName])
+                        parsedFilters.forEach((item) => {
+                            store.dispatch($do.bcAddFilter({bcName, filter: item}))
+                        })
+                        if (!diff.length) {
+                            store.dispatch($do.bcForceUpdate({bcName}))
+                        }
+                    })
+                } catch (e) {
+                    console.warn(e)
+                }
+            }
+            historyObj.push(makeRelativeUrl(urlBase))
             break
     }
     return Observable.empty()
@@ -150,16 +190,19 @@ const userDrillDown: Epic = (action$, store) => action$.ofType(types.userDrillDo
 })
 .switchMap(action => {
     const state = store.getState()
-    const {bcName, fieldKey} = action.payload
+    const {bcName, fieldKey, cursor} = action.payload
     const bcUrl = buildBcUrl(bcName, true)
     const fetch = api.fetchRowMeta(state.screen.screenName, bcUrl)
     return fetch
     .mergeMap(rowMeta => {
         const drillDownField = rowMeta.fields.find(field => field.key === fieldKey)
         const route = state.router
-        return drillDownField && drillDownField.drillDown
+        return (drillDownField && drillDownField.drillDown)
             ? Observable.concat(
-                Observable.of($do.userDrillDownSuccess({ bcName, bcUrl, cursor: action.payload.cursor })),
+                (drillDownField.drillDownType !== DrillDownType.inner)
+                    ? Observable.of($do.bcFetchRowMetaSuccess({bcName, rowMeta, bcUrl, cursor}))
+                    : Observable.empty<never>(),
+                Observable.of($do.userDrillDownSuccess({bcName, bcUrl, cursor})),
                 Observable.of($do.drillDown({
                     url: drillDownField.drillDown,
                     drillDownType: drillDownField.drillDownType as DrillDownType,
@@ -187,6 +230,34 @@ const handleRouter: Epic = (action$, store) => action$.ofType(types.handleRouter
         return Observable.empty()
     })
 })
+
+/**
+ * Function for parsing filters from string into BcFilter type
+ */
+function parseFiltersFromString(defaultFilters: string) {
+    const result: BcFilter[] = []
+    const urlParams = qs.parse(defaultFilters)
+    Object.keys(urlParams).forEach((param) => {
+        const [fieldName, type] = param.split('.')
+        if (fieldName && type && urlParams[param]) {
+            let value = urlParams[param]
+            if (type === FilterType.containsOneOf || type === FilterType.equalsOneOf) {
+                try {
+                    value = JSON.parse(value)
+                } catch (e) {
+                    console.warn(e)
+                }
+                value = Array.isArray(value) ? value : []
+            }
+            result.push({
+                fieldName,
+                type: type as FilterType,
+                value
+            })
+        }
+    })
+    return result.length ? result : null
+}
 
 export const routerEpics = combineEpics(
     changeLocation,
