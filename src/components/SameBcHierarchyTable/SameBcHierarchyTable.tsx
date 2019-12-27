@@ -65,7 +65,7 @@ export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> 
     const indentLevel = depthLevel - 1
     const hasNested = props.data && props.data.length
 
-    const [selectedRecords] = useAssocRecords(props.data, props.pendingChanges, hierarchyRadioAll)
+    const selectedRecords = useAssocRecords(props.data, props.pendingChanges, hierarchyRadioAll)
 
     const rowSelection: TableRowSelection<DataItem> = React.useMemo(() => {
         if (props.selectable) {

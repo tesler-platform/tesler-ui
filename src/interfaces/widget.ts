@@ -110,6 +110,10 @@ export type FileUploadFieldMeta = AllWidgetTypeFieldBase & {
     fileSource: string
 }
 
+export type HiddenFieldMeta = AllWidgetTypeFieldBase & {
+    type: FieldType.hidden
+}
+
 export type WidgetField = NumberFieldMeta
     | DateFieldMeta
     | DateTimeFieldMeta
@@ -123,6 +127,7 @@ export type WidgetField = NumberFieldMeta
     | InlinePickListFieldMeta
     | FileUploadFieldMeta
     | CheckboxFieldMeta
+    | HiddenFieldMeta
 
 export type WidgetFormField = Extract<WidgetField, WidgetFormFieldBase>
 
@@ -138,8 +143,10 @@ export interface WidgetOptions {
     },
     hierarchy?: WidgetTableHierarchy[],
     hierarchySameBc?: boolean,
+    hierarchyFull?: boolean,
     hierarchyParentKey?: string,
     hierarchyGroupSelection?: boolean,
+    hierarchyGroupDeselection?: boolean,
     hierarchyTraverse?: boolean,
     hierarchyRadio?: boolean,
     hierarchyRadioAll?: boolean,

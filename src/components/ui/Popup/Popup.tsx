@@ -13,6 +13,7 @@ interface PopupProps {
     showed: boolean,
     title?: string,
     bcName: string,
+    disablePagination?: boolean,
 }
 
 const widths = {
@@ -31,9 +32,11 @@ export function Popup(props: PopupProps) {
             width={width}
             onCancel={props.onCancelHandler}
             footer={<div className={styles.footerContainer}>
-                    <div className={styles.pagination}>
-                        <Pagination bcName={props.bcName} mode={PaginationMode.page} />
-                    </div>
+                    {(!props.disablePagination) &&
+                        <div className={styles.pagination}>
+                            <Pagination bcName={props.bcName} mode={PaginationMode.page} />
+                        </div>
+                    }
                     <div className={styles.actions}>
                         <Button onClick={props.onOkHandler} className={styles.buttonYellow}>
                             Выбрать

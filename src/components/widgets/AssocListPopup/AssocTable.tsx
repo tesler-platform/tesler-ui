@@ -24,7 +24,7 @@ export interface AssocTableProps extends AssocTableOwnProps {
 }
 
 export const AssocTable: FunctionComponent<AssocTableProps> = (props) => {
-    const [selectedRecords] = useAssocRecords(props.data, props.pendingChanges)
+    const selectedRecords = useAssocRecords(props.data, props.pendingChanges)
 
     const rowSelection: TableRowSelection<DataItem> = {
         type: 'checkbox',

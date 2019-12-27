@@ -248,7 +248,38 @@ export function view(state = initialState, action: AnyAction, store: Store) {
                 pendingDataChanges[action.payload.bcName] = pendingBcChanges
             })
 
-            return { ...state, pendingDataChanges }
+            return {
+                ...state,
+                pendingDataChanges,
+                pendingValidationFails: initialState.pendingValidationFails
+            }
+        }
+        case types.dropAllAssociationsFull: {
+            const bcName = action.payload.bcName
+            const pendingDataChanges = {...state.pendingDataChanges}
+            const dropDesc = action.payload.dropDescendants
+
+            const pendingBcChanges: Record<string, PendingDataItem> = {};
+            (store.data[bcName] || [])
+                .filter(item => item._associate)
+                .forEach(item => {
+                    if (dropDesc && item.level === action.payload.depth || item.level >= action.payload.depth) {
+                        pendingBcChanges[item.id] = { ...item, _associate: false }
+                    }
+                })
+            Object.entries(pendingDataChanges[bcName] || {})
+                .forEach(([itemId, item]) => {
+                    if (dropDesc && item.level === action.payload.depth || item.level >= action.payload.depth) {
+                        pendingBcChanges[itemId] = { ...item, _associate: false }
+                    }
+                })
+            pendingDataChanges[bcName] = pendingBcChanges
+
+            return {
+                ...state,
+                pendingDataChanges,
+                pendingValidationFails: initialState.pendingValidationFails
+            }
         }
         case types.sendOperationSuccess:
         case types.bcSaveDataSuccess: {
