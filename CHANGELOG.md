@@ -1,3 +1,9 @@
+# Version 1.1.1
+
+## Fixes
+
+* Broken npm package
+
 # Version 1.1.0
 
 ## Features
