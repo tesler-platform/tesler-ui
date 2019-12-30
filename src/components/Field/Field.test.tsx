@@ -46,6 +46,7 @@ describe('Readonly field drilldown', () => {
             name: testBcName,
             parentName: null,
             url: testBcName,
+            defaultSort: null,
             cursor: initialCursor
         }
     })
