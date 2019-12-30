@@ -3,6 +3,8 @@ import {ScreenState} from '../interfaces/screen'
 import {BcMeta, BcMetaState} from '../interfaces/bc'
 import {ObjectMap} from '../interfaces/objectMap'
 import {OperationTypeCrud} from '../interfaces/operation'
+import {parseSorters} from '../utils/filters'
+import {BcSorter} from '../interfaces/filters'
 
 const initialState: ScreenState = {
     screenName: null,
@@ -20,15 +22,21 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
     switch (action.type) {
         case types.selectScreen: {
             const bcDictionary: ObjectMap<BcMeta> = {}
+            const bcSorters: Record<string, BcSorter[]> = {}
             action.payload.screen.meta.bo.bc.forEach(item => {
                 bcDictionary[item.name] = item
+                const sorter = parseSorters(item.defaultSort)
+                if (sorter) {
+                    bcSorters[item.name] = sorter
+                }
             })
             return {
                 ...state,
                 screenName: action.payload.screen.name,
                 primaryView: action.payload.screen.meta.primary,
                 views: action.payload.screen.meta.views,
-                bo: { activeBcName: null, bc: bcDictionary }
+                bo: { activeBcName: null, bc: bcDictionary },
+                sorters: bcSorters
             }
         }
         case types.selectScreenFail: {
