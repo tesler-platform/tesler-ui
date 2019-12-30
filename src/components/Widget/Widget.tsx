@@ -26,7 +26,7 @@ interface WidgetProps extends WidgetOwnProps {
     customWidgets?: ObjectMap<CustomWidget>,
     showWidget: boolean,
     rowMetaExists: boolean,
-    dataExists: boolean,
+    dataExists: boolean
 }
 
 const skeletonParams = { rows: 5 }
@@ -80,6 +80,8 @@ export function Widget(props: WidgetProps) {
  * @param children Дочерние компоненты виджета, возвращаются при неизвестном типе виджета
  */
 function chooseWidgetType(widgetMeta: WidgetMeta, customWidgets?: ObjectMap<CustomWidget>, children?: React.ReactNode) {
+    const options = widgetMeta.options
+    const readOnly = options && options.readOnly
     if (customWidgets && customWidgets[widgetMeta.type]) {
         const CustomWidgetComponent = customWidgets[widgetMeta.type]
         return <CustomWidgetComponent meta={widgetMeta} />
@@ -90,7 +92,7 @@ function chooseWidgetType(widgetMeta: WidgetMeta, customWidgets?: ObjectMap<Cust
             return <TableWidget
                 meta={widgetMeta as WidgetTableMeta}
                 showRowActions
-                allowEdit
+                allowEdit={!readOnly}
             />
         case WidgetTypes.Form:
             return <FormWidget meta={widgetMeta as WidgetFormMeta} />
