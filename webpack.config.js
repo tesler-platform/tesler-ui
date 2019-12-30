@@ -148,7 +148,13 @@ module.exports = (env, options) => {
         },
         plugins: [
             // new CleanWebpackPlugin(),
-            new CopyWebpackPlugin([{ from: 'package.json' }])
+            new CopyWebpackPlugin([
+                { from: 'package.json' },
+                { from: 'README.MD' },
+                { from: 'LICENSE.MD' },
+                { from: 'CHANGELOG.MD' },
+                { from: 'CONTRIBUTING.MD' }
+            ])
         ]
     }
 }

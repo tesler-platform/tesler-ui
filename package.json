@@ -1,11 +1,11 @@
 {
   "name": "@tesler-ui/core",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "tesler-ui-core.js",
   "homepage": "https://tesler.io/",
   "types": "index.d.ts",
   "author": "tesler",
-  "license": "",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "webpack --mode=production",
     "start": "webpack --watch",
