@@ -128,6 +128,9 @@ export type WidgetFormField = Extract<WidgetField, WidgetFormFieldBase>
 
 export type WidgetListField = Extract<WidgetField, WidgetListFieldBase>
 
+/**
+ * @param readOnly All widget fields are not editable 
+ */
 export interface WidgetOptions {
     layout?: {
         header?: string[],
@@ -144,6 +147,7 @@ export interface WidgetOptions {
     hierarchyRadio?: boolean,
     hierarchyRadioAll?: boolean,
     actionGroups?: WidgetOperations,
+    readOnly?: boolean,
     /**
      * @deprecated TODO: Удалить в 0.2.0
      */
