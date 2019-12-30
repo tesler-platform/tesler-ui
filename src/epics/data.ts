@@ -127,7 +127,9 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
         ...getFilters(filters),
         ...getSorters(sorters)
     }
-    if (action.type === types.bcFetchDataRequest && action.payload.ignorePageLimit) {
+    if (action.type === types.bcFetchDataRequest && action.payload.ignorePageLimit
+        || anyHierarchyWidget && anyHierarchyWidget.options.hierarchyFull
+    ) {
         fetchParams._limit = 0
     }
     const cancelFlow = action$.ofType(types.selectView).filter((item) => {
@@ -535,6 +537,47 @@ const changeChildrenAssociationsSameBc: Epic = (action$, store) => action$.ofTyp
     }))
 })
 
+/**
+ * Change full hierarchy descendants association state.
+ *
+ * @param action$
+ * @param store
+ */
+const changeDescendantsAssociationsFull: Epic = (action$, store) => action$.ofType(types.changeDescendantsAssociationsFull)
+.mergeMap(action => {
+    const state = store.getState()
+    const depth = action.payload.depth
+    const data = state.data[action.payload.bcName]
+
+    const targetData = (data || []).filter((item) =>
+        item.level === depth && item.parentId === action.payload.parentId
+    )
+
+    const result: Array<Observable<AnyAction>> = [
+        Observable.of($do.changeDataItems({
+            bcName: action.payload.bcName,
+            cursors: targetData.map(item => item.id),
+            dataItems: targetData.map(item => ({
+                ...item,
+                _value: item[action.payload.assocValueKey],
+                _associate: action.payload.selected
+            }))
+        }))
+    ]
+
+    targetData.forEach((targetDataItem) => {
+        if (data.find((dataItem) => dataItem.parentId === targetDataItem.id)) {
+            result.push(Observable.of($do.changeDescendantsAssociationsFull({
+                ...action.payload,
+                parentId: targetDataItem.id,
+                depth: depth + 1
+            })))
+        }
+    })
+
+    return Observable.concat(...result)
+})
+
 const changeAssociation: Epic = (action$, store) => action$.ofType(types.changeAssociation)
 .mergeMap(action => {
     const state = store.getState()
@@ -682,6 +725,115 @@ const changeAssociationSameBc: Epic = (action$, store) => action$.ofType(types.c
 })
 
 /**
+ * Change full hierarchy record association state. Also select/deselect dependent records according to widget options.
+ *
+ * @param action$
+ * @param store
+ */
+const changeAssociationFull: Epic = (action$, store) => action$.ofType(types.changeAssociationFull)
+.mergeMap(action => {
+    const state = store.getState()
+    const result: Array<Observable<AnyAction>> = []
+
+    const bcName = action.payload.bcName
+    const allData = state.data[bcName]
+    const selected = action.payload.dataItem._associate
+    const depth = action.payload.depth || 1
+    const parentDepth = depth - 1
+    const parentItem = (depth > 1) && allData.find((item) => item.id === action.payload.dataItem.parentId)
+    const widget = state.view.widgets.find(item => item.name === action.payload.widgetName) as WidgetTableMeta
+    const hierarchyTraverse = widget.options.hierarchyTraverse
+    const rootRadio = widget.options.hierarchyRadio
+    const hierarchyGroupDeselection = widget.options.hierarchyGroupDeselection
+
+    const currentLevelData = allData.filter(
+        (item) => item.level === depth && (item.level === 1 || (parentItem && item.parentId === parentItem.id))
+    )
+
+    if (rootRadio && hierarchyGroupDeselection && depth === 1) {
+        if (selected) {
+            const delta = state.view.pendingDataChanges[bcName]
+            const prevSelected = allData.find((dataItem) => {
+                if (dataItem.level === 1 && dataItem.id !== action.payload.dataItem.id) {
+                    const deltaItem = delta && delta[dataItem.id]
+                    if (deltaItem && deltaItem._associate || !deltaItem && dataItem._associate) {
+                        return true
+                    }
+                }
+
+                return false
+            })
+
+            if (prevSelected) {
+                result.push(Observable.of($do.changeAssociationFull({
+                    bcName,
+                    depth: depth,
+                    widgetName: action.payload.widgetName,
+                    dataItem: { ...prevSelected, _associate: false },
+                    assocValueKey: action.payload.assocValueKey
+                })))
+            }
+        } else {
+            // result.push(Observable.of($do.dropAllAssociationsFull({bcName, depth: depth + 1, dropDescendants: true})))
+            result.push(Observable.of($do.changeDescendantsAssociationsFull({
+                bcName,
+                parentId: action.payload.dataItem.id,
+                depth: depth + 1,
+                assocValueKey: action.payload.assocValueKey,
+                selected: false
+            })))
+        }
+    }
+
+    result.push(Observable.of($do.changeDataItem({
+        bcName: action.payload.bcName,
+        cursor: action.payload.dataItem.id,
+        dataItem: action.payload.dataItem
+    })))
+
+    if (parentDepth && hierarchyTraverse && selected) {
+        result.push(Observable.of($do.changeAssociationFull({
+            bcName,
+            depth: parentDepth,
+            widgetName: action.payload.widgetName,
+            dataItem: {
+                ...parentItem,
+                _associate: true,
+                _value: parentItem[action.payload.assocValueKey]
+            },
+            assocValueKey: action.payload.assocValueKey
+        })))
+    }
+
+    if (parentDepth && hierarchyTraverse && !selected) {
+        const wasLastInData = currentLevelData
+            .filter(item => item.id !== action.payload.dataItem.id)
+            .every(item => !item._associate)
+
+        const delta = state.view.pendingDataChanges[bcName]
+        const wasLastInDelta = !delta
+            || !Object.values(delta).find((deltaValue) => {
+                return (
+                    deltaValue._associate === true && deltaValue.id !== action.payload.dataItem.id
+                    && currentLevelData.find((dataValue) => dataValue.id === deltaValue.id)
+                )
+            })
+
+        if (wasLastInData && wasLastInDelta) {
+            result.push(Observable.of($do.changeAssociationFull({
+                bcName,
+                depth: parentDepth,
+                widgetName: action.payload.widgetName,
+                dataItem: { ...parentItem, _associate: false },
+                assocValueKey: action.payload.assocValueKey
+            })))
+        }
+    }
+
+    return Observable.concat(...result)
+})
+
+/**
  * Возвращает словарь дочерних бизнес-компонент на текущей view
  * Ключ - имя дочерней бизнес-компоненты
  * Значение - массив идентификаторов виджетов, которые эту бизнес-компоненту используют.
@@ -789,6 +941,8 @@ export const dataEpics = combineEpics(
     changeAssociationSameBc,
     changeChildrenAssociations,
     changeChildrenAssociationsSameBc,
+    changeAssociationFull,
+    changeDescendantsAssociationsFull,
     bcLoadMore,
     removeMultivalueTag
 )

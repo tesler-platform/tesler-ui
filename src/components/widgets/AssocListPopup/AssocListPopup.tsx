@@ -10,6 +10,7 @@ import HierarchyTable from '../../../components/HierarchyTable/HierarchyTable'
 import AssocTable from './AssocTable'
 import {Skeleton} from 'antd'
 import SameBcHierarchyTable from '../../SameBcHierarchyTable/SameBcHierarchyTable'
+import FullHierarchyTable from '../../FullHierarchyTable/FullHierarchyTable'
 
 export interface IAssocListRecord {
     id: string,
@@ -67,21 +68,30 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         onOkHandler={saveData}
         onCancelHandler={cancelData}
         bcName={props.widget.bcName}
+        disablePagination={props.widget.options && props.widget.options.hierarchyFull}
     >
         {(props.bcLoading)
             ? <Skeleton loading paragraph={{rows: 5}} />
-            : (props.widget.options && (props.widget.options.hierarchy || props.widget.options.hierarchySameBc))
-                ? (props.widget.options.hierarchySameBc)
-                    ? <SameBcHierarchyTable
+            : (props.widget.options
+                && (props.widget.options.hierarchy || props.widget.options.hierarchySameBc || props.widget.options.hierarchyFull)
+            )
+                ? (props.widget.options.hierarchyFull)
+                    ? <FullHierarchyTable
                         meta={props.widget}
                         assocValueKey={props.assocValueKey}
                         selectable
                     />
-                    : <HierarchyTable
-                        meta={props.widget}
-                        assocValueKey={props.assocValueKey}
-                        selectable
-                    />
+                    : (props.widget.options.hierarchySameBc)
+                        ? <SameBcHierarchyTable
+                            meta={props.widget}
+                            assocValueKey={props.assocValueKey}
+                            selectable
+                        />
+                        : <HierarchyTable
+                            meta={props.widget}
+                            assocValueKey={props.assocValueKey}
+                            selectable
+                        />
                 : <AssocTable
                     meta={props.widget}
                     disablePagination={true}

@@ -84,7 +84,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
 
     const isRadio = hierarchyLevel && hierarchyLevel.radio
         || (!hierarchyLevel && hierarchyRadio)
-    const [selectedRecords] = useAssocRecords(props.data, props.pendingChanges, isRadio)
+    const selectedRecords = useAssocRecords(props.data, props.pendingChanges, isRadio)
 
     const rowSelection: TableRowSelection<DataItem> = React.useMemo(() => {
         if (props.selectable) {

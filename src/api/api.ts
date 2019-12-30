@@ -13,10 +13,11 @@ export function routerRequest(path: string, params: object) {
 }
 
 export function fetchBcData(screenName: string, bcUrl: string, params: GetParamsMap = {}) {
+    const noLimit = params._limit === 0
     const queryStringObject = {
         ...params,
-        _page: ('_page' in params) ? params._page : 1,
-        _limit: ('_limit' in params) ? params._limit : 30
+        _page: !noLimit && (('_page' in params) ? params._page : 1),
+        _limit: !noLimit && (('_limit' in params) ? params._limit : 30)
     }
     const url = applyParams(buildUrl`data/${screenName}/` + bcUrl, queryStringObject)
     return axiosGet<BcDataResponse>(url)
