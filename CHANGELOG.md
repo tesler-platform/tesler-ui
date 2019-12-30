@@ -1,3 +1,26 @@
+# Version 1.1.0
+
+## Features
+
+* In addition to `inner` drilldowns, new drilldown types were introduced: `relative`, `relativeNew`, `external`, `externalNew`. See `DrillDownType` interface for description.
+* Hierarchy-based tables now support full datasource, e.g. all data for hierarchy is fetched in one request, as opposite to a previous hierarchies which fetched data one hierarchy level at a time. See `FullHierarchyTable` for implementation details.
+* Table widget now supports `readOnly` flag from widget meta (#8).
+* Support `defaultSort` property for business components (#4).
+* Support `autoSaveBefore` flag for operations which indicates that before requesting widget operation API `required` fields of that widget should be validated for empty values (#1).
+
+## Fixes
+
+* Validation error should be displayed for input and custom fields when rendered on table widget (#1)
+* Restore two missing commits that were lost in initial release (#6):
+    * Pending changes should be considered for widget's showCondition calculation 
+    * Hierarchy list bug fixes
+ 
+## Misc
+
+* package.json now includes license
+* Update contributing guide with corrections for `Branch organization` section
+* .md files are now included in npm release
+
 # Version 1.0.0
 
 * Public release

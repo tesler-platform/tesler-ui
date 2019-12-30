@@ -13,6 +13,7 @@ import qs from 'query-string'
 import {initHistory} from './reducers/router'
 import {combineReducers} from './utils/redux'
 import {createAutoSaveMiddleware} from './middlewares/autosaveMiddleware'
+import {createRequiredFieldsMiddleware} from './middlewares/requiredFieldsMiddleware'
 import {initLocale} from './imports/i18n'
 import {Resource, i18n} from 'i18next'
 
@@ -91,6 +92,7 @@ export function configureStore<ClientState, ClientActions extends Action<any>>(
         }
     })
     const middlewares: Middleware[] = [
+        createRequiredFieldsMiddleware(),
         createAutoSaveMiddleware()
     ]
     if (useEpics) {
@@ -120,7 +122,7 @@ const Provider = <ClientState extends Partial<CoreStore>, ClientActions extends 
 }
 
 // TODO: Вынести
-function defaultParseLocation(loc: Location<any>): Route {
+export function defaultParseLocation(loc: Location<any>): Route {
     let path: string = loc.pathname
     if (path.startsWith('/')) {
         path = path.substring(1)

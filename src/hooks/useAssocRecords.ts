@@ -6,9 +6,8 @@ const emptyData: AssociatedItem[] = []
 
 export function useAssocRecords(
     data: AssociatedItem[], pendingChanges: Record<string, PendingDataItem>, isRadio?: boolean
-): [AssociatedItem[] , React.Dispatch<React.SetStateAction<AssociatedItem[]>>] {
-    const [selectedRecords, setSelectedRecords] = React.useState(emptyData)
-    React.useEffect(() => {
+): AssociatedItem[] {
+    return React.useMemo(() => {
         let records = emptyData
         if (data) {
             records = data.filter(item => {
@@ -23,7 +22,6 @@ export function useAssocRecords(
                 return item._associate
             })
         }
-        setSelectedRecords(records)
+        return records
     }, [data, pendingChanges, isRadio])
-    return [selectedRecords, setSelectedRecords]
 }

@@ -53,7 +53,8 @@ describe('Multivalue test', () => {
             name: testBcName,
             parentName: null,
             cursor: testCursor,
-            url: null
+            url: null,
+            defaultSort: null
         }
         store.getState().view.rowMeta[testBcName] = {
             [buildBcUrl(testBcName, true)]: {

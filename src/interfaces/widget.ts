@@ -110,6 +110,10 @@ export type FileUploadFieldMeta = AllWidgetTypeFieldBase & {
     fileSource: string
 }
 
+export type HiddenFieldMeta = AllWidgetTypeFieldBase & {
+    type: FieldType.hidden
+}
+
 export type WidgetField = NumberFieldMeta
     | DateFieldMeta
     | DateTimeFieldMeta
@@ -123,11 +127,15 @@ export type WidgetField = NumberFieldMeta
     | InlinePickListFieldMeta
     | FileUploadFieldMeta
     | CheckboxFieldMeta
+    | HiddenFieldMeta
 
 export type WidgetFormField = Extract<WidgetField, WidgetFormFieldBase>
 
 export type WidgetListField = Extract<WidgetField, WidgetListFieldBase>
 
+/**
+ * @param readOnly All widget fields are not editable 
+ */
 export interface WidgetOptions {
     layout?: {
         header?: string[],
@@ -138,12 +146,15 @@ export interface WidgetOptions {
     },
     hierarchy?: WidgetTableHierarchy[],
     hierarchySameBc?: boolean,
+    hierarchyFull?: boolean,
     hierarchyParentKey?: string,
     hierarchyGroupSelection?: boolean,
+    hierarchyGroupDeselection?: boolean,
     hierarchyTraverse?: boolean,
     hierarchyRadio?: boolean,
     hierarchyRadioAll?: boolean,
     actionGroups?: WidgetOperations,
+    readOnly?: boolean,
     /**
      * @deprecated TODO: Удалить в 0.2.0
      */

@@ -4,28 +4,16 @@ import {OperationTypeCrud} from '../interfaces/operation'
 import {WidgetMeta} from '../interfaces/widget'
 import {Store as CoreStore} from '../interfaces/store'
 import {buildBcUrl} from '../utils/strings'
-import {openButtonWarningNotification} from '../utils/notifications'
-import i18n from 'i18next'
 
-const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI) =>
+const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) =>
     (next: Dispatch) =>
-        (action: AnyAction): any => {
+        (action: AnyAction) => {
             if (!needSaveAction(action.type)) {
                 return next(action)
             }
             const state = getState()
-            if (state.view.pendingValidationFails && Object.keys(state.view.pendingValidationFails).length) {
-                openButtonWarningNotification(
-                    i18n.t('Required fields are missing'),
-                    i18n.t('Cancel changes'),
-                    0,
-                    () => {
-                        dispatch($do.clearValidationFails(null))
-                    },
-                    'requiredFieldsMissing'
-                )
-                return
-            }
+
+            // TODO: Should offer to save pending changes or drop them
 
             const selectedCell = state.view.selectedCell
             if (selectedCell
@@ -64,7 +52,7 @@ function bcHasPendingAutosaveChanges(store: CoreStore, bcName: string, cursor: s
             && store.view.rowMeta[bcName]
             && store.view.rowMeta[bcName][bcUrl]
             && store.view.rowMeta[bcName][bcUrl].actions
-
+        // TODO: Shouldn't we check for nested operation if action oftype OperationGroup?
         result = actions && actions.some((action) => action.type === OperationTypeCrud.save)
     }
 

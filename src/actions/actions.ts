@@ -248,6 +248,13 @@ export class ActionPayloadTypes {
         dataItem: AssociatedItem,
         assocValueKey: string
     } = z
+    changeAssociationFull: {
+        bcName: string,
+        depth: number,
+        widgetName: string,
+        dataItem: AssociatedItem,
+        assocValueKey: string
+    } = z
     changeChildrenAssociations: {
         bcName: string,
         assocValueKey: string,
@@ -259,12 +266,24 @@ export class ActionPayloadTypes {
         assocValueKey: string,
         selected: boolean
     } = z
+    changeDescendantsAssociationsFull: {
+        bcName: string,
+        parentId: string,
+        depth: number,
+        assocValueKey: string,
+        selected: boolean
+    } = z
     dropAllAssociations: {
         bcNames: string[]
     } = z
     dropAllAssociationsSameBc: {
         bcName: string,
         depthFrom: number
+    } = z
+    dropAllAssociationsFull: {
+        bcName: string,
+        depth: number,
+        dropDescendants?: boolean
     } = z
     handleRouter: {
         path: string,

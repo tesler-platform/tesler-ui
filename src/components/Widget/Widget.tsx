@@ -10,6 +10,7 @@ import AssocListPopup from '../widgets/AssocListPopup/AssocListPopup'
 import {ObjectMap} from '../../interfaces/objectMap'
 import PickListPopup from '../widgets/PickListPopup/PickListPopup'
 import {BcMetaState} from '../../interfaces/bc'
+import {ViewState} from '../../interfaces/view'
 import {DataState} from '../../interfaces/data'
 import {buildBcUrl} from '../../utils/strings'
 
@@ -25,7 +26,7 @@ interface WidgetProps extends WidgetOwnProps {
     customWidgets?: ObjectMap<CustomWidget>,
     showWidget: boolean,
     rowMetaExists: boolean,
-    dataExists: boolean,
+    dataExists: boolean
 }
 
 const skeletonParams = { rows: 5 }
@@ -79,6 +80,8 @@ export function Widget(props: WidgetProps) {
  * @param children Дочерние компоненты виджета, возвращаются при неизвестном типе виджета
  */
 function chooseWidgetType(widgetMeta: WidgetMeta, customWidgets?: ObjectMap<CustomWidget>, children?: React.ReactNode) {
+    const options = widgetMeta.options
+    const readOnly = options && options.readOnly
     if (customWidgets && customWidgets[widgetMeta.type]) {
         const CustomWidgetComponent = customWidgets[widgetMeta.type]
         return <CustomWidgetComponent meta={widgetMeta} />
@@ -89,7 +92,7 @@ function chooseWidgetType(widgetMeta: WidgetMeta, customWidgets?: ObjectMap<Cust
             return <TableWidget
                 meta={widgetMeta as WidgetTableMeta}
                 showRowActions
-                allowEdit
+                allowEdit={!readOnly}
             />
         case WidgetTypes.Form:
             return <FormWidget meta={widgetMeta as WidgetFormMeta} />
@@ -105,7 +108,7 @@ function mapStateToProps(store: Store, ownProps: WidgetOwnProps) {
     const hasParent = !!parent
     let showWidget = true
     if (ownProps.meta.showCondition && !Array.isArray(ownProps.meta.showCondition)) {
-        showWidget = checkShowCondition(ownProps.meta.showCondition, store.screen.bo.bc, store.data)
+        showWidget = checkShowCondition(ownProps.meta.showCondition, store.screen.bo.bc, store.data, store.view)
     }
     const bcUrl = buildBcUrl(bcName, true)
     const rowMeta = bcUrl
@@ -120,7 +123,7 @@ function mapStateToProps(store: Store, ownProps: WidgetOwnProps) {
     }
 }
 
-function checkShowCondition(condition: WidgetShowCondition, bcMap: Record<string, BcMetaState>, data: DataState) {
+function checkShowCondition(condition: WidgetShowCondition, bcMap: Record<string, BcMetaState>, data: DataState, view: ViewState) {
     const { bcName, isDefault, params } = condition
     if (isDefault) {
         return true
@@ -128,7 +131,12 @@ function checkShowCondition(condition: WidgetShowCondition, bcMap: Record<string
     const cursor = bcMap[bcName] && bcMap[bcName].cursor
     const record = cursor && data[bcName] && data[bcName].find(item => item.id === cursor)
     const actualValue = record && record[params.fieldKey]
-    return actualValue === params.value
+    const pendingValue = view.pendingDataChanges[bcName]
+        && view.pendingDataChanges[bcName][cursor]
+        && view.pendingDataChanges[bcName][cursor][params.fieldKey]
+    return (pendingValue !== undefined)
+        ? pendingValue === params.value
+        : actualValue === params.value
 }
 
 export default connect(mapStateToProps)(Widget)

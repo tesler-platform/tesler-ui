@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import {connect} from 'react-redux'
 import {Dispatch} from 'redux'
 import {Input, Tooltip, Form} from 'antd'
@@ -57,9 +57,9 @@ export interface ChangeDataItemPayload { // TODO: Может из карты в 
 
 export const emptyMultivalue: MultivalueSingleValue[] = []
 
-export const Field = (props: FieldProps) => {
+export const Field: FunctionComponent<FieldProps> = (props) => {
     const [localValue, setLocalValue] = React.useState(null)
-    let resultField = null
+    let resultField: React.ReactChild = null
     // todo: временный фикс для корректной работы с пиклистами
     const undefinedValuesAllowed = [
         FieldType.pickList,
@@ -280,7 +280,7 @@ export const Field = (props: FieldProps) => {
             </ReadOnlyField>
             break
         default:
-            return <CustomizationContext.Consumer>
+            resultField = <CustomizationContext.Consumer>
                 {context => {
                     const customFields = context.customFields
                     if (customFields && (customFields[props.widgetFieldMeta.type] || customFields[props.widgetFieldMeta.key])) {
@@ -292,7 +292,7 @@ export const Field = (props: FieldProps) => {
                         />
                     }
 
-                    resultField = (props.readonly)
+                    return props.readonly
                         ? <ReadOnlyField
                             {...commonProps}
                             onDrillDown={handleDrilldown}
@@ -306,7 +306,7 @@ export const Field = (props: FieldProps) => {
                             onBlur={handleInputBlur}
                             autoFocus={props.forceFocus}
                         />
-                    return resultField
+
                 }}
             </CustomizationContext.Consumer>
     }
