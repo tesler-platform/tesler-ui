@@ -38,15 +38,17 @@ export type OperationType = OperationTypeCrud | string
  * @param action - ???
  * @param scope - ???
  * @param preInvoke - действие, которое надо произвести прежде чем начать выполнять операцию
+ * @param autoSaveBefore Validate the record for empty "required" fields before API call
  */
 export interface Operation {
     text: string,
     type: OperationType,
     scope: OperationScope,
     action?: string,
-    icon?: string
-    showOnlyIcon: boolean
-    preInvoke?: OperationPreInvoke
+    icon?: string,
+    showOnlyIcon: boolean,
+    preInvoke?: OperationPreInvoke,
+    autoSaveBefore?: boolean
 }
 
 /**

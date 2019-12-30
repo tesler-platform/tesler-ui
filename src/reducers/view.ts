@@ -304,10 +304,10 @@ export function view(state = initialState, action: AnyAction, store: Store) {
             }
         }
         case types.bcCancelPendingChanges: {
-            // TODO: Неправильно работает, надо попробовать решить без ввода еще одной дельты
+            // TODO: Check if this works for hierarchy after 1.1.0
             const pendingDataChanges = { ...state.pendingDataChanges }
             for (const bcName in state.pendingDataChanges) {
-                if (action.payload.bcNames.includes(bcName)) {
+                if (action.payload ? action.payload.bcNames.includes(bcName) : true) {
                     pendingDataChanges[bcName] = {}
                 }
             }
