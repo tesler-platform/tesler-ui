@@ -6,9 +6,9 @@ Backwards incompatible changes are denoted with `[BREAKING CHANGE]` mark.
 
 # Branch organization 
 
-Major versions are realesed from master branch marked with a corresponding tag.  
-Minor versions are merged into "develop" branch first.  
-Features and bugfixes should be named in `feat/issue-number` format.
+Realeses are build from master branch, marked with a corresponding tag.  
+Minor versions and patches are merged into "develop" branch first.  
+Features and bugfixes should be named in `feat/issue-number` and `fix/issue-number` format.  
 
 # Development
 
