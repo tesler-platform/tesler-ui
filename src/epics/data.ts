@@ -238,7 +238,8 @@ const bcSelectRecord: Epic = (action$, store) => action$.ofType(types.bcSelectRe
             return $do.bcFetchDataRequest({
                 bcName: childBcName,
                 widgetName: widgetNames[0],
-                ignorePageLimit: action.payload.ignoreChildrenPageLimit
+                ignorePageLimit: action.payload.ignoreChildrenPageLimit,
+                keepDelta: action.payload.keepDelta
             })
         })
     return Observable.concat(
@@ -586,13 +587,21 @@ const changeAssociation: Epic = (action$, store) => action$.ofType(types.changeA
         })))
     }
     if (parent && hierarchyTraverse && !selected) {
-        const wasLastInData = state.data[action.payload.bcName]
+        const data = state.data[action.payload.bcName]
+        const wasLastInData = data
         .filter(item => item.id !== action.payload.dataItem.id)
         .every(item => !item._associate)
 
         const delta = state.view.pendingDataChanges[action.payload.bcName]
         const wasLastInDelta = !delta
-            || !Object.values(delta).filter((v) => v._associate === true && v.id !== action.payload.dataItem.id).length
+            || !Object.values(delta).find((deltaValue) => {
+                return (
+                    deltaValue._associate === true && deltaValue.id !== action.payload.dataItem.id
+                    // Filter by data records, because delta can contain records from another hierarchy branch, but data always contains
+                    // only target branch records, that we see in widget
+                    && data.find((dataValue) => dataValue.id === deltaValue.id)
+                )
+            })
         if (wasLastInData && wasLastInDelta) {
             result.push(Observable.of($do.changeAssociation({
                 bcName: parent.bcName,
