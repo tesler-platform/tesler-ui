@@ -68,10 +68,12 @@ The documentation is divided into several sections:
 * [Features](./docs/features.md)
 * [API Reference](./docs/api-reference.md)
 
+You could also check our [changelog section](https://github.com/tesler-platform/tesler-ui/blob/master/CHANGELOG.md).
+
 # Reporting an error
 
 In case you've encountered a problem, please open an issue with reproducible example and detailed description.  
-If you are also willing to provide a fix, please check our [contributing guide](./CONTRIBUTING.md)!
+If you are also willing to provide a fix, please check our [contributing guide](https://github.com/tesler-platform/tesler-ui/blob/master/CONTRIBUTING.md)!
 
 # Contributing
 
