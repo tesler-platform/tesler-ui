@@ -1,3 +1,14 @@
+# Version 1.1.2
+
+## Fixes
+
+* Page crash after view change due to missing `Set` polyfill for IE11 (#12).
+* forceActive fields should not drop all existing validation errors.
+* requiredFieldsMiddleware incorrectly checked for effective value which could lead to non-empty fields highlighted as empty.
+* Russian translation "Required fields are missing" message fix.
+* Webpack config incorrectly referred `LICENSE.MD` instead of `LICENSE`
+* Non-working readme links on NPM 
+
 # Version 1.1.1
 
 ## Fixes
