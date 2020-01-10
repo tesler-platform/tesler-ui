@@ -89,7 +89,7 @@ function getRequiredFieldsMissing(record: DataItem, pendingChanges: PendingDataI
 
         const value = record && record[field.key] as string
         const pendingValue = pendingChanges && pendingChanges[field.key]
-        const effectiveValue = pendingChanges !== undefined ? pendingValue as string: value
+        const effectiveValue = pendingValue !== undefined ? pendingValue as string: value
         let falsyValue = false
         if ([undefined, null, ''].includes(effectiveValue)) {
             falsyValue = true
