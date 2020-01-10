@@ -159,7 +159,6 @@ export function view(state = initialState, action: AnyAction, store: Store) {
                         [cursor]: newPendingDataChanges
                     }
                 },
-                pendingValidationFails: initialState.pendingValidationFails,
                 rowMeta: {
                     ...state.rowMeta,
                     [bcName]: {
