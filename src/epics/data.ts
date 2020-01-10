@@ -854,9 +854,7 @@ function requestBcChildren(bcName: string) {
             array[nextWidget.bcName].push(nextWidget.name)
             return array
         }, {} as ObjectMap<string[]>)
-    if (!state.view.popupData.bcName) {
-        return childrenBcMap
-    }
+
     // Если виджет поддерживает иерархию, то поискать дочерний в ней
     // TODO: сделать описание, разбить на хэлперы?
     const hierarchyWidget = state.view.widgets.find(item => {

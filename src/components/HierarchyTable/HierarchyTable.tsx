@@ -225,7 +225,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
             dataSource={props.data}
             expandedRowRender={hasNested ? nested : undefined}
             expandIconAsCell={false}
-            expandIconColumnIndex={1}
+            expandIconColumnIndex={(rowSelection) ? 1 : 0}
             loading={props.loading}
         />
         {props.showPagination && <Pagination bcName={bcName} mode={PaginationMode.page} />}
