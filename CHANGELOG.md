@@ -1,3 +1,11 @@
+# Version 1.1.3
+
+## Fixes
+
+* `required` fields validation should be limited to only visible fields, to avoid situations when field is marked as required but user is unable to interact with it (#27).
+* `List` widgets erroneously fetched data only for the first level of hierarchy (#25).
+* Hierarchy widgets positioned expand icon incorrectly.
+
 # Version 1.1.2
 
 ## Fixes
