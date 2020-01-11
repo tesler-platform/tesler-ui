@@ -9,14 +9,15 @@ import {Store as CoreStore} from '../interfaces/store'
 import {buildBcUrl} from '../utils/strings'
 import {openButtonWarningNotification} from '../utils/notifications'
 import i18n from 'i18next'
-import {PendingDataItem, DataItem} from 'interfaces/data'
-import {RowMetaField} from 'interfaces/rowMeta'
+import {PendingDataItem, DataItem} from '../interfaces/data'
+import {RowMetaField} from '../interfaces/rowMeta'
+import {WidgetField} from '../interfaces/widget'
 
 const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) => (next: Dispatch) =>
 (action: AnyAction) => {
     const state = getState()
     if (action.type === types.sendOperation) {
-        const { bcName, operationType } = action.payload as unknown as ActionPayloadTypes['sendOperation']
+        const { bcName, operationType, widgetName } = action.payload as unknown as ActionPayloadTypes['sendOperation']
         const cursor = state.screen.bo.bc[bcName] && state.screen.bo.bc[bcName].cursor
         const bcUrl = buildBcUrl(bcName, true)
         const record = state.data[bcName] && state.data[bcName].find(item => item.id === cursor)
@@ -28,7 +29,23 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
 
         // If operation marked as validation-sensetive, mark all 'required' fields which haven't been filled as dirty and invalid
         if (operationRequiresAutosave(operationType, rowMeta && rowMeta.actions)) {
-            const dataItem: PendingDataItem = getRequiredFieldsMissing(record, pendingValues, rowMeta && rowMeta.fields)
+            const widget = state.view.widgets.find(item => item.name === widgetName)
+            // While `required` fields are assigned via rowMeta, only visually visible fields should be checked
+            // to avoid situations when field is marked as `required` but not available for user to interact.
+            const fieldsToCheck: Record<string, RowMetaField> = {}
+            // Form could be split into multiple widgets so we check all widget with the same BC as action initiator.
+            // TODO: use visibleSameBcWidgets instead of state.view.widgets (i.e. widgets showCondition should be respected)
+            state.view.widgets
+            .filter(item => item.bcName === widget.bcName)
+            .forEach(item => {
+                item.fields.forEach((widgetField: WidgetField) => {
+                    const matchingRowMeta = rowMeta.fields.find(rowMetaField => rowMetaField.key === widgetField.key)
+                    if (!fieldsToCheck[widgetField.key] && matchingRowMeta && !matchingRowMeta.hidden) {
+                        fieldsToCheck[widgetField.key] = matchingRowMeta
+                    }
+                })
+            })
+            const dataItem: PendingDataItem = getRequiredFieldsMissing(record, pendingValues, Object.values(fieldsToCheck))
             return dataItem
                 ? next($do.changeDataItem({ bcName, cursor, dataItem }))
                 : next(action)
