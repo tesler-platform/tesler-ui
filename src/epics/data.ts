@@ -102,7 +102,7 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
 
     const anyHierarchyWidget = state.view.widgets.find((widget) => {
         return widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup
-            && widget.options && (widget.options.hierarchy || widget.options.hierarchySameBc)
+            && widget.options && (widget.options.hierarchy || widget.options.hierarchySameBc || widget.options.hierarchyFull)
     })
     const sameBcHierarchyOptions = anyHierarchyWidget && anyHierarchyWidget.options.hierarchySameBc && anyHierarchyWidget.options
     const depthLevel = sameBcHierarchyOptions && (action.type === types.bcFetchDataRequest && action.payload.depth || 1)
