@@ -78,6 +78,17 @@ const changeLocation: Epic = (action$, store) => action$.ofType(types.changeLoca
                 : Observable.of($do.selectViewFail({ viewName: nextViewName}))
         )
     }
+    // If CURSOR has been updated but VIEW has`t changed, need update DATA
+    if (needUpdateCursors && !needUpdateViews) {
+        Object.entries(nextCursors).forEach(entry => {
+            const [ bcName, cursor ] = entry
+            if (!state.data[bcName].find(item => item.id === cursor)) {
+                resultObservables.push(
+                    Observable.of($do.bcForceUpdate({ bcName }))
+                )
+            }
+        })
+    }
     // Порядок важен (сначала проставляются курсоры, потом перезагружается вьюха)
     return Observable.concat(...resultObservables)
 })
