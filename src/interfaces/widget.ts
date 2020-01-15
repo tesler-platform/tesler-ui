@@ -232,10 +232,18 @@ export interface WidgetOperations {
 
 export type CustomWidget = ConnectedComponentClass<any, any> | FunctionComponent<any>
 
+/**
+ * TODO
+ * 
+ * @param item
+ */
 export function isWidgetFieldBlock(item: any): item is WidgetFieldBlock<any> {
     return !!item && ('blockId' in item)
 }
 
+/**
+ * Type of pagination, either page numbers or "Load More" button
+ */
 export const enum PaginationMode {
     page = 'page',
     loadMore = 'loadMore'

@@ -7,6 +7,11 @@ export interface ViewNavigationItem {
     viewName: string
 }
 
+/**
+ * TODO
+ * 
+ * @param item 
+ */
 export function isViewNavigationItem(item: any): item is ViewNavigationItem {
     return !!item && ('viewName' in item)
 }
@@ -24,6 +29,10 @@ export interface ViewNavigationCategory {
     child: Array<ViewNavigationCategory | ViewNavigationItem>
 }
 
+/**
+ * 
+ * @param item 
+ */
 export function isViewNavigationCategory(item: any): item is ViewNavigationCategory {
     return !!item && ('categoryName' in item)
 }
@@ -41,6 +50,10 @@ export interface ViewNavigationGroup {
     child: Array<ViewNavigationItem | ViewNavigationCategory>
 }
 
+/**
+ * TODO
+ * @param item 
+ */
 export function isViewNavigationGroup(item: any): item is ViewNavigationGroup {
     return !!item && ('title' in item)
 }
