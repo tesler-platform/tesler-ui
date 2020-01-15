@@ -90,6 +90,7 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
         .filter((field) => field.forceActive && (pendingChanges[field.key] !== undefined))
         .some((field) => {
             const result = pendingChanges[field.key] !== handledForceActive[field.key]
+                && pendingChanges[field.key] !== currentRecordData[field.key]
             if (result) {
                 changedFiledKey = field.key
             }
