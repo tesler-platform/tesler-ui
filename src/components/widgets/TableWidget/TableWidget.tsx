@@ -55,6 +55,20 @@ interface TableWidgetProps extends TableWidgetOwnProps {
     onOperationClick: (bcName: string, operationType: string, widgetName: string) => void,
     onSelectRow: (bcName: string, cursor: string) => void,
     onSelectCell: (cursor: string, widgetName: string, fieldKey: string) => void,
+    children?: React.ElementType<TableComponent>
+}
+
+export interface TableComponent {
+    columns: TableColumn[],
+    data: DataItem[],
+    onCell?: (rowId: string, columnKey: string) => void
+}
+
+export interface TableColumn {
+    dataIndex: string,
+    title: React.ReactNode,
+    width?: string | number,
+    render: (_text: any, dataItem: DataItem, index: number) => React.ReactNode,
 }
 
 export function TableWidget(props: TableWidgetProps) {
@@ -310,13 +324,15 @@ export function TableWidget(props: TableWidgetProps) {
         props.onShowAll(props.bcName, props.cursor, props.route)
     }
 
-    return <div
-        className={styles.tableContainer}
-        ref={tableContainerRef}
-    >
-        { props.limitBySelf &&
-            <ActionLink onClick={handleShowAll}>Показать остальные записи</ActionLink>
-        }
+    const ek: TableColumn[] = columns.map(item => ({
+        dataIndex: item.dataIndex,
+        width: item.width,
+        title: item.title,
+        render: item.render
+    }))
+    const Bek = props.children
+    const pek = Bek && <Bek columns={ek} data={props.data} onCell={processCellClick} />
+    const content = pek ||
         <Table
             className={cn(
                 styles.table,
@@ -331,22 +347,32 @@ export function TableWidget(props: TableWidgetProps) {
         />
         {!props.disablePagination && <Pagination bcName={props.bcName} mode={props.paginationMode || PaginationMode.page} />}
         {(props.showRowActions) &&
-        <div
-            ref={floatMenuRef}
-            className={styles.floatMenu}
-            onMouseLeave={onFloatMenuMouseLeave}
-        >
-            <Dropdown
-                placement="bottomRight"
-                trigger={['click']}
-                onVisibleChange={onMenuVisibilityChange}
-                overlay={rowActionsMenu}
-                getPopupContainer={trigger => trigger.parentElement}
+            <div
+                ref={floatMenuRef}
+                className={styles.floatMenu}
+                onMouseLeave={onFloatMenuMouseLeave}
             >
-                <div className={styles.dots}>...</div>
-            </Dropdown>
-        </div>
+                <Dropdown
+                    placement="bottomRight"
+                    trigger={['click']}
+                    onVisibleChange={onMenuVisibilityChange}
+                    overlay={rowActionsMenu}
+                    getPopupContainer={trigger => trigger.parentElement}
+                >
+                    <div className={styles.dots}>...</div>
+                </Dropdown>
+            </div>
         }
+
+    return <div
+        className={styles.tableContainer}
+        ref={tableContainerRef}
+    >
+        { props.limitBySelf &&
+            <ActionLink onClick={handleShowAll}>Показать остальные записи</ActionLink>
+        }
+        { content }
+    
     </div>
 }
 
