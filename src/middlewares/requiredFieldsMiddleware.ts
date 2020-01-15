@@ -76,7 +76,7 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
  * @param operationType Key of operation to check
  * @param actions List of operations and/or operation groups
  */
-function operationRequiresAutosave(operationType: string, actions: (Operation | OperationGroup)[], ) {
+function operationRequiresAutosave(operationType: string, actions: Array<Operation | OperationGroup>) {
     let result = false
     if (!actions) {
         console.error('rowMeta is missing in the middle of "sendOperation" action')
@@ -106,7 +106,7 @@ function getRequiredFieldsMissing(record: DataItem, pendingChanges: PendingDataI
 
         const value = record && record[field.key] as string
         const pendingValue = pendingChanges && pendingChanges[field.key]
-        const effectiveValue = pendingValue !== undefined ? pendingValue as string: value
+        const effectiveValue = pendingValue !== undefined ? pendingValue as string : value
         let falsyValue = false
         if ([undefined, null, ''].includes(effectiveValue)) {
             falsyValue = true
@@ -122,6 +122,9 @@ function getRequiredFieldsMissing(record: DataItem, pendingChanges: PendingDataI
     return Object.keys(result).length > 0 ? result : null
 }
 
+/**
+ * TODO
+ */
 export function createRequiredFieldsMiddleware() {
     return requiredFields as Middleware
 }

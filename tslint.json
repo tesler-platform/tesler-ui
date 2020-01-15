@@ -51,8 +51,13 @@
         "no-trailing-whitespace": [
             true,
             "ignore-jsdoc"
+        ],
+        "jsdoc-require": [
+            true
         ]
     },
     "jsRules": true,
-    "rulesDirectory": []
+    "rulesDirectory": [
+        "node_modules/@tesler-ui/tslint-jsdoc-rules/lib"
+    ]
 }

@@ -7,6 +7,11 @@ const defaultResources: Resource = {
     ru
 }
 
+/**
+ * TODO
+ *
+ * @param customDictionary 
+ */
 function getResources(customDictionary: Resource) {
     const result = { ...defaultResources }
     if (!customDictionary) {

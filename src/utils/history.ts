@@ -33,7 +33,12 @@ export function parseBcCursors(bcPath: string) {
     return cursors
 }
 
-// TODO: JSDOC
+/**
+ * TODO
+ * 
+ * @param literals
+ * @param placeholders 
+ */
 export function buildUrl(literals: TemplateStringsArray, ...placeholders: Array<string|number>) {
     let result = ''
 

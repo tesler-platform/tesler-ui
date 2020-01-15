@@ -1,0 +1,19 @@
+name: CI
+
+on: pull_request
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: install
+      run: yarn install
+    - name: unit tests
+      run: yarn test
+    - name: linter
+      run: yarn lint
+    - name: build
+      run: yarn build

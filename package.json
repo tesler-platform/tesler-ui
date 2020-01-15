@@ -23,6 +23,7 @@
     "@types/react": "16.8.23",
     "@types/react-redux": "7.1.1",
     "@types/redux": "3.6.0",
+    "@tesler-ui/tslint-jsdoc-rules": "0.3.0",
     "clean-webpack-plugin": "3.0.0",
     "copy-webpack-plugin": "5.0.4",
     "css-loader": "1.0.0",

@@ -179,7 +179,7 @@ function mapStateToProps(state: Store, props: FileUploadOwnProps ) {
     }
 }
 
-function mapDispathToProps(dispatch: Dispatch): FileUploadActions {
+function mapDispatchToProps(dispatch: Dispatch): FileUploadActions {
     return {
         onStartUpload: () => {
             dispatch($do.uploadFile(null))
@@ -197,4 +197,4 @@ function mapDispathToProps(dispatch: Dispatch): FileUploadActions {
     }
 }
 
-export default connect(mapStateToProps, mapDispathToProps)(FileUpload)
+export default connect(mapStateToProps, mapDispatchToProps)(FileUpload)

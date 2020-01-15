@@ -5,7 +5,12 @@
 import {store as globalStore} from '../Provider'
 import {Store} from '../interfaces/store'
 
-// TODO: JSDOC
+/**
+ * TODO
+ * 
+ * @param literals
+ * @param placeholders 
+ */
 export function getTemplate(literals: TemplateStringsArray, ...placeholders: any[]) {
     let result = ''
     for (let i = 0; i < placeholders.length; i++) {

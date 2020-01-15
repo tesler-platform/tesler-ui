@@ -8,10 +8,23 @@ import {Observable} from 'rxjs/Observable'
 
 type GetParamsMap = ObjectMap<string | number>
 
+/**
+ * TODO
+ *
+ * @param path 
+ * @param params 
+ */
 export function routerRequest(path: string, params: object) {
     return axiosGet(applyRawParams(path, params))
 }
 
+/**
+ * TODO
+ *
+ * @param screenName 
+ * @param bcUrl 
+ * @param params 
+ */
 export function fetchBcData(screenName: string, bcUrl: string, params: GetParamsMap = {}) {
     const noLimit = params._limit === 0
     const queryStringObject = {
@@ -23,6 +36,13 @@ export function fetchBcData(screenName: string, bcUrl: string, params: GetParams
     return axiosGet<BcDataResponse>(url)
 }
 
+/**
+ * TODO
+ *
+ * @param screenName 
+ * @param bcUrl 
+ * @param params 
+ */
 export function fetchBcDataAll(screenName: string, bcUrl: string, params: GetParamsMap = {}) {
     let currentPage = 1
 
@@ -40,6 +60,13 @@ export function fetchBcDataAll(screenName: string, bcUrl: string, params: GetPar
         )
 }
 
+/**
+ * TODO
+ *
+ * @param screenName 
+ * @param bcUrl 
+ * @param params 
+ */
 export function fetchRowMeta(screenName: string, bcUrl: string, params?: GetParamsMap) {
     const url = applyParams(
         buildUrl`row-meta/${screenName}/` + bcUrl,

@@ -6,7 +6,7 @@ test('should parse single sorter', () => {
     expect(result.length).toBe(1)
     expect(result[0].fieldName).toBe('ID')
     expect(result[0].direction).toBe('asc')
-    source = "_sort.0.desc=TEST"
+    source = '_sort.0.desc=TEST'
     result = parseSorters(source)
     expect(result[0].fieldName).toBe('TEST')
     expect(result[0].direction).toBe('desc')
