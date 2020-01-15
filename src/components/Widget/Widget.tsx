@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import {connect} from 'react-redux'
 import {Skeleton, Spin} from 'antd'
 import {Store} from '../../interfaces/store'
@@ -31,7 +31,7 @@ interface WidgetProps extends WidgetOwnProps {
 
 const skeletonParams = { rows: 5 }
 
-export function Widget(props: WidgetProps) {
+export const Widget: FunctionComponent<WidgetProps> = (props) => {
     if (!props.showWidget) {
         return null
     }
@@ -123,6 +123,14 @@ function mapStateToProps(store: Store, ownProps: WidgetOwnProps) {
     }
 }
 
+/**
+ * TODO
+ *
+ * @param condition 
+ * @param bcMap 
+ * @param data 
+ * @param view 
+ */
 function checkShowCondition(condition: WidgetShowCondition, bcMap: Record<string, BcMetaState>, data: DataState, view: ViewState) {
     const { bcName, isDefault, params } = condition
     if (isDefault) {

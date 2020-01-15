@@ -6,11 +6,20 @@ type SelectProps = AntdSelectProps & {
     forwardedRef?: React.RefObject<AntdSelect<string>>
 }
 
-// Обертка для старой версии rc-select, т.к. в актуальной версии происходит обновление ширины выпадающего списка даже когда список закрыт
-// https://github.com/react-component/select/issues/378
+/**
+ * Wrapper for original rc-select due to performance problems with last version
+ * https://github.com/react-component/select/issues/378
+ */
 export class Select<T = SelectValue> extends React.PureComponent<SelectProps> {
+
+    /**
+     * STUB
+     */
     static Option = AntdSelect.Option
 
+    /**
+     * STUB
+     */
     render() {
         const extendedProps: any = {
             ...this.props,

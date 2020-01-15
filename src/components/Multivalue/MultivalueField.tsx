@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import {connect} from 'react-redux'
 import {Dispatch} from 'redux'
 import {Store} from '../../interfaces/store'
@@ -32,7 +32,7 @@ export interface MultivalueFieldProps extends MultivalueFieldOwnProps {
     onMultivalueAssocOpen: () => void
 }
 
-function MultivalueField(props: MultivalueFieldProps) {
+const MultivalueField: FunctionComponent<MultivalueFieldProps> = (props) => {
 
     const onRemove = (newValue: MultivalueSingleValue[], removedItem: MultivalueSingleValue) => {
         props.onRemove(props.bcName, props.popupBcName, props.cursor, props.fieldKey, newValue, removedItem)

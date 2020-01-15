@@ -14,10 +14,18 @@ export const crudOperations = [
     OperationTypeCrud.create, OperationTypeCrud.save, OperationTypeCrud.delete, OperationTypeCrud.associate, OperationTypeCrud.cancelCreate
 ]
 
+/**
+ * 
+ * @param operationType 
+ */
 export function isCrud(operationType: string): operationType is OperationTypeCrud {
     return crudOperations.includes(operationType as OperationTypeCrud)
 }
 
+/**
+ * 
+ * @param operation 
+ */
 export function isOperationGroup(operation: Operation | OperationGroup): operation is OperationGroup {
     return Array.isArray((operation as OperationGroup).actions)
 }

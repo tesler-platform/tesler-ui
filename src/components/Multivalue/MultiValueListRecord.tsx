@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import {connect} from 'react-redux'
 import {Dispatch} from 'redux'
 import {$do} from '../../actions/actions'
@@ -18,7 +18,7 @@ export interface MultiValueListRecordProps extends MultiValueListRecordOwnProps 
     onDrillDown: (drillDownUrl: string, drillDownType: DrillDownType) => void,
 }
 
-function MultiValueListRecord(props: MultiValueListRecordProps) {
+const MultiValueListRecord: FunctionComponent<MultiValueListRecordProps> = (props) => {
     const handleDrillDown = () => {
         props.onDrillDown(
             props.multivalueSingleValue.options.drillDown,

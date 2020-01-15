@@ -17,6 +17,11 @@ export type uActionCreators<A> = {
     [key in keyof A]: (payload: A[key]) => Action<key, A[key]>
 }
 
+/**
+ * TODO
+ *
+ * @param actionObj 
+ */
 export function createActionCreators<A>(actionObj: A): uActionCreators<A> {
     const keys = Object.keys(actionObj)
     const creators = {} as any
@@ -29,6 +34,11 @@ export function createActionCreators<A>(actionObj: A): uActionCreators<A> {
     return creators
 }
 
+/**
+ * TODO
+ *
+ * @param actionObj 
+ */
 export function createActionTypes<A>(actionObj: A): uActionTypesMap<A> {
     const keys = Object.keys(actionObj)
     const types = {} as any

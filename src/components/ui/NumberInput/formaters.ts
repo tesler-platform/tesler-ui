@@ -27,6 +27,13 @@ export const NumberInputFormat = {
     }
 }
 
+/**
+ * TODO
+ *
+ * @param value 
+ * @param digits 
+ * @param useGrouping 
+ */
 export function getFormattedNumber(value: number, digits: number, useGrouping = false): string {
     const precision = getPrecision(digits)
     let result = Intl.NumberFormat('ru-RU', {
@@ -45,7 +52,12 @@ export function getFormattedNumber(value: number, digits: number, useGrouping = 
     return result
 }
 
-/* Округление дробей до ближайшего числа указанной точности */
+/**
+ * Округление дробей до ближайшего числа указанной точности
+ *
+ * @param value 
+ * @param precision 
+ */
 export function fractionsRound(value: number, precision: number): number {
     if (value == null || isNaN(value) || !precision) {
         return value
@@ -58,6 +70,11 @@ export function fractionsRound(value: number, precision: number): number {
     return Number(rmant + 'e' + ((rexp) ? (Number(rexp) - precision) : -precision))
 }
 
+/**
+ * TODO
+ *
+ * @param digits 
+ */
 export function getPrecision(digits: number): number {
     let precision = 0
     // определение целевой точности относительно максимально допустимого для Intl форматирования

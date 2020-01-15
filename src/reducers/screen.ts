@@ -18,6 +18,16 @@ const initialState: ScreenState = {
     sorters: {}
 }
 
+/**
+ * Screen reducer
+ * 
+ * Stores information about currently active screen and various more persistent values which should be stored
+ * until we navitage to a different screen.
+ *
+ * @param state Screen branch of Redux store 
+ * @param action Redux action
+ * @param store Store instance for read-only access of different branches of Redux store
+ */
 export function screen(state = initialState, action: AnyAction): ScreenState {
     switch (action.type) {
         case types.selectScreen: {

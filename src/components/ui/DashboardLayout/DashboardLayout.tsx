@@ -11,6 +11,11 @@ export interface DashboardLayoutProps {
     card?: (props: any) => React.ReactElement<any>
 }
 
+/**
+ * TODO
+ *
+ * @param props 
+ */
 export function DashboardLayout(props: DashboardLayoutProps) {
     const widgetsByRow = React.useMemo(() => {
         return groupByRow(props.widgets, props.skipWidgetTypes || [])
@@ -26,6 +31,12 @@ export function DashboardLayout(props: DashboardLayoutProps) {
     </React.Fragment>
 }
 
+/**
+ * TODO
+ *
+ * @param widgets 
+ * @param skipWidgetTypes 
+ */
 function groupByRow(widgets: WidgetMeta[], skipWidgetTypes: string[]) {
     const byRow: ObjectMap<WidgetMeta[]> = {}
     widgets

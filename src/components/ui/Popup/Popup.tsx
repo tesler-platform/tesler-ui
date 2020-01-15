@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import {Modal, Button} from 'antd'
 import Pagination from '../../ui/Pagination/Pagination'
 import {PaginationMode} from '../../../interfaces/widget'
@@ -21,7 +21,7 @@ const widths = {
     large: '808px'
 }
 
-export function Popup(props: PopupProps) {
+export const Popup: FunctionComponent<PopupProps> = (props) => {
     const title = <h1 className={styles.title}>{props.title}</h1>
     const width = props.size ? widths[props.size] : widths.medium
     return <div>

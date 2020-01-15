@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import {connect} from 'react-redux'
 import {Form, Row, Col} from 'antd'
 import {Store} from '../../../interfaces/store'
@@ -21,7 +21,7 @@ interface FormWidgetProps extends FormWidgetOwnProps {
     missingFields: Record<string, string>
 }
 
-export function FormWidget(props: FormWidgetProps) {
+export const FormWidget: FunctionComponent<FormWidgetProps> = (props) => {
     const flattenWidgetFields = useFlatFormFields<WidgetFormField>(props.meta.fields)
     const { meta: { bcName, name }, cursor } = props
 
