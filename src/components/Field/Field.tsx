@@ -68,7 +68,9 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
         FieldType.date,
         FieldType.dateTime,
         FieldType.dateTimeWithSeconds,
-        FieldType.checkbox
+        FieldType.checkbox,
+        FieldType.dictionary,
+        FieldType.multivalue
     ]
     const value = undefinedValuesAllowed.includes(props.widgetFieldMeta.type)
         ? (props.pendingValue !== undefined)
