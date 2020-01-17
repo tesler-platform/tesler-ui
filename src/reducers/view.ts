@@ -27,11 +27,11 @@ const initialState: ViewState  = {
 
 /**
  * View reducer
- * 
+ *
  * Stores information about currently active view and various fast-living pending values which should be stored
  * until we navitage to a different view.
  *
- * @param state View branch of Redux store 
+ * @param state View branch of Redux store
  * @param action Redux action
  * @param store Store instance for read-only access of different branches of Redux store
  */

@@ -111,8 +111,8 @@ const Dictionary: React.FunctionComponent<IDictionaryProps> = (props) => {
 /**
  * TODO
  *
- * @param params 
- * @param extraStyleClasses 
+ * @param params
+ * @param extraStyleClasses
  */
 export function getIconByParams(params: string, extraStyleClasses?: string) {
     if (params) {
