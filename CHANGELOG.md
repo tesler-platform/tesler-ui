@@ -1,3 +1,14 @@
+# Version 1.1.4
+
+## Fixes
+
+* Remove `limit` and `page` params from full hierarchy data request (#34).
+* Fix an infinite loop when a business error is received during a change in a force-active field (#35).
+
+## Misc
+
+* Add pull request pipeline
+
 # Version 1.1.3
 
 ## Fixes
