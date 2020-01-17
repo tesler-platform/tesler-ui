@@ -69,11 +69,11 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
     const initUrl = state.view.url
     const {bcName, cursor} = action.payload
 
-    const isSameBcHierarchy = state.view.widgets.some((widget) => {
-        return widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup
-            && widget.options && widget.options.hierarchySameBc
+    const isBcHierarchy = state.view.widgets.some((widget) => {
+        return widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup && widget.options
+            && (widget.options.hierarchySameBc || widget.options.hierarchyFull)
     })
-    if (isSameBcHierarchy) {
+    if (isBcHierarchy) {
         return Observable.empty<never>()
     }
 
