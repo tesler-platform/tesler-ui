@@ -27,7 +27,7 @@ export {fetchBcDataAll} from './api/api'
 const parseLocation = getParseLocationInstance
 const buildLocation = getBuildLocationInstance
 
-import {isViewNavigationItem, isViewNavigationCategory, isViewNavigationGroup} from './interfaces/navigation'
+import {isViewNavigationItem, isViewNavigationGroup} from './interfaces/navigation'
 import {isWidgetFieldBlock} from './interfaces/widget'
 
 export {
@@ -44,7 +44,6 @@ export {
     parseLocation,
     buildLocation,
     isViewNavigationItem,
-    isViewNavigationCategory,
     isViewNavigationGroup,
     isWidgetFieldBlock
 }

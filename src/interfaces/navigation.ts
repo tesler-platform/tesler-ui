@@ -1,64 +1,49 @@
 /**
- * Описание конечного пункта в меню навигации.
+ * Description of the destination in the navigation menu.
  *
- * @param viewName Имя вью.
+ * @param viewName Identifier of view.
  */
 export interface ViewNavigationItem {
-    viewName: string
+    id: string
+    viewName: string,
+    hidden?: boolean,
 }
 
 /**
- * TODO
+ * Returns MenuItem if it is ViewNavigationItem
  * 
- * @param item 
+ * @param item to be identified as view
  */
-export function isViewNavigationItem(item: any): item is ViewNavigationItem {
+export function isViewNavigationItem(item: MenuItem): item is ViewNavigationItem {
     return !!item && ('viewName' in item)
 }
 
 /**
- * Описание категории в меню навигации.
+ * Description of groups in the navigation menu.
  *
- * Используется для создания уровней вложенности пунктов меню.
+ * Used to create nesting levels of menu items.
  *
- * @param categoryName Название категории.
- * @param child Список категорий или пунктов меню, входящих в категорию.
- */
-export interface ViewNavigationCategory {
-    categoryName: string,
-    child: Array<ViewNavigationCategory | ViewNavigationItem>
-}
-
-/**
- * 
- * @param item 
- */
-export function isViewNavigationCategory(item: any): item is ViewNavigationCategory {
-    return !!item && ('categoryName' in item)
-}
-
-/**
- * Описание группы в меню навигации.
- *
- * Используется как корневой элемент, включающий в себя категории и пункты меню.
- *
- * @param title Имя группы.
- * @param child Список категорий или пунктов меню, входящих в группу.
+ * @param title Title of group. Navigation element shows it to user.
+ * @param child Array of navigation elements specified below group(View or inner Group)
  */
 export interface ViewNavigationGroup {
-    title: string
-    child: Array<ViewNavigationItem | ViewNavigationCategory>
+    id: string
+    title: string,
+    child: Array<ViewNavigationGroup | ViewNavigationItem>
+    hidden?: boolean
+    defaultView?: string
 }
 
 /**
- * TODO
- * @param item 
+ * Returns MenuItem if it is ViewNavigationGroup
+ *
+ * @param item to be identified as group
  */
-export function isViewNavigationGroup(item: any): item is ViewNavigationGroup {
-    return !!item && ('title' in item)
+export function isViewNavigationGroup(item: MenuItem): item is ViewNavigationGroup {
+    return !!item && ('child' in item)
 }
 
 /**
- * Тип объекта для описания пунктов меню в навигации.
+ * The type of object to describe the menu items in the navigation.
  */
-export type MenuItem = ViewNavigationGroup | ViewNavigationCategory | ViewNavigationItem
+export type MenuItem = ViewNavigationGroup | ViewNavigationItem
