@@ -25,7 +25,7 @@ const MultiValueListRecord: FunctionComponent<MultiValueListRecordProps> = (prop
             props.multivalueSingleValue.options.drillDownType
         )
     }
-    return <div>
+    return <div className={styles.fieldAreaFloat}>
         {props.multivalueSingleValue.options && props.multivalueSingleValue.options.hint &&
         <div className={cn({
             [styles.hintFloat]: props.isFloat,
