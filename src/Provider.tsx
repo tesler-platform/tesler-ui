@@ -92,8 +92,8 @@ export function configureStore<ClientState, ClientActions extends Action<any>>(
         }
     })
     const middlewares: Middleware[] = [
-        createRequiredFieldsMiddleware(),
-        createAutoSaveMiddleware()
+        createAutoSaveMiddleware(),
+        createRequiredFieldsMiddleware()
     ]
     if (useEpics) {
         const epics = combineEpics(coreEpics, customEpics)
