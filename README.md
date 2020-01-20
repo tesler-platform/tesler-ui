@@ -1,5 +1,5 @@
 
-# Tesler UI
+# Tesler UI &middot; ![Build status](https://github.com/tesler-platform/tesler-ui/workflows/Build/badge.svg)
 
 Tesler UI is an open source library that supplies user interaction support for Tesler framework in form of React components, Redux reducers and redux-observable epics for handling asynchronous actions.
 More specifically that includes:
