@@ -1,3 +1,13 @@
+# Version 1.1.5
+
+## Fixes
+
+* Increase indent between multi-value list records (#41)
+
+## Misc
+
+* Add release workflow
+
 # Version 1.1.4
 
 ## Fixes
