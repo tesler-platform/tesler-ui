@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import {connect} from 'react-redux'
 import {Store} from '../../interfaces/store'
 import {CustomWidget, WidgetMeta} from '../../interfaces/widget'
@@ -20,7 +20,7 @@ export const CustomizationContext: React.Context<{
     customFields: {}
 })
 
-export function View(props: ViewProps) {
+export const View: FunctionComponent<ViewProps> = (props) => {
     let layout: React.ReactNode = null
     if (props.customLayout) {
         layout = <props.customLayout

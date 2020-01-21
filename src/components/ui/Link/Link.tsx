@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FunctionComponent} from 'react'
 import {createLocation} from 'history'
 import {historyObj} from '../../../reducers/router'
 
@@ -8,7 +8,7 @@ interface LinkProps {
     href: string
 }
 
-export default function Link(props: LinkProps) {
+export const Link: FunctionComponent<LinkProps> = (props) => {
     const { className, href, ...rest } = props
     return <a
         className={className}
@@ -18,3 +18,5 @@ export default function Link(props: LinkProps) {
         {props.children}
     </a>
 }
+
+export default Link

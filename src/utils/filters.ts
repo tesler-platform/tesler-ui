@@ -2,6 +2,11 @@ import {BcFilter, BcSorter} from '../interfaces/filters'
 import {DataValue} from '../interfaces/data'
 import qs from 'query-string'
 
+/**
+ * TODO
+ * 
+ * @param filters
+ */
 export function getFilters(filters: BcFilter[]) {
     if (!filters || !filters.length) {
         return null
@@ -18,6 +23,11 @@ export function getFilters(filters: BcFilter[]) {
     return result
 }
 
+/**
+ * TODO
+ * 
+ * @param sorters 
+ */
 export function getSorters(sorters: BcSorter[]) {
     if (!sorters || !sorters.length) {
         return null
@@ -50,7 +60,7 @@ export function parseSorters(sorters: string) {
     Object.entries(dictionary)
     .map(([sort, fieldKey]) => {
         const [ order, direction ] = sort.split('.').slice(1)
-        return { fieldName: fieldKey as string, order: Number.parseInt(order), direction }
+        return { fieldName: fieldKey as string, order: Number.parseInt(order, 10), direction }
     })
     .sort((a, b) => a.order - b.order)
     .forEach(item => {

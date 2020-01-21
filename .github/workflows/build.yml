@@ -1,0 +1,41 @@
+on:
+  push:
+    branches:
+      - master
+
+name: Build
+
+jobs:
+  assets:
+    name: Create NPM Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+          always-auth: true
+      - name: install
+        run: yarn install
+      - name: unit tests
+        run: yarn test
+      - name: linter
+        run: yarn lint
+      - name: build
+        run: yarn build
+      - name: navigate dist
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+          cd dist
+          yarn publish --access public
+          cd ..
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  src:
+    needs: assets
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: release-drafter/release-drafter@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

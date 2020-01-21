@@ -3,6 +3,9 @@ import {DepthDataState} from '../interfaces/data'
 
 const initialState: DepthDataState  = {}
 
+/**
+ * TODO
+ */
 export function depthData(state = initialState, action: AnyAction) {
     switch (action.type) {
         case types.bcFetchDataSuccess: {
