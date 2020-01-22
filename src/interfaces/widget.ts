@@ -153,6 +153,7 @@ export interface WidgetOptions {
     hierarchyTraverse?: boolean,
     hierarchyRadio?: boolean,
     hierarchyRadioAll?: boolean,
+    hierarchyDisableRoot?: boolean,
     actionGroups?: WidgetOperations,
     readOnly?: boolean,
     /**

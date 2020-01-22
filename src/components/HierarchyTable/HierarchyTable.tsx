@@ -10,7 +10,7 @@ import {buildBcUrl} from '../../utils/strings'
 import {WidgetTableMeta, WidgetListField } from '../../interfaces/widget'
 import {DataItem, MultivalueSingleValue, PendingDataItem } from '../../interfaces/data'
 import {RowMetaField } from '../../interfaces/rowMeta'
-import {ColumnProps, TableRowSelection } from 'antd/lib/table'
+import {ColumnProps, TableRowSelection, TableEventListeners} from 'antd/lib/table'
 import {Route } from '../../interfaces/router'
 import {FieldType } from '../../interfaces/view'
 import styles from './HierarchyTable.less'
@@ -24,7 +24,8 @@ interface HierarchyTableOwnProps {
     assocValueKey?: string,
     nestedByBc?: string,
     parentBcName?: string
-    showPagination?: boolean
+    showPagination?: boolean,
+    onRow?: (record: DataItem, index: number) => TableEventListeners
 }
 
 export interface HierarchyTableProps extends HierarchyTableOwnProps {
@@ -67,6 +68,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
     const hierarchyRadio = props.meta.options && props.meta.options.hierarchyRadio
     const hierarchyRadioAll = props.meta.options && props.meta.options.hierarchyRadioAll
     const hierarchyLevels = props.meta.options && props.meta.options.hierarchy
+    const hierarchyDisableRoot = props.meta.options && props.meta.options.hierarchyDisableRoot
 
     // TODO: Переделать в более понятный вид
     const indentLevel = props.nestedByBc
@@ -165,6 +167,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
             assocValueKey={nestedHierarchyDescriptor.assocValueKey}
             nestedByBc={nestedBcName}
             onDrillDown={null}
+            onRow={props.onRow}
         />
     }
 
@@ -227,6 +230,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
             expandIconAsCell={false}
             expandIconColumnIndex={(rowSelection) ? 1 : 0}
             loading={props.loading}
+            onRow={!(hierarchyDisableRoot && indentLevel === 0) && props.onRow}
         />
         {props.showPagination && <Pagination bcName={bcName} mode={PaginationMode.page} />}
     </div>
