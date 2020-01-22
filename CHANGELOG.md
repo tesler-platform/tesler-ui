@@ -1,3 +1,12 @@
+# Version 1.1.6
+
+## Fixes
+
+* Fields shouldn't ignore empty delta value (#46).
+* Console error, that appears when trying to check force active fields change on full hierarchy BC without data (#47).
+* Change location with cursors change should initiate data fetch even if View was not updated (e.g. drilldown on the same View) (#34).
+* Changelog incorrectly referenced #34 instead of #32 in 1.1.4 release.
+
 # Version 1.1.5
 
 ## Fixes
@@ -12,7 +21,7 @@
 
 ## Fixes
 
-* Remove `limit` and `page` params from full hierarchy data request (#34).
+* Remove `limit` and `page` params from full hierarchy data request (#32).
 * Fix an infinite loop when a business error is received during a change in a force-active field (#35).
 
 ## Misc
