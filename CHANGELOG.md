@@ -1,3 +1,10 @@
+# Version 1.2.0
+
+## Features
+
+* PickList widget now supports hierarchy tables, i.e. widget options `hierarchy`, `hierarchySameBc` and `hierarchyFull` now work the same way as in regular Table widgets (#49).
+* New `hierarchyDisableRoot: boolean` flag added to control if rows on top of hierarchy are selectablable or not (#49).
+
 # Version 1.1.6
 
 ## Fixes
