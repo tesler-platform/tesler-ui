@@ -4,6 +4,8 @@
 
 import {store as globalStore} from '../Provider'
 import {Store} from '../interfaces/store'
+import moment from 'moment'
+import {DataItem} from '../interfaces/data'
 
 /**
  * TODO
@@ -43,4 +45,57 @@ export function buildBcUrl(bcName: string, includeSelf: boolean = false, store?:
     }
     const bcUrl = url.reverse().join('/')
     return bcUrl
+}
+
+// Token format: '${fieldName:defaultValue}'
+const TAG_PLACEHOLDER = /\${([^{}]+)}/g
+
+/**
+ * Replaces tokens in a template string with object field values.
+ * If the value is like a date, then convert it to the format 'DD.MM.YYYY'
+ *
+ * Example:
+ * const item = { color1: 'Green', color2: 'Blue' }
+ * const templatedString = 'Color is ${color1} ${color2:Purple} ${color3:Purple}'
+ * format(templateString, item) // => 'Green Blue Purple'
+ *
+ * @param templatedString Patterned string
+ * @param item An object in the fields of which tokens should be searched
+ */
+const formatString = (templatedString: string, item: DataItem): string => {
+    if (!templatedString) {
+        return ''
+    }
+    return templatedString.replace(TAG_PLACEHOLDER, (token, varName) => {
+        const [key, defaultValue] = varName.split(':')
+        const result = String(item && item[key]
+            || defaultValue
+            || ''
+        )
+        const date = moment(result, moment.ISO_8601)
+        return !date.isValid()
+            ? result
+            : date.format('DD.MM.YYYY')
+    })
+}
+
+const isTemplate = (templatedString: string): boolean => {
+    if (!templatedString) {
+        return false
+    }
+    return templatedString.match(TAG_PLACEHOLDER) !== null
+}
+
+/**
+ * If there is a template in the field name then returns the formatted string
+ *
+ * @param title Field name
+ * @param dataItem An object in the fields of which tokens should be searched
+ */
+export function getFieldTitle(title: string, dataItem?: DataItem) {
+    if (!isTemplate(title)) {
+        return title
+    } else {
+        return formatString(title, dataItem)
+    }
 }
