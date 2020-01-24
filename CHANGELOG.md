@@ -1,3 +1,12 @@
+# Version 1.2.1
+
+## Fixes
+
+* Respect default width of columns for hierarchy tables and disable pagination if not required (#56).
+* Disable pagination for PickListPopup with FullHierarchy (#55).
+* List widget in hierarchy mode should support drilldown field (#51).
+* RowMeta request isn`t sent when the forceActive field changes (#53).
+
 # Version 1.2.0
 
 ## Features
