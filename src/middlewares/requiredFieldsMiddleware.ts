@@ -11,7 +11,7 @@ import {openButtonWarningNotification} from '../utils/notifications'
 import i18n from 'i18next'
 import {PendingDataItem, DataItem} from '../interfaces/data'
 import {RowMetaField} from '../interfaces/rowMeta'
-import {WidgetField} from '../interfaces/widget'
+import {WidgetField, WidgetFieldBlock, isWidgetFieldBlock} from '../interfaces/widget'
 
 const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) => (next: Dispatch) =>
 (action: AnyAction) => {
@@ -38,7 +38,15 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
             state.view.widgets
             .filter(item => item.bcName === widget.bcName)
             .forEach(item => {
-                item.fields.forEach((widgetField: WidgetField) => {
+                const itemFieldsCalc: object[] = item.fields
+                if (item.fields) {
+                    item.fields.forEach((block: object | WidgetFieldBlock<object>) => {
+                        if (isWidgetFieldBlock(block)) {
+                            block.fields.forEach((field: []) => itemFieldsCalc.push(field))
+                        }
+                    })
+                }
+                itemFieldsCalc.forEach((widgetField: WidgetField) => {
                     const matchingRowMeta = rowMeta.fields.find(rowMetaField => rowMetaField.key === widgetField.key)
                     if (!fieldsToCheck[widgetField.key] && matchingRowMeta && !matchingRowMeta.hidden) {
                         fieldsToCheck[widgetField.key] = matchingRowMeta
@@ -47,7 +55,8 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
             })
             const dataItem: PendingDataItem = getRequiredFieldsMissing(record, pendingValues, Object.values(fieldsToCheck))
             return dataItem
-                ? next($do.changeDataItem({ bcName, cursor, dataItem }))
+                ? (dispatch($do.selectTableCellInit({ widgetName, rowId: cursor, fieldKey: Object.keys(dataItem)[0] })),
+                next($do.changeDataItem({ bcName, cursor, dataItem })))
                 : next(action)
         }
 
