@@ -26,6 +26,10 @@ interface PaginationDispatchProps {
 type PaginationAllProps = PaginationOwnProps & PaginationStateProps & PaginationDispatchProps
 
 const Pagination: React.FunctionComponent<PaginationAllProps> = (props) => {
+    // disable pagination if not required
+    if (!props.hasNext && props.page < 2) {
+        return null
+    }
     const onLoadMore = React.useCallback(
         () => {
             props.loadMore(props.bcName)
