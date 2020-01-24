@@ -11,7 +11,7 @@ import {openButtonWarningNotification} from '../utils/notifications'
 import i18n from 'i18next'
 import {PendingDataItem, DataItem} from '../interfaces/data'
 import {RowMetaField} from '../interfaces/rowMeta'
-import {WidgetField, WidgetFieldBlock} from '../interfaces/widget'
+import {WidgetField, WidgetFieldBlock, isWidgetFieldBlock} from '../interfaces/widget'
 
 const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) => (next: Dispatch) =>
 (action: AnyAction) => {
@@ -41,13 +41,6 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
                 const itemFieldsCalc: object[] = item.fields
                 if (item.fields) {
                     item.fields.forEach((block: object | WidgetFieldBlock<object>) => {
-                        /**
-                         * block check
-                         * @param itemObject
-                         */
-                        function isWidgetFieldBlock(itemObject: any): itemObject is WidgetFieldBlock<object> {
-                            return !!itemObject && ('fields' in itemObject)
-                        }
                         if (isWidgetFieldBlock(block)) {
                             block.fields.forEach((field: []) => itemFieldsCalc.push(field))
                         }

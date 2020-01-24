@@ -194,7 +194,7 @@ export interface WidgetShowCondition {
 
 /**
  * Description of the list of fields of block type.
- * Deprecated interface
+ * @deprecated
  * Used to create a block grouping of fields
  *
  * @param blockId Block ID.
