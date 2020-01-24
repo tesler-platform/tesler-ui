@@ -11,7 +11,7 @@ import {openButtonWarningNotification} from '../utils/notifications'
 import i18n from 'i18next'
 import {PendingDataItem, DataItem} from '../interfaces/data'
 import {RowMetaField} from '../interfaces/rowMeta'
-import {WidgetField, WidgetBlock, WidgetTypes} from '../interfaces/widget'
+import {WidgetField, WidgetFieldBlock} from '../interfaces/widget'
 
 const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) => (next: Dispatch) =>
 (action: AnyAction) => {
@@ -38,12 +38,20 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
             state.view.widgets
             .filter(item => item.bcName === widget.bcName)
             .forEach(item => {
-                let itemFieldsCalc: object[] = []
-                if (item.type === WidgetTypes.List) {
-                    itemFieldsCalc = item.fields
-                }
-                if (item.type === WidgetTypes.Form) {
-                    item.fields.forEach((block: WidgetBlock) => {block.fields.forEach((field: []) => itemFieldsCalc.push(field))})
+                const itemFieldsCalc: object[] = item.fields
+                if (item.fields) {
+                    item.fields.forEach((block: object | WidgetFieldBlock<object>) => {
+                        /**
+                         * block check
+                         * @param itemObject
+                         */
+                        function isWidgetFieldBlock(itemObject: any): itemObject is WidgetFieldBlock<object> {
+                            return !!itemObject && ('fields' in itemObject)
+                        }
+                        if (isWidgetFieldBlock(block)) {
+                            block.fields.forEach((field: []) => itemFieldsCalc.push(field))
+                        }
+                    })
                 }
                 itemFieldsCalc.forEach((widgetField: WidgetField) => {
                     const matchingRowMeta = rowMeta.fields.find(rowMetaField => rowMetaField.key === widgetField.key)
