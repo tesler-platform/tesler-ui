@@ -18,6 +18,7 @@ import {AssociatedItem} from '../../interfaces/operation'
 import {useAssocRecords} from '../../hooks/useAssocRecords'
 import Pagination from '../ui/Pagination/Pagination'
 import {PaginationMode} from '../../interfaces/widget'
+import cn from 'classnames'
 
 interface HierarchyTableOwnProps {
     meta: WidgetTableMeta,
@@ -179,7 +180,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
         key: '_indentColumn',
         dataIndex: null as string,
         className: styles.selectColumn,
-        width: `${50 + indentLevel * 50}px`,
+        width: `50px`,
         render: (text: string, dataItem: AssociatedItem): React.ReactNode => {
             return null
         }
@@ -191,6 +192,8 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
                 title: item.title,
                 key: item.key,
                 dataIndex: item.key,
+                width: '200px',
+                className: cn({[styles[`padding${indentLevel}`]]: fields[0].key === item.key && indentLevel}),
                 render: (text: string, dataItem: any) => {
                     if (item.type === FieldType.multivalue) {
                         return <MultivalueHover
