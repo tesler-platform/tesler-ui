@@ -394,11 +394,13 @@ export class ActionPayloadTypes {
      * @param bcName
      * @param cursors
      * @param dataItems
+     * @param disableRetry
      */
     changeDataItem: {
         bcName: string,
         cursor: string,
-        dataItem: PendingDataItem
+        dataItem: PendingDataItem,
+        disableRetry?: boolean
     } = z
 
     /**
