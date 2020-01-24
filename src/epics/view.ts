@@ -67,7 +67,7 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
 .mergeMap((action) => {
     const state = store.getState()
     const initUrl = state.view.url
-    const {bcName, cursor} = action.payload
+    const {bcName, cursor, disableRetry} = action.payload
 
     const isBcHierarchy = state.view.widgets.some((widget) => {
         return widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup && widget.options
@@ -90,14 +90,13 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
         .filter((field) => field.forceActive && (pendingChanges[field.key] !== undefined))
         .some((field) => {
             const result = pendingChanges[field.key] !== handledForceActive[field.key]
-                && pendingChanges[field.key] !== currentRecordData[field.key]
             if (result) {
                 changedFiledKey = field.key
             }
             return result
         })
 
-    if (someForceActiveChanged) {
+    if (someForceActiveChanged && !disableRetry) {
         return api.getRmByForceActive(
             state.screen.screenName,
             bcUrl,
@@ -119,7 +118,8 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
                 ? Observable.of($do.changeDataItem({
                     bcName,
                     cursor,
-                    dataItem: {[changedFiledKey]: currentRecordData[changedFiledKey]}
+                    dataItem: {[changedFiledKey]: currentRecordData[changedFiledKey]},
+                    disableRetry
                 }))
                 : Observable.empty<never>()
         })
