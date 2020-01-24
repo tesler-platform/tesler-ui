@@ -134,7 +134,7 @@ export type WidgetFormField = Extract<WidgetField, WidgetFormFieldBase>
 export type WidgetListField = Extract<WidgetField, WidgetListFieldBase>
 
 /**
- * @param readOnly All widget fields are not editable 
+ * @param readOnly All widget fields are not editable
  */
 export interface WidgetOptions {
     layout?: {
@@ -193,6 +193,15 @@ export interface WidgetShowCondition {
     }
 }
 
+/**
+ * Description of the list of fields of block type.
+ * @deprecated
+ * Used to create a block grouping of fields
+ *
+ * @param blockId Block ID.
+ * @param name The name of the block.
+ * @param Fields an array of fields of type T.
+ */
 export interface WidgetFieldBlock<T> {
     blockId: number,
     name: string,
