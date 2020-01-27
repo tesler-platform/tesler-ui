@@ -317,6 +317,7 @@ export class ActionPayloadTypes {
      */
     processPostInvoke: {
         bcName: string,
+        widgetName?: string,
         postInvoke: OperationPostInvokeAny,
         cursor?: string
     } = z
@@ -361,7 +362,8 @@ export class ActionPayloadTypes {
         url: string,
         drillDownType?: DrillDownType,
         urlName?: string,
-        route: Route
+        route: Route,
+        widgetName?: string,
     } = z
 
     /**
