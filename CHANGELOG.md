@@ -1,3 +1,9 @@
+# Version 1.2.2
+
+## Fixes
+
+* Required number fields are erroneously cleared on record create/save and on blur if only zero value entered, due to their incorrect work with `undefined` valudes (#58).
+
 # Version 1.2.1
 
 ## Fixes
