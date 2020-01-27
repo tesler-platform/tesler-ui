@@ -1,7 +1,7 @@
 import React, {FunctionComponent} from 'react'
 import {connect} from 'react-redux'
 import {Dispatch} from 'redux'
-import {Input, Tooltip, Form} from 'antd'
+import {Input, Tooltip, Form, Icon} from 'antd'
 import {$do} from '../../actions/actions'
 import {Store} from '../../interfaces/store'
 import {DataItem, DataValue, MultivalueSingleValue, PendingDataItem} from '../../interfaces/data'
@@ -26,6 +26,7 @@ import readOnlyFieldStyles from '../../components/ui/ReadOnlyField/ReadOnlyField
 import CheckboxPicker from '../../components/ui/CheckboxPicker/CheckboxPicker'
 import styles from './Field.less'
 import {CustomizationContext} from '../../components/View/View'
+import {InteractiveInput} from '../../components/ui/InteractiveInput/InteractiveInput'
 
 interface FieldOwnProps {
     widgetFieldMeta: WidgetField,
@@ -123,7 +124,8 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
         metaError: props.metaError,
         disabled,
         readOnly: props.readonly,
-        backgroundColor: bgColor
+        backgroundColor: bgColor,
+        onDrillDown: handleDrilldown
     }
 
     switch (props.widgetFieldMeta.type) {
@@ -136,7 +138,6 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 value={(value || '').toString()}
                 showTime={props.widgetFieldMeta.type === FieldType.dateTime}
                 showSeconds={props.widgetFieldMeta.type === FieldType.dateTimeWithSeconds}
-                onDrillDown={handleDrilldown}
             />
             break
         case FieldType.number:
@@ -147,7 +148,6 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 digits={props.widgetFieldMeta.digits}
                 nullable={props.widgetFieldMeta.nullable}
                 onChange={handleChange}
-                onDrillDown={handleDrilldown}
                 forceFocus={props.forceFocus}
             />
             break
@@ -159,7 +159,6 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 digits={props.widgetFieldMeta.digits}
                 nullable={props.widgetFieldMeta.nullable}
                 onChange={handleChange}
-                onDrillDown={handleDrilldown}
                 forceFocus={props.forceFocus}
             />
             break
@@ -171,7 +170,6 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 digits={props.widgetFieldMeta.digits}
                 nullable={props.widgetFieldMeta.nullable}
                 onChange={handleChange}
-                onDrillDown={handleDrilldown}
                 forceFocus={props.forceFocus}
             />
             break
@@ -182,7 +180,6 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 values={props.rowFieldMeta ? props.rowFieldMeta.values : []}
                 fieldName={props.widgetFieldMeta.key}
                 onChange={handleChange}
-                onDrillDown={handleDrilldown}
             />
             break
         case FieldType.text:
@@ -190,7 +187,6 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 {...commonProps}
                 defaultValue={value as any}
                 onChange={handleChange}
-                onDrillDown={handleDrilldown}
                 forceFocus={props.forceFocus}
             />
             break
@@ -217,30 +213,40 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 bcName={props.bcName}
             />
             break
-        case FieldType.pickList:
-            resultField = <PickListField
+        case FieldType.pickList: {
+            const pickListField = <PickListField
                 {...commonProps}
                 parentBCName={props.bcName}
                 bcName={props.widgetFieldMeta.popupBcName}
                 cursor={props.cursor}
                 value={value as any}
                 pickMap={props.widgetFieldMeta.pickMap}
-                onDrillDown={handleDrilldown}
             />
+            resultField = props.readonly
+                ? pickListField
+                : <InteractiveInput suffix={handleDrilldown && <Icon type="link" />} onSuffixClick={handleDrilldown}>
+                    {pickListField}
+                </InteractiveInput>
             break
-        case FieldType.inlinePickList:
-            resultField = <InlinePickList
-                {...commonProps}
-                fieldName={props.widgetFieldMeta.key}
-                searchSpec={props.widgetFieldMeta.searchSpec}
-                bcName={props.bcName}
-                popupBcName={props.widgetFieldMeta.popupBcName}
-                cursor={props.cursor}
-                value={value as string}
-                pickMap={props.widgetFieldMeta.pickMap}
-                onDrillDown={handleDrilldown}
-            />
+        }
+        case FieldType.inlinePickList: {
+            const pickListField = <InlinePickList
+                    {...commonProps}
+                    fieldName={props.widgetFieldMeta.key}
+                    searchSpec={props.widgetFieldMeta.searchSpec}
+                    bcName={props.bcName}
+                    popupBcName={props.widgetFieldMeta.popupBcName}
+                    cursor={props.cursor}
+                    value={value as string}
+                    pickMap={props.widgetFieldMeta.pickMap}
+                />
+            resultField = props.readonly
+                ? pickListField
+                : <InteractiveInput suffix={handleDrilldown && <Icon type="link" />} onSuffixClick={handleDrilldown}>
+                    {pickListField}
+                </InteractiveInput>
             break
+        }
         case FieldType.checkbox:
             resultField = <CheckboxPicker
                 {...commonProps}
@@ -269,7 +275,6 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 {...commonProps}
                 data={(value || emptyMultivalue) as MultivalueSingleValue[]}
                 displayedValue={props.widgetFieldMeta.displayedKey && props.data[props.widgetFieldMeta.displayedKey]}
-                onDrillDown={handleDrilldown}
             />
             break
         case FieldType.hint:
@@ -279,7 +284,6 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                     props.className,
                     readOnlyFieldStyles.hint
                 )}
-                onDrillDown={handleDrilldown}
             >
                 {value}
             </ReadOnlyField>
@@ -300,18 +304,18 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                     return props.readonly
                         ? <ReadOnlyField
                             {...commonProps}
-                            onDrillDown={handleDrilldown}
                         >
                             {value}
                         </ReadOnlyField>
-                        : <Input
-                            {...commonProps}
-                            value={localValue !== null ? localValue : (value ? String(value) : '')}
-                            onChange={handleInputChange}
-                            onBlur={handleInputBlur}
-                            autoFocus={props.forceFocus}
-                        />
-
+                        : <InteractiveInput suffix={handleDrilldown && <Icon type="link" />} onSuffixClick={handleDrilldown}>
+                            <Input
+                                {...commonProps}
+                                value={localValue !== null ? localValue : (value ? String(value) : '')}
+                                onChange={handleInputChange}
+                                onBlur={handleInputBlur}
+                                autoFocus={props.forceFocus}
+                            />
+                        </InteractiveInput>
                 }}
             </CustomizationContext.Consumer>
     }
