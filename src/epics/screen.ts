@@ -20,7 +20,8 @@ const processPostInvoke: Epic = (action$, store) => action$.ofType(types.process
         case OperationPostInvokeType.drillDown:
             return Observable.of($do.drillDown({
                 ...action.payload.postInvoke as OperationPostInvokeDrillDown,
-                route: state.router
+                route: state.router,
+                widgetName: action.payload.widgetName
             }))
         case OperationPostInvokeType.postDelete:
             const newBcUrl = state.router.bcPath.split(action.payload.bcName)[0] || ''
