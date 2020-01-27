@@ -139,7 +139,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
         return undefined
     }, [bcName, props.onSelect, props.cursor, selectedRecords, props.assocValueKey])
 
-    const [userClosedRecords, setUserClosedRecords] = React.useState([])
+    const [userClosedRecords, setUserClosedRecords] = React.useState([props.cursor])
     const expandedRowKeys = React.useMemo(() => {
         if (userClosedRecords.includes(props.cursor)) {
             return emptyArray
@@ -180,7 +180,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
         key: '_indentColumn',
         dataIndex: null as string,
         className: styles.selectColumn,
-        width: `50px`,
+        width: '50px',
         render: (text: string, dataItem: AssociatedItem): React.ReactNode => {
             return null
         }
@@ -192,8 +192,8 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
                 title: item.title,
                 key: item.key,
                 dataIndex: item.key,
-                width: '200px',
-                className: cn({[styles[`padding${indentLevel}`]]: fields[0].key === item.key && indentLevel}),
+                className: cn({[styles[`padding${indentLevel}`]]: fields[0].key === item.key && indentLevel,
+                    [styles.numberColumn]: fields[0].key === item.key}),
                 render: (text: string, dataItem: any) => {
                     if (item.type === FieldType.multivalue) {
                         return <MultivalueHover
