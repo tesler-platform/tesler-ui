@@ -28,7 +28,7 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
                     return next($do.sendOperation({
                         bcName: bcName,
                         operationType: OperationTypeCrud.save,
-                        widgetName: action.payload.widgetName,
+                        widgetName: widget.name,
                         onSuccessAction: action
                     }))
                 }
