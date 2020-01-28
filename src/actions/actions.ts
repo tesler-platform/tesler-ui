@@ -311,14 +311,18 @@ export class ActionPayloadTypes {
     /**
      * TODO
      * 
-     * @param bcName
      * @param postInvoke
      * @param cursor
+     * @param widgetName What widget initiated original operation, TODO: mandatory in 2.0.0
+     * 
+     * @deprecated TODO: Prefer widgetName instead (2.0.0)
+     * @param bcName
      */
     processPostInvoke: {
         bcName: string,
         postInvoke: OperationPostInvokeAny,
         cursor?: string
+        widgetName?: string
     } = z
 
     /**

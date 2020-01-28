@@ -1,5 +1,5 @@
 import {combineEpics} from 'redux-observable'
-import {$do, types, Epic} from '../actions/actions'
+import {$do, types, Epic, AnyAction} from '../actions/actions'
 import {Observable} from 'rxjs/Observable'
 import {
     OperationPostInvokeType,
@@ -22,12 +22,21 @@ const processPostInvoke: Epic = (action$, store) => action$.ofType(types.process
                 ...action.payload.postInvoke as OperationPostInvokeDrillDown,
                 route: state.router
             }))
-        case OperationPostInvokeType.postDelete:
-            const newBcUrl = state.router.bcPath.split(action.payload.bcName)[0] || ''
-            const newUrl = `/screen/${state.router.screenName}/view/${state.router.viewName}/${newBcUrl}`
-            historyObj.push(newUrl)
+        case OperationPostInvokeType.postDelete: {
             const cursorsMap: ObjectMap<string> = { [action.payload.bcName]: null }
-            return Observable.of($do.bcChangeCursors({ cursorsMap }))
+            const result: AnyAction[] = [$do.bcChangeCursors({ cursorsMap })]
+            if (state.router.bcPath.includes(`${action.payload.bcName}/`)) {
+                const newBcUrl = state.router.bcPath.split(action.payload.bcName)[0] || ''
+                const newUrl = `/screen/${state.router.screenName}/view/${state.router.viewName}/${newBcUrl}`
+                historyObj.push(newUrl)
+            } else {
+                result.push($do.bcFetchDataRequest({
+                    bcName: action.payload.bcName,
+                    widgetName: action.payload.widgetName
+                }))
+            }
+            return Observable.of(...result)
+        }
         case OperationPostInvokeType.refreshBC: {
             const bo = state.screen.bo
             const postInvoke = action.payload.postInvoke as OperationPostInvokeRefreshBc
