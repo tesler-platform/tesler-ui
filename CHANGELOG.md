@@ -1,3 +1,19 @@
+# Version 1.3.0
+
+## Features
+
+* Table widget should show drilldown button when cell is in edit mode (#64).
+* New record creation should be cancelable from Table widget (#66).
+
+## Fixes
+
+* Required field check crash on autosave caused by drilldown (#63).
+* Child elements in the hierarchy should be collapsed by default (#68).
+* Changes to HierarchyTable default styling (#68):
+  * Decrease the indentation in the TreeData cells from 20px to 15px.
+  * Align the first column and "+" on the top edge.
+  * Align the data in the 2nd and 3rd columns.
+
 # Version 1.2.2
 
 ## Fixes
