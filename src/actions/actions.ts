@@ -320,7 +320,6 @@ export class ActionPayloadTypes {
      */
     processPostInvoke: {
         bcName: string,
-        widgetName?: string,
         postInvoke: OperationPostInvokeAny,
         cursor?: string
         widgetName?: string
