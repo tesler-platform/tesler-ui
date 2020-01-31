@@ -8,7 +8,7 @@ import Field from '../../components/Field/Field'
 import MultivalueHover from '../../components/ui/Multivalue/MultivalueHover'
 import {WidgetTableMeta, WidgetListField} from '../../interfaces/widget'
 import {DataItem, MultivalueSingleValue, PendingDataItem } from '../../interfaces/data'
-import {ColumnProps, TableRowSelection } from 'antd/lib/table'
+import {ColumnProps, TableRowSelection, TableEventListeners} from 'antd/lib/table'
 import {Route } from '../../interfaces/router'
 import {FieldType } from '../../interfaces/view'
 import styles from './SameBcHierarchyTable.less'
@@ -20,6 +20,7 @@ interface SameBcHierarchyTableOwnProps {
     assocValueKey?: string,
     depth?: number,
     selectable?: boolean,
+    onRow?: (record: DataItem, index: number) => TableEventListeners
 }
 
 export interface SameBcHierarchyTableProps extends SameBcHierarchyTableOwnProps {
@@ -60,6 +61,7 @@ export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> 
 
     const hierarchyGroupSelection = props.meta.options && props.meta.options.hierarchyGroupSelection
     const hierarchyRadioAll = props.meta.options && props.meta.options.hierarchyRadioAll
+    const hierarchyDisableRoot = props.meta.options && props.meta.options.hierarchyDisableRoot
 
     const depthLevel = props.depth || 1
     const indentLevel = depthLevel - 1
@@ -121,6 +123,7 @@ export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> 
             assocValueKey={props.assocValueKey}
             onDrillDown={null}
             depth={depthLevel + 1}
+            onRow={props.onRow}
         />
     }
 
@@ -181,8 +184,9 @@ export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> 
             dataSource={props.data}
             expandedRowRender={hasNested ? nested : undefined}
             expandIconAsCell={false}
-            expandIconColumnIndex={1}
+            expandIconColumnIndex={props.onRow ? 0 : 1}
             loading={props.loading}
+            onRow={!(hierarchyDisableRoot && depthLevel === 1) && props.onRow}
         />
     </div>
 }

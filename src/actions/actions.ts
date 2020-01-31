@@ -15,39 +15,113 @@ import {BcFilter, BcSorter} from '../interfaces/filters'
 
 const z = null as any
 
-/*
-    ActionName: PayloadType = z
-
-    ActionName - Имя Action оно же имя ActionCreator-а и значение поле type в экшене
-    PayloadType - тип payload поля в экшене и он же тип входного параметра ActionCreator-а
-    = z в конце указывать обязательно, иначе поля класса не будет в runtume
-    и экшен не будет создан runtume(а ts будет считать что он есть)
-*/
+/**
+ * ActionName: PayloadType = z
+ * @param ActionName Name for an action (redux action "type") and corresponding action creater action
+ * @param PayloadType Typescript description for payload
+ * @property z Mandatory to prevent typescript from erasing unused class fields (@see https://github.com/microsoft/TypeScript/issues/12437)
+ */
 export class ActionPayloadTypes {
+
+    /**
+     * Browser location change occured (either through history listener or manually)
+     *
+     * @param rawLocation Change was requested to browser url
+     * @param location Change was requested to precalculated application route
+     * @param action History API type, usually 'PUSH'
+     */
     changeLocation: {
         rawLocation?: string,
         location?: Route,
         action: HistoryAction
     } = z
+
+    /**
+     * Authentication request
+     * 
+     * @param login User-provided login
+     * @param password User-provided password
+     * @param role Optionally user can choose a role to authentificate with
+     */
     login: {
         login: string,
         password: string,
         role?: string
     } = z
+
+    /**
+     * Login was successful
+     */
     loginDone: LoginResponse = z
+
+    /**
+     * Login was unsuccesful
+     * 
+     * @param errorMsg Reason could be provided
+     */
     loginFail: { errorMsg: string } = z
+
+    /**
+     * Logout was requested, manually or through stale session
+     */
     logout: null = z
+
+    /**
+     * User succesfully was logged out
+     */
     logoutDone: null = z
+
+    /**
+     * Request to change active screen was initiated
+     * 
+     * TODO: 2.0.0 Should be string (just the screen name) instead;
+     * Initially this was due to `screen` reducer did not having access to `session` part of redux store
+     * @param screen Request initiated with all the meta from login response  
+     */
     selectScreen: {
         screen: SessionScreen
     } = z
+
+    /**
+     * Request to change active screen was unsuccesful (incorrect path, unknown screen, etc.)
+     * 
+     * @param screenName Which screen was requested originally
+     */
     selectScreenFail: {
         screenName: string
     } = z
+
+    /**
+     * Request to change active view was initiated
+     * 
+     * TODO: 2.0.0 Should be string (just the view name) instead;
+     * Initially this was due to `screen` and `view` reducers did not having access to `session` part of redux store
+     */
     selectView: ViewMetaResponse = z
+
+    /**
+     * Request to change active view was unsuccesful (incorrect path, unknown screen, etc.)
+     * 
+     * @param selectViewFail Which view was requested originally
+     */
     selectViewFail: {
         viewName: string
     } = z
+
+    /**
+     * Fetch data request for business component was initiated
+     * 
+     * @param widgetName What widget requires data (widget can only request its own data here)
+     * 
+     * @deprecated TODO: 2.0.0 Should be removed in favor of widgetName
+     * @param bcName The business component to fetch data for
+     * 
+     * @deprecated TODO: 2.0.0 Should be all moved to separate hierarchy-specific action
+     * @param depth The level of hierarchy to fetch data for
+     * @param ignorePageLimit Page size should be ignored
+     * @param keepDelta Pending changes should not be dropped when performing this request (due to
+     * hierarchy expanging through cursor change, for same BC hierarchy this leads to data loss)
+     */
     bcFetchDataRequest: {
         bcName: string,
         depth?: number,
@@ -55,15 +129,33 @@ export class ActionPayloadTypes {
         ignorePageLimit?: boolean,
         keepDelta?: boolean
     } = z
+
+    /**
+     * Fetch data request for searchable fields
+     * 
+     * @param bcName The business component to fetch data for
+     * @param searchSpec Search expression // TODO: Check format
+     * @param searchString Value to search for
+     */
     inlinePickListFetchDataRequest: {
         bcName: string,
         searchSpec: string,
         searchString: string
     } = z
-    bcFetchDataStart: {
-        bcName: string,
-        widgetName: string
-    } = z
+
+    /**
+     * Fetch data request was succesful
+     * 
+     * @param data Data records from response for this business component
+     * @param bcUrl BC url with respect of parents cursors
+     * @param hasNext If there are more data to fetch (other pages etc.)
+     * 
+     * @deprecated TODO: 2.0.0 Remove in favor of widgetName
+     * @param bcName Business component that requested data
+     * 
+     * @deprecated TODO: 2.0.0 Should be all moved to separate hierarchy-specific action
+     * @param depth For same BC hierarchies, the level which was requested
+     */
     bcFetchDataSuccess: {
         bcName: string,
         data: DataItem[],
@@ -71,98 +163,277 @@ export class ActionPayloadTypes {
         bcUrl: string,
         hasNext?: boolean
     } = z
+
+    /**
+     * Fetch data request wac unsuccesful
+     * 
+     * @param bcName Business component that initiated data fetch
+     * @param bcUrl BC url with respect of parents cursors
+     *
+     * @deprecated TODO: 2.0.0 Should be all moved to separate hierarchy-specific action
+     * @param depth For same BC hierarchies, the level which was requested
+     */
     bcFetchDataFail: {
         bcName: string,
         bcUrl: string,
         depth?: number,
     } = z
+
+    /**
+     * Fetch next chunk of data for table widgets with infinite scroll
+     * 
+     * @param bcName Business component that initiated data fetch
+     */
     bcLoadMore: {
         bcName: string
     } = z
+
+    /**
+     * Fetch meta information for active record of business component
+     * 
+     * @param widgetName Widget that initiated row meta fetch
+     * 
+     * @deprecated TODO: 2.0.0 Remove in favor of widgetName
+     * @param bcName Business component that initiated row meta fetch
+     */
     bcFetchRowMeta: {
         bcName: string,
         widgetName: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param bcUrl
+     * @param rowMeta
+     * @param cursor
+     */
     bcFetchRowMetaSuccess: {
         bcName: string,
         bcUrl: string,
         rowMeta: RowMeta,
         cursor?: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     */
     bcFetchRowMetaFail: {
         bcName: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     */
     bcNewData: {
         bcName: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param dataItem
+     * @param bcUrl
+     */
     bcNewDataSuccess: {
         bcName: string,
         dataItem: DataItem,
         bcUrl: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bName
+     */
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     */
     bcNewDataFail: {
         bcName: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     */
     bcDeleteDataFail: {
         bcName: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param operationType
+     * @param widgetName
+     * @param onSuccessAction
+     */
     sendOperation: {
         bcName: string,
         operationType: OperationTypeCrud | string,
         widgetName: string,
         onSuccessAction?: AnyAction,
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param bcUrl
+     * @param viewError
+     * @param entityError
+     */
     sendOperationFail: {
         bcName: string,
         bcUrl: string,
         viewError: string,
         entityError: OperationErrorEntity
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param cursor
+     */
     sendOperationSuccess: {
         bcName: string,
         cursor: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param postInvoke
+     * @param cursor
+     * @param widgetName What widget initiated original operation, TODO: mandatory in 2.0.0
+     * 
+     * @deprecated TODO: Prefer widgetName instead (2.0.0)
+     * @param bcName
+     */
     processPostInvoke: {
         bcName: string,
         postInvoke: OperationPostInvokeAny,
         cursor?: string
+        widgetName?: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param widgetName
+     * @param bcName
+     * @param cursor
+     * @param fieldKey
+     */
     userDrillDown: {
         widgetName: string,
         bcName: string,
         cursor: string,
         fieldKey: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcUrl
+     * @param bcName
+     * @param cursor
+     */
     userDrillDownSuccess: {
         bcUrl: string,
         bcName: string,
         cursor: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param url
+     * @param drillDownType
+     * @param urlName
+     * @param route
+     */
     drillDown: {
         url: string,
         drillDownType?: DrillDownType,
         urlName?: string,
-        route: Route
+        route: Route,
+        widgetName?: string,
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param cursorsMap
+     * @param keepDelta
+     */
     bcChangeCursors: {
         cursorsMap: ObjectMap<string>,
         keepDelta?: boolean
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param depth
+     * @param cursor
+     */
     bcChangeDepthCursor: {
         bcName: string,
         depth: number,
         cursor: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param cursors
+     * @param dataItems
+     * @param disableRetry
+     */
     changeDataItem: {
         bcName: string,
         cursor: string,
-        dataItem: PendingDataItem
+        dataItem: PendingDataItem,
+        disableRetry?: boolean
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param cursors
+     * @param dataItems
+     */
     changeDataItems: {
         bcName: string,
         cursors: string[],
         dataItems: PendingDataItem[]
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param currentRecordData
+     * @param rowMeta
+     * @param bcName
+     * @param bcUrl
+     * @param cursor
+     */
     forceActiveRmUpdate: {
         // данные текущей записи, для которой вызывалось обновление rowMeta
         currentRecordData: DataItem,
@@ -171,6 +442,16 @@ export class ActionPayloadTypes {
         bcUrl: string,
         cursor: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param calleeBCName
+     * @param associateFieldKey
+     * @param assocValueKey
+     * @param active
+     */
     showViewPopup: {
         bcName: string,
         calleeBCName?: string,
@@ -178,24 +459,67 @@ export class ActionPayloadTypes {
         assocValueKey?: string,
         active?: boolean
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     */
     closeViewPopup: {
         bcName: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param map
+     * @param bcName
+     */
     viewPutPickMap: {
         map: PickMap,
         bcName: string,
     } = z
+
+    /**
+     * TODO
+     */
     viewClearPickMap: null = z
+
+    /**
+     * TODO
+     * 
+     * @param bcNames
+     * @param calleeBCName
+     * @param associateFieldKey
+     */
     saveAssociations: {
         bcNames: string[],
         // Для использования вне попапа (multivalue не открывая)
         calleeBcName?: string,
         associateFieldKey?: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param records
+     */
     changeAssociations: {
         bcName: string,
         records?: DataItem[]
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param popupBcName
+     * @param cursor
+     * @param associateFieldKey
+     * @param dataItem
+     * @param removedItem
+     */
     removeMultivalueTag: {
         bcName: string,
         popupBcName: string,
@@ -204,43 +528,120 @@ export class ActionPayloadTypes {
         dataItem: MultivalueSingleValue[],
         removedItem: MultivalueSingleValue
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param cursor
+     * @param dataItem
+     */
     bcSaveDataSuccess: {
         bcName: string,
         cursor: string,
         dataItem: DataItem
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param bcUrl
+     * @param entityError
+     * @param viewError
+     */
     bcSaveDataFail: {
         bcName: string,
         bcUrl: string,
         entityError?: OperationErrorEntity,
         viewError?: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     */
     bcForceUpdate: {
         bcName: string
     } = z
+
+    /**
+     * TODO
+     */
     uploadFile: null = z
+
+    /**
+     * TODO
+     */
     uploadFileDone: null = z
+
+    /**
+     * TODO
+     */
     uploadFileFailed: null = z
+
+    /**
+     * TODO
+     * 
+     * @param bcNames
+     */
     bcCancelPendingChanges: {
         bcNames: string[]
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param cursor
+     * @param ignoreChildrenPageLimit
+     * @param keepDelta
+     */
     bcSelectRecord: {
         bcName: string,
         cursor: string,
         ignoreChildrenPageLimit?: boolean,
         keepDelta?: boolean
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param depth
+     * @param cursor
+     */
     bcSelectDepthRecord: {
         bcName: string,
         depth: number,
         cursor: string,
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param widgetName
+     * @param dataItem
+     * @param assocValueKey
+     */
     changeAssociation: {
         bcName: string,
         widgetName: string,
         dataItem: AssociatedItem,
         assocValueKey: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param depth
+     * @param widgetName
+     * @param dataItem
+     * @param assocValueKey
+     */
     changeAssociationSameBc: {
         bcName: string,
         depth: number,
@@ -248,6 +649,16 @@ export class ActionPayloadTypes {
         dataItem: AssociatedItem,
         assocValueKey: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param depth
+     * @param widgetName
+     * @param dataItem
+     * @param assocValueKey
+     */
     changeAssociationFull: {
         bcName: string,
         depth: number,
@@ -255,17 +666,44 @@ export class ActionPayloadTypes {
         dataItem: AssociatedItem,
         assocValueKey: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param assocValueKey
+     * @param selected
+     */
     changeChildrenAssociations: {
         bcName: string,
         assocValueKey: string,
         selected: boolean
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param depth
+     * @param assocValueKey
+     * @param selected
+     */
     changeChildrenAssociationsSameBc: {
         bcName: string,
         depth: number,
         assocValueKey: string,
         selected: boolean
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param parentId
+     * @param depth
+     * @param assocValueKey
+     * @param selected
+     */
     changeDescendantsAssociationsFull: {
         bcName: string,
         parentId: string,
@@ -273,75 +711,205 @@ export class ActionPayloadTypes {
         assocValueKey: string,
         selected: boolean
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcNames
+     */
     dropAllAssociations: {
         bcNames: string[]
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param depthFrom
+     */
     dropAllAssociationsSameBc: {
         bcName: string,
         depthFrom: number
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param depth
+     * @param dropDescendants
+     */
     dropAllAssociationsFull: {
         bcName: string,
         depth: number,
         dropDescendants?: boolean
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param path
+     * @param params
+     */
     handleRouter: {
         path: string,
         params: object
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param widgetName
+     * @param rowId
+     * @param fieldKey
+     */
     selectTableCellInit: {
         widgetName: string,
         rowId: string,
         fieldKey: string,
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param widgetName
+     * @param rowId
+     * @param fieldKey
+     */
     selectTableCell: {
         widgetName: string,
         rowId: string,
         fieldKey: string,
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param cursor
+     * @param router
+     */
     showAllTableRecordsInit: {
         bcName: string,
         cursor: string,
         route: Route
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param type
+     * @param message
+     */
     showNotification: {
         type: AppNotificationType,
         message: string
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param id
+     */
     closeNotification: {
         id: number
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param filter
+     */
     bcAddFilter: {
         bcName: string,
         filter: BcFilter
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param filter
+     */
     bcRemoveFilter: {
         bcName: string,
         filter: BcFilter
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param sorter
+     */
     bcAddSorter: {
         bcName: string,
         sorter: BcSorter
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param sorter
+     */
     bcRemoveSorter: {
         bcName: string,
         sorter: BcSorter
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param bcName
+     * @param page
+     */
     bcChangePage: {
         bcName: string,
         page: number
     } = z
+
+    /**
+     * TODO
+     * 
+     * @param error
+     */
     showViewError: {
         error: ApplicationError
     } = z
+
+    /**
+     * TODO
+     */
     closeViewError: null = z
+
+    /**
+     * TODO
+     */
     clearValidationFails: null = z
+
+    /**
+     * TODO
+     * 
+     * @param fileId
+     */
     downloadFile: {
         fileId: string
     } = z
+
+    /**
+     * TODO
+     *
+     * @param url
+     */
     downloadFileByUrl: {
         url: string
     } = z
+
+    /**
+     * TODO
+     */
     emptyAction: null = z
 }
 
@@ -367,6 +935,11 @@ export type ActionsMap = util.uActionsMap<ActionPayloadTypes>
 export type AnyAction = util.AnyOfMap<ActionsMap> | {type: ' UNKNOWN ACTION '}
 
 export interface ActionsObservable<T extends AnyAction> extends rActionsObservable<T> {
+    /**
+     * TODO
+     *
+     * @param key 
+     */
     ofType<K extends keyof ActionPayloadTypes>(...key: K[]): ActionsObservable<ActionsMap[K]>
 }
 // тип любого Epic

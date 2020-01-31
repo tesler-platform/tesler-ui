@@ -53,6 +53,11 @@ const NumberInput: React.FunctionComponent<NumberProps> = (props) => {
         [mode, props.value]
     )
 
+    /**
+     * TODO
+     *
+     * @param text 
+     */
     function parseEditedValueText(text: string): number | null {
         if (props.nullable && text === '') {
             return null
@@ -146,16 +151,33 @@ const NumberInput: React.FunctionComponent<NumberProps> = (props) => {
     />
 }
 
+/**
+ * TODO
+ *
+ * @param text 
+ */
 function normalizeValueFormat(text: string) {
     return text
     .replace(/[,.]/g, '.')
     .replace(/[\s]/g, '')
 }
 
+/**
+ * TODO
+ *
+ * @param text
+ */
 function unformatValue(text: string) {
     return text.replace(/[^-,.\d]/g, '')
 }
 
+/**
+ * TODO
+ *
+ * @param formatedValue 
+ * @param start 
+ * @param end 
+ */
 function getUnformatedValueSelection(formatedValue: string, start: number, end: number): [number, number] {
     const selectionStartStart = formatedValue.substr(0, start)
     const selectionEndStart = formatedValue.substr(0, end)

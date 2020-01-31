@@ -26,6 +26,11 @@ const onResponseHook = <ResponsePayload>(response: AxiosResponse<ResponsePayload
     return response
 }
 
+/**
+ * TODO
+ * 
+ * @param value 
+ */
 function redirectOccurred(value: AxiosResponse<TeslerResponse>) {
     if (value.data && value.data.redirectUrl) {
         let redirectUrl = value.data.redirectUrl
@@ -41,6 +46,12 @@ function redirectOccurred(value: AxiosResponse<TeslerResponse>) {
     return true
 }
 
+/**
+ * TODO
+ * 
+ * @param error 
+ * @param callContext 
+ */
 function onErrorHook(error: AxiosError, callContext?: ApiCallContext) {
     if (error.response && error.response.status === 418) {
         const typedError = error.response.data as OperationError
@@ -191,6 +202,12 @@ export function applyParams(url: string, qso: QueryParamsMap) {
     return applyRawParams(url, dropEmptyOrWrongParams(qso))
 }
 
+/**
+ * TODO
+ * 
+ * @param url 
+ * @param qso 
+ */
 export function applyRawParams(url: string, qso: object) {
     if (!qso) {
         return url

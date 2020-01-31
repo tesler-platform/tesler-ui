@@ -4,7 +4,16 @@ import {DataState, DataItem} from '../interfaces/data'
 const initialState: DataState  = {}
 const emptyData: DataItem[] = []
 
-export function view(state = initialState, action: AnyAction) {
+/**
+ * Data reducer
+ * 
+ * Stores data (i.e. records, rows) for Business Components
+ *
+ * @param state Data branch of Redux store 
+ * @param action Redux action
+ * @param store Store instance for read-only access of different branches of Redux store
+ */
+export function data(state = initialState, action: AnyAction) {
     switch (action.type) {
         case types.bcFetchDataSuccess: {
             return (action.payload.depth && action.payload.depth > 1)
@@ -80,4 +89,4 @@ export function view(state = initialState, action: AnyAction) {
     }
 }
 
-export default view
+export default data

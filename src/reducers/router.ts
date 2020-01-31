@@ -7,10 +7,18 @@ import {parseLocation, store} from '../Provider'
 /* Общий инстанс истории для всего приложения */
 export const historyObj = createHashHistory()
 
+/**
+ * TODO
+ * 
+ * @param href
+ */
 export function changeLocation(href: string) {
     historyObj.push(href)
 }
 
+/**
+ * TODO
+ */
 export function initHistory() {
     historyObj.listen((loc, action) => {
         const prevState = store.getState().router
@@ -24,6 +32,15 @@ export function initHistory() {
 
 const initialState: Route = {type: RouteType.default, path: '/', params: null, screenName: null}
 
+/**
+ * Router reducer
+ * 
+ * Stores information about currently active route
+ *
+ * @param state Router branch of Redux store 
+ * @param action Redux action
+ * @param store Store instance for read-only access of different branches of Redux store
+ */
 export function router(state: Route = initialState, action: AnyAction ): Route {
     switch (action.type) {
         case types.loginDone:

@@ -135,7 +135,7 @@ export type WidgetFormField = Extract<WidgetField, WidgetFormFieldBase>
 export type WidgetListField = Extract<WidgetField, WidgetListFieldBase>
 
 /**
- * @param readOnly All widget fields are not editable 
+ * @param readOnly All widget fields are not editable
  */
 export interface WidgetOptions {
     layout?: {
@@ -154,6 +154,7 @@ export interface WidgetOptions {
     hierarchyTraverse?: boolean,
     hierarchyRadio?: boolean,
     hierarchyRadioAll?: boolean,
+    hierarchyDisableRoot?: boolean,
     actionGroups?: WidgetOperations,
     readOnly?: boolean,
     /**
@@ -193,6 +194,15 @@ export interface WidgetShowCondition {
     }
 }
 
+/**
+ * Description of the list of fields of block type.
+ * @deprecated
+ * Used to create a block grouping of fields
+ *
+ * @param blockId Block ID.
+ * @param name The name of the block.
+ * @param Fields an array of fields of type T.
+ */
 export interface WidgetFieldBlock<T> {
     blockId: number,
     name: string,
@@ -239,10 +249,18 @@ export interface WidgetOperations {
 
 export type CustomWidget = ConnectedComponentClass<any, any> | FunctionComponent<any>
 
+/**
+ * TODO
+ * 
+ * @param item
+ */
 export function isWidgetFieldBlock(item: any): item is WidgetFieldBlock<any> {
     return !!item && ('blockId' in item)
 }
 
+/**
+ * Type of pagination, either page numbers or "Load More" button
+ */
 export const enum PaginationMode {
     page = 'page',
     loadMore = 'loadMore'

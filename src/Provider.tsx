@@ -36,32 +36,61 @@ export let parseLocation: (loc: Location<any>) => Route = null
 export let buildLocation: (route: Route) => string = null
 export let localeProviderInstance: i18n = null
 
+/**
+ * TODO
+ * 
+ * @param storeCreator 
+ */
 function withLogger(storeCreator: StoreCreator): StoreCreator {
     return (window as any).devToolsExtension
         ? (window as any).devToolsExtension()(storeCreator)
         : storeCreator
 }
 
+/**
+ * TODO
+ */
 export function getStoreInstance() {
     return store
 }
 
+/**
+ * TODO
+ *
+ * @param storeInstance 
+ */
 export function setStoreInstance(storeInstance: Store<CoreStore>) {
     store = storeInstance
 }
 
+/**
+ * TODO
+ */
 export function getParseLocationInstance() {
     return parseLocation
 }
 
+/**
+ * TODO
+ */
 export function getBuildLocationInstance() {
     return buildLocation
 }
 
+/**
+ * TODO
+ */
 export function getLocaleProviderInstance() {
     return localeProviderInstance
 }
 
+/**
+ * TODO
+ *
+ * @param customReducers 
+ * @param customEpics 
+ * @param useEpics 
+ */
 export function configureStore<ClientState, ClientActions extends Action<any>>(
     customReducers = {} as ClientReducersMapObject<ClientState, ClientActions>,
     customEpics: Epic = null,
@@ -92,8 +121,8 @@ export function configureStore<ClientState, ClientActions extends Action<any>>(
         }
     })
     const middlewares: Middleware[] = [
-        createRequiredFieldsMiddleware(),
-        createAutoSaveMiddleware()
+        createAutoSaveMiddleware(),
+        createRequiredFieldsMiddleware()
     ]
     if (useEpics) {
         const epics = combineEpics(coreEpics, customEpics)
@@ -121,7 +150,10 @@ const Provider = <ClientState extends Partial<CoreStore>, ClientActions extends 
     </ReduxProvider>
 }
 
-// TODO: Вынести
+/**
+ * TODO: Extract into separate module
+ * @param loc 
+ */
 export function defaultParseLocation(loc: Location<any>): Route {
     let path: string = loc.pathname
     if (path.startsWith('/')) {
@@ -171,6 +203,11 @@ export function defaultParseLocation(loc: Location<any>): Route {
     }
 }
 
+/**
+ * TODO
+ *
+ * @param route 
+ */
 function defaultBuildLocation(route: Route) {
     return `/screen/${route.screenName}/view/${route.viewName}/${route.bcPath}`
 }

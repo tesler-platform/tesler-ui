@@ -1,3 +1,71 @@
+# Version 1.3.0
+
+## Features
+
+* Table widget should show drilldown button when cell is in edit mode (#64).
+* New record creation should be cancelable from Table widget (#66).
+
+## Fixes
+
+* Required field check crash on autosave caused by drilldown (#63).
+* Child elements in the hierarchy should be collapsed by default (#68).
+* Changes to HierarchyTable default styling (#68):
+  * Decrease the indentation in the TreeData cells from 20px to 15px.
+  * Align the first column and "+" on the top edge.
+  * Align the data in the 2nd and 3rd columns.
+
+# Version 1.2.2
+
+## Fixes
+
+* Required number fields are erroneously cleared on record create/save and on blur if only zero value entered, due to their incorrect work with `undefined` valudes (#58).
+
+# Version 1.2.1
+
+## Fixes
+
+* Respect default width of columns for hierarchy tables and disable pagination if not required (#56).
+* Disable pagination for PickListPopup with FullHierarchy (#55).
+* List widget in hierarchy mode should support drilldown field (#51).
+* RowMeta request isn`t sent when the forceActive field changes (#53).
+
+# Version 1.2.0
+
+## Features
+
+* PickList widget now supports hierarchy tables, i.e. widget options `hierarchy`, `hierarchySameBc` and `hierarchyFull` now work the same way as in regular Table widgets (#49).
+* New `hierarchyDisableRoot: boolean` flag added to control if rows on top of hierarchy are selectablable or not (#49).
+
+# Version 1.1.6
+
+## Fixes
+
+* Fields shouldn't ignore empty delta value (#46).
+* Console error, that appears when trying to check force active fields change on full hierarchy BC without data (#47).
+* Change location with cursors change should initiate data fetch even if View was not updated (e.g. drilldown on the same View) (#34).
+* Changelog incorrectly referenced #34 instead of #32 in 1.1.4 release.
+
+# Version 1.1.5
+
+## Fixes
+
+* Increase indent between multi-value list records (#41)
+
+## Misc
+
+* Add release workflow
+
+# Version 1.1.4
+
+## Fixes
+
+* Remove `limit` and `page` params from full hierarchy data request (#32).
+* Fix an infinite loop when a business error is received during a change in a force-active field (#35).
+
+## Misc
+
+* Add pull request pipeline
+
 # Version 1.1.3
 
 ## Fixes

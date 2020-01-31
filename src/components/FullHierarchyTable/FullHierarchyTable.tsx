@@ -6,7 +6,7 @@ import {Store} from '../../interfaces/store'
 import {Dispatch} from 'redux'
 import {connect} from 'react-redux'
 import {Icon, Table} from 'antd'
-import {ColumnProps, TableRowSelection} from 'antd/lib/table'
+import {ColumnProps, TableRowSelection, TableEventListeners} from 'antd/lib/table'
 import {DataItem, MultivalueSingleValue, PendingDataItem} from '../../interfaces/data'
 import {FieldType} from '../../interfaces/view'
 import MultivalueHover from '../ui/Multivalue/MultivalueHover'
@@ -19,7 +19,8 @@ interface FullHierarchyTableOwnProps {
     assocValueKey?: string,
     depth?: number,
     parentId?: string,
-    selectable?: boolean
+    selectable?: boolean,
+    onRow?: (record: DataItem, index: number) => TableEventListeners
 }
 
 interface FullHierarchyTableProps {
@@ -61,6 +62,7 @@ const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllProps> = 
     const hierarchyGroupDeselection = props.meta.options && props.meta.options.hierarchyGroupDeselection
     const hierarchyRadioAll = props.meta.options && props.meta.options.hierarchyRadioAll
     const hierarchyRootRadio = props.meta.options && props.meta.options.hierarchyRadio
+    const hierarchyDisableRoot = props.meta.options && props.meta.options.hierarchyDisableRoot
 
     const selectedRecords = useAssocRecords(props.data, props.pendingChanges)
     const [userOpenedRecords, setUserOpenedRecords] = React.useState([])
@@ -150,7 +152,8 @@ const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllProps> = 
             assocValueKey={props.assocValueKey}
             depth={depthLevel + 1}
             parentId={record.id}
-            selectable
+            selectable={props.selectable}
+            onRow={props.onRow}
         />
     }
 
@@ -212,8 +215,9 @@ const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllProps> = 
             dataSource={tableRecords}
             expandedRowRender={nestedHierarchy}
             expandIconAsCell={false}
-            expandIconColumnIndex={1}
+            expandIconColumnIndex={props.onRow ? 0 : 1}
             loading={props.loading}
+            onRow={!(hierarchyDisableRoot && depthLevel === 1) && props.onRow}
         />
     </div>
 }

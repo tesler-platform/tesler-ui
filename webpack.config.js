@@ -150,10 +150,10 @@ module.exports = (env, options) => {
             // new CleanWebpackPlugin(),
             new CopyWebpackPlugin([
                 { from: 'package.json' },
-                { from: 'README.MD' },
+                { from: 'README.md' },
                 { from: 'LICENSE' },
-                { from: 'CHANGELOG.MD' },
-                { from: 'CONTRIBUTING.MD' }
+                { from: 'CHANGELOG.md' },
+                { from: 'CONTRIBUTING.md' }
             ])
         ]
     }

@@ -94,6 +94,14 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
     </Popover>
 }
 
+/**
+ * TODO
+ *
+ * @param title 
+ * @param value 
+ * @param filterValues 
+ * @param setValue 
+ */
 function renderCheckbox(
     title: string,
     value: DataValue[],

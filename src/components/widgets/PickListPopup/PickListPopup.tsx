@@ -10,6 +10,9 @@ import {Table, Skeleton} from 'antd'
 import {ColumnProps} from 'antd/es/table'
 import {DataItem, PickMap} from '../../../interfaces/data'
 import {ChangeDataItemPayload} from '../../Field/Field'
+import SameBcHierarchyTable from '../../SameBcHierarchyTable/SameBcHierarchyTable'
+import HierarchyTable from '../../../components/HierarchyTable/HierarchyTable'
+import FullHierarchyTable from '../../FullHierarchyTable/FullHierarchyTable'
 
 export interface PickListPopupActions {
     onChange: (payload: ChangeDataItemPayload) => void,
@@ -65,11 +68,29 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
         onOkHandler={props.onClose}
         onCancelHandler={props.onClose}
         bcName={props.widget.bcName}
+        disablePagination={props.widget.options && props.widget.options.hierarchyFull}
     >
         <div>
             <h2 className={styles.title}>{props.widget.title}</h2>
             {(props.bcLoading)
-                ? <Skeleton loading paragraph={{rows: 5}} />
+            ? <Skeleton loading paragraph={{rows: 5}} />
+            : (props.widget.options
+                && (props.widget.options.hierarchy || props.widget.options.hierarchySameBc || props.widget.options.hierarchyFull)
+            )
+                ? props.widget.options.hierarchyFull
+                    ? <FullHierarchyTable
+                        meta={props.widget}
+                        onRow={onRow}
+                    />
+                    : (props.widget.options.hierarchySameBc)
+                        ? <SameBcHierarchyTable
+                            meta={props.widget}
+                            onRow={onRow}
+                        />
+                        : <HierarchyTable
+                            meta={props.widget}
+                            onRow={onRow}
+                        />
                 : <div>
                     <Table
                         className={styles.table}

@@ -28,7 +28,7 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
                     return next($do.sendOperation({
                         bcName: bcName,
                         operationType: OperationTypeCrud.save,
-                        widgetName: action.payload.widgetName,
+                        widgetName: widget.name,
                         onSuccessAction: action
                     }))
                 }
@@ -37,10 +37,19 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
             return next(action)
         }
 
+/**
+ * 
+ */
 export function createAutoSaveMiddleware() {
     return saveFormMiddleware as Middleware
 }
 
+/**
+ * 
+ * @param store 
+ * @param bcName 
+ * @param cursor 
+ */
 function bcHasPendingAutosaveChanges(store: CoreStore, bcName: string, cursor: string) {
     let result = false
 

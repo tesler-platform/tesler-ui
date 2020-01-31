@@ -72,7 +72,15 @@ export function shallowCompare(prevProps: ObjectMap<any>, nextProps: ObjectMap<a
  * TODO: JSDoc
  */
 class ActionsContext<T> {
+
+    /**
+     * TODO
+     */
     dispatch: Dispatch<any> = null
+
+    /**
+     * TODO
+     */
     props: T = null
 }
 

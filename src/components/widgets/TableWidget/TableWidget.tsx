@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FunctionComponent } from 'react'
 import {connect} from 'react-redux'
 import {Dispatch} from 'redux'
 import {
@@ -57,7 +57,7 @@ interface TableWidgetProps extends TableWidgetOwnProps {
     onSelectCell: (cursor: string, widgetName: string, fieldKey: string) => void,
 }
 
-export function TableWidget(props: TableWidgetProps) {
+export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
 
     if (props.meta.options && props.meta.options.hierarchy) {
         return <HierarchyTable
@@ -295,7 +295,7 @@ export function TableWidget(props: TableWidgetProps) {
                 </div>
             },
             onCell: (record, rowIndex) => {
-                return (!props.allowEdit || item.drillDown)
+                return (!props.allowEdit)
                     ? null
                     : {
                         onDoubleClick: (event) => {

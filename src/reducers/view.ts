@@ -25,6 +25,16 @@ const initialState: ViewState  = {
     error: null
 }
 
+/**
+ * View reducer
+ *
+ * Stores information about currently active view and various fast-living pending values which should be stored
+ * until we navitage to a different view.
+ *
+ * @param state View branch of Redux store
+ * @param action Redux action
+ * @param store Store instance for read-only access of different branches of Redux store
+ */
 export function view(state = initialState, action: AnyAction, store: Store) {
     switch (action.type) {
         case types.selectView: {
