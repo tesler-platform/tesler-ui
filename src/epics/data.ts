@@ -299,7 +299,7 @@ const bcNewDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperati
             Observable.of($do.bcNewDataSuccess({ bcName, dataItem, bcUrl })),
             Observable.of($do.bcFetchRowMetaSuccess({ bcName, bcUrl: `${bcUrl}/${cursor}`, rowMeta, cursor})),
             postInvoke
-                ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor}))
+                ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName: action.payload.widgetName }))
                 : Observable.empty<never>()
         )
     })
@@ -354,7 +354,12 @@ const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperat
             Observable.of($do.bcSaveDataSuccess({ bcName, cursor, dataItem: responseDataItem })),
             Observable.of($do.bcFetchRowMeta({ widgetName, bcName })),
             postInvoke
-                ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor: responseDataItem.id }))
+                ? Observable.of($do.processPostInvoke({
+                    bcName,
+                    widgetName,
+                    postInvoke,
+                    cursor: responseDataItem.id
+                }))
                 : Observable.empty<never>(),
             (action.payload.onSuccessAction)
                 ? Observable.of(action.payload.onSuccessAction)

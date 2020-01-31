@@ -1,11 +1,36 @@
-
 .container tr:global(.ant-table-expanded-row) > td {
     padding-left: 0;
     padding-right: 0;
 }
 
+.container {
+    :global {
+        .ant-table {
+            .ant-table-body > table {
+                table-layout: fixed;
+            }
+            .ant-table-tbody > tr > td {
+                padding-top: 15px;
+                padding-bottom: 15px;
+            }
+            .ant-table-selection-column {
+                vertical-align: top;
+            }
+        }
+    }
+}
+
 .container :global(.ant-table-tbody) > tr > td {
     border-bottom: none;
+    .padding1 {
+        padding-left: 30px;
+    }
+    .padding2 {
+        padding-left: 60px;
+    }
+    .padding3 {
+        padding-left: 90px;
+    }
 }
 
 .table {
@@ -13,5 +38,10 @@
 }
 
 .selectColumn {
+    vertical-align: top;
     text-align: center;
+}
+
+.numberColumn {
+    vertical-align: top;
 }

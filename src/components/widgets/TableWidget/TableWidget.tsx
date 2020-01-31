@@ -295,7 +295,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                 </div>
             },
             onCell: (record, rowIndex) => {
-                return (!props.allowEdit || item.drillDown)
+                return (!props.allowEdit)
                     ? null
                     : {
                         onDoubleClick: (event) => {

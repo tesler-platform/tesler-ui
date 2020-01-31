@@ -68,6 +68,7 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
         onOkHandler={props.onClose}
         onCancelHandler={props.onClose}
         bcName={props.widget.bcName}
+        disablePagination={props.widget.options && props.widget.options.hierarchyFull}
     >
         <div>
             <h2 className={styles.title}>{props.widget.title}</h2>

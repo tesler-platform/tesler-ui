@@ -165,11 +165,13 @@ export class ActionPayloadTypes {
     } = z
 
     /**
-     * TODO
+     * Fetch data request wac unsuccesful
      * 
-     * @param bcName
-     * @param bcUrl
-     * @param depth
+     * @param bcName Business component that initiated data fetch
+     * @param bcUrl BC url with respect of parents cursors
+     *
+     * @deprecated TODO: 2.0.0 Should be all moved to separate hierarchy-specific action
+     * @param depth For same BC hierarchies, the level which was requested
      */
     bcFetchDataFail: {
         bcName: string,
@@ -178,19 +180,21 @@ export class ActionPayloadTypes {
     } = z
 
     /**
-     * TODO
+     * Fetch next chunk of data for table widgets with infinite scroll
      * 
-     * @param bcName
+     * @param bcName Business component that initiated data fetch
      */
     bcLoadMore: {
         bcName: string
     } = z
 
     /**
-     * TODO
+     * Fetch meta information for active record of business component
      * 
-     * @param bcName
-     * @param widgetName
+     * @param widgetName Widget that initiated row meta fetch
+     * 
+     * @deprecated TODO: 2.0.0 Remove in favor of widgetName
+     * @param bcName Business component that initiated row meta fetch
      */
     bcFetchRowMeta: {
         bcName: string,
@@ -311,14 +315,18 @@ export class ActionPayloadTypes {
     /**
      * TODO
      * 
-     * @param bcName
      * @param postInvoke
      * @param cursor
+     * @param widgetName What widget initiated original operation, TODO: mandatory in 2.0.0
+     * 
+     * @deprecated TODO: Prefer widgetName instead (2.0.0)
+     * @param bcName
      */
     processPostInvoke: {
         bcName: string,
         postInvoke: OperationPostInvokeAny,
         cursor?: string
+        widgetName?: string
     } = z
 
     /**
@@ -361,7 +369,8 @@ export class ActionPayloadTypes {
         url: string,
         drillDownType?: DrillDownType,
         urlName?: string,
-        route: Route
+        route: Route,
+        widgetName?: string,
     } = z
 
     /**
@@ -394,11 +403,13 @@ export class ActionPayloadTypes {
      * @param bcName
      * @param cursors
      * @param dataItems
+     * @param disableRetry
      */
     changeDataItem: {
         bcName: string,
         cursor: string,
-        dataItem: PendingDataItem
+        dataItem: PendingDataItem,
+        disableRetry?: boolean
     } = z
 
     /**

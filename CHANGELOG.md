@@ -1,3 +1,34 @@
+# Version 1.3.0
+
+## Features
+
+* Table widget should show drilldown button when cell is in edit mode (#64).
+* New record creation should be cancelable from Table widget (#66).
+
+## Fixes
+
+* Required field check crash on autosave caused by drilldown (#63).
+* Child elements in the hierarchy should be collapsed by default (#68).
+* Changes to HierarchyTable default styling (#68):
+  * Decrease the indentation in the TreeData cells from 20px to 15px.
+  * Align the first column and "+" on the top edge.
+  * Align the data in the 2nd and 3rd columns.
+
+# Version 1.2.2
+
+## Fixes
+
+* Required number fields are erroneously cleared on record create/save and on blur if only zero value entered, due to their incorrect work with `undefined` valudes (#58).
+
+# Version 1.2.1
+
+## Fixes
+
+* Respect default width of columns for hierarchy tables and disable pagination if not required (#56).
+* Disable pagination for PickListPopup with FullHierarchy (#55).
+* List widget in hierarchy mode should support drilldown field (#51).
+* RowMeta request isn`t sent when the forceActive field changes (#53).
+
 # Version 1.2.0
 
 ## Features
