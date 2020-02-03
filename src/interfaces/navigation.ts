@@ -48,8 +48,8 @@ export function isViewNavigationCategory(item: any): item is ViewNavigationCateg
  * @param child Array of navigation elements specified below group(View or inner Group)
  */
 export interface ViewNavigationGroup {
-    /** TODO identifier will be nullable in 2.0.0 */
-    id?: string
+    /** TODO identifier will be nullable and string-only in 2.0.0 */
+    id?: string | number,
     title: string,
     child: Array<ViewNavigationGroup | ViewNavigationItem>
     hidden?: boolean
