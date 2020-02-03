@@ -7,7 +7,7 @@ import {Store} from '../../interfaces/store'
 import Field from '../../components/Field/Field'
 import MultivalueHover from '../../components/ui/Multivalue/MultivalueHover'
 import {buildBcUrl} from '../../utils/strings'
-import {WidgetTableMeta, WidgetListField } from '../../interfaces/widget'
+import {WidgetTableMeta, WidgetListField, WidgetTableHierarchy} from '../../interfaces/widget'
 import {DataItem, MultivalueSingleValue, PendingDataItem } from '../../interfaces/data'
 import {RowMetaField } from '../../interfaces/rowMeta'
 import {ColumnProps, TableRowSelection, TableEventListeners} from 'antd/lib/table'
@@ -30,6 +30,10 @@ interface HierarchyTableOwnProps {
 }
 
 export interface HierarchyTableProps extends HierarchyTableOwnProps {
+    childData: AssociatedItem[],
+    hierarchyLevels: WidgetTableHierarchy[],
+    nestedBcName: string,
+    indentLevel: number,
     data: AssociatedItem[],
     rowMetaFields: RowMetaField[],
     cursor: string,
@@ -48,7 +52,7 @@ export interface HierarchyTableProps extends HierarchyTableOwnProps {
 const emptyMultivalue: MultivalueSingleValue[] = []
 
 export const Exp: FunctionComponent = (props: any) => {
-    if (!props.onExpand) {
+    if (!props.onExpand || props.record.noChildren) {
         return null
     }
     const type = props.expanded ? 'minus-square' : 'plus-square'
@@ -68,15 +72,10 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
     const hierarchyGroupSelection = props.meta.options && props.meta.options.hierarchyGroupSelection
     const hierarchyRadio = props.meta.options && props.meta.options.hierarchyRadio
     const hierarchyRadioAll = props.meta.options && props.meta.options.hierarchyRadioAll
-    const hierarchyLevels = props.meta.options && props.meta.options.hierarchy
     const hierarchyDisableRoot = props.meta.options && props.meta.options.hierarchyDisableRoot
 
     // TODO: Переделать в более понятный вид
-    const indentLevel = props.nestedByBc
-        ? hierarchyLevels.findIndex(item => item.bcName === props.nestedByBc) + 1
-        : 0
-    const nestedBcName = hierarchyLevels[indentLevel] && hierarchyLevels[indentLevel].bcName
-
+    const {hierarchyLevels, nestedBcName, indentLevel} = props
     const hierarchyLevel = (props.nestedByBc)
         ? hierarchyLevels.find(item => item.bcName === props.nestedByBc)
         : null
@@ -139,16 +138,36 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
         return undefined
     }, [bcName, props.onSelect, props.cursor, selectedRecords, props.assocValueKey])
 
-    const [userClosedRecords, setUserClosedRecords] = React.useState([props.cursor])
+    const [currentCursor, setCurrentCursor] = React.useState()
+    const [noChildRecords, setNoChildRecords] = React.useState([])
+    const tableRecords = React.useMemo(
+        () => {
+            return props.data && props.data.map((item) => {
+                return {
+                    ...item,
+                    noChildren: (currentCursor && noChildRecords.includes(item.id))
+                }
+            })
+        },
+        [currentCursor, props.data, noChildRecords]
+    )
+    const [userClosedRecords, setUserClosedRecords] = React.useState([])
     const expandedRowKeys = React.useMemo(() => {
-        if (userClosedRecords.includes(props.cursor)) {
+        if (currentCursor && !(props.childData && props.childData.length)) {
+            if (!noChildRecords.includes(currentCursor)) {
+                setNoChildRecords([...noChildRecords, currentCursor])
+            }
             return emptyArray
         }
-        return [props.cursor]
-    }, [props.cursor, userClosedRecords])
+        if (noChildRecords.includes(currentCursor)) {
+            setNoChildRecords(noChildRecords.filter(item => item !== currentCursor))
+        }
+        return !currentCursor || userClosedRecords.includes(currentCursor) ? emptyArray : [currentCursor]
+    }, [currentCursor, userClosedRecords, props.childData])
 
     const handleExpand = (expanded: boolean, dataItem: DataItem) => {
         if (expanded) {
+            setCurrentCursor(dataItem.id)
             setUserClosedRecords(userClosedRecords.filter(item => item !== dataItem.id))
             props.onExpand(props.nestedByBc || props.meta.bcName, nestedBcName, dataItem.id, props.route)
         } else {
@@ -228,7 +247,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
             defaultExpandedRowKeys={[props.cursor]}
             expandedRowKeys={expandedRowKeys}
             onExpand={hasNested ? handleExpand : undefined}
-            dataSource={props.data}
+            dataSource={tableRecords}
             expandedRowRender={hasNested ? nested : undefined}
             expandIconAsCell={false}
             expandIconColumnIndex={(rowSelection) ? 1 : 0}
@@ -242,6 +261,11 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
 function mapStateToProps(store: Store, ownProps: HierarchyTableOwnProps) {
     const bcMap = store.screen.bo.bc
     const bcName = ownProps.nestedByBc || ownProps.meta.bcName
+    const hierarchyLevels = ownProps.meta.options && ownProps.meta.options.hierarchy
+    const indentLevel = ownProps.nestedByBc
+        ? hierarchyLevels.findIndex(item => item.bcName === ownProps.nestedByBc) + 1
+        : 0
+    const nestedBcName = hierarchyLevels[indentLevel] && hierarchyLevels[indentLevel].bcName
     const loading = bcMap[bcName] && bcMap[bcName].loading
     const bcUrl = buildBcUrl(bcName, true)
     const fields = bcUrl
@@ -253,6 +277,10 @@ function mapStateToProps(store: Store, ownProps: HierarchyTableOwnProps) {
         && bcMap[ownProps.parentBcName] && bcMap[ownProps.parentBcName].cursor
     const pendingChanges = store.view.pendingDataChanges[bcName]
     return {
+        childData: loading ? emptyData : store.data[nestedBcName],
+        indentLevel,
+        nestedBcName,
+        hierarchyLevels,
         data: loading ? emptyData : store.data[bcName],
         pendingChanges,
         rowMetaFields: fields,
