@@ -19,4 +19,5 @@ export {default as Field} from './Field/Field'
 // Бизнес-виджеты
 export {default as FormWidget} from './widgets/FormWidget/FormWidget'
 export {default as TableWidget} from './widgets/TableWidget/TableWidget'
+export {default as TextWidget} from './widgets/TextWidget/TextWidget'
 export {default as widgets} from './widgets/FormWidget/FormWidget'

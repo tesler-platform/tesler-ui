@@ -1,33 +1,22 @@
 import React from 'react'
 import {WidgetTextMeta} from 'interfaces/widget'
-import {connect} from 'react-redux'
-import {Store} from '../../../interfaces/store'
 import styles from './TextWidget.less'
-
-const parse = require('html-react-parser')
-const marked = require('marked')
+import marked from 'marked'
+import parse from 'html-react-parser'
+import ErrorBoundary from 'components/ErrorBoundary/ErrorBoundary'
 
 interface TextWidgetOwnProps {
     meta: WidgetTextMeta
 }
 
-interface TextWidgetProps extends TextWidgetOwnProps {
-    description: string
-}
-
-const TextWidget: React.FunctionComponent<TextWidgetProps> = (props) => {
-    const description = props.description
+const TextWidget: React.FunctionComponent<TextWidgetOwnProps> = (props) => {
+    const description = props.meta.description
     const htmlText = parse(marked(description))
-    return <div className={styles.textWidget}>
-        {htmlText}
-    </div>
+    return <ErrorBoundary msg={<p className={styles.errorMessage}>Невалидный текст</p>}>
+        <div className={styles.textWidget}>
+            {htmlText}
+        </div>
+    </ErrorBoundary>
 }
 
-function mapStateToProps(store: Store, ownProps: TextWidgetOwnProps) {
-    const description = ownProps.meta.description
-    return {
-        description
-    }
-}
-
-export default connect(mapStateToProps)(TextWidget)
+export default (TextWidget)

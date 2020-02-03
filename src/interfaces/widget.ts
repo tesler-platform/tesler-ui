@@ -230,6 +230,12 @@ export interface WidgetTableHierarchy {
     fields: WidgetListField[]
 }
 
+/**
+ * Description of the interface for the widget displaying text with support for markdowns
+ * @param description Text to display
+ * @param descriptionTitle Title
+ */
+
 export interface WidgetTextMeta extends WidgetMeta {
     type: WidgetTypes.Text,
     description: string,
