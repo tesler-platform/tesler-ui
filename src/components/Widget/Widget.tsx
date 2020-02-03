@@ -2,8 +2,17 @@ import React, {FunctionComponent} from 'react'
 import {connect} from 'react-redux'
 import {Skeleton, Spin} from 'antd'
 import {Store} from '../../interfaces/store'
-import {WidgetMeta, WidgetTypes, WidgetFormMeta, WidgetTableMeta, CustomWidget, WidgetShowCondition} from '../../interfaces/widget'
+import {
+    WidgetMeta,
+    WidgetTypes,
+    WidgetFormMeta,
+    WidgetTableMeta,
+    CustomWidget,
+    WidgetShowCondition,
+    WidgetTextMeta
+} from '../../interfaces/widget'
 import TableWidget from '../widgets/TableWidget/TableWidget'
+import TextWidget from '../widgets/TextWidget/TextWidget'
 import FormWidget from '../widgets/FormWidget/FormWidget'
 import styles from './Widget.less'
 import AssocListPopup from '../widgets/AssocListPopup/AssocListPopup'
@@ -96,6 +105,8 @@ function chooseWidgetType(widgetMeta: WidgetMeta, customWidgets?: ObjectMap<Cust
             />
         case WidgetTypes.Form:
             return <FormWidget meta={widgetMeta as WidgetFormMeta} />
+        case WidgetTypes.Text:
+            return <TextWidget meta={widgetMeta as WidgetTextMeta} />
         default:
             return children
     }
