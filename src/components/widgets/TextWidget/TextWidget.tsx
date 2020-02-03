@@ -3,7 +3,7 @@ import {WidgetTextMeta} from 'interfaces/widget'
 import styles from './TextWidget.less'
 import marked from 'marked'
 import parse from 'html-react-parser'
-import ErrorBoundary from 'components/ErrorBoundary/ErrorBoundary'
+import ErrorBoundary from '../../../components/ErrorBoundary/ErrorBoundary'
 
 interface TextWidgetOwnProps {
     meta: WidgetTextMeta
