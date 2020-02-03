@@ -1,3 +1,15 @@
+# Version 1.4.0
+
+## Features
+
+* New widget type `Text` supporting markdown syntax (#72).
+* Support Tesler API changes for navigation structure (https://github.com/tesler-platform/tesler/issues/18)
+* Expand button for hierarchy records now not be showed if there are no children for the record (#76).
+
+## Fixes
+
+* `hidden` field type should not be displayed on `Form`, `List`, `DataGrid` widgets (#73).
+
 # Version 1.3.0
 
 ## Features
