@@ -9,6 +9,7 @@ import Field from '../../Field/Field'
 import {useFlatFormFields} from '../../../hooks/useFlatFormFields'
 import styles from './FormWidget.less'
 import cn from 'classnames'
+import {FieldType} from '../../../interfaces/view'
 
 interface FormWidgetOwnProps {
     meta: WidgetFormMeta,
@@ -22,20 +23,30 @@ interface FormWidgetProps extends FormWidgetOwnProps {
 }
 
 export const FormWidget: FunctionComponent<FormWidgetProps> = (props) => {
+    const hiddenKeys: string[] = []
     const flattenWidgetFields = useFlatFormFields<WidgetFormField>(props.meta.fields)
+        .filter(item => {
+            const isHidden = item.type === FieldType.hidden
+            if (isHidden) {
+                hiddenKeys.push(item.key)
+            }
+            return !isHidden
+        })
     const { meta: { bcName, name }, cursor } = props
 
     const fields = React.useMemo(() => {
         return <Row gutter={24}>
             {props.meta.options
             && props.meta.options.layout
-            && props.meta.options.layout.rows.map((row, index) => {
-                return <Row key={index}>
+            && props.meta.options.layout.rows
+                .map((row, index) => {
+                    return <Row key={index}>
                     {row.cols
                     .filter(field => {
                         const meta = props.fields && props.fields.find(item => item.key === field.fieldKey)
                         return meta ? !meta.hidden : true
                     })
+                        .filter((col) => !hiddenKeys.includes(col.fieldKey))
                     .map((col, colIndex) => {
                         const field = flattenWidgetFields.find(item => item.key === col.fieldKey)
                         const error = (props.missingFields && props.missingFields[field.key])
@@ -59,7 +70,7 @@ export const FormWidget: FunctionComponent<FormWidgetProps> = (props) => {
                         </Col>
                     })}
                 </Row>
-            })}
+                })}
         </Row>
     }, [bcName, name, cursor, flattenWidgetFields, props.missingFields, props.metaErrors])
 
