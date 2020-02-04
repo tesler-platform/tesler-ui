@@ -6,7 +6,8 @@
 export interface ViewNavigationItem {
     /** TODO identifier will be nullable in 2.0.0 */
     id?: string
-    viewName: string,
+    // TODO: Should not be optional in 2.0.0
+    viewName?: string,
     hidden?: boolean,
 }
 

@@ -1,3 +1,9 @@
+# Versions 1.4.1
+
+## Fixes
+
+* Broken navigation structure in 1.4.0.
+
 # Version 1.4.0
 
 ## Features
