@@ -63,8 +63,8 @@ export interface ViewNavigationGroup {
  * @param item to be identified as group
  */
 export function isViewNavigationGroup(item: MenuItem): item is ViewNavigationGroup {
-    // TODO: remove 'title' check in 2.0.0
-    return !!item && ('child' in item || 'title' in item)
+    // TODO: remove 'categoryName' check in 2.0.0
+    return !!item && ('child' in item) && !('categoryName' in item)
 }
 
 /**

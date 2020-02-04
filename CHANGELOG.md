@@ -1,4 +1,10 @@
-# Versions 1.4.1
+# Version 1.4.2
+
+## Fixes
+
+* Incorrect `isViewNavigationGroup` safeguard falsy reported true for navigation categories (1.4.0).
+
+# Version 1.4.1
 
 ## Fixes
 
