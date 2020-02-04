@@ -366,6 +366,16 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                 : [ ...prevFilters, filter ]
             return {
                 ...state,
+                bo: {
+                    ...state.bo,
+                    bc: {
+                        ...state.bo.bc,
+                        [action.payload.bcName]: {
+                            ...state.bo.bc[action.payload.bcName],
+                            page: 1
+                        }
+                    }
+                },
                 filters: {
                     ...state.filters,
                     [bcName]: newFilters
@@ -378,6 +388,16 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
             const newFilters = prevFilters.filter(item => item.fieldName !== filter.fieldName || item.type !== item.type)
             return {
                 ...state,
+                bo: {
+                    ...state.bo,
+                    bc: {
+                        ...state.bo.bc,
+                        [action.payload.bcName]: {
+                            ...state.bo.bc[action.payload.bcName],
+                            page: 1
+                        }
+                    }
+                },
                 filters: {
                     ...state.filters,
                     [bcName]: newFilters
@@ -387,6 +407,16 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
         case types.bcAddSorter: {
             return {
                 ...state,
+                bo: {
+                    ...state.bo,
+                    bc: {
+                        ...state.bo.bc,
+                        [action.payload.bcName]: {
+                            ...state.bo.bc[action.payload.bcName],
+                            page: 1
+                        }
+                    }
+                },
                 sorters: {
                     ...state.sorters,
                     [action.payload.bcName]: [action.payload.sorter]

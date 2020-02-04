@@ -1,4 +1,4 @@
-import React, {FunctionComponent} from 'react'
+import React, {FormEvent, FunctionComponent} from 'react'
 import {Popover, Checkbox, Input, Button, Form, Icon} from 'antd'
 import {connect} from 'react-redux'
 import {RowMetaField} from '../../interfaces/rowMeta'
@@ -37,7 +37,8 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
         setValue(e.target.value || null)
     }
 
-    const handleApply = () => {
+    const handleApply = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
         const type = props.widgetMeta.type === FieldType.dictionary
             ? FilterType.equalsOneOf
             : FilterType.contains
@@ -53,7 +54,8 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
         }
     }
 
-    const handleCancel = () => {
+    const handleCancel = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+        e.preventDefault()
         if (props.filter) {
             props.onCancel(props.bcName, filter)
         }
