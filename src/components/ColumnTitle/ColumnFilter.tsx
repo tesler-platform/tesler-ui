@@ -54,6 +54,7 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
     }
 
     const handleCancel = () => {
+        setValue(null)
         if (props.filter) {
             props.onCancel(props.bcName, filter)
         }
