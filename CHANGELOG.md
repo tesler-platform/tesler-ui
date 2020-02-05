@@ -1,4 +1,16 @@
-# Versions 1.4.1
+# Version 1.4.3
+
+## Fixes
+
+* Broken IE11 support due to `markdown` dependency hosted on npm in ES6 format
+
+# Version 1.4.2
+
+## Fixes
+
+* Incorrect `isViewNavigationGroup` safeguard falsy reported true for navigation categories (1.4.0).
+
+# Version 1.4.1
 
 ## Fixes
 
