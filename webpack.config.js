@@ -5,6 +5,11 @@ const rxjsExternals = require('webpack-rxjs-externals')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
+/* Dependencies from package.json that ship in ES2015 module format */
+const es2015modules = [
+    'marked'
+].map((item) => path.resolve(__dirname, 'node_modules', item))
+
 // function extract(rules) {
 //     if (env.production) {
 //         return ExtractStyles.extract({
@@ -143,6 +148,19 @@ module.exports = (env, options) => {
                     use: {
                         loader: 'svg-inline-loader?classPrefix'
                     }
+                },
+                // Translating ES2015 modules from npm to support IE11
+                {
+                    test: /\.jsx?$/,
+                    include: es2015modules,
+                    use: [
+                        {
+                            loader: 'ts-loader',
+                            options: {
+                                transpileOnly: true
+                            }
+                        }
+                    ]
                 },
             ]
         },
