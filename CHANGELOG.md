@@ -1,3 +1,9 @@
+# Version 1.4.3
+
+## Fixes
+
+* Broken IE11 support due to `markdown` dependency hosted on npm in ES6 format
+
 # Version 1.4.2
 
 ## Fixes
