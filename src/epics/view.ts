@@ -119,7 +119,7 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
                     bcName,
                     cursor,
                     dataItem: {[changedFiledKey]: currentRecordData[changedFiledKey]},
-                    disableRetry
+                    disableRetry: true
                 }))
                 : Observable.empty<never>()
         })
