@@ -56,6 +56,7 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
 
     const handleCancel = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
         e.preventDefault()
+        setValue(null)
         if (props.filter) {
             props.onCancel(props.bcName, filter)
         }
