@@ -17,7 +17,8 @@ export interface ColumnSortOwnProps {
 export interface ColumnSortProps extends ColumnSortOwnProps {
     sorter: BcSorter,
     bcName: string,
-    onSort: (bcName: string, sorter: BcSorter) => void
+    page: number,
+    onSort: (bcName: string, sorter: BcSorter, page: number) => void
 }
 
 export const ColumnSort: FunctionComponent<ColumnSortProps> = (props) => {
@@ -33,7 +34,7 @@ export const ColumnSort: FunctionComponent<ColumnSortProps> = (props) => {
                 ? 'desc'
                 : props.sorter.direction === 'asc' ? 'desc' : 'asc'
         }
-        props.onSort(props.bcName, sorter)
+        props.onSort(props.bcName, sorter, props.page)
     }
 
     return <Icon
@@ -47,17 +48,24 @@ function mapStateToProps(store: Store, ownProps: ColumnSortOwnProps) {
     const widget = store.view.widgets.find(item => item.name === ownProps.widgetName)
     const bcName = widget && widget.bcName
     const sorter = store.screen.sorters[bcName] && store.screen.sorters[bcName].find(item => item.fieldName === ownProps.fieldKey)
+    const page = store.screen.bo.bc[bcName].page
     return {
         bcName,
-        sorter
+        sorter,
+        page
     }
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {
     return {
-        onSort: (bcName: string, sorter: BcSorter) => {
-            dispatch($do.bcAddSorter({ bcName, sorter }))
-            dispatch($do.bcForceUpdate({ bcName }))
+        onSort: (bcName: string, sorter: BcSorter, page: number) => {
+            dispatch($do.bcAddSorter({bcName, sorter}))
+            dispatch($do.bcForceUpdate({bcName}))
+            let currentPage = 1
+            while (currentPage < page) {
+                currentPage++
+                dispatch($do.bcLoadMore({bcName}))
+            }
         }
     }
 }
