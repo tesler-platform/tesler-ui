@@ -13,6 +13,9 @@ import {ChangeDataItemPayload} from '../../Field/Field'
 import SameBcHierarchyTable from '../../SameBcHierarchyTable/SameBcHierarchyTable'
 import HierarchyTable from '../../../components/HierarchyTable/HierarchyTable'
 import FullHierarchyTable from '../../FullHierarchyTable/FullHierarchyTable'
+import ColumnTitle from '../../ColumnTitle/ColumnTitle'
+import {RowMetaField} from '../../../interfaces/rowMeta'
+import {buildBcUrl} from '../../../utils/strings'
 
 export interface PickListPopupActions {
     onChange: (payload: ChangeDataItemPayload) => void,
@@ -30,17 +33,25 @@ export interface PickListPopupProps extends PickListPopupOwnProps {
     cursor: string,
     parentBCName: string,
     bcLoading: boolean,
+    rowMetaFields: RowMetaField[]
 }
 
 export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopupActions> = (props) => {
-    const columns: Array<ColumnProps<DataItem>> = props.widget.fields.map((item: WidgetListField) => ({
-        title: item.title,
-        key: item.key,
-        dataIndex: item.key,
-        render: (text, dataItem) => {
-            return text
+    const columns: Array<ColumnProps<DataItem>> = props.widget.fields.map((item: WidgetListField) => {
+        const fieldRowMeta = props.rowMetaFields && props.rowMetaFields.find(field => field.key === item.key)
+        return {
+            title: <ColumnTitle
+                widgetName={props.widget.name}
+                widgetMeta={item}
+                rowMeta={fieldRowMeta}
+            />,
+            key: item.key,
+            dataIndex: item.key,
+            render: (text, dataItem) => {
+                return text
+            }
         }
-    }))
+    })
 
     const onRow = React.useCallback(
         (rowData: DataItem) => {
@@ -108,6 +119,11 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
 
 function mapStateToProps(store: Store, props: PickListPopupOwnProps) {
     const bcName = props.widget.bcName
+    const bcUrl = buildBcUrl(bcName, true)
+    const fields = bcUrl
+        && store.view.rowMeta[bcName]
+        && store.view.rowMeta[bcName][bcUrl]
+        && store.view.rowMeta[bcName][bcUrl].fields
     const bc = store.screen.bo.bc[bcName]
     const parentBCName = bc && bc.parentName
     return {
@@ -116,7 +132,8 @@ function mapStateToProps(store: Store, props: PickListPopupOwnProps) {
         data: store.data[props.widget.bcName],
         cursor: parentBCName && store.screen.bo.bc[parentBCName].cursor,
         parentBCName: bc && bc.parentName,
-        bcLoading: bc && bc.loading
+        bcLoading: bc && bc.loading,
+        rowMetaFields: fields
     }
 }
 

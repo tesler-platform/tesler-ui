@@ -1,3 +1,15 @@
+# Version 1.4.4
+
+## Fixes
+
+* Force active fields should not end up in infinite loop when trying to revert changes that were declined by Tesler API (#96).
+* Incorrect filtering behaviour:
+  * Filters and sorting are not applied for bcLoadMore action (#85)
+  * Page is not respected for sorting (#85)
+  * Removing filters should reset page (#85)
+  * When filtering returns 0 rows, then after clicking on "Reset" button the values ​​in the filter are not reset (#91)
+  * Filtering does not work in Picklists (#91)
+
 # Version 1.4.3
 
 ## Fixes
