@@ -204,6 +204,15 @@ const bcLoadMore: Epic = (action$, store) => action$.ofType(types.bcLoadMore)
     const {cursor, page, limit} = state.screen.bo.bc[action.payload.bcName]
     const limitBySelfCursor = state.router.bcPath && state.router.bcPath.includes(`${bcName}/${cursor}`)
     const bcUrl = buildBcUrl(bcName, limitBySelfCursor)
+    const filters = state.screen.filters[bcName] || []
+    const sorters = state.screen.sorters[bcName]
+
+    const fetchParams: Record<string, any> = {
+        _page: page,
+        _limit: limit,
+        ...getFilters(filters),
+        ...getSorters(sorters)
+    }
 
     const cancelFlow = action$.ofType(types.selectView).filter((item) => {
         return true
@@ -212,7 +221,7 @@ const bcLoadMore: Epic = (action$, store) => action$.ofType(types.bcLoadMore)
     })
     .take(1)
 
-    const normalFlow = api.fetchBcData(state.screen.screenName, bcUrl, {_page: page, _limit: limit})
+    const normalFlow = api.fetchBcData(state.screen.screenName, bcUrl, fetchParams)
     .mergeMap(data => {
         const oldBcDataIds = state.data[bcName] && state.data[bcName].map(i => i.id)
         const newData = [...state.data[bcName], ...data.data.filter((bc: DataItem) => !oldBcDataIds.includes(bc.id))]
