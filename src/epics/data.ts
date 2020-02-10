@@ -88,6 +88,7 @@ const bcFetchRowMetaRequest: Epic = (action$, store) => action$.ofType(types.bcF
  */
 const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
     types.bcFetchDataRequest,
+    types.bcFetchDataPages,
     types.showViewPopup,
     types.bcForceUpdate,
     types.bcChangePage
@@ -126,6 +127,11 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
         _limit: limit,
         ...getFilters(filters),
         ...getSorters(sorters)
+    }
+
+    if (action.type === types.bcFetchDataPages) {
+        fetchParams._page = action.payload.from || 1
+        fetchParams._limit = (action.payload.to || page - fetchParams._page) * limit
     }
     if (action.type === types.bcFetchDataRequest && action.payload.ignorePageLimit
         || anyHierarchyWidget && anyHierarchyWidget.options.hierarchyFull
@@ -333,7 +339,7 @@ const bcDeleteDataEpic: Epic = (action$, store) => action$.ofType(types.sendOper
         return Observable.concat(
             Observable.of($do.bcFetchDataRequest({ bcName, widgetName })),
             postInvoke
-                ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor}))
+                ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName}))
                 : Observable.empty<never>()
         )
     })
@@ -421,7 +427,7 @@ const bcCancelCreateDataEpic: Epic = (action$, store) => action$.ofType(types.se
         return Observable.concat(
             Observable.of($do.bcChangeCursors({ cursorsMap })),
             postInvoke
-                ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor}))
+                ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName: context.widgetName}))
                 : Observable.empty<never>()
         )
     })

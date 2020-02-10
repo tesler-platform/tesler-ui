@@ -29,6 +29,7 @@ export interface ViewState extends ViewMetaResponse {
         [bcName: string]: boolean
     },
     popupData?: PopupData,
+    infiniteWidgets?: [],
     pickMap?: PickMap,
     selectedCell?: ViewSelectedCell,
     systemNotifications?: SystemNotification[],
