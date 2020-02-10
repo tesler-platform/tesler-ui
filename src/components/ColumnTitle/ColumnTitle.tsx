@@ -4,6 +4,7 @@ import {WidgetListField} from '../../interfaces/widget'
 import ColumnFilter from './ColumnFilter'
 import ColumnSort from './ColumnSort'
 import styles from './ColumnTitle.less'
+import TemplatedTitle from '../TemplatedTitle/TemplatedTitle'
 
 export interface ColumnTitle {
     widgetName: string,
@@ -15,8 +16,12 @@ export const ColumnTitle: FunctionComponent<ColumnTitle> = (props) => {
     if (!props.widgetMeta && !props.rowMeta) {
         return null
     }
+    const title = <TemplatedTitle
+        widgetName={props.widgetName}
+        title={props.widgetMeta.title}
+    />
     if (!props.rowMeta) {
-        return <div>{props.widgetMeta.title}</div>
+        return <div>{title}</div>
     }
 
     const filterable = props.rowMeta.filterable
@@ -32,7 +37,7 @@ export const ColumnTitle: FunctionComponent<ColumnTitle> = (props) => {
             rowMeta={props.rowMeta}
         />
     return <div className={styles.container}>
-        {props.widgetMeta.title}
+        {title}
         {filter}
         {sort}
     </div>

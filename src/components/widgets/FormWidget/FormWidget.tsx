@@ -10,6 +10,7 @@ import {useFlatFormFields} from '../../../hooks/useFlatFormFields'
 import styles from './FormWidget.less'
 import cn from 'classnames'
 import {FieldType} from '../../../interfaces/view'
+import TemplatedTitle from '../../TemplatedTitle/TemplatedTitle'
 
 interface FormWidgetOwnProps {
     meta: WidgetFormMeta,
@@ -51,12 +52,17 @@ export const FormWidget: FunctionComponent<FormWidgetProps> = (props) => {
                         const field = flattenWidgetFields.find(item => item.key === col.fieldKey)
                         const error = (props.missingFields && props.missingFields[field.key])
                             || props.metaErrors && props.metaErrors[field.key]
-                        const fieldLabel = field.type === 'checkbox' ? null : field.label
                         return  <Col key={colIndex} span={col.span} className={cn(
                             {[styles.colWrapper]: row.cols.length > 1 || col.span !== 24}
                         )}>
                             <Form.Item
-                                label={fieldLabel}
+                                label={field.type === 'checkbox'
+                                    ? null
+                                    : <TemplatedTitle
+                                        widgetName={props.meta.name}
+                                        title={field.label}
+                                    />
+                                }
                                 validateStatus={error ? 'error' : undefined}
                                 help={error}
                             >
