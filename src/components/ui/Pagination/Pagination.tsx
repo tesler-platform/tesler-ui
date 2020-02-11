@@ -10,6 +10,7 @@ import {$do} from '../../../actions/actions'
 interface PaginationOwnProps {
     bcName: string
     mode: PaginationMode,
+    onChangePage?: () => void,
 }
 
 interface PaginationStateProps {
@@ -40,6 +41,9 @@ const Pagination: React.FunctionComponent<PaginationAllProps> = (props) => {
     const onPrevPage = React.useCallback(
         () => {
             props.changePage(props.bcName, props.page - 1)
+            if (props.onChangePage) {
+                props.onChangePage()
+            }
         },
         [props.bcName, props.page, props.changePage]
     )
@@ -47,6 +51,9 @@ const Pagination: React.FunctionComponent<PaginationAllProps> = (props) => {
     const onNextPage = React.useCallback(
         () => {
             props.changePage(props.bcName, props.page + 1)
+            if (props.onChangePage) {
+                props.onChangePage()
+            }
         },
         [props.bcName, props.page, props.changePage]
     )

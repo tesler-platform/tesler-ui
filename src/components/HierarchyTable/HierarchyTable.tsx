@@ -145,7 +145,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
             return props.data && props.data.map((item) => {
                 return {
                     ...item,
-                    noChildren: (currentCursor && noChildRecords.includes(item.id))
+                    noChildren: noChildRecords.includes(item.id)
                 }
             })
         },
@@ -174,6 +174,10 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
             setUserClosedRecords([ ...userClosedRecords, dataItem.id ])
         }
     }
+
+    const resetCursor = React.useCallback(() => {
+        setCurrentCursor(null)
+    }, [])
 
     // Вложенный уровень иерархии рисуется новой таблицей
     const nested = (record: DataItem, index: number, indent: number, expanded: boolean) => {
@@ -254,7 +258,8 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
             loading={props.loading}
             onRow={!(hierarchyDisableRoot && indentLevel === 0) && props.onRow}
         />
-        {props.showPagination && <Pagination bcName={bcName} mode={PaginationMode.page} />}
+        {props.showPagination &&
+        <Pagination bcName={bcName} mode={PaginationMode.page} onChangePage={resetCursor}/>}
     </div>
 }
 
