@@ -140,14 +140,14 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
         return undefined
     }, [bcName, props.onSelect, props.cursor, selectedRecords, props.assocValueKey])
 
-    const [currentCursor, setCurrentCursor] = React.useState(undefined)
+    const [currentCursor, setCurrentCursor] = React.useState()
     const [noChildRecords, setNoChildRecords] = React.useState([])
     const tableRecords = React.useMemo(
         () => {
-            return props.data?.map((item) => {
+            return props.data && props.data.map((item) => {
                 return {
                     ...item,
-                    noChildren: noChildRecords.includes(item.id)
+                    noChildren: (currentCursor && noChildRecords.includes(item.id))
                 }
             })
         },
@@ -155,7 +155,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
     )
     const [userClosedRecords, setUserClosedRecords] = React.useState([])
     const expandedRowKeys = React.useMemo(() => {
-        if (currentCursor && !(props.childData?.length)) {
+        if (currentCursor && !(props.childData && props.childData.length)) {
             if (!noChildRecords.includes(currentCursor)) {
                 setNoChildRecords([...noChildRecords, currentCursor])
             }
@@ -176,10 +176,6 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
             setUserClosedRecords([ ...userClosedRecords, dataItem.id ])
         }
     }
-
-    const resetCursor = React.useCallback(() => {
-        setCurrentCursor(null)
-    }, [])
 
     // Вложенный уровень иерархии рисуется новой таблицей
     const nested = (record: DataItem, index: number, indent: number, expanded: boolean) => {
@@ -210,10 +206,6 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
             return null
         }
     }
-
-    const fieldCustomProps = React.useMemo(() => {
-        return {hierarchyDepth: indentLevel + 1}
-    }, [indentLevel])
     const columns: Array<ColumnProps<DataItem>> = React.useMemo(() => {
         return [
             indentColumn,
@@ -230,15 +222,16 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
                             displayedValue={item.displayedKey && dataItem[item.displayedKey]}
                         />
                     }
-
-                    return <Field
-                        bcName={bcName}
-                        cursor={dataItem.id}
-                        widgetName={props.meta.name}
-                        widgetFieldMeta={item}
-                        readonly
-                        customProps={fieldCustomProps}
-                    />
+                    if (item.type === FieldType.multifield || item.drillDown) {
+                        return <Field
+                            bcName={bcName}
+                            cursor={dataItem.id}
+                            widgetName={props.meta.name}
+                            widgetFieldMeta={item}
+                            readonly
+                        />
+                    }
+                    return text
                 }
             }))
         ]
@@ -263,24 +256,27 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
             loading={props.loading}
             onRow={!(hierarchyDisableRoot && indentLevel === 0) && props.onRow}
         />
-        {props.showPagination &&
-        <Pagination bcName={bcName} mode={PaginationMode.page} onChangePage={resetCursor} widgetName={props.meta.name}/>}
+        {props.showPagination && <Pagination bcName={bcName} mode={PaginationMode.page} />}
     </div>
 }
 
 function mapStateToProps(store: Store, ownProps: HierarchyTableOwnProps) {
     const bcMap = store.screen.bo.bc
     const bcName = ownProps.nestedByBc || ownProps.meta.bcName
-    const hierarchyLevels = ownProps.meta.options?.hierarchy
+    const hierarchyLevels = ownProps.meta.options && ownProps.meta.options.hierarchy
     const indentLevel = ownProps.nestedByBc
         ? hierarchyLevels.findIndex(item => item.bcName === ownProps.nestedByBc) + 1
         : 0
-    const nestedBcName = hierarchyLevels[indentLevel]?.bcName
-    const loading = bcMap[bcName]?.loading
+    const nestedBcName = hierarchyLevels[indentLevel] && hierarchyLevels[indentLevel].bcName
+    const loading = bcMap[bcName] && bcMap[bcName].loading
     const bcUrl = buildBcUrl(bcName, true)
-    const fields = bcUrl && store.view.rowMeta[bcName]?.[bcUrl]?.fields
-    const cursor = bcMap[bcName]?.cursor
-    const parentCursor = ownProps.nestedByBc && bcMap[ownProps.parentBcName]?.cursor
+    const fields = bcUrl
+        && store.view.rowMeta[bcName]
+        && store.view.rowMeta[bcName][bcUrl]
+        && store.view.rowMeta[bcName][bcUrl].fields
+    const cursor = bcMap[bcName] && bcMap[bcName].cursor
+    const parentCursor = ownProps.nestedByBc && ownProps.parentBcName
+        && bcMap[ownProps.parentBcName] && bcMap[ownProps.parentBcName].cursor
     const pendingChanges = store.view.pendingDataChanges[bcName]
     return {
         childData: loading ? emptyData : store.data[nestedBcName],
