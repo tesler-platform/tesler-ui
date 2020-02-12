@@ -6,7 +6,7 @@ import cn from 'classnames'
 import MultiValueListRecord from '../../Multivalue/MultiValueListRecord'
 
 interface MultivalueListOwnProps {
-    fieldTitle: string,
+    fieldTitle: React.ReactNode,
     field: MultivalueFieldMeta,
     data: MultivalueSingleValue[],
     isFloat: boolean,
@@ -16,7 +16,7 @@ interface MultivalueListOwnProps {
 
 const MultivalueList: React.FunctionComponent<MultivalueListOwnProps> = (props) => {
 
-    return <div key={`${props.field.key}_${props.fieldTitle}`} className={cn({
+    return <div key={`${props.field.key}_${props.field.label}`} className={cn({
         [styles.fieldAreaFloat]: props.isFloat,
         [styles.fieldAreaBase]: !props.isFloat,
         [styles.noFieldSeparator]: props.noLineSeparator,

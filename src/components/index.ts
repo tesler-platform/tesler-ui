@@ -13,6 +13,7 @@ export {default as CheckboxPicker} from './ui/CheckboxPicker/CheckboxPicker'
 export {default as Pagination} from './ui/Pagination/Pagination'
 export {default as ErrorPopup} from './ui/ErrorPopup/ErrorPopup'
 // Контейнеры
+export {default as TemplatedTitle} from './TemplatedTitle/TemplatedTitle'
 export {default as View} from './View/View'
 export {default as Widget} from './Widget/Widget'
 export {default as Field} from './Field/Field'
