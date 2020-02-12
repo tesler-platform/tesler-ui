@@ -3,7 +3,6 @@ import {$do, needSaveAction, types} from '../actions/actions'
 import {OperationTypeCrud} from '../interfaces/operation'
 import {WidgetMeta} from '../interfaces/widget'
 import {Store as CoreStore} from '../interfaces/store'
-import {buildBcUrl} from '../utils/strings'
 
 const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) =>
     (next: Dispatch) =>
@@ -51,19 +50,8 @@ export function createAutoSaveMiddleware() {
  * @param cursor 
  */
 function bcHasPendingAutosaveChanges(store: CoreStore, bcName: string, cursor: string) {
-    let result = false
-
     const pendingChanges = store.view.pendingDataChanges
     const cursorChanges = pendingChanges[bcName] && pendingChanges[bcName][cursor]
-    if (cursorChanges && !Object.keys(cursorChanges).includes('_associate') && Object.values(cursorChanges).length) {
-        const bcUrl = buildBcUrl(bcName, true)
-        const actions = bcUrl
-            && store.view.rowMeta[bcName]
-            && store.view.rowMeta[bcName][bcUrl]
-            && store.view.rowMeta[bcName][bcUrl].actions
-        // TODO: Shouldn't we check for nested operation if action oftype OperationGroup?
-        result = actions && actions.some((action) => action.type === OperationTypeCrud.save)
-    }
-
+    const result = cursorChanges && !Object.keys(cursorChanges).includes('_associate') && Object.values(cursorChanges).length
     return result
 }
