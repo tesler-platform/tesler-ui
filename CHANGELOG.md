@@ -1,3 +1,18 @@
+# Version 1.5.0
+
+## Features
+
+* Template strings for field titles: Table and Form widgets now support templated title in form of `Title {token:defaultValue}` string, where `token` is replaced with value of the field with key `token` of the currently selected record. `<TemplatedTitle />` component now exported to support this behaviour is custom widgets (#94).
+* `<Pagination />` component now have `onChangePage` callback (#76).
+
+## Fixes
+
+* Hierarchy table should clear active cursor on page change (#76).
+
+## Misc
+
+* Disable check for the presence of `save` action in row meta for autosave middleware until we investigate the cases when this check fails due to missing cursor (#99).
+
 # Version 1.4.4
 
 ## Fixes
