@@ -159,7 +159,7 @@ export const enum OperationPostInvokeType {
  * @param [key: string] ??? TODO: Это что?
  */
 export interface OperationPostInvoke {
-    type: OperationPostInvokeType
+    type: OperationPostInvokeType | string
 }
 
 /**
