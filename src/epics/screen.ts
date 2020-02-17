@@ -60,7 +60,7 @@ const processPostInvoke: Epic = (action$, store) => action$.ofType(types.process
             return Observable.of($do.downloadFileByUrl({ url: postInvoke.url }))
         }
         default:
-            console.warn(`Операция ${action.payload.postInvoke.type} не поддерживается`)
+            // Other types can be handled by client application
             return Observable.empty()
     }
 })
