@@ -4,6 +4,8 @@
         "Clear": "Сбросить",
         "Required fields are missing": "Не заполнены обязательные поля",
         "There are pending changes. Please save them or cancel.": "Остались несохраненные данные. Сохраните или отмените изменения.",
-        "Cancel changes": "Отменить изменения"
+        "Cancel changes": "Отменить изменения",
+        "No operations available": "Нет доступных операций",
+        "Show other records": "Показать остальные записи"
     }
 }

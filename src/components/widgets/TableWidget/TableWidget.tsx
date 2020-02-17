@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react'
 import {connect} from 'react-redux'
 import {Dispatch} from 'redux'
+import {useTranslation} from 'react-i18next'
 import {Table} from 'antd'
 import {ColumnProps, TableRowSelection} from 'antd/es/table'
 import ActionLink from '../../ui/ActionLink/ActionLink'
@@ -59,6 +60,7 @@ interface TableWidgetProps extends TableWidgetOwnProps {
 }
 
 export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
+    const {t} = useTranslation()
     // Switch to hierarchy mode if necessary
     if (props.meta.options && props.meta.options.hierarchy) {
         return <HierarchyTable meta={props.meta} showPagination />
@@ -129,7 +131,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
     return <div className={styles.tableContainer}>
         { props.limitBySelf &&
             <ActionLink onClick={() => props.onShowAll(props.meta.bcName, props.cursor)}>
-                Показать остальные записи
+                {t('Show other records')}
             </ActionLink>
         }
         <Table

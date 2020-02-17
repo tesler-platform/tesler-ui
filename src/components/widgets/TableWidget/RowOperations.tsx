@@ -1,6 +1,7 @@
 import React from 'react'
 import {Dispatch} from 'redux'
 import {connect} from 'react-redux'
+import {useTranslation} from 'react-i18next'
 import {Menu, Skeleton, Icon, Dropdown} from 'antd'
 import {$do} from '../../../actions/actions'
 import {useWidgetOperations} from '../../../hooks'
@@ -26,6 +27,7 @@ interface RowOperationProps extends RowOperationsOwnProps {
  * "More actions" button for per-row operations
  */
 export const RowOperations: React.FC<RowOperationProps> = (props) => {
+    const {t} = useTranslation()
     const handleExpand = React.useCallback(() => {
         props.onExpand(props.widgetMeta.bcName, props.selectedKey)
     }, [props.widgetMeta.bcName, props.selectedKey])
@@ -86,7 +88,7 @@ export const RowOperations: React.FC<RowOperationProps> = (props) => {
             : menuItemList.length
                 ? menuItemList
                 : <Menu.Item disabled>
-                    Нет доступных операций
+                    {t('No operations available')}
                 </Menu.Item>
         }
     </Menu>

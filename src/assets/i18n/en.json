@@ -1,6 +1,8 @@
 {
     "translation": {
         "Apply": "Apply",
-        "Clear": "Clear"
+        "Clear": "Clear",
+        "No operations available": "No operations available",
+        "Show other records": "Show other records"
     }
 }
