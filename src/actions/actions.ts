@@ -783,16 +783,14 @@ export class ActionPayloadTypes {
     } = z
 
     /**
-     * TODO
-     * 
-     * @param bcName
      * @param cursor
-     * @param router
+     * @param bcName TODO: Use widgetName instead; remove in 2.0.0
+     * @param router TODO: Handled in epic instead; remove in 2.0.0
      */
     showAllTableRecordsInit: {
         bcName: string,
         cursor: string,
-        route: Route
+        route?: Route
     } = z
 
     /**

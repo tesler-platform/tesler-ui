@@ -37,16 +37,19 @@ interface TableWidgetProps extends TableWidgetOwnProps {
     data: DataItem[],
     rowMetaFields: RowMetaField[],
     limitBySelf: boolean,
-    route: Route,
     cursor: string,
     selectedCell: ViewSelectedCell,
     hasNext: boolean,
-    onShowAll: (bcName: string, cursor: string, route: Route) => void,
+    /**
+     * TODO: `route` arg now handled in epics, remove in 2.0.0
+     */
+    onShowAll: (bcName: string, cursor: string, route?: Route) => void,
     onSelectCell: (cursor: string, widgetName: string, fieldKey: string) => void,
     /**
      * @deprecated TODO: Properties below not used anymore and will be removed in 2.0.0
      */
     bcName?: string, // Use meta.bcName instead
+    route?: Route, // Handled in epic
     operations?: Array<Operation | OperationGroup>,
     metaInProgress?: boolean,
     pendingDataItem?: PendingDataItem,
@@ -125,7 +128,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
 
     return <div className={styles.tableContainer}>
         { props.limitBySelf &&
-            <ActionLink onClick={() => props.onShowAll(props.meta.bcName, props.cursor, props.route)}>
+            <ActionLink onClick={() => props.onShowAll(props.meta.bcName, props.cursor)}>
                 Показать остальные записи
             </ActionLink>
         }
@@ -165,7 +168,6 @@ function mapStateToProps(store: Store, ownProps: TableWidgetOwnProps) {
         data: store.data[ownProps.meta.bcName],
         rowMetaFields: fields,
         limitBySelf,
-        route: store.router,
         cursor,
         hasNext,
         selectedCell: store.view.selectedCell
@@ -177,8 +179,8 @@ function mapDispatchToProps(dispatch: Dispatch) {
         onSelectCell: (cursor: string, widgetName: string, fieldKey: string) => {
             dispatch($do.selectTableCellInit({ widgetName, rowId: cursor, fieldKey }))
         },
-        onShowAll: (bcName: string, cursor: string, route: Route) => {
-            dispatch($do.showAllTableRecordsInit({ bcName, cursor, route }))
+        onShowAll: (bcName: string, cursor: string, route?: Route) => {
+            dispatch($do.showAllTableRecordsInit({ bcName, cursor }))
         }
     }
 }
