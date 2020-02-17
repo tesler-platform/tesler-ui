@@ -46,7 +46,7 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                 primaryView: action.payload.screen.meta.primary,
                 views: action.payload.screen.meta.views,
                 bo: { activeBcName: null, bc: bcDictionary },
-                sorters: bcSorters
+                sorters: { ...state.sorters, ...bcSorters }
             }
         }
         case types.selectScreenFail: {
@@ -404,12 +404,33 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                 }
             }
         }
+        case types.bcRemoveAllFilters: {
+            return {
+                ...state,
+                bo: {
+                    ...state.bo,
+                    bc: {
+                        ...state.bo.bc,
+                        [action.payload.bcName]: {
+                            ...state.bo.bc[action.payload.bcName],
+                            page: 1
+                        }
+                    }
+                },
+                filters: {
+                    ...state.filters,
+                    [action.payload.bcName]: []
+                }
+            }
+        }
         case types.bcAddSorter: {
             return {
                 ...state,
                 sorters: {
                     ...state.sorters,
-                    [action.payload.bcName]: [action.payload.sorter]
+                    [action.payload.bcName]: Array.isArray(action.payload.sorter)
+                        ? action.payload.sorter
+                        : [action.payload.sorter]
                 }
             }
         }

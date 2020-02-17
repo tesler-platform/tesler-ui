@@ -865,6 +865,15 @@ export class ActionPayloadTypes {
     } = z
 
     /**
+     * Remove all filters at once
+     *
+     * @param bcName
+     */
+    bcRemoveAllFilters: {
+        bcName: string
+    } = z
+
+    /**
      * TODO
      * 
      * @param bcName
@@ -872,7 +881,7 @@ export class ActionPayloadTypes {
      */
     bcAddSorter: {
         bcName: string,
-        sorter: BcSorter
+        sorter: BcSorter | BcSorter[]
     } = z
 
     /**
