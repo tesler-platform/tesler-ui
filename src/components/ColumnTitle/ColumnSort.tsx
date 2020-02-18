@@ -18,7 +18,8 @@ export interface ColumnSortProps extends ColumnSortOwnProps {
     sorter: BcSorter,
     bcName: string,
     page: number,
-    onSort: (bcName: string, sorter: BcSorter, page: number) => void
+    infinitePagination: boolean,
+    onSort: (bcName: string, sorter: BcSorter, page: number, widgetName: string, infinitePagination: boolean) => void
 }
 
 export const ColumnSort: FunctionComponent<ColumnSortProps> = (props) => {
@@ -34,7 +35,7 @@ export const ColumnSort: FunctionComponent<ColumnSortProps> = (props) => {
                 ? 'desc'
                 : props.sorter.direction === 'asc' ? 'desc' : 'asc'
         }
-        props.onSort(props.bcName, sorter, props.page)
+        props.onSort(props.bcName, sorter, props.page, props.widgetName, props.infinitePagination)
     }
 
     return <Icon
@@ -46,11 +47,16 @@ export const ColumnSort: FunctionComponent<ColumnSortProps> = (props) => {
 
 function mapStateToProps(store: Store, ownProps: ColumnSortOwnProps) {
     const widget = store.view.widgets.find(item => item.name === ownProps.widgetName)
+    const widgetName = widget.name
     const bcName = widget && widget.bcName
     const sorter = store.screen.sorters[bcName] && store.screen.sorters[bcName].find(item => item.fieldName === ownProps.fieldKey)
     const page = store.screen.bo.bc[bcName].page
+    const infiniteWidgets: string[] = store.view.infiniteWidgets || []
+    const infinitePagination = infiniteWidgets.includes(widgetName)
     return {
         bcName,
+        widgetName,
+        infinitePagination,
         sorter,
         page
     }
@@ -58,9 +64,19 @@ function mapStateToProps(store: Store, ownProps: ColumnSortOwnProps) {
 
 function mapDispatchToProps(dispatch: Dispatch) {
     return {
-        onSort: (bcName: string, sorter: BcSorter, page: number) => {
+        onSort: (bcName: string, sorter: BcSorter, page: number, widgetName: string, infinitePagination: boolean) => {
             dispatch($do.bcAddSorter({bcName, sorter}))
-            dispatch($do.bcForceUpdate({bcName}))
+            infinitePagination
+                ? dispatch($do.bcFetchDataPages({
+                    bcName: bcName,
+                    widgetName: widgetName,
+                    from: 1,
+                    to: page
+                }))
+                : dispatch($do.bcForceUpdate({
+                    bcName: bcName,
+                    widgetName: widgetName
+                }))
         }
     }
 }
