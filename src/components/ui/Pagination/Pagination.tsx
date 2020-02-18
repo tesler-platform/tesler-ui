@@ -8,7 +8,8 @@ import styles from './Pagination.less'
 import {$do} from '../../../actions/actions'
 
 interface PaginationOwnProps {
-    bcName: string
+    bcName: string,
+    widgetName?: string,
     mode: PaginationMode,
     onChangePage?: () => void,
 }
@@ -17,11 +18,12 @@ interface PaginationStateProps {
     hasNext: boolean,
     page: number,
     loading: boolean,
+    widgetName: string
 }
 
 interface PaginationDispatchProps {
     changePage: (bcName: string, page: number) => void,
-    loadMore: (bcName: string) => void,
+    loadMore: (bcName: string, widgetName: string) => void,
 }
 
 type PaginationAllProps = PaginationOwnProps & PaginationStateProps & PaginationDispatchProps
@@ -33,9 +35,9 @@ const Pagination: React.FunctionComponent<PaginationAllProps> = (props) => {
     }
     const onLoadMore = React.useCallback(
         () => {
-            props.loadMore(props.bcName)
+            props.loadMore(props.bcName, props.widgetName)
         },
-        [props.bcName, props.loadMore]
+        [props.bcName, props.widgetName, props.loadMore]
     )
 
     const onPrevPage = React.useCallback(
@@ -92,7 +94,8 @@ function mapStateToProps(store: Store, ownProps: PaginationOwnProps): Pagination
     return {
         hasNext: bc && bc.hasNext,
         page: bc && bc.page,
-        loading: bc && bc.loading
+        loading: bc && bc.loading,
+        widgetName: ownProps.widgetName
     }
 }
 
@@ -101,8 +104,8 @@ function mapDispatchToProps(dispatch: Dispatch): PaginationDispatchProps {
         changePage: (bcName: string, page: number) => {
             dispatch($do.bcChangePage({bcName, page}))
         },
-        loadMore: (bcName: string) => {
-            dispatch($do.bcLoadMore({bcName}))
+        loadMore: (bcName: string, widgetName: string) => {
+            dispatch($do.bcLoadMore({bcName: bcName, widgetName: widgetName}))
         }
     }
 }

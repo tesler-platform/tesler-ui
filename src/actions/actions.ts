@@ -131,6 +131,29 @@ export class ActionPayloadTypes {
     } = z
 
     /**
+     * Fetch data request request for specific pages range
+     */
+    bcFetchDataPages: {
+        /**
+         * The business component to fetch data for
+         * @deprecated TODO: 2.0.0 Should be removed in favor of widgetName
+         */
+        bcName: string,
+        /**
+         * Fisrt page to fetch (default is 1)
+         */
+        widgetName: string,
+        /**
+         * What widget requires data (widget can only request its own data here)
+         */
+        from?: number,
+        /**
+         * Last page to fetch (default is current page)
+         */
+        to?: number
+    } = z
+
+    /**
      * Fetch data request for searchable fields
      * 
      * @param bcName The business component to fetch data for
@@ -183,9 +206,11 @@ export class ActionPayloadTypes {
      * Fetch next chunk of data for table widgets with infinite scroll
      * 
      * @param bcName Business component that initiated data fetch
+     * @param widgetName Widget that initiated row meta fetch
      */
     bcLoadMore: {
-        bcName: string
+        bcName: string,
+        widgetName?: string
     } = z
 
     /**
