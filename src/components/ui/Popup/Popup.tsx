@@ -13,6 +13,7 @@ interface PopupProps {
     showed: boolean,
     title?: string,
     bcName: string,
+    widgetName?: string,
     disablePagination?: boolean,
 }
 
@@ -34,7 +35,7 @@ export const Popup: FunctionComponent<PopupProps> = (props) => {
             footer={<div className={styles.footerContainer}>
                     {(!props.disablePagination) &&
                         <div className={styles.pagination}>
-                            <Pagination bcName={props.bcName} mode={PaginationMode.page} />
+                            <Pagination bcName={props.bcName} mode={PaginationMode.page} widgetName={props.widgetName}/>
                         </div>
                     }
                     <div className={styles.actions}>

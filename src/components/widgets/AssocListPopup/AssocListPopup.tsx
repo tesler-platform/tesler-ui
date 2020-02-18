@@ -68,6 +68,7 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         onOkHandler={saveData}
         onCancelHandler={cancelData}
         bcName={props.widget.bcName}
+        widgetName={props.widget.name}
         disablePagination={props.widget.options && props.widget.options.hierarchyFull}
     >
         {(props.bcLoading)

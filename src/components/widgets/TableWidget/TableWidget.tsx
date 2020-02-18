@@ -43,6 +43,7 @@ interface TableWidgetProps extends TableWidgetOwnProps {
     rowMetaFields: RowMetaField[],
     limitBySelf: boolean,
     bcName: string,
+    widgetName?: string,
     route: Route,
     cursor: string,
     selectedCell: ViewSelectedCell,
@@ -51,7 +52,7 @@ interface TableWidgetProps extends TableWidgetOwnProps {
     operations: Array<Operation | OperationGroup>,
     metaInProgress: boolean,
     onDrillDown: (widgetName: string, bcName: string, cursor: string, fieldKey: string) => void,
-    onShowAll: (bcName: string, cursor: string, route: Route) => void,
+    onShowAll: (bcName: string, cursor: string, route: Route, widgetName: string) => void,
     onOperationClick: (bcName: string, operationType: string, widgetName: string) => void,
     onSelectRow: (bcName: string, cursor: string) => void,
     onSelectCell: (cursor: string, widgetName: string, fieldKey: string) => void,
@@ -63,6 +64,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
         return <HierarchyTable
             meta={props.meta}
             showPagination
+            widgetName={props.widgetName}
         />
     }
 
@@ -309,7 +311,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
         })
 
     const handleShowAll = () => {
-        props.onShowAll(props.bcName, props.cursor, props.route)
+        props.onShowAll(props.bcName, props.cursor, props.route, props.widgetName)
     }
 
     return <div
@@ -331,7 +333,8 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
             pagination={false}
             onRow={(props.showRowActions) ? onTableRow : null}
         />
-        {!props.disablePagination && <Pagination bcName={props.bcName} mode={props.paginationMode || PaginationMode.page} />}
+        {!props.disablePagination && <Pagination bcName={props.bcName} mode={props.paginationMode
+        || PaginationMode.page} widgetName={props.meta.name}/>}
         {(props.showRowActions) &&
         <div
             ref={floatMenuRef}

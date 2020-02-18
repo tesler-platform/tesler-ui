@@ -33,6 +33,7 @@ export interface HierarchyTableProps extends HierarchyTableOwnProps {
     childData: AssociatedItem[],
     hierarchyLevels: WidgetTableHierarchy[],
     nestedBcName: string,
+    widgetName?: string,
     indentLevel: number,
     data: AssociatedItem[],
     rowMetaFields: RowMetaField[],
@@ -259,7 +260,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
             onRow={!(hierarchyDisableRoot && indentLevel === 0) && props.onRow}
         />
         {props.showPagination &&
-        <Pagination bcName={bcName} mode={PaginationMode.page} onChangePage={resetCursor}/>}
+        <Pagination bcName={bcName} mode={PaginationMode.page} onChangePage={resetCursor} widgetName={props.meta.name}/>}
     </div>
 }
 

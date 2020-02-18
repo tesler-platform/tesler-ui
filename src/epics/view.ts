@@ -33,7 +33,7 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
             Observable.of($do.sendOperationSuccess({ bcName, cursor })),
             Observable.of($do.bcForceUpdate({ bcName })),
             postInvoke
-                ? Observable.of($do.processPostInvoke({ bcName, postInvoke }))
+                ? Observable.of($do.processPostInvoke({ bcName, postInvoke, widgetName: context.widgetName }))
                 : Observable.empty<never>(),
         )
     })
