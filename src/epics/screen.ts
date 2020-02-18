@@ -41,11 +41,23 @@ const processPostInvoke: Epic = (action$, store) => action$.ofType(types.process
         case OperationPostInvokeType.refreshBC: {
             const bo = state.screen.bo
             const postInvoke = action.payload.postInvoke as OperationPostInvokeRefreshBc
+            const postInvokeBC = postInvoke.bc
             const postInvokeBCItem = bo.bc[postInvoke.bc]
-            const widgetName = (action.payload as any).widgetName // TODO: interface should specify widgetName
-            return Observable.of($do.bcFetchDataRequest({
-                bcName: postInvokeBCItem.name, widgetName
-            }))
+            const widgetName = action.payload.widgetName
+            const infiniteWidgets: string[] = state.view.infiniteWidgets || []
+            const infinitePagination = state.view.widgets
+                  .some((item) => item.bcName === postInvokeBC && infiniteWidgets.includes(item.name))
+            return infinitePagination
+                ? Observable.of($do.bcFetchDataPages({
+                    bcName: postInvokeBCItem.name,
+                    widgetName: widgetName,
+                    from: 1,
+                    to: postInvokeBCItem.page
+                }))
+                : Observable.of($do.bcFetchDataRequest({
+                    bcName: postInvokeBCItem.name,
+                    widgetName
+                }))
         }
         case OperationPostInvokeType.showMessage: {
             const postInvoke = action.payload.postInvoke as OperationPostInvokeShowMessage

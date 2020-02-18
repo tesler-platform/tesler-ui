@@ -66,7 +66,8 @@ function onErrorHook(error: AxiosError, callContext?: ApiCallContext) {
                 const bcName = widget && widget.type
                 getStoreInstance().dispatch($do.processPostInvoke({
                     bcName,
-                    postInvoke: typedError.error.postActions[0]
+                    postInvoke: typedError.error.postActions[0],
+                    widgetName: widget.name
                 }))
             }
         }
