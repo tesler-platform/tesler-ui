@@ -17,6 +17,7 @@ const initialState: ViewState  = {
     metaInProgress: {},
     popupData: {bcName: null},
     pendingDataChanges: {},
+    infiniteWidgets: [],
     pendingValidationFails: {},
     handledForceActive: {},
     selectedCell: null,
@@ -51,6 +52,14 @@ export function view(state = initialState, action: AnyAction, store: Store) {
                     ...state.metaInProgress,
                     [action.payload.bcName]: true
                 }
+            }
+        }
+        case types.bcLoadMore: {
+            const infiniteWidgets: string[] = state.infiniteWidgets || []
+            infiniteWidgets.push(action.payload.widgetName)
+            return {
+                ...state,
+                infiniteWidgets: Array.from(new Set(infiniteWidgets))
             }
         }
         case types.sendOperation: {

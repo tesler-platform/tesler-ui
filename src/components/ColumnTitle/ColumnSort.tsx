@@ -61,11 +61,6 @@ function mapDispatchToProps(dispatch: Dispatch) {
         onSort: (bcName: string, sorter: BcSorter, page: number) => {
             dispatch($do.bcAddSorter({bcName, sorter}))
             dispatch($do.bcForceUpdate({bcName}))
-            let currentPage = 1
-            while (currentPage < page) {
-                currentPage++
-                dispatch($do.bcLoadMore({bcName}))
-            }
         }
     }
 }
