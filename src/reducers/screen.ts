@@ -407,16 +407,6 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
         case types.bcAddSorter: {
             return {
                 ...state,
-                bo: {
-                    ...state.bo,
-                    bc: {
-                        ...state.bo.bc,
-                        [action.payload.bcName]: {
-                            ...state.bo.bc[action.payload.bcName],
-                            page: 1
-                        }
-                    }
-                },
                 sorters: {
                     ...state.sorters,
                     [action.payload.bcName]: [action.payload.sorter]

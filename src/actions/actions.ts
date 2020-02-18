@@ -586,9 +586,11 @@ export class ActionPayloadTypes {
      * TODO
      * 
      * @param bcName
+     * @param widgetName What widget requires data (widget can only request its own data here)
      */
     bcForceUpdate: {
-        bcName: string
+        bcName: string,
+        widgetName?: string
     } = z
 
     /**
