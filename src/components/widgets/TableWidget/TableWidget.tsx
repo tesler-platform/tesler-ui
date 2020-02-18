@@ -252,7 +252,6 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                                 <Menu.Item
                                     key={operation.type}
                                     onClick={() => {
-                                        onMenuVisibilityChange(false) // Dropdown bug: doesn't call onVisibleChange on menu item click
                                         props.onOperationClick(props.bcName, operation.type, props.meta.name)
                                     }}
                                 >
