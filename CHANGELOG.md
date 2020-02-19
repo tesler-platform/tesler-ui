@@ -1,3 +1,14 @@
+# Version 1.5.1
+
+## Fixes
+
+* Fix table record menu bugs: stuck button, requesting wrong rowMeta (#87).
+    * Row operations button may stuck on record after operation selected and menu is closed
+    * Row operations may request wrong rowMeta which leads to incorrect displaying operations and sometime erroneous restore of deleted record
+* New action bcFetchDataPages for fetching specific page range of data which should solve the problem of missing pages when working with infinite pagination (#102).
+* Remove page reset on table sort (#85).
+* `OperationPostInvoke` should allow `type` field to be a string to correctly support custom postInvokes. 
+
 # Version 1.5.0
 
 ## Features
