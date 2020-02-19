@@ -297,6 +297,21 @@ export class ActionPayloadTypes {
     } = z
 
     /**
+     * Request to change Force active field was unsuccesful
+     *
+     * @param bcName
+     * @param bcUrl
+     * @param viewError
+     * @param entityError
+     */
+    forceActiveChangeFail: {
+        bcName: string,
+        bcUrl: string,
+        viewError: string,
+        entityError: OperationErrorEntity
+    } = z
+
+    /**
      * TODO
      * 
      * @param bcName

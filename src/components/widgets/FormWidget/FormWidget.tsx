@@ -50,7 +50,8 @@ export const FormWidget: FunctionComponent<FormWidgetProps> = (props) => {
                         .filter((col) => !hiddenKeys.includes(col.fieldKey))
                     .map((col, colIndex) => {
                         const field = flattenWidgetFields.find(item => item.key === col.fieldKey)
-                        const error = (props.missingFields && props.missingFields[field.key])
+                        const disabled = props.fields && props.fields.find(item => item.key === field.key && item.disabled)
+                        const error = (!disabled && props.missingFields && props.missingFields[field.key])
                             || props.metaErrors && props.metaErrors[field.key]
                         return  <Col key={colIndex} span={col.span} className={cn(
                             {[styles.colWrapper]: row.cols.length > 1 || col.span !== 24}
