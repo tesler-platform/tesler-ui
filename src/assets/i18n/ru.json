@@ -4,6 +4,11 @@
         "Clear": "Сбросить",
         "Required fields are missing": "Не заполнены обязательные поля",
         "There are pending changes. Please save them or cancel.": "Остались несохраненные данные. Сохраните или отмените изменения.",
-        "Cancel changes": "Отменить изменения"
+        "Cancel changes": "Отменить изменения",
+        "Cancel": "Отменить",
+        "Ok": "Ок",
+        "Are you sure?": "Вы уверены?",
+        "Perform an additional action?": "Выполнить дополнительное действие?",
+        "The operation is not supported": "Операция не поддерживается"
     }
 }

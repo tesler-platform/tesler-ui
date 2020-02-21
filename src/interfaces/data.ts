@@ -1,4 +1,4 @@
-import {OperationPostInvokeAny} from './operation'
+import {OperationPostInvokeAny, OperationPreInvoke} from './operation'
 import {DrillDownType} from './router'
 
 /**
@@ -57,7 +57,8 @@ export interface DepthDataState {
 export interface DataItemResponse {
     data: {
         record: DataItem,
-        postActions?: OperationPostInvokeAny[]
+        postActions?: OperationPostInvokeAny[],
+        preInvoke?: OperationPreInvoke
     }
 }
 

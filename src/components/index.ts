@@ -17,6 +17,7 @@ export {default as TemplatedTitle} from './TemplatedTitle/TemplatedTitle'
 export {default as View} from './View/View'
 export {default as Widget} from './Widget/Widget'
 export {default as Field} from './Field/Field'
+export {default as ModalInvoke} from './ModalInvoke/ModalInvoke'
 // Бизнес-виджеты
 export {default as FormWidget} from './widgets/FormWidget/FormWidget'
 export {default as TableWidget} from './widgets/TableWidget/TableWidget'

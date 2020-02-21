@@ -17,23 +17,34 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
 .mergeMap((action) => {
     const state = store.getState()
     const screenName = state.screen.screenName
-    const bcName = action.payload.bcName
+    const {bcName, operationType, widgetName, confirmOperation} = action.payload
     const bcUrl = buildBcUrl(bcName, true)
     const bc = state.screen.bo.bc[bcName]
     const cursor = bc.cursor
     const record = state.data[bcName] && state.data[bcName].find(item => item.id === bc.cursor)
     const pendingRecordChange = state.view.pendingDataChanges[bcName] && state.view.pendingDataChanges[bcName][bc.cursor]
     const data = record && { ...pendingRecordChange, vstamp: record && record.vstamp }
-    const params = { _action: action.payload.operationType }
+    const params = confirmOperation
+        ? { _action: operationType, _confirm: confirmOperation.type }
+        : { _action: operationType }
     const context = { widgetName: action.payload.widgetName }
     return api.customAction(screenName, bcUrl, data, context, params)
     .mergeMap(response => {
         const postInvoke = response.postActions[0]
+        const preInvoke = response.preInvoke
         return Observable.concat(
             Observable.of($do.sendOperationSuccess({ bcName, cursor })),
             Observable.of($do.bcForceUpdate({ bcName })),
             postInvoke
                 ? Observable.of($do.processPostInvoke({ bcName, postInvoke, widgetName: context.widgetName }))
+                : Observable.empty<never>(),
+            preInvoke
+                ? Observable.of($do.processPreInvoke({
+                    bcName,
+                    operationType,
+                    widgetName,
+                    preInvoke
+                }))
                 : Observable.empty<never>(),
         )
     })
