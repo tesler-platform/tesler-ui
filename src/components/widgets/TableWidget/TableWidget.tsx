@@ -77,10 +77,59 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
     const mouseAboveRow = React.useRef(false)
     const expectedFloatMenuTopValue = React.useRef('') // положение меню, которое должно быть выставлено после закрытия
 
+    const onRowMouseEnterHandler = React.useCallback(
+        (target: HTMLElement, recordId: string) => {
+            mouseAboveRow.current = true
+
+            // Should compare hovered record id with event target id, because function is called twice, when cursor enters table
+            if (!floatMenuRef.current || !tableContainerRef.current || floatMenuHoveredRecord.current === recordId) {
+                return
+            }
+
+            const tableContainerRect = tableContainerRef.current.getBoundingClientRect()
+            const tableRowRect = target.getBoundingClientRect()
+
+            const floatMenuTopValue = `${tableRowRect.top - tableContainerRect.top + 17}px`
+            expectedFloatMenuTopValue.current = floatMenuTopValue
+
+            floatMenuHoveredRecord.current = recordId
+            if (!floatMenuIsOpened.current) {
+                floatMenuRef.current.style.top = floatMenuTopValue
+            }
+        }, []
+    )
+
     const onTableMouseEnter = React.useCallback(
-        () => {
+        (event: React.MouseEvent<HTMLElement>) => {
             if (floatMenuRef.current) {
                 floatMenuRef.current.classList.add(styles.showMenu)
+            }
+
+            /*
+             * workaround: Table.onRow.onMouseEnter event isn't fired on chrome after menu disappear, when we select record menu item, that
+             * located above another record.
+             * https://github.com/facebook/react/issues/16566
+             */
+            if (!floatMenuIsOpened.current && tableBodyRef.current) {
+                const elementMouseIsOver = document.elementFromPoint(event.clientX, event.clientY)
+                if (elementMouseIsOver) {
+                    let checkElement = elementMouseIsOver
+                    while (checkElement) {
+                        if (checkElement === tableBodyRef.current) {
+                            return
+                        }
+
+                        if (checkElement.tagName === 'TR') {
+                            const rowKey = checkElement.getAttribute('data-row-key')
+                            if (rowKey) {
+                                onRowMouseEnterHandler(checkElement as HTMLElement, rowKey)
+                                return
+                            }
+                        }
+
+                        checkElement = checkElement.parentElement
+                    }
+                }
             }
         },
         []
@@ -143,23 +192,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
         (record, index) => {
             return {
                 onMouseEnter: (event: React.MouseEvent<HTMLElement>) => {
-                    mouseAboveRow.current = true
-
-                    if (!floatMenuRef.current || !tableContainerRef.current) {
-                        return
-                    }
-
-                    const tableRow = event.currentTarget
-                    const tableContainerRect = tableContainerRef.current.getBoundingClientRect()
-                    const tableRowRect = tableRow.getBoundingClientRect()
-
-                    const floatMenuTopValue = `${tableRowRect.top - tableContainerRect.top + 17}px`
-                    expectedFloatMenuTopValue.current = floatMenuTopValue
-
-                    if (!floatMenuIsOpened.current) {
-                        floatMenuRef.current.style.top = floatMenuTopValue
-                        floatMenuHoveredRecord.current = record.id
-                    }
+                    onRowMouseEnterHandler(event.currentTarget, record.id)
                 },
                 onMouseLeave: () => {
                     mouseAboveRow.current = false
@@ -201,6 +234,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                                 <Menu.Item
                                     key={operation.type}
                                     onClick={() => {
+                                        onMenuVisibilityChange(false) // Dropdown bug: doesn't call onVisibleChange on menu item click
                                         props.onOperationClick(props.bcName, operation.type, props.meta.name)
                                     }}
                                 >
@@ -225,7 +259,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                         <Menu.Item
                             key={item.type}
                             onClick={() => {
-                                floatMenuIsOpened.current = false
+                                onMenuVisibilityChange(false) // Dropdown bug: doesn't call onVisibleChange on menu item click
                                 props.onOperationClick(props.bcName, ungroupedOperation.type, props.meta.name)
                             }}
                         >
