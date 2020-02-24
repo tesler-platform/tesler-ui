@@ -225,16 +225,14 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
                             displayedValue={item.displayedKey && dataItem[item.displayedKey]}
                         />
                     }
-                    if (item.type === FieldType.multifield || item.drillDown) {
-                        return <Field
-                            bcName={bcName}
-                            cursor={dataItem.id}
-                            widgetName={props.meta.name}
-                            widgetFieldMeta={item}
-                            readonly
-                        />
-                    }
-                    return text
+
+                    return <Field
+                        bcName={bcName}
+                        cursor={dataItem.id}
+                        widgetName={props.meta.name}
+                        widgetFieldMeta={item}
+                        readonly
+                    />
                 }
             }))
         ]
