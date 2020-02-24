@@ -62,6 +62,12 @@ export interface DataItemResponse {
     }
 }
 
+export const enum RecordSnapshotState {
+    noChange = 'noChange',
+    new = 'new',
+    deleted = 'deleted'
+}
+
 /**
  * Структура, в которой хранятся значения Multivalue - поля
  *
@@ -82,7 +88,8 @@ export interface MultivalueSingleValue {
 export interface MultivalueSingleValueOptions {
     hint?: string,
     drillDown?: string,
-    drillDownType?: DrillDownType
+    drillDownType?: DrillDownType,
+    snapshotState?: RecordSnapshotState
 }
 
 /**

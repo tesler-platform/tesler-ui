@@ -2,7 +2,7 @@ import React, {FunctionComponent} from 'react'
 import {connect} from 'react-redux'
 import {Dispatch} from 'redux'
 import {$do} from '../../actions/actions'
-import {MultivalueSingleValue} from '../../interfaces/data'
+import {MultivalueSingleValue, RecordSnapshotState} from '../../interfaces/data'
 import cn from 'classnames'
 import styles from './MultiValueListRecord.less'
 import {DrillDownType} from '../../interfaces/router'
@@ -19,27 +19,40 @@ export interface MultiValueListRecordProps extends MultiValueListRecordOwnProps 
 }
 
 const MultiValueListRecord: FunctionComponent<MultiValueListRecordProps> = (props) => {
+    const singleValue = props.multivalueSingleValue
     const handleDrillDown = () => {
         props.onDrillDown(
-            props.multivalueSingleValue.options.drillDown,
-            props.multivalueSingleValue.options.drillDownType
+            singleValue.options.drillDown,
+            singleValue.options.drillDownType
         )
     }
+
+    const historyClass = singleValue.options.snapshotState && cn({
+        [styles.deletedValue]: singleValue.options.snapshotState === RecordSnapshotState.deleted,
+        [styles.newValue]: singleValue.options.snapshotState === RecordSnapshotState.new
+    }) || null
+
     return <div className={styles.fieldAreaFloat}>
-        {props.multivalueSingleValue.options && props.multivalueSingleValue.options.hint &&
-        <div className={cn({
-            [styles.hintFloat]: props.isFloat,
-            [styles.hintBase]: !props.isFloat
-        })}>
-            {props.multivalueSingleValue.options.hint}
-        </div>}
-        <div>
-            { (props.multivalueSingleValue.options.drillDown)
-                ? <ActionLink onClick={handleDrillDown}>
-                    {props.multivalueSingleValue.value}
-                </ActionLink>
-                : props.multivalueSingleValue.value
-            }
+        {singleValue.options && singleValue.options.hint &&
+            <div>
+                <div className={cn(
+                    styles.hint,
+                    historyClass,
+                    {[styles.hintFloat]: props.isFloat}
+                )}>
+                    {singleValue.options.hint}
+                </div>
+            </div>
+        }
+        <div className={historyClass}>
+            <div className={styles.recordValue}>
+                {(singleValue.options.drillDown)
+                    ? <ActionLink onClick={handleDrillDown}>
+                        {singleValue.value}
+                    </ActionLink>
+                    : singleValue.value
+                }
+            </div>
         </div>
     </div>
 }
