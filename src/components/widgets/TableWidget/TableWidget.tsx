@@ -30,6 +30,7 @@ import {PaginationMode} from '../../../interfaces/widget'
 import HierarchyTable from '../../../components/HierarchyTable/HierarchyTable'
 import {BcFilter} from '../../../interfaces/filters'
 import {useTranslation} from 'react-i18next'
+import FullHierarchyTable from '../../../components/FullHierarchyTable/FullHierarchyTable'
 
 interface TableWidgetOwnProps {
     meta: WidgetTableMeta,
@@ -63,13 +64,20 @@ interface TableWidgetProps extends TableWidgetOwnProps {
 }
 
 export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
+    if (props.meta.options) {
+        if (props.meta.options.hierarchyFull) {
+            return <FullHierarchyTable
+                meta={props.meta}
+            />
+        }
 
-    if (props.meta.options && props.meta.options.hierarchy) {
-        return <HierarchyTable
-            meta={props.meta}
-            showPagination
-            widgetName={props.widgetName}
-        />
+        if (props.meta.options.hierarchy) {
+            return <HierarchyTable
+                meta={props.meta}
+                showPagination
+                widgetName={props.widgetName}
+            />
+        }
     }
     const {t} = useTranslation()
 

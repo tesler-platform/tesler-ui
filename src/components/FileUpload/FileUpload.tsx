@@ -22,7 +22,9 @@ export interface FileUploadOwnProps {
     fileSource: string,
     readOnly?: boolean,
     disabled?: boolean,
-    metaError: string
+    metaError: string,
+    snapshotKey?: string,
+    snapshotFileIdKey?: string,
 }
 
 export interface FileUploadProps {
@@ -104,6 +106,39 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
     const fileName = fileNameDelta || fieldValue
 
     if (props.readOnly) {
+        if (props.snapshotKey && props.snapshotFileIdKey) {
+            const diffDownloadParams = {
+                source: props.fileSource,
+                id: props.fieldDataItem && props.fieldDataItem[props.snapshotFileIdKey]
+                    && props.fieldDataItem[props.snapshotFileIdKey].toString()
+            }
+            const diffDownloadUrl = applyParams(`${axiosInstance.defaults.baseURL || '/'}file`, diffDownloadParams)
+            const diffFileName = props.fieldDataItem && props.fieldDataItem[props.snapshotKey]
+
+            if ((diffDownloadParams.id || downloadParams.id) && diffDownloadParams.id !== downloadParams.id) {
+                return <div>
+                    {(diffDownloadParams.id)
+                        && <div>
+                            <span className={cn(styles.viewLink, styles.prevValue)}>
+                                <a href={diffDownloadUrl}>
+                                    <Icon type="file" /> <span>{diffFileName}</span>
+                                </a>
+                            </span>
+                        </div>
+                    }
+                    {(downloadParams.id)
+                        && <div>
+                            <span className={cn(styles.viewLink, styles.newValue)}>
+                                <a href={downloadUrl}>
+                                    <Icon type="file" /> <span>{fileName}</span>
+                                </a>
+                            </span>
+                        </div>
+                    }
+                </div>
+            }
+        }
+
         return <span className={styles.viewLink}>
             {(downloadParams.id) &&
                 <a href={downloadUrl}>

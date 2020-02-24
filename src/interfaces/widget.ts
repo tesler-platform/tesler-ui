@@ -29,7 +29,8 @@ export interface WidgetFieldBase {
     label?: string,
     groupName?: string
     newRow?: boolean,
-    break?: boolean
+    break?: boolean,
+    snapshotKey?: string,
 }
 
 export interface WidgetListFieldBase extends WidgetFieldBase {
@@ -108,7 +109,8 @@ export type InlinePickListFieldMeta = AllWidgetTypeFieldBase & {
 export type FileUploadFieldMeta = AllWidgetTypeFieldBase & {
     type: FieldType.fileUpload,
     fileIdKey: string,
-    fileSource: string
+    fileSource: string,
+    snapshotFileIdKey?: string,
 }
 
 export type HiddenFieldMeta = AllWidgetTypeFieldBase & {
