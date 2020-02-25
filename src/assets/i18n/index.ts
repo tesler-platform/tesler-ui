@@ -18,7 +18,7 @@ function getResources(customDictionary: Resource) {
         return result
     }
     Object.keys(customDictionary).forEach(code => {
-        const core = defaultResources[code].translation as Record<string, string>
+        const core = (defaultResources[code] && defaultResources[code].translation || {}) as Record<string, string>
         const custom = customDictionary[code].translation as Record<string, string>
         result[code] = {
             translation: {

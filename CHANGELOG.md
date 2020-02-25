@@ -1,3 +1,9 @@
+# Version 1.5.2
+
+## Fixes
+
+* Fix error when custom internationalization language has no matching core dictionary
+
 # Version 1.5.1
 
 ## Fixes
