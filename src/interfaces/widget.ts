@@ -172,7 +172,8 @@ export interface WidgetMeta {
     gridWidth: number, // 1-24
     fields: object[],
     options?: WidgetOptions,
-    showCondition?: WidgetShowCondition
+    showCondition?: WidgetShowCondition,
+    documentation?: string // description for documentation
 }
 
 /**
