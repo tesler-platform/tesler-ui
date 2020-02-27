@@ -97,9 +97,9 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                 .from(
                     new Set(action.payload.widgets.map(widget => widget.bcName)) // БК которые есть на вьюхе
                 )
-                .filter(bcName => state.bo.bc[bcName] && state.bo.bc[bcName].page !== 1)
+                .filter(bcName => state.bo.bc[bcName])
                 .forEach((bcName) => {
-                    newBcs[bcName] = {...state.bo.bc[bcName], page: 1}
+                    newBcs[bcName] = {...state.bo.bc[bcName], page: 1, loading: true}
                 })
             return {
                 ...state,

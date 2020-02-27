@@ -10,7 +10,13 @@ import {DataItem, MultivalueSingleValue, PendingDataItem, PickMap} from '../inte
 import {Store as CoreStore} from '../interfaces/store'
 import {RowMeta} from '../interfaces/rowMeta'
 import {ObjectMap, AppNotificationType} from '../interfaces/objectMap'
-import {OperationPostInvokeAny, OperationTypeCrud, AssociatedItem, OperationErrorEntity} from '../interfaces/operation'
+import {
+    OperationPostInvokeAny,
+    OperationTypeCrud,
+    AssociatedItem,
+    OperationErrorEntity,
+    OperationPreInvoke
+} from '../interfaces/operation'
 import {BcFilter, BcSorter} from '../interfaces/filters'
 
 const z = null as any
@@ -297,18 +303,35 @@ export class ActionPayloadTypes {
     } = z
 
     /**
-     * TODO
-     * 
+     * Request to change Force active field was unsuccesful
+     *
      * @param bcName
-     * @param operationType
-     * @param widgetName
-     * @param onSuccessAction
+     * @param bcUrl
+     * @param viewError
+     * @param entityError
+     */
+    forceActiveChangeFail: {
+        bcName: string,
+        bcUrl: string,
+        viewError: string,
+        entityError: OperationErrorEntity
+    } = z
+
+    /**
+     * Perform CustomAction
+     * 
+     * @param bcName The business component to fetch data for
+     * @param operationType Type of operation to be performed
+     * @param widgetName What widget requires data
+     * @param onSuccessAction Any other action
+     * @param confirmOperation params for confirm modal
      */
     sendOperation: {
         bcName: string,
         operationType: OperationTypeCrud | string,
         widgetName: string,
         onSuccessAction?: AnyAction,
+        confirmOperation?: OperationPreInvoke
     } = z
 
     /**
@@ -352,6 +375,21 @@ export class ActionPayloadTypes {
         postInvoke: OperationPostInvokeAny,
         cursor?: string
         widgetName?: string
+    } = z
+
+    /**
+     * Operation to perform preInvoke actions
+     * 
+     * @param bcName The business component to fetch data for
+     * @param operationType Type of operation to be performed
+     * @param widgetName What widget requires data
+     * @param preInvoke the action that will be performed before the main operation
+     */
+    processPreInvoke: {
+        bcName: string,
+        operationType: string
+        widgetName: string
+        preInvoke: OperationPreInvoke
     } = z
 
     /**
@@ -580,6 +618,21 @@ export class ActionPayloadTypes {
         bcUrl: string,
         entityError?: OperationErrorEntity,
         viewError?: string
+    } = z
+
+    /**
+     * Save info about current operation for confirm modal
+     * 
+     * @param operation Current operation
+     * @param confirmOperation Text for confirm modal
+     */
+    operationConfirmation: {
+        operation: {
+            bcName: string,
+            operationType: OperationTypeCrud | string,
+            widgetName: string,
+        },
+        confirmOperation: OperationPreInvoke
     } = z
 
     /**
@@ -919,6 +972,11 @@ export class ActionPayloadTypes {
      * TODO
      */
     closeViewError: null = z
+
+    /**
+     * Close confirm modal window
+     */
+    closeConfirmModal: null = z
 
     /**
      * TODO

@@ -17,23 +17,43 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
 .mergeMap((action) => {
     const state = store.getState()
     const screenName = state.screen.screenName
-    const bcName = action.payload.bcName
+    const {bcName, operationType, widgetName, confirmOperation} = action.payload
     const bcUrl = buildBcUrl(bcName, true)
     const bc = state.screen.bo.bc[bcName]
+    const rowMeta = bcUrl
+        && state.view.rowMeta[bcName]
+        && state.view.rowMeta[bcName][bcUrl]
+    const fields = rowMeta && rowMeta.fields
     const cursor = bc.cursor
     const record = state.data[bcName] && state.data[bcName].find(item => item.id === bc.cursor)
     const pendingRecordChange = state.view.pendingDataChanges[bcName] && state.view.pendingDataChanges[bcName][bc.cursor]
+    for (const key in pendingRecordChange) {
+        if (fields.find(item => item.key === key && item.disabled)) {
+            delete pendingRecordChange[key]
+        }
+    }
     const data = record && { ...pendingRecordChange, vstamp: record && record.vstamp }
-    const params = { _action: action.payload.operationType }
+    const params = confirmOperation
+        ? { _action: operationType, _confirm: confirmOperation.type }
+        : { _action: operationType }
     const context = { widgetName: action.payload.widgetName }
     return api.customAction(screenName, bcUrl, data, context, params)
     .mergeMap(response => {
         const postInvoke = response.postActions[0]
+        const preInvoke = response.preInvoke
         return Observable.concat(
             Observable.of($do.sendOperationSuccess({ bcName, cursor })),
             Observable.of($do.bcForceUpdate({ bcName })),
             postInvoke
                 ? Observable.of($do.processPostInvoke({ bcName, postInvoke, widgetName: context.widgetName }))
+                : Observable.empty<never>(),
+            preInvoke
+                ? Observable.of($do.processPreInvoke({
+                    bcName,
+                    operationType,
+                    widgetName,
+                    preInvoke
+                }))
                 : Observable.empty<never>(),
         )
     })
@@ -86,8 +106,8 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
 
     // среди forceActive-полей в дельте ищем то которое изменилось по отношению к обработанным forceActive
     // или не содержится в нем, устанавливаем флаг необходимости отправки запроса если такое поле найдено
-    const someForceActiveChanged = fieldsRowMeta
-        .filter((field) => field.forceActive && (pendingChanges[field.key] !== undefined))
+    let someForceActiveChanged = fieldsRowMeta
+        .filter((field) => field.forceActive && pendingChanges[field.key] !== undefined)
         .some((field) => {
             const result = pendingChanges[field.key] !== handledForceActive[field.key]
             if (result) {
@@ -95,6 +115,12 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
             }
             return result
         })
+
+    for (const key in pendingChanges) {
+        if (fieldsRowMeta.find(item => item.key === key && item.required && pendingChanges[item.key] === null)) {
+            someForceActiveChanged = false
+        }
+    }
 
     if (someForceActiveChanged && !disableRetry) {
         return api.getRmByForceActive(
@@ -113,18 +139,27 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
                 }))
                 : Observable.empty<never>()
         })
-        .catch((error) => {
+        .catch((e: AxiosError) => {
+            console.error(e)
+            let viewError: string = null
+            let entityError: OperationErrorEntity = null
+            const operationError = e.response.data as OperationError
+            if (e.response.data === Object(e.response.data)) {
+                entityError = operationError.error.entity
+                viewError = operationError.error.popup && operationError.error.popup[0]
+            }
             return (store.getState().view.url === initUrl)
-                ? Observable.of($do.changeDataItem({
-                    bcName,
-                    cursor,
-                    dataItem: {[changedFiledKey]: currentRecordData[changedFiledKey]},
-                    disableRetry: true
-                }))
+                ? Observable.concat(
+                    Observable.of($do.changeDataItem({
+                        bcName,
+                        cursor,
+                        dataItem: {[changedFiledKey]: currentRecordData[changedFiledKey]},
+                        disableRetry: true
+                    })),
+                    Observable.of($do.forceActiveChangeFail({bcName, bcUrl, viewError, entityError})))
                 : Observable.empty<never>()
         })
     }
-
     return Observable.empty<never>()
 })
 

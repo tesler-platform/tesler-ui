@@ -25,36 +25,26 @@ const selectView: Epic = (action$, store) => action$.ofType(types.selectView)
     const state = store.getState()
     const bcToLoad: ObjectMap<WidgetMeta> = {}
     state.view.widgets
-        .filter(widget => {
-            if (!widget.bcName) {
-                return false
-            }
-
-            const parentBcName = state.screen.bo.bc[widget.bcName].parentName
-            const parentBc = parentBcName && state.screen.bo.bc[parentBcName]
-            // На загрузку попадают корневые бизнес-компоненты у которых нет родителя,
-            // и те у которых родитель уже с курсором и загружен
-            return !parentBcName || (parentBc.cursor && !parentBc.loading)
-        })
-        // Несколько виджетов могут ссылаться на одну бизнес-компоненту, поэтому фильтруем чтоб не было повторений
         .forEach(widget => {
-            if (!bcToLoad[widget.bcName]) {
-                bcToLoad[widget.bcName] = widget
+            if (widget.bcName) {
+                let bcName = widget.bcName
+                let parentName = state.screen.bo.bc[widget.bcName].parentName
+                while (parentName) {
+                    bcName = parentName
+                    parentName = state.screen.bo.bc[parentName].parentName
+                }
+
+                if (!bcToLoad[bcName]) {
+                    bcToLoad[bcName] = widget
+                }
             }
         })
-    // Если родитель попал в очередь на загрузку, то дочерние пока не загружаем
-    Object.keys(bcToLoad).forEach(bcName => {
-        const bc = state.screen.bo.bc[bcName]
-        if (bcToLoad[bc.parentName]) {
-            delete bcToLoad[bcName]
-        }
-    })
-    const result = Object.values(bcToLoad).map(widget => {
-        const { name: widgetName, bcName } = widget
+
+    const result = Object.entries(bcToLoad).map(([bcName, widget]) => {
         // TODO: Если получится разобраться с RxJS, то здесь можно бросать
         // конкат от двух Observable - первый на загрузку данных, второй на загрузку меты, отложенный
         // до появления экшна успеха загрузки данных с указанными бк и виджетом
-        return $do.bcFetchDataRequest({ widgetName, bcName })
+        return $do.bcFetchDataRequest({ widgetName: widget.name, bcName })
     })
     return result
 })
@@ -358,8 +348,16 @@ const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperat
     const widgetName = action.payload.widgetName
     const cursor = state.screen.bo.bc[bcName].cursor
     const dataItem = state.data[bcName].find(item => item.id === cursor)
-    const pendingChanges = state.view.pendingDataChanges[bcName]
-        && state.view.pendingDataChanges[bcName][cursor]
+    const rowMeta = bcUrl
+        && state.view.rowMeta[bcName]
+        && state.view.rowMeta[bcName][bcUrl]
+    const fields = rowMeta && rowMeta.fields
+    const pendingChanges = state.view.pendingDataChanges[bcName] && state.view.pendingDataChanges[bcName][cursor]
+    for (const key in pendingChanges) {
+        if (fields.find(item => item.key === key && item.disabled)) {
+            delete pendingChanges[key]
+        }
+    }
     const context = { widgetName: action.payload.widgetName }
     return api.saveBcData(state.screen.screenName, bcUrl, { ...pendingChanges, vstamp: dataItem.vstamp }, context)
     .mergeMap(data => {
@@ -864,16 +862,33 @@ function requestBcChildren(bcName: string) {
     const state = storeInstance.getState()
     const widgets = state.view.widgets
     const bcMap = state.screen.bo.bc
-    // Построим словарь с дочерними БК от запрошенной и виджетами, которые эту БК хотят
-    const childrenBcMap = Object.values(widgets)
-        .filter(widget => widget.bcName && bcMap[widget.bcName].parentName === bcName)
-        .reduce((array, nextWidget) => {
-            if (!array[nextWidget.bcName]) {
-                array[nextWidget.bcName] = []
+
+    // Build a dictionary with children for requested BC and widgets that need this BC
+    const childrenBcMap: ObjectMap<string[]> = {}
+    widgets.forEach((widget) => {
+        if (widget.bcName) {
+            const widgetBcList: string[] = []
+
+            widgetBcList.push(widget.bcName)
+            let parentName = bcMap[widget.bcName] && bcMap[widget.bcName].parentName
+            while (parentName) {
+                widgetBcList.push(parentName)
+                parentName = bcMap[parentName] && bcMap[parentName].parentName
             }
-            array[nextWidget.bcName].push(nextWidget.name)
-            return array
-        }, {} as ObjectMap<string[]>)
+
+            widgetBcList.some((expectedBcName) => {
+                if (bcMap[expectedBcName].parentName === bcName) {
+                    if (!childrenBcMap[expectedBcName]) {
+                        childrenBcMap[expectedBcName] = []
+                    }
+                    childrenBcMap[expectedBcName].push(widget.name)
+                    return true
+                }
+
+                return false
+            })
+        }
+    })
 
     // Если виджет поддерживает иерархию, то поискать дочерний в ней
     // TODO: сделать описание, разбить на хэлперы?

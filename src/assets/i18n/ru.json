@@ -6,6 +6,11 @@
         "There are pending changes. Please save them or cancel.": "Остались несохраненные данные. Сохраните или отмените изменения.",
         "Cancel changes": "Отменить изменения",
         "Show all records": "Показать остальные записи",
-        "Clear all filters": "Сбросить все фильтры"
+        "Clear all filters": "Сбросить все фильтры",
+        "Cancel": "Отменить",
+        "Ok": "Ок",
+        "Are you sure?": "Вы уверены?",
+        "Perform an additional action?": "Выполнить дополнительное действие?",
+        "The operation is not supported": "Операция не поддерживается"
     }
 }
