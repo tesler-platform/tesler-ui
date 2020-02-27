@@ -1,6 +1,11 @@
 {
     "translation": {
         "Apply": "Apply",
-        "Clear": "Clear"
+        "Clear": "Clear",
+        "Cancel": "Cancel",
+        "Ok": "Ok",
+        "Are you sure?": "Are you sure?",
+        "Perform an additional action?": "Perform an additional action?",
+        "The operation is not supported": "The operation is not supported"
     }
 }

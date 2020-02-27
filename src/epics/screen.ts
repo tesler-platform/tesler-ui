@@ -7,7 +7,8 @@ import {
     OperationPostInvokeDrillDown,
     OperationPostInvokeShowMessage,
     OperationPostInvokeDownloadFile,
-    OperationPostInvokeDownloadFileByUrl
+    OperationPostInvokeDownloadFileByUrl,
+    OperationPreInvokeType
 } from '../interfaces/operation'
 import {ObjectMap} from '../interfaces/objectMap'
 import {historyObj} from '../reducers/router'
@@ -109,8 +110,27 @@ const downloadFileByUrl: Epic = (action$, store) => action$.ofType(types.downloa
     return Observable.empty()
 })
 
+const processPreInvoke: Epic = (action$, store) => action$.ofType(types.processPreInvoke)
+.mergeMap((action) => {
+    switch (action.payload.preInvoke.type) {
+        case OperationPreInvokeType.confirm:
+            const {bcName, operationType, widgetName, preInvoke} = action.payload
+            return Observable.of($do.operationConfirmation({
+                operation: {
+                    bcName,
+                    operationType,
+                    widgetName,
+                },
+                confirmOperation: preInvoke
+            }))
+        default:
+            return Observable.empty()
+    }
+})
+
 export const screenEpics = combineEpics(
     processPostInvoke,
     downloadFile,
-    downloadFileByUrl
+    downloadFileByUrl,
+    processPreInvoke
 )
