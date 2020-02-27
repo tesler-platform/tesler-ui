@@ -303,7 +303,22 @@ export class ActionPayloadTypes {
     } = z
 
     /**
-     * Perform CustomAction 
+     * Request to change Force active field was unsuccesful
+     *
+     * @param bcName
+     * @param bcUrl
+     * @param viewError
+     * @param entityError
+     */
+    forceActiveChangeFail: {
+        bcName: string,
+        bcUrl: string,
+        viewError: string,
+        entityError: OperationErrorEntity
+    } = z
+
+    /**
+     * Perform CustomAction
      * 
      * @param bcName The business component to fetch data for
      * @param operationType Type of operation to be performed

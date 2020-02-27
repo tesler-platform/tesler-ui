@@ -103,6 +103,7 @@ export function view(state = initialState, action: AnyAction, store: Store) {
                 }
             }
         }
+        case types.forceActiveChangeFail:
         case types.bcSaveDataFail:
         case types.sendOperationFail: {
             const bcName = action.payload.bcName
