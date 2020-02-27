@@ -1,3 +1,20 @@
+# Version 1.6.0
+
+## Features
+
+* New `preInvoke` field in operation response, which allows to prompt the user with a confirmation window if he wants to perform another operation (#109)
+* New `Clear all filters` functionality (#111)
+* Drilldowns now allow to specify the filters which will be applied after drilldown (#111)
+* Fetch parent bc data even if there are no corresponding widgets for those parent business components on active view (#113)
+* Optional `documentation` field for widget meta which can be used to document widget usage (#116)
+
+## Fixes
+
+* Required fields no longer highlighted when they are left empty and marked as read-only, as it's confusing for user who has no means to resolve this problem for read-only fields (#118).
+* Return previous value if field becomes read-only when we change forceActive and send an operation (#118).
+* Validation does not work when we click on actions or change forceActive, if the widget has required fields (#118).
+* Unfilled required fields are sent to the backend as modified (value=null) (#118).
+
 # Version 1.5.2
 
 ## Fixes
