@@ -23,7 +23,8 @@ const initialState: ViewState  = {
     selectedCell: null,
     ignoreHistory: null,
     systemNotifications: [],
-    error: null
+    error: null,
+    modalInvoke: null
 }
 
 /**
@@ -387,6 +388,12 @@ export function view(state = initialState, action: AnyAction, store: Store) {
         }
         case types.showViewError: {
             return { ...state, error: action.payload.error }
+        }
+        case types.operationConfirmation: {
+            return { ...state, modalInvoke: action.payload}
+        }
+        case types.closeConfirmModal: {
+            return { ...state, modalInvoke: null }
         }
         case types.closeViewError:
             return { ...state, error: null }
