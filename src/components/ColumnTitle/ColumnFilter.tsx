@@ -32,6 +32,20 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
     const {t} = useTranslation()
     const filter = props.filter
     const [value, setValue] = React.useState(filter ? filter.value : null)
+    const [visible, setVisible] = React.useState(false)
+
+    React.useEffect(
+        () => {
+            if (!filter) {
+                setValue(null)
+            }
+        },
+        [filter]
+    )
+
+    const handleVisibleChange = () => {
+        setVisible((prevVisibleState) => !prevVisibleState)
+    }
 
     const handleInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
         setValue(e.target.value || null)
@@ -39,6 +53,7 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
 
     const handleApply = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        setVisible(false)
         const type = props.widgetMeta.type === FieldType.dictionary
             ? FilterType.equalsOneOf
             : FilterType.contains
@@ -56,7 +71,7 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
 
     const handleCancel = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
         e.preventDefault()
-        setValue(null)
+        setVisible(false)
         if (props.filter) {
             props.onCancel(props.bcName, filter)
         }
@@ -89,6 +104,8 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
     return <Popover
         trigger="click"
         content={content}
+        visible={visible}
+        onVisibleChange={handleVisibleChange}
     >
         <div
             className={cn(styles.icon, { [styles.active]: !!filter })}
