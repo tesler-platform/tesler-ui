@@ -348,16 +348,21 @@ const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperat
     const widgetName = action.payload.widgetName
     const cursor = state.screen.bo.bc[bcName].cursor
     const dataItem = state.data[bcName].find(item => item.id === cursor)
+    const pendingChanges = state.view.pendingDataChanges[bcName] && state.view.pendingDataChanges[bcName][cursor]
     const rowMeta = bcUrl
         && state.view.rowMeta[bcName]
         && state.view.rowMeta[bcName][bcUrl]
-    const fields = rowMeta && rowMeta.fields
-    const pendingChanges = state.view.pendingDataChanges[bcName] && state.view.pendingDataChanges[bcName][cursor]
-    for (const key in pendingChanges) {
-        if (fields.find(item => item.key === key && item.disabled)) {
-            delete pendingChanges[key]
+
+    // there is no row meta when parent bc custom operation's postaction triggers autosave, because custom operation call bcForceUpdate
+    if (rowMeta) {
+        const fields = rowMeta && rowMeta.fields
+        for (const key in pendingChanges) {
+            if (fields.find(item => item.key === key && item.disabled)) {
+                delete pendingChanges[key]
+            }
         }
     }
+
     const context = { widgetName: action.payload.widgetName }
     return api.saveBcData(state.screen.screenName, bcUrl, { ...pendingChanges, vstamp: dataItem.vstamp }, context)
     .mergeMap(data => {
