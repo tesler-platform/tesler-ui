@@ -1,4 +1,4 @@
-import {OperationPostInvokeAny} from './operation'
+import {OperationPostInvokeAny, OperationPreInvoke} from './operation'
 import {DrillDownType} from './router'
 
 /**
@@ -57,8 +57,15 @@ export interface DepthDataState {
 export interface DataItemResponse {
     data: {
         record: DataItem,
-        postActions?: OperationPostInvokeAny[]
+        postActions?: OperationPostInvokeAny[],
+        preInvoke?: OperationPreInvoke
     }
+}
+
+export const enum RecordSnapshotState {
+    noChange = 'noChange',
+    new = 'new',
+    deleted = 'deleted'
 }
 
 /**
@@ -81,7 +88,8 @@ export interface MultivalueSingleValue {
 export interface MultivalueSingleValueOptions {
     hint?: string,
     drillDown?: string,
-    drillDownType?: DrillDownType
+    drillDownType?: DrillDownType,
+    snapshotState?: RecordSnapshotState
 }
 
 /**

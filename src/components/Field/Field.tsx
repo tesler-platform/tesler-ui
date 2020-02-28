@@ -27,6 +27,7 @@ import CheckboxPicker from '../../components/ui/CheckboxPicker/CheckboxPicker'
 import styles from './Field.less'
 import {CustomizationContext} from '../../components/View/View'
 import {InteractiveInput} from '../../components/ui/InteractiveInput/InteractiveInput'
+import HistoryField from '../../components/ui/HistoryField/HistoryField'
 
 interface FieldOwnProps {
     widgetFieldMeta: WidgetField,
@@ -37,7 +38,9 @@ interface FieldOwnProps {
     className?: string,
     readonly?: boolean,
     disableDrillDown?: boolean,
-    forceFocus?: boolean
+    forceFocus?: boolean,
+    forcedValue?: DataValue,
+    historyMode?: boolean,
 }
 
 interface FieldProps extends FieldOwnProps {
@@ -58,6 +61,22 @@ export interface ChangeDataItemPayload { // TODO: Может из карты в 
 
 export const emptyMultivalue: MultivalueSingleValue[] = []
 
+const simpleDiffSupportedFieldTypes = [
+    FieldType.input,
+    FieldType.text,
+    FieldType.hint,
+    FieldType.number,
+    FieldType.money,
+    FieldType.percent,
+    FieldType.date,
+    FieldType.dateTime,
+    FieldType.dateTimeWithSeconds,
+    FieldType.checkbox,
+    FieldType.pickList,
+    FieldType.inlinePickList,
+    FieldType.dictionary
+]
+
 export const Field: FunctionComponent<FieldProps> = (props) => {
     const [localValue, setLocalValue] = React.useState(null)
     let resultField: React.ReactChild = null
@@ -76,11 +95,14 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
         FieldType.money,
         FieldType.percent
     ]
-    const value = undefinedValuesAllowed.includes(props.widgetFieldMeta.type)
-        ? (props.pendingValue !== undefined)
-            ? props.pendingValue
-            : props.data && props.data[props.widgetFieldMeta.key]
-        : props.pendingValue || props.data && props.data[props.widgetFieldMeta.key]
+    const value = ('forcedValue' in props)
+        ? props.forcedValue
+        : (undefinedValuesAllowed.includes(props.widgetFieldMeta.type)
+            ? (props.pendingValue !== undefined)
+                ? props.pendingValue
+                : props.data && props.data[props.widgetFieldMeta.key]
+            : props.pendingValue || props.data && props.data[props.widgetFieldMeta.key]
+        )
 
     const disabled = (props.rowFieldMeta ? props.rowFieldMeta.disabled : true)
 
@@ -126,6 +148,16 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
         readOnly: props.readonly,
         backgroundColor: bgColor,
         onDrillDown: handleDrilldown
+    }
+
+    if (!props.historyMode && props.widgetFieldMeta.snapshotKey && simpleDiffSupportedFieldTypes.includes(props.widgetFieldMeta.type)) {
+        return <HistoryField
+            fieldMeta={props.widgetFieldMeta}
+            data={props.data}
+            bcName={props.bcName}
+            cursor={props.cursor}
+            widgetName={props.widgetName}
+        />
     }
 
     switch (props.widgetFieldMeta.type) {
@@ -268,6 +300,8 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 fieldValue={value as string}
                 fileIdKey={props.widgetFieldMeta.fileIdKey}
                 fileSource={props.widgetFieldMeta.fileSource}
+                snapshotKey={props.widgetFieldMeta.snapshotKey}
+                snapshotFileIdKey={props.widgetFieldMeta.snapshotFileIdKey}
             />
             break
         case FieldType.multivalueHover:

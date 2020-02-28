@@ -28,6 +28,9 @@ import cn from 'classnames'
 import Pagination from '../../ui/Pagination/Pagination'
 import {PaginationMode} from '../../../interfaces/widget'
 import HierarchyTable from '../../../components/HierarchyTable/HierarchyTable'
+import {BcFilter} from '../../../interfaces/filters'
+import {useTranslation} from 'react-i18next'
+import FullHierarchyTable from '../../../components/FullHierarchyTable/FullHierarchyTable'
 
 interface TableWidgetOwnProps {
     meta: WidgetTableMeta,
@@ -51,22 +54,32 @@ interface TableWidgetProps extends TableWidgetOwnProps {
     hasNext: boolean,
     operations: Array<Operation | OperationGroup>,
     metaInProgress: boolean,
+    filters: BcFilter[],
     onDrillDown: (widgetName: string, bcName: string, cursor: string, fieldKey: string) => void,
     onShowAll: (bcName: string, cursor: string, route: Route, widgetName: string) => void,
     onOperationClick: (bcName: string, operationType: string, widgetName: string) => void,
     onSelectRow: (bcName: string, cursor: string) => void,
     onSelectCell: (cursor: string, widgetName: string, fieldKey: string) => void,
+    onRemoveFilters: (bcName: string) => void,
 }
 
 export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
+    if (props.meta.options) {
+        if (props.meta.options.hierarchyFull) {
+            return <FullHierarchyTable
+                meta={props.meta}
+            />
+        }
 
-    if (props.meta.options && props.meta.options.hierarchy) {
-        return <HierarchyTable
-            meta={props.meta}
-            showPagination
-            widgetName={props.widgetName}
-        />
+        if (props.meta.options.hierarchy) {
+            return <HierarchyTable
+                meta={props.meta}
+                showPagination
+                widgetName={props.widgetName}
+            />
+        }
     }
+    const {t} = useTranslation()
 
     // Набор рефов для работы меню операций строки
     const floatMenuRef = React.useRef(null)
@@ -348,12 +361,19 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
         props.onShowAll(props.bcName, props.cursor, props.route, props.widgetName)
     }
 
+    const handleRemoveFilters = () => {
+        props.onRemoveFilters(props.bcName)
+    }
+
     return <div
         className={styles.tableContainer}
         ref={tableContainerRef}
     >
         { props.limitBySelf &&
-            <ActionLink onClick={handleShowAll}>Показать остальные записи</ActionLink>
+            <ActionLink onClick={handleShowAll}> {t('Show all records')} </ActionLink>
+        }
+        { props.filters && !!props.filters.length &&
+            <ActionLink onClick={handleRemoveFilters}> {t('Clear all filters')} </ActionLink>
         }
         <Table
             className={cn(
@@ -403,6 +423,7 @@ function mapStateToProps(store: Store, ownProps: TableWidgetOwnProps) {
     const operations = store.view.rowMeta[bcName]
         && store.view.rowMeta[bcName][bcUrl]
         && store.view.rowMeta[bcName][bcUrl].actions
+    const filters = store.screen.filters[bcName]
     return {
         data: store.data[ownProps.meta.bcName],
         rowMetaFields: fields,
@@ -414,7 +435,8 @@ function mapStateToProps(store: Store, ownProps: TableWidgetOwnProps) {
         selectedCell: store.view.selectedCell,
         pendingDataItem: cursor && store.view.pendingDataChanges[bcName] && store.view.pendingDataChanges[bcName][cursor],
         operations,
-        metaInProgress: !!store.view.metaInProgress[bcName]
+        metaInProgress: !!store.view.metaInProgress[bcName],
+        filters
     }
 }
 
@@ -434,6 +456,10 @@ function mapDispatchToProps(dispatch: Dispatch) {
         },
         onSelectRow: (bcName: string, cursor: string) => {
             dispatch($do.bcSelectRecord({ bcName, cursor }))
+        },
+        onRemoveFilters: (bcName: string) => {
+            dispatch($do.bcRemoveAllFilters({ bcName}))
+            dispatch($do.bcForceUpdate({ bcName }))
         },
     }
 }

@@ -69,8 +69,8 @@ const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllProps> = 
 
     const tableRecords = React.useMemo(
         () => {
-            return props.data
-                .filter((dataItem) => {
+            return props.data &&
+                props.data.filter((dataItem) => {
                     return dataItem.level === depthLevel && (dataItem.level === 1 || dataItem.parentId === props.parentId)
                 })
                 .map((filteredItem) => {
@@ -185,16 +185,14 @@ const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllProps> = 
                                 displayedValue={item.displayedKey && dataItem[item.displayedKey]}
                             />
                         }
-                        if (item.type === FieldType.multifield) {
-                            return <Field
-                                bcName={bcName}
-                                cursor={dataItem.id}
-                                widgetName={props.meta.name}
-                                widgetFieldMeta={item}
-                                readonly
-                            />
-                        }
-                        return text
+
+                        return <Field
+                            bcName={bcName}
+                            cursor={dataItem.id}
+                            widgetName={props.meta.name}
+                            widgetFieldMeta={item}
+                            readonly
+                        />
                     }
                 }))
         ]
@@ -215,7 +213,7 @@ const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllProps> = 
             dataSource={tableRecords}
             expandedRowRender={nestedHierarchy}
             expandIconAsCell={false}
-            expandIconColumnIndex={props.onRow ? 0 : 1}
+            expandIconColumnIndex={(props.selectable) ? 1 : 0}
             loading={props.loading}
             onRow={!(hierarchyDisableRoot && depthLevel === 1) && props.onRow}
         />

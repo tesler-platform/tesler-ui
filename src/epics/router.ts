@@ -11,10 +11,10 @@ import {makeRelativeUrl, parseBcCursors} from '../utils/history'
 import {buildBcUrl} from '../utils/strings'
 import {DrillDownType, RouteType} from '../interfaces/router'
 import qs from 'query-string'
-import {BcFilter, FilterType} from '../interfaces/filters'
 import {defaultParseLocation} from '../Provider'
 import {shallowCompare} from '../utils/redux'
 import {parsePath} from 'history'
+import {parseFilters, parseSorters} from '../utils/filters'
 
 /**
  * Эпик смены текущего маршрута
@@ -167,21 +167,34 @@ const drillDown: Epic = (action$, store) => action$.ofType(types.drillDown)
         default:
             const [urlBase, urlParams] = url.split('?')
             const urlFilters = qs.parse(urlParams).filters
-            if (urlFilters) {
+            const urlSorters = qs.parse(urlParams).sorters
+            if (urlFilters || urlSorters) {
                 const prevState = state.router
                 const nextState = defaultParseLocation(parsePath(urlBase))
                 const diff = shallowCompare(prevState, nextState, ['params'])
                 try {
-                    const filters = JSON.parse(urlFilters)
-                    Object.keys(filters).map((bcName) => {
-                        const parsedFilters = parseFiltersFromString(filters[bcName])
-                        parsedFilters.forEach((item) => {
-                            store.dispatch($do.bcAddFilter({bcName, filter: item}))
+                    if (urlFilters) {
+                        const filters = JSON.parse(urlFilters)
+                        Object.keys(filters).map((bcName) => {
+                            const parsedFilters = parseFilters(filters[bcName])
+                            parsedFilters.forEach((item) => {
+                                store.dispatch($do.bcAddFilter({bcName, filter: item}))
+                            })
+                            if (!diff.length) {
+                                store.dispatch($do.bcForceUpdate({bcName}))
+                            }
                         })
-                        if (!diff.length) {
-                            store.dispatch($do.bcForceUpdate({bcName}))
-                        }
-                    })
+                    }
+                    if (urlSorters) {
+                        const sorters = JSON.parse(urlSorters)
+                        Object.keys(sorters).map((bcName) => {
+                            const parsedSorters = parseSorters(sorters[bcName])
+                            store.dispatch($do.bcAddSorter({bcName, sorter: parsedSorters}))
+                            if (!diff.length) {
+                                store.dispatch($do.bcForceUpdate({bcName}))
+                            }
+                        })
+                    }
                 } catch (e) {
                     console.warn(e)
                 }
@@ -241,34 +254,6 @@ const handleRouter: Epic = (action$, store) => action$.ofType(types.handleRouter
         return Observable.empty()
     })
 })
-
-/**
- * Function for parsing filters from string into BcFilter type
- */
-function parseFiltersFromString(defaultFilters: string) {
-    const result: BcFilter[] = []
-    const urlParams = qs.parse(defaultFilters)
-    Object.keys(urlParams).forEach((param) => {
-        const [fieldName, type] = param.split('.')
-        if (fieldName && type && urlParams[param]) {
-            let value = urlParams[param]
-            if (type === FilterType.containsOneOf || type === FilterType.equalsOneOf) {
-                try {
-                    value = JSON.parse(value)
-                } catch (e) {
-                    console.warn(e)
-                }
-                value = Array.isArray(value) ? value : []
-            }
-            result.push({
-                fieldName,
-                type: type as FilterType,
-                value
-            })
-        }
-    })
-    return result.length ? result : null
-}
 
 export const routerEpics = combineEpics(
     changeLocation,
