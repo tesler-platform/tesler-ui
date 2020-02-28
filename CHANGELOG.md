@@ -1,3 +1,12 @@
+# Version 1.7.0
+
+## Features
+
+* New `HistoryField` component which will visualize the difference between the current value of the field and the value from field with key specified in `snapshotKey` (and `snapshotFileIdKey` for file fields) of widget meta (#118).
+* Multivalue record now supports `snapshotState` field which will containt the status of the record: `new`, `deleted` or `noChange` (#118).
+* List widget in hierarchy mode now correctly displays all field types.
+* List widget now supports full hierarchy mode.
+
 # Version 1.6.0
 
 ## Features
