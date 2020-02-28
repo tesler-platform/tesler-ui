@@ -175,7 +175,7 @@ export interface WidgetMeta {
     fields: object[],
     options?: WidgetOptions,
     showCondition?: WidgetShowCondition,
-    documentation?: string // description for documentation
+    description?: string // description for documentation
 }
 
 /**
