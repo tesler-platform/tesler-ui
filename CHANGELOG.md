@@ -1,3 +1,9 @@
+# Version 1.7.1
+
+## Fixes
+
+* Revert the changes for not sending empty but required forceActive fields introduced in 1.6.0
+
 # Version 1.7.0
 
 ## Features
