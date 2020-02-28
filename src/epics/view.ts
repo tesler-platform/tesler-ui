@@ -106,7 +106,7 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
 
     // среди forceActive-полей в дельте ищем то которое изменилось по отношению к обработанным forceActive
     // или не содержится в нем, устанавливаем флаг необходимости отправки запроса если такое поле найдено
-    let someForceActiveChanged = fieldsRowMeta
+    const someForceActiveChanged = fieldsRowMeta
         .filter((field) => field.forceActive && pendingChanges[field.key] !== undefined)
         .some((field) => {
             const result = pendingChanges[field.key] !== handledForceActive[field.key]
@@ -115,12 +115,6 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
             }
             return result
         })
-
-    for (const key in pendingChanges) {
-        if (fieldsRowMeta.find(item => item.key === key && item.required && pendingChanges[item.key] === null)) {
-            someForceActiveChanged = false
-        }
-    }
 
     if (someForceActiveChanged && !disableRetry) {
         return api.getRmByForceActive(
