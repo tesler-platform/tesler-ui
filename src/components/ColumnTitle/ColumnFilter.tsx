@@ -1,5 +1,5 @@
 import React, {FormEvent, FunctionComponent} from 'react'
-import {Popover, Checkbox, Input, Button, Form, Icon} from 'antd'
+import {Popover, Checkbox, Input, Button, Form, Icon, DatePicker} from 'antd'
 import {connect} from 'react-redux'
 import {RowMetaField} from '../../interfaces/rowMeta'
 import {WidgetListField} from '../../interfaces/widget'
@@ -14,6 +14,7 @@ import {CheckboxChangeEvent} from 'antd/lib/checkbox'
 import cn from 'classnames'
 import filterIcon from './filter-solid.svg'
 import {useTranslation} from 'react-i18next'
+import {Moment} from 'moment'
 
 export interface ColumnFilterOwnProps {
     widgetName: string,
@@ -48,15 +49,47 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
     }
 
     const handleInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const textValue = e.target.value.substr(0, 100)
+        setValue(textValue || null)
+    }
+
+    const handleDateValue = (date: Moment, dateString: string) => {
+        setValue(dateString || null)
+    }
+
+    const handleCheckboxValue = (e: CheckboxChangeEvent) => {
         setValue(e.target.value || null)
     }
 
     const handleApply = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setVisible(false)
-        const type = props.widgetMeta.type === FieldType.dictionary
-            ? FilterType.equalsOneOf
-            : FilterType.contains
+        let type: FilterType
+        switch (props.widgetMeta.type) {
+            case(FieldType.dictionary): {
+                type = FilterType.equalsOneOf
+                break
+            }
+            case(FieldType.checkbox): {
+                type = FilterType.specified
+                break
+            }
+            case(FieldType.date):
+            case(FieldType.number):
+            case(FieldType.pickList):
+            case(FieldType.multivalue): {
+                type = FilterType.equals
+                break
+            }
+            case(FieldType.input):
+            case(FieldType.text): {
+                type = FilterType.contains
+                break
+            }
+            default:
+                type = FilterType.equals
+        }
+
         const newFilter: BcFilter = {
             type,
             value,
@@ -77,19 +110,44 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
         }
     }
 
-    const content = <div className={styles.content}>
-        <Form onSubmit={handleApply} layout="vertical">
-            { props.widgetMeta.type === FieldType.dictionary &&
+    let columnFilterPopover
+    switch (props.widgetMeta.type) {
+        case (FieldType.dictionary) :
+        case (FieldType.pickList) :
+        case (FieldType.multivalue) : {
+            columnFilterPopover =
                 renderCheckbox(props.widgetMeta.title, value as DataValue[], props.rowMeta.filterValues, setValue)
-            }
-            { props.widgetMeta.type !== FieldType.dictionary &&
+            break
+        }
+        case (FieldType.checkbox) : {
+            columnFilterPopover =
+                <Checkbox onChange={handleCheckboxValue}/>
+            break
+        }
+        case (FieldType.input) :
+        case (FieldType.text) :
+        case (FieldType.number) : {
+            columnFilterPopover =
                 <Input
                     autoFocus
                     value={value as string}
-                    suffix={<Icon type="search" />}
-                    onChange={handleInputValue}
-                />
-            }
+                    suffix={<Icon type="search"/>}
+                    onChange={handleInputValue}/>
+            break
+        }
+        case (FieldType.date) : {
+            columnFilterPopover =
+                <DatePicker
+                    autoFocus
+                    onChange={handleDateValue}
+                    format={'YYYY-MM-DD' + 'T' + 'HH:mm:SS'}/>
+            break
+        }
+    }
+
+    const content = <div className={styles.content}>
+        <Form onSubmit={handleApply} layout="vertical">
+            {columnFilterPopover}
             <div className={styles.operators}>
                 <Button className={styles.button} htmlType="submit">
                     {t('Apply')}
