@@ -1,3 +1,10 @@
+# Version 1.7.2
+
+## Fixes
+
+* Widget meta should reuse existing `description` field instead of introducing new `documentation` field to avoid adittional work on Tesler API (#126).
+* Post action operation should not try to access row meta when there isn't one (#129).
+
 # Version 1.7.1
 
 ## Fixes
