@@ -11,6 +11,7 @@
         "Ok": "Ок",
         "Are you sure?": "Вы уверены?",
         "Perform an additional action?": "Выполнить дополнительное действие?",
-        "The operation is not supported": "Операция не поддерживается"
+        "The operation is not supported": "Операция не поддерживается",
+        "Show all": "Показать все"
     }
 }
