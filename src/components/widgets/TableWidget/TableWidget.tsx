@@ -28,9 +28,11 @@ import cn from 'classnames'
 import Pagination from '../../ui/Pagination/Pagination'
 import {PaginationMode} from '../../../interfaces/widget'
 import HierarchyTable from '../../../components/HierarchyTable/HierarchyTable'
-import {BcFilter} from '../../../interfaces/filters'
+import {BcFilter, FilterGroup} from '../../../interfaces/filters'
 import {useTranslation} from 'react-i18next'
 import FullHierarchyTable from '../../../components/FullHierarchyTable/FullHierarchyTable'
+import {parseFilters} from '../../../utils/filters'
+import Select from '../../ui/Select/Select'
 
 interface TableWidgetOwnProps {
     meta: WidgetTableMeta,
@@ -55,12 +57,15 @@ interface TableWidgetProps extends TableWidgetOwnProps {
     operations: Array<Operation | OperationGroup>,
     metaInProgress: boolean,
     filters: BcFilter[],
+    filterGroups: FilterGroup[],
     onDrillDown: (widgetName: string, bcName: string, cursor: string, fieldKey: string) => void,
     onShowAll: (bcName: string, cursor: string, route: Route, widgetName: string) => void,
     onOperationClick: (bcName: string, operationType: string, widgetName: string) => void,
     onSelectRow: (bcName: string, cursor: string) => void,
     onSelectCell: (cursor: string, widgetName: string, fieldKey: string) => void,
     onRemoveFilters: (bcName: string) => void,
+    onApplyFilter: (bcName: string, filter: BcFilter) => void,
+    onForceUpdate: (bcName: string) => void
 }
 
 export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
@@ -357,24 +362,71 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
             }
         })
 
+    const [filterGroupName, setFilterGroupName] = React.useState(null)
+    const filtersExist = props.filters && !!props.filters.length
+
     const handleShowAll = () => {
         props.onShowAll(props.bcName, props.cursor, props.route, props.widgetName)
     }
 
     const handleRemoveFilters = () => {
         props.onRemoveFilters(props.bcName)
+        props.onForceUpdate(props.bcName)
     }
+
+    const handleAddFilters = React.useMemo(
+        () => {
+            return (value: string) => {
+                const filterGroup = props.filterGroups.find(item => item.name === value)
+                const parsedFilters = parseFilters(filterGroup.filters)
+                setFilterGroupName(filterGroup.name)
+                props.onRemoveFilters(props.bcName)
+                parsedFilters.forEach(item => props.onApplyFilter(props.bcName, item))
+                props.onForceUpdate(props.bcName)
+            }
+        },
+        [props.filterGroups, props.bcName]
+    )
+
+    React.useEffect(
+        () => {
+            if (!filtersExist) {
+                setFilterGroupName(null)
+            }
+        },
+        [filtersExist]
+    )
 
     return <div
         className={styles.tableContainer}
         ref={tableContainerRef}
     >
-        { props.limitBySelf &&
-            <ActionLink onClick={handleShowAll}> {t('Show all records')} </ActionLink>
-        }
-        { props.filters && !!props.filters.length &&
-            <ActionLink onClick={handleRemoveFilters}> {t('Clear all filters')} </ActionLink>
-        }
+        <div
+            className={styles.filtersContainer}
+        >
+            {props.filterGroups && !!props.filterGroups.length &&
+                <Select
+                    value={filterGroupName ? filterGroupName : t('Show all').toString()}
+                    onChange={handleAddFilters}
+                    dropdownMatchSelectWidth={false}
+                >
+                    {props.filterGroups.map((group) =>
+                        <Select.Option
+                            key={group.name}
+                            value={group.name}
+                        >
+                            <span>{group.name}</span>
+                        </Select.Option>
+                    )}
+                </Select>
+            }
+            {filtersExist &&
+                <ActionLink onClick={handleRemoveFilters}> {t('Clear all filters')} </ActionLink>
+            }
+            {props.limitBySelf &&
+                <ActionLink onClick={handleShowAll}> {t('Show all records')} </ActionLink>
+            }
+        </div>
         <Table
             className={cn(
                 styles.table,
@@ -390,21 +442,21 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
         {!props.disablePagination && <Pagination bcName={props.bcName} mode={props.paginationMode
         || PaginationMode.page} widgetName={props.meta.name}/>}
         {(props.showRowActions) &&
-        <div
-            ref={floatMenuRef}
-            className={styles.floatMenu}
-            onMouseLeave={onFloatMenuMouseLeave}
-        >
-            <Dropdown
-                placement="bottomRight"
-                trigger={['click']}
-                onVisibleChange={onMenuVisibilityChange}
-                overlay={rowActionsMenu}
-                getPopupContainer={trigger => trigger.parentElement}
+            <div
+                ref={floatMenuRef}
+                className={styles.floatMenu}
+                onMouseLeave={onFloatMenuMouseLeave}
             >
-                <div className={styles.dots}>...</div>
-            </Dropdown>
-        </div>
+                <Dropdown
+                    placement="bottomRight"
+                    trigger={['click']}
+                    onVisibleChange={onMenuVisibilityChange}
+                    overlay={rowActionsMenu}
+                    getPopupContainer={trigger => trigger.parentElement}
+                >
+                    <div className={styles.dots}>...</div>
+                </Dropdown>
+            </div>
         }
     </div>
 }
@@ -436,7 +488,8 @@ function mapStateToProps(store: Store, ownProps: TableWidgetOwnProps) {
         pendingDataItem: cursor && store.view.pendingDataChanges[bcName] && store.view.pendingDataChanges[bcName][cursor],
         operations,
         metaInProgress: !!store.view.metaInProgress[bcName],
-        filters
+        filters,
+        filterGroups: store.screen.bo.bc[bcName].filterGroups
     }
 }
 
@@ -459,6 +512,11 @@ function mapDispatchToProps(dispatch: Dispatch) {
         },
         onRemoveFilters: (bcName: string) => {
             dispatch($do.bcRemoveAllFilters({ bcName}))
+        },
+        onApplyFilter: (bcName: string, filter: BcFilter) => {
+            dispatch($do.bcAddFilter({ bcName, filter }))
+        },
+        onForceUpdate: (bcName: string) => {
             dispatch($do.bcForceUpdate({ bcName }))
         },
     }

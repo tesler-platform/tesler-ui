@@ -37,9 +37,7 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
 
     React.useEffect(
         () => {
-            if (!filter) {
-                setValue(null)
-            }
+            setValue(filter ? filter.value : null)
         },
         [filter]
     )

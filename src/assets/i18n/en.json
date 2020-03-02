@@ -8,6 +8,7 @@
         "Ok": "Ok",
         "Are you sure?": "Are you sure?",
         "Perform an additional action?": "Perform an additional action?",
-        "The operation is not supported": "The operation is not supported"
+        "The operation is not supported": "The operation is not supported",
+        "Show all": "Show all"
     }
 }
