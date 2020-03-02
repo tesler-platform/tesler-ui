@@ -23,3 +23,8 @@ export interface BcSorter {
     fieldName: string,
     direction: 'asc' | 'desc'
 }
+
+export interface FilterGroup {
+    name: string
+    filters: string
+}

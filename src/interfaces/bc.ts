@@ -2,6 +2,8 @@
  * Интерфейсы для Business Component'ы
  */
 
+import {FilterGroup} from './filters'
+
  /**
   * Meta data for Business Component
   * 
@@ -14,14 +16,16 @@
   *     @param fieldKey Sort by field
   *     @param order Priority of this specfic sorter
   *     @param direction "asc" or "desc"
-  *     i.e. "_sort.0.asc=firstName"         
+  *     i.e. "_sort.0.asc=firstName"
+  * @param filterGroups Predefined filters
   */
 export interface BcMeta {
     name: string
     parentName: string | null
     url: string,
     cursor: string | null,
-    defaultSort?: string
+    defaultSort?: string,
+    filterGroups?: FilterGroup[]
 }
 
 export interface BcMetaState extends BcMeta {
