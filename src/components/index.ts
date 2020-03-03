@@ -12,13 +12,13 @@ export {default as MultivalueTag} from './ui/Multivalue/MultivalueTag'
 export {default as CheckboxPicker} from './ui/CheckboxPicker/CheckboxPicker'
 export {default as Pagination} from './ui/Pagination/Pagination'
 export {default as ErrorPopup} from './ui/ErrorPopup/ErrorPopup'
-// Контейнеры
+// Containers
 export {default as TemplatedTitle} from './TemplatedTitle/TemplatedTitle'
 export {default as View} from './View/View'
 export {default as Widget} from './Widget/Widget'
 export {default as Field} from './Field/Field'
 export {default as ModalInvoke} from './ModalInvoke/ModalInvoke'
-// Бизнес-виджеты
+// Busines-widgets
 export {default as FormWidget} from './widgets/FormWidget/FormWidget'
 export {default as TableWidget} from './widgets/TableWidget/TableWidget'
 export {default as TextWidget} from './widgets/TextWidget/TextWidget'
