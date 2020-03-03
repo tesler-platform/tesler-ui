@@ -41,6 +41,7 @@ interface FieldOwnProps {
     forceFocus?: boolean,
     forcedValue?: DataValue,
     historyMode?: boolean,
+    customProps?: Record<string, any>,
 }
 
 interface FieldProps extends FieldOwnProps {
@@ -330,6 +331,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                         const CustomComponent = customFields[props.widgetFieldMeta.type] || customFields[props.widgetFieldMeta.key]
                         return <CustomComponent
                             {...commonProps}
+                            customProps={props.customProps}
                             value={value}
                             onBlur={handleInputBlur}
                         />
