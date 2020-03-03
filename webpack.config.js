@@ -85,6 +85,12 @@ module.exports = (env, options) => {
                 commonjs2: 'rxjs',
                 commonjs: 'rxjs',
                 amd: 'rxjs'
+            },
+            'moment': {
+                root: 'moment',
+                commonjs2: 'moment',
+                commonjs: 'moment',
+                amd: 'moment'
             }
         }],
         devtool: 'source-map',
