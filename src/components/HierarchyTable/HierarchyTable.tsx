@@ -209,6 +209,10 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
             return null
         }
     }
+
+    const fieldCustomProps = React.useMemo(() => {
+        return {hierarchyDepth: indentLevel + 1}
+    }, [indentLevel])
     const columns: Array<ColumnProps<DataItem>> = React.useMemo(() => {
         return [
             indentColumn,
@@ -232,6 +236,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
                         widgetName={props.meta.name}
                         widgetFieldMeta={item}
                         readonly
+                        customProps={fieldCustomProps}
                     />
                 }
             }))
