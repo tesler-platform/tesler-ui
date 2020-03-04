@@ -1,3 +1,10 @@
+# Version 1.7.3
+
+## Fixes
+
+* Make a datepicker with an empty value to keep the selected locale (#133).
+* Pass hierarchy depth level to custom fields (#135).
+
 # Version 1.7.2
 
 ## Fixes
