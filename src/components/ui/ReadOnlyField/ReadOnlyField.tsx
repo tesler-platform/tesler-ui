@@ -12,7 +12,11 @@ interface ReadOnlyFieldProps {
 
 const ReadOnlyField: React.FunctionComponent<ReadOnlyFieldProps> = (props) => {
     return <span
-        className={cn(styles.readOnlyField, props.className)}
+        className={cn(
+            styles.readOnlyField,
+            {[styles.coloredField]: props.backgroundColor},
+            props.className
+        )}
         style={props.backgroundColor ? {backgroundColor: props.backgroundColor} : null}
     >
         {(props.onDrillDown)
