@@ -5,6 +5,7 @@ import ColumnFilter from './ColumnFilter'
 import ColumnSort from './ColumnSort'
 import styles from './ColumnTitle.less'
 import TemplatedTitle from '../TemplatedTitle/TemplatedTitle'
+import {FieldType} from '../../interfaces/view'
 
 export interface ColumnTitle {
     widgetName: string,
@@ -24,12 +25,23 @@ export const ColumnTitle: FunctionComponent<ColumnTitle> = (props) => {
         return <div>{title}</div>
     }
 
-    const filterable = props.rowMeta.filterable
-    const sort = <ColumnSort
+    const noSortable = [
+        FieldType.multivalue,
+        FieldType.multivalueHover,
+        FieldType.multifield,
+        FieldType.hidden,
+        FieldType.fileUpload,
+        FieldType.inlinePickList,
+        FieldType.hint
+    ].includes(props.widgetMeta.type)
+
+    const sort = !noSortable && <ColumnSort
         widgetName={props.widgetName}
         fieldKey={props.widgetMeta.key}
         className={styles.sort}
     />
+
+    const filterable = props.rowMeta.filterable
     const filter = filterable &&
         <ColumnFilter
             widgetName={props.widgetName}
