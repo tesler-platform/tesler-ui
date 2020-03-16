@@ -92,9 +92,9 @@ const Pagination: React.FunctionComponent<PaginationAllProps> = (props) => {
 function mapStateToProps(store: Store, ownProps: PaginationOwnProps): PaginationStateProps {
     const bc = store.screen.bo.bc[ownProps.bcName]
     return {
-        hasNext: bc && bc.hasNext,
-        page: bc && bc.page,
-        loading: bc && bc.loading,
+        hasNext: bc?.hasNext,
+        page: bc?.page,
+        loading: bc?.loading,
         widgetName: ownProps.widgetName
     }
 }

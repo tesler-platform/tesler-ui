@@ -33,7 +33,7 @@ export const Popup: FunctionComponent<PopupProps> = (props) => {
             width={width}
             onCancel={props.onCancelHandler}
             footer={<div className={styles.footerContainer}>
-                    {(!props.disablePagination) &&
+                    {!props.disablePagination &&
                         <div className={styles.pagination}>
                             <Pagination bcName={props.bcName} mode={PaginationMode.page} widgetName={props.widgetName}/>
                         </div>

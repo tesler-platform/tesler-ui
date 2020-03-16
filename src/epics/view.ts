@@ -20,19 +20,17 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
     const {bcName, operationType, widgetName, confirmOperation} = action.payload
     const bcUrl = buildBcUrl(bcName, true)
     const bc = state.screen.bo.bc[bcName]
-    const rowMeta = bcUrl
-        && state.view.rowMeta[bcName]
-        && state.view.rowMeta[bcName][bcUrl]
-    const fields = rowMeta && rowMeta.fields
+    const rowMeta = bcUrl && state.view.rowMeta[bcName]?.[bcUrl]
+    const fields = rowMeta?.fields
     const cursor = bc.cursor
-    const record = state.data[bcName] && state.data[bcName].find(item => item.id === bc.cursor)
-    const pendingRecordChange = state.view.pendingDataChanges[bcName] && state.view.pendingDataChanges[bcName][bc.cursor]
+    const record = state.data[bcName]?.find(item => item.id === bc.cursor)
+    const pendingRecordChange = state.view.pendingDataChanges[bcName]?.[bc.cursor]
     for (const key in pendingRecordChange) {
         if (fields.find(item => item.key === key && item.disabled)) {
             delete pendingRecordChange[key]
         }
     }
-    const data = record && { ...pendingRecordChange, vstamp: record && record.vstamp }
+    const data = record && { ...pendingRecordChange, vstamp: record.vstamp }
     const params = confirmOperation
         ? { _action: operationType, _confirm: confirmOperation.type }
         : { _action: operationType }
@@ -61,10 +59,10 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
         console.error(e)
         let viewError: string = null
         let entityError: OperationErrorEntity = null
-        const operationError = e.response.data as OperationError
-        if (e.response.data === Object(e.response.data)) {
-            entityError = operationError.error.entity
-            viewError = operationError.error.popup && operationError.error.popup[0]
+        const operationError = e.response?.data as OperationError
+        if (e.response?.data === Object(e.response?.data)) {
+            entityError = operationError?.error?.entity
+            viewError = operationError?.error?.popup[0]
         }
         return Observable.of($do.sendOperationFail({ bcName, bcUrl, viewError, entityError }))
     })
@@ -90,8 +88,8 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
     const {bcName, cursor, disableRetry} = action.payload
 
     const isBcHierarchy = state.view.widgets.some((widget) => {
-        return widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup && widget.options
-            && (widget.options.hierarchySameBc || widget.options.hierarchyFull)
+        return widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup
+            && (widget.options?.hierarchySameBc || widget.options?.hierarchyFull)
     })
     if (isBcHierarchy) {
         return Observable.empty<never>()
@@ -99,7 +97,7 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
 
     const bcUrl = buildBcUrl(bcName, true)
     const pendingChanges = state.view.pendingDataChanges[bcName][cursor]
-    const handledForceActive = state.view.handledForceActive[bcName] && state.view.handledForceActive[bcName][cursor] || {}
+    const handledForceActive = state.view.handledForceActive[bcName]?.[cursor] || {}
     const currentRecordData = state.data[bcName].find((record) => record.id === cursor)
     const fieldsRowMeta = state.view.rowMeta[bcName][bcUrl].fields
     let changedFiledKey: string = null
@@ -137,10 +135,10 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
             console.error(e)
             let viewError: string = null
             let entityError: OperationErrorEntity = null
-            const operationError = e.response.data as OperationError
-            if (e.response.data === Object(e.response.data)) {
-                entityError = operationError.error.entity
-                viewError = operationError.error.popup && operationError.error.popup[0]
+            const operationError = e.response?.data as OperationError
+            if (e.response?.data === Object(e.response?.data)) {
+                entityError = operationError?.error?.entity
+                viewError = operationError?.error?.popup?.[0]
             }
             return (store.getState().view.url === initUrl)
                 ? Observable.concat(
@@ -177,7 +175,7 @@ const clearPendingDataChangesAfterCursorChange: Epic = (action$, store) => actio
     Object.entries(nextCursors).forEach(entry => {
         const [ bcName, cursor ] = entry
         const bc = state.screen.bo.bc[bcName]
-        if (!bc || bc && bc.cursor !== cursor) {
+        if (!bc || bc?.cursor !== cursor) {
             cursorsDiffMap[bcName] = cursor
         }
     })
@@ -199,7 +197,7 @@ const selectTableCellInit: Epic = (action$, store) => action$.ofType(types.selec
 
     const nextWidget = state.view.widgets.find(widget => widget.name === action.payload.widgetName)
     const nextBcName = nextWidget.bcName
-    const nextBcCursor = state.screen.bo.bc[nextBcName] && state.screen.bo.bc[nextBcName].cursor
+    const nextBcCursor = state.screen.bo.bc[nextBcName]?.cursor
 
     const selectedCell = state.view.selectedCell
     if (nextRowId !== nextBcCursor) {

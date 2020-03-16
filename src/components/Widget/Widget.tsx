@@ -77,21 +77,20 @@ export const Widget: FunctionComponent<WidgetProps> = (props) => {
 }
 
 /**
- * Возвращает экземпляр компонента виджета на основе типа, который пришел в мете виджета.
+ * Return component instance based on type specified in widget meta
+ * 
+ * `customWidgets` dictionary can be used to extend this function with new widget types,
+ *  with custom declaration having a priority when it is specified for core widget type
+ * `children` is returned in case of unknown widget type
  *
- * Словарь customWidgets может использоваться для расширения новыми типами виджетов, при этом
- * если в словаре переопределен один из стандартных типов виджета, то приоритет будет за тем компонентом,
- * что пришел в словаре.
- * В случае неизвестного типа виджета, будет возвращен children.
- *
- * @param widgetMeta Мета виджета
- * @param customWidgets Словарь, где ключ - тип виджета, значение - экземпляр компонента, которым этот виджет нужно рендерить
- * @param children Дочерние компоненты виджета, возвращаются при неизвестном типе виджета
+ * @param widgetMeta Meta configuration for widget
+ * @param customWidgets Dictionary where key is a widget type and value is a component that should be rendered
+ * @param children Widgets children component, returned in case type is unknown
  */
 function chooseWidgetType(widgetMeta: WidgetMeta, customWidgets?: ObjectMap<CustomWidget>, children?: React.ReactNode) {
     const options = widgetMeta.options
-    const readOnly = options && options.readOnly
-    if (customWidgets && customWidgets[widgetMeta.type]) {
+    const readOnly = options?.readOnly
+    if (customWidgets?.[widgetMeta.type]) {
         const CustomWidgetComponent = customWidgets[widgetMeta.type]
         return <CustomWidgetComponent meta={widgetMeta} />
     }
@@ -115,18 +114,16 @@ function chooseWidgetType(widgetMeta: WidgetMeta, customWidgets?: ObjectMap<Cust
 function mapStateToProps(store: Store, ownProps: WidgetOwnProps) {
     const bcName = ownProps.meta.bcName
     const bc = store.screen.bo.bc[bcName]
-    const parent = bc && store.screen.bo.bc[bc.parentName]
+    const parent = store.screen.bo.bc[bc?.parentName]
     const hasParent = !!parent
     let showWidget = true
     if (ownProps.meta.showCondition && !Array.isArray(ownProps.meta.showCondition)) {
         showWidget = checkShowCondition(ownProps.meta.showCondition, store.screen.bo.bc, store.data, store.view)
     }
     const bcUrl = buildBcUrl(bcName, true)
-    const rowMeta = bcUrl
-        && store.view.rowMeta[bcName]
-        && store.view.rowMeta[bcName][bcUrl]
+    const rowMeta = bcUrl && store.view.rowMeta[bcName]?.[bcUrl]
     return {
-        loading: bc && bc.loading,
+        loading: bc?.loading,
         parentCursor: hasParent && parent.cursor,
         showWidget,
         rowMetaExists: !!rowMeta,
@@ -147,12 +144,10 @@ function checkShowCondition(condition: WidgetShowCondition, bcMap: Record<string
     if (isDefault) {
         return true
     }
-    const cursor = bcMap[bcName] && bcMap[bcName].cursor
-    const record = cursor && data[bcName] && data[bcName].find(item => item.id === cursor)
-    const actualValue = record && record[params.fieldKey]
-    const pendingValue = view.pendingDataChanges[bcName]
-        && view.pendingDataChanges[bcName][cursor]
-        && view.pendingDataChanges[bcName][cursor][params.fieldKey]
+    const cursor = bcMap[bcName]?.cursor
+    const record = cursor && data[bcName]?.find(item => item.id === cursor)
+    const actualValue = record?.[params.fieldKey]
+    const pendingValue = view.pendingDataChanges[bcName]?.[cursor]?.[params.fieldKey]
     return (pendingValue !== undefined)
         ? pendingValue === params.value
         : actualValue === params.value

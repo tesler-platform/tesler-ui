@@ -41,7 +41,7 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
     const columns: Array<ColumnProps<DataItem>> = props.widget.fields
     .filter(item => item.type !== FieldType.hidden)
     .map(item => {
-        const fieldRowMeta = props.rowMetaFields && props.rowMetaFields.find(field => field.key === item.key)
+        const fieldRowMeta = props.rowMetaFields?.find(field => field.key === item.key)
         return {
             title: <ColumnTitle
                 widgetName={props.widget.name}
@@ -83,15 +83,13 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
         onCancelHandler={props.onClose}
         bcName={props.widget.bcName}
         widgetName={props.widget.name}
-        disablePagination={props.widget.options && props.widget.options.hierarchyFull}
+        disablePagination={props.widget.options?.hierarchyFull}
     >
         <div>
             <h2 className={styles.title}>{props.widget.title}</h2>
             {(props.bcLoading)
             ? <Skeleton loading paragraph={{rows: 5}} />
-            : (props.widget.options
-                && (props.widget.options.hierarchy || props.widget.options.hierarchySameBc || props.widget.options.hierarchyFull)
-            )
+            : (props.widget.options?.hierarchy || props.widget.options?.hierarchySameBc || props.widget.options?.hierarchyFull)
                 ? props.widget.options.hierarchyFull
                     ? <FullHierarchyTable
                         meta={props.widget}
@@ -125,19 +123,16 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
 function mapStateToProps(store: Store, props: PickListPopupOwnProps) {
     const bcName = props.widget.bcName
     const bcUrl = buildBcUrl(bcName, true)
-    const fields = bcUrl
-        && store.view.rowMeta[bcName]
-        && store.view.rowMeta[bcName][bcUrl]
-        && store.view.rowMeta[bcName][bcUrl].fields
+    const fields = bcUrl && store.view.rowMeta[bcName]?.[bcUrl]?.fields
     const bc = store.screen.bo.bc[bcName]
-    const parentBCName = bc && bc.parentName
+    const parentBCName = bc?.parentName
     return {
         pickMap: store.view.pickMap,
         showed: store.view.popupData.bcName === props.widget.bcName,
         data: store.data[props.widget.bcName],
-        cursor: parentBCName && store.screen.bo.bc[parentBCName].cursor,
-        parentBCName: bc && bc.parentName,
-        bcLoading: bc && bc.loading,
+        cursor: store.screen.bo.bc[parentBCName]?.cursor,
+        parentBCName: bc?.parentName,
+        bcLoading: bc?.loading,
         rowMetaFields: fields
     }
 }

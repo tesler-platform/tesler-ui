@@ -18,17 +18,14 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
     const state = getState()
     if (action.type === types.sendOperation) {
         const { bcName, operationType, widgetName } = action.payload as unknown as ActionPayloadTypes['sendOperation']
-        const cursor = state.screen.bo.bc[bcName] && state.screen.bo.bc[bcName].cursor
+        const cursor = state.screen.bo.bc[bcName]?.cursor
         const bcUrl = buildBcUrl(bcName, true)
-        const record = state.data[bcName] && state.data[bcName].find(item => item.id === cursor)
-        const rowMeta = bcUrl
-            && state.view.rowMeta[bcName]
-            && state.view.rowMeta[bcName][bcUrl]
-        const pendingValues = state.view.pendingDataChanges[bcName]
-            && state.view.pendingDataChanges[bcName][cursor]
+        const record = state.data[bcName]?.find(item => item.id === cursor)
+        const rowMeta = bcUrl && state.view.rowMeta[bcName]?.[bcUrl]
+        const pendingValues = state.view.pendingDataChanges[bcName]?.[cursor]
 
         // If operation marked as validation-sensetive, mark all 'required' fields which haven't been filled as dirty and invalid
-        if (operationRequiresAutosave(operationType, rowMeta && rowMeta.actions)) {
+        if (operationRequiresAutosave(operationType, rowMeta?.actions)) {
             const widget = state.view.widgets.find(item => item.name === widgetName)
             // While `required` fields are assigned via rowMeta, only visually visible fields should be checked
             // to avoid situations when field is marked as `required` but not available for user to interact.
@@ -48,7 +45,7 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
                 }
                 itemFieldsCalc.forEach((widgetField: WidgetField) => {
                     const matchingRowMeta = rowMeta.fields.find(rowMetaField => rowMetaField.key === widgetField.key)
-                    if (!fieldsToCheck[widgetField.key] && matchingRowMeta && !matchingRowMeta.hidden) {
+                    if (!fieldsToCheck[widgetField.key] && !matchingRowMeta?.hidden) {
                         fieldsToCheck[widgetField.key] = matchingRowMeta
                     }
                 })
@@ -91,7 +88,7 @@ function operationRequiresAutosave(operationType: string, actions: Array<Operati
         console.error('rowMeta is missing in the middle of "sendOperation" action')
         return result
     }
-    result = actions && actions.some(action => {
+    result = actions?.some(action => {
         if (isOperationGroup(action)) {
             return action.actions.find(item => item.type === operationType && item.autoSaveBefore)
         } else {
@@ -113,8 +110,8 @@ function getRequiredFieldsMissing(record: DataItem, pendingChanges: PendingDataI
     const result: PendingDataItem = {}
     fieldsMeta.forEach(field => {
 
-        const value = record && record[field.key] as string
-        const pendingValue = pendingChanges && pendingChanges[field.key]
+        const value = record?.[field.key] as string
+        const pendingValue = pendingChanges?.[field.key]
         const effectiveValue = pendingValue !== undefined ? pendingValue : value
         let falsyValue = false
         if ([undefined, null, ''].includes(effectiveValue as any)) {
