@@ -37,22 +37,20 @@ export const FormWidget: FunctionComponent<FormWidgetProps> = (props) => {
 
     const fields = React.useMemo(() => {
         return <Row gutter={24}>
-            {props.meta.options
-            && props.meta.options.layout
-            && props.meta.options.layout.rows
+            { props.meta.options?.layout?.rows
                 .map((row, index) => {
                     return <Row key={index}>
                     {row.cols
                     .filter(field => {
-                        const meta = props.fields && props.fields.find(item => item.key === field.fieldKey)
+                        const meta = props.fields?.find(item => item.key === field.fieldKey)
                         return meta ? !meta.hidden : true
                     })
                         .filter((col) => !hiddenKeys.includes(col.fieldKey))
                     .map((col, colIndex) => {
                         const field = flattenWidgetFields.find(item => item.key === col.fieldKey)
-                        const disabled = props.fields && props.fields.find(item => item.key === field.key && item.disabled)
-                        const error = (!disabled && props.missingFields && props.missingFields[field.key])
-                            || props.metaErrors && props.metaErrors[field.key]
+                        const disabled = props.fields?.find(item => item.key === field.key && item.disabled)
+                        const error = (!disabled && props.missingFields?.[field.key])
+                            || props.metaErrors?.[field.key]
                         return  <Col key={colIndex} span={col.span} className={cn(
                             {[styles.colWrapper]: row.cols.length > 1 || col.span !== 24}
                         )}>
@@ -90,13 +88,11 @@ function mapStateToProps(store: Store, ownProps: FormWidgetOwnProps) {
     const bcName = ownProps.meta.bcName
     const bc = store.screen.bo.bc[bcName]
     const bcUrl = buildBcUrl(bcName, true)
-    const rowMeta = bcUrl
-        && store.view.rowMeta[bcName]
-        && store.view.rowMeta[bcName][bcUrl]
-    const fields = rowMeta && rowMeta.fields
-    const metaErrors = rowMeta && rowMeta.errors
+    const rowMeta = bcUrl && store.view.rowMeta[bcName]?.[bcUrl]
+    const fields = rowMeta?.fields
+    const metaErrors = rowMeta?.errors
     const missingFields = store.view.pendingValidationFails
-    const cursor = bc && bc.cursor
+    const cursor = bc?.cursor
     return {
         cursor,
         fields,

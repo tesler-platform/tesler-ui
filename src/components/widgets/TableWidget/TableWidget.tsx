@@ -315,7 +315,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
     const columns: Array<ColumnProps<DataItem>> = props.meta.fields
         .filter((item: WidgetListField) => item.type !== FieldType.hidden)
         .map((item: WidgetListField) => {
-            const fieldRowMeta = props.rowMetaFields && props.rowMetaFields.find(field => field.key === item.key)
+            const fieldRowMeta = props.rowMetaFields?.find(field => field.key === item.key)
             return {
                 title: <ColumnTitle
                     widgetName={props.meta.name}
@@ -354,7 +354,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                     return (!props.allowEdit)
                         ? null
                         : {
-                            onDoubleClick: (event) => {
+                            onDoubleClick: (event: React.MouseEvent) => {
                                 processCellClick(record.id, item.key)
                             }
                         }
@@ -363,7 +363,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
         })
 
     const [filterGroupName, setFilterGroupName] = React.useState(null)
-    const filtersExist = props.filters && !!props.filters.length
+    const filtersExist = !!props.filters?.length
 
     const handleShowAll = () => {
         props.onShowAll(props.bcName, props.cursor, props.route, props.widgetName)
@@ -404,7 +404,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
         <div
             className={styles.filtersContainer}
         >
-            {props.filterGroups && !!props.filterGroups.length &&
+            {!!props.filterGroups?.length &&
                 <Select
                     value={filterGroupName ? filterGroupName : t('Show all').toString()}
                     onChange={handleAddFilters}
@@ -464,17 +464,12 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
 function mapStateToProps(store: Store, ownProps: TableWidgetOwnProps) {
     const bcName = ownProps.meta.bcName
     const bcUrl = buildBcUrl(bcName, true)
-    const fields = bcUrl
-        && store.view.rowMeta[bcName]
-        && store.view.rowMeta[bcName][bcUrl]
-        && store.view.rowMeta[bcName][bcUrl].fields
+    const fields = bcUrl && store.view.rowMeta[bcName]?.[bcUrl]?.fields
     const bc = store.screen.bo.bc[bcName]
-    const cursor = bc && bc.cursor
-    const hasNext = bc && bc.hasNext
-    const limitBySelf = cursor && store.router.bcPath && store.router.bcPath.includes(`${bcName}/${cursor}`)
-    const operations = store.view.rowMeta[bcName]
-        && store.view.rowMeta[bcName][bcUrl]
-        && store.view.rowMeta[bcName][bcUrl].actions
+    const cursor = bc?.cursor
+    const hasNext = bc?.hasNext
+    const limitBySelf = cursor && store.router.bcPath?.includes(`${bcName}/${cursor}`)
+    const operations = store.view.rowMeta[bcName]?.[bcUrl]?.actions
     const filters = store.screen.filters[bcName]
     return {
         data: store.data[ownProps.meta.bcName],
@@ -485,7 +480,7 @@ function mapStateToProps(store: Store, ownProps: TableWidgetOwnProps) {
         cursor,
         hasNext,
         selectedCell: store.view.selectedCell,
-        pendingDataItem: cursor && store.view.pendingDataChanges[bcName] && store.view.pendingDataChanges[bcName][cursor],
+        pendingDataItem: cursor && store.view.pendingDataChanges[bcName]?.[cursor],
         operations,
         metaInProgress: !!store.view.metaInProgress[bcName],
         filters,

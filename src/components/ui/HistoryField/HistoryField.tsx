@@ -16,8 +16,8 @@ interface HistoryFieldProps {
 }
 
 const HistoryField: React.FunctionComponent<HistoryFieldProps> = (props) => {
-    const prevValue = (props.fieldMeta.snapshotKey && props.data && props.data[props.fieldMeta.snapshotKey] || '').toString()
-    const currentValue = (props.data && props.data[props.fieldMeta.key] || '').toString()
+    const prevValue = (props.fieldMeta.snapshotKey && props.data?.[props.fieldMeta.snapshotKey] || '').toString()
+    const currentValue = (props.data?.[props.fieldMeta.key] || '').toString()
 
     if (props.fieldMeta.type === FieldType.text) {
         return <div>
@@ -48,7 +48,7 @@ const HistoryField: React.FunctionComponent<HistoryFieldProps> = (props) => {
     }
 
     return <div className={styles.container}>
-        {(prevValue) && <div>
+        {prevValue && <div>
             <div className={styles.prevValue}>
                 <Field
                     bcName={props.bcName}
@@ -62,7 +62,7 @@ const HistoryField: React.FunctionComponent<HistoryFieldProps> = (props) => {
                 />
             </div>
         </div>}
-        {(currentValue) && <div>
+        {currentValue && <div>
             <div className={styles.newValue}>
                 <Field
                     bcName={props.bcName}
@@ -73,7 +73,8 @@ const HistoryField: React.FunctionComponent<HistoryFieldProps> = (props) => {
                     historyMode
                 />
             </div>
-        </div>}
+        </div>
+        }
     </div>
 }
 

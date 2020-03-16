@@ -47,8 +47,8 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         onSave,
     } = props
 
-    const pendingBcNames = props.widget.options && props.widget.options.hierarchy
-    ? [props.widget.bcName, ...props.widget.options.hierarchy.map(item => item.bcName)]
+    const pendingBcNames = props.widget.options?.hierarchy
+    ? [props.widget.bcName, ...props.widget.options?.hierarchy.map(item => item.bcName)]
     : [props.widget.bcName]
 
     const saveData = React.useCallback(() => {
@@ -69,13 +69,11 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         onCancelHandler={cancelData}
         bcName={props.widget.bcName}
         widgetName={props.widget.name}
-        disablePagination={props.widget.options && props.widget.options.hierarchyFull}
+        disablePagination={props.widget.options?.hierarchyFull}
     >
         {(props.bcLoading)
             ? <Skeleton loading paragraph={{rows: 5}} />
-            : (props.widget.options
-                && (props.widget.options.hierarchy || props.widget.options.hierarchySameBc || props.widget.options.hierarchyFull)
-            )
+            : (props.widget.options?.hierarchy || props.widget.options?.hierarchySameBc || props.widget.options?.hierarchyFull)
                 ? (props.widget.options.hierarchyFull)
                     ? <FullHierarchyTable
                         meta={props.widget}
@@ -107,7 +105,7 @@ function mapStateToProps(store: Store, ownProps: IAssocListOwnProps) {
     return {
         showed: store.view.popupData.bcName === ownProps.widget.bcName,
         assocValueKey: store.view.popupData.assocValueKey,
-        bcLoading: bc && bc.loading
+        bcLoading: bc?.loading
     }
 }
 

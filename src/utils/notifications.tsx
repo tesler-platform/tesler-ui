@@ -8,7 +8,7 @@ export const openButtonWarningNotification = (
     onButtonClick: () => void,
     key?: string
 ): string => {
-    if (key && key.length > 0) {
+    if (key?.length > 0) {
         notification.close(key)
     }
 

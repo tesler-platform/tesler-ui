@@ -101,8 +101,8 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
         : (undefinedValuesAllowed.includes(props.widgetFieldMeta.type)
             ? (props.pendingValue !== undefined)
                 ? props.pendingValue
-                : props.data && props.data[props.widgetFieldMeta.key]
-            : props.pendingValue || props.data && props.data[props.widgetFieldMeta.key]
+                : props.data?.[props.widgetFieldMeta.key]
+            : props.pendingValue || props.data?.[props.widgetFieldMeta.key]
         )
 
     const disabled = (props.rowFieldMeta ? props.rowFieldMeta.disabled : true)
@@ -118,18 +118,18 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
     }, [])
 
     const bgColor = props.widgetFieldMeta.bgColorKey
-        ? props.data && (props.data[props.widgetFieldMeta.bgColorKey] as string)
+        ? (props.data?.[props.widgetFieldMeta.bgColorKey] as string)
         : props.widgetFieldMeta.bgColor
 
     const handleDrilldown = React.useMemo(
         () => {
             return (!props.disableDrillDown && props.widgetFieldMeta.drillDown)
                 ? () => {
-                    props.onDrillDown(props.widgetName, props.data && props.data.id, props.bcName, props.widgetFieldMeta.key)
+                    props.onDrillDown(props.widgetName, props.data?.id, props.bcName, props.widgetFieldMeta.key)
                 }
                 : null
         },
-        [props.disableDrillDown, props.widgetFieldMeta.drillDown, props.widgetName, props.data && props.data.id, props.bcName,
+        [props.disableDrillDown, props.widgetFieldMeta.drillDown, props.widgetName, props.data?.id, props.bcName,
             props.widgetFieldMeta.key]
     )
 
@@ -309,7 +309,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
             resultField = <MultivalueHover
                 {...commonProps}
                 data={(value || emptyMultivalue) as MultivalueSingleValue[]}
-                displayedValue={props.widgetFieldMeta.displayedKey && props.data[props.widgetFieldMeta.displayedKey]}
+                displayedValue={props.widgetFieldMeta.displayedKey && props.data?.[props.widgetFieldMeta.displayedKey]}
             />
             break
         case FieldType.hint:
@@ -327,8 +327,8 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
             resultField = <CustomizationContext.Consumer>
                 {context => {
                     const customFields = context.customFields
-                    if (customFields && (customFields[props.widgetFieldMeta.type] || customFields[props.widgetFieldMeta.key])) {
-                        const CustomComponent = customFields[props.widgetFieldMeta.type] || customFields[props.widgetFieldMeta.key]
+                    if (customFields?.[props.widgetFieldMeta.type] || customFields?.[props.widgetFieldMeta.key]) {
+                        const CustomComponent = customFields?.[props.widgetFieldMeta.type] || customFields?.[props.widgetFieldMeta.key]
                         return <CustomComponent
                             {...commonProps}
                             customProps={props.customProps}
@@ -373,22 +373,17 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
 
 function mapStateToProps(store: Store, ownProps: FieldOwnProps) {
     const bcUrl = buildBcUrl(ownProps.bcName, true)
-    const rowMeta = bcUrl
-        && store.view.rowMeta[ownProps.bcName]
-        && store.view.rowMeta[ownProps.bcName][bcUrl]
-        && store.view.rowMeta[ownProps.bcName][bcUrl]
-    const rowFieldMeta = rowMeta && rowMeta.fields.find(field => field.key === ownProps.widgetFieldMeta.key)
-    const missing = store.view.pendingValidationFails && store.view.pendingValidationFails[ownProps.widgetFieldMeta.key]
-    const metaError = missing || rowMeta && rowMeta.errors && rowMeta.errors[ownProps.widgetFieldMeta.key]
+    const rowMeta = bcUrl && store.view.rowMeta[ownProps.bcName]?.[bcUrl]
+    const rowFieldMeta = rowMeta?.fields.find(field => field.key === ownProps.widgetFieldMeta.key)
+    const missing = store.view.pendingValidationFails?.[ownProps.widgetFieldMeta.key]
+    const metaError = missing || rowMeta?.errors?.[ownProps.widgetFieldMeta.key]
     const pendingValue = store.view.pendingDataChanges[ownProps.bcName]
-        && store.view.pendingDataChanges[ownProps.bcName][ownProps.cursor]
-        && store.view.pendingDataChanges[ownProps.bcName][ownProps.cursor][ownProps.widgetFieldMeta.key]
+    ?.[ownProps.cursor]
+    ?.[ownProps.widgetFieldMeta.key]
     const widget = store.view.widgets.find(item => item.name === ownProps.widgetName)
-    const showErrorPopup = widget && widget.type !== WidgetTypes.Form
+    const showErrorPopup = widget?.type !== WidgetTypes.Form
     return {
-        data: (ownProps.data)
-            ? ownProps.data
-            : store.data[ownProps.bcName] && store.data[ownProps.bcName].find(item => item.id === ownProps.cursor),
+        data: ownProps.data || store.data[ownProps.bcName]?.find(item => item.id === ownProps.cursor),
         pendingValue,
         rowFieldMeta,
         metaError,

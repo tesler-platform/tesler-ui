@@ -4,6 +4,7 @@
         "tslint-eslint-rules"
     ],
     "rules": {
+        "array-type": [true, "array-simple"],
         "ter-indent": [
             true,
             4,

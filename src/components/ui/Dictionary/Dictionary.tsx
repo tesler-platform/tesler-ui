@@ -48,7 +48,7 @@ const Dictionary: React.FunctionComponent<IDictionaryProps> = (props) => {
 
             if (values) {
                 const valueId = Number(valueKey)
-                value = values[valueId] && values[valueId].value
+                value = values[valueId]?.value
             }
 
             props.onChange(value || '')
@@ -76,7 +76,7 @@ const Dictionary: React.FunctionComponent<IDictionaryProps> = (props) => {
             forwardedRef={selectRef}
             className={props.className}
         >
-            {(props.values && props.values.length)
+            {props.values?.length
                 ? props.values.map((el, index) => {
                     // @see https://github.com/ant-design/ant-design/issues/7138#issuecomment-324116471
                     const titleFix = { title: el.value }

@@ -93,12 +93,12 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
 
     const anyHierarchyWidget = state.view.widgets.find((widget) => {
         return widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup
-            && widget.options && (widget.options.hierarchy || widget.options.hierarchySameBc || widget.options.hierarchyFull)
+            && (widget.options?.hierarchy || widget.options?.hierarchySameBc || widget.options?.hierarchyFull)
     })
-    const sameBcHierarchyOptions = anyHierarchyWidget && anyHierarchyWidget.options.hierarchySameBc && anyHierarchyWidget.options
+    const sameBcHierarchyOptions = anyHierarchyWidget?.options?.hierarchySameBc && anyHierarchyWidget?.options
     const depthLevel = sameBcHierarchyOptions && (action.type === types.bcFetchDataRequest && action.payload.depth || 1)
 
-    const limitBySelfCursor = !depthLevel && state.router.bcPath && state.router.bcPath.includes(`${bcName}/${cursor}`)
+    const limitBySelfCursor = !depthLevel && state.router.bcPath?.includes(`${bcName}/${cursor}`)
     const bcUrl = buildBcUrl(bcName, limitBySelfCursor)
     if (depthLevel) {
         filters.push({
@@ -124,7 +124,7 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
         fetchParams._limit = (action.payload.to || page - fetchParams._page) * limit
     }
     if (action.type === types.bcFetchDataRequest && action.payload.ignorePageLimit
-        || anyHierarchyWidget && anyHierarchyWidget.options.hierarchyFull
+        || anyHierarchyWidget?.options?.hierarchyFull
     ) {
         fetchParams._limit = 0
     }
@@ -140,8 +140,8 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
         fetchParams
     )
     .mergeMap(data => {
-        const newCursor = data.data[0] && data.data[0].id
-        const fetchChildrenBcData = (data.data && data.data.length)
+        const newCursor = data.data[0]?.id
+        const fetchChildrenBcData = (data.data?.length)
             ? (depthLevel)
                 ? (depthLevel <= maxDepthLevel)
                     ? Observable.of($do.bcFetchDataRequest({
@@ -180,7 +180,7 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
                 bcUrl,
                 hasNext: data.hasNext
             })),
-            (action.type === types.bcFetchDataRequest && action.payload.depth && action.payload.depth > 1)
+            (action.type === types.bcFetchDataRequest && action.payload.depth > 1)
                 ? Observable.empty<never>()
                 : Observable.of<AnyAction>($do.bcFetchRowMeta({widgetName, bcName})),
             fetchChildrenBcData
@@ -198,7 +198,7 @@ const bcLoadMore: Epic = (action$, store) => action$.ofType(types.bcLoadMore)
     const state = store.getState() as Store
     const bcName = action.payload.bcName
     const {cursor, page, limit} = state.screen.bo.bc[action.payload.bcName]
-    const limitBySelfCursor = state.router.bcPath && state.router.bcPath.includes(`${bcName}/${cursor}`)
+    const limitBySelfCursor = state.router.bcPath?.includes(`${bcName}/${cursor}`)
     const bcUrl = buildBcUrl(bcName, limitBySelfCursor)
     const filters = state.screen.filters[bcName] || []
     const sorters = state.screen.sorters[bcName]
@@ -219,7 +219,7 @@ const bcLoadMore: Epic = (action$, store) => action$.ofType(types.bcLoadMore)
 
     const normalFlow = api.fetchBcData(state.screen.screenName, bcUrl, fetchParams)
     .mergeMap(data => {
-        const oldBcDataIds = state.data[bcName] && state.data[bcName].map(i => i.id)
+        const oldBcDataIds = state.data[bcName]?.map(i => i.id)
         const newData = [...state.data[bcName], ...data.data.filter((bc: DataItem) => !oldBcDataIds.includes(bc.id))]
         return Observable.of($do.bcFetchDataSuccess({
             bcName,
@@ -348,14 +348,12 @@ const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperat
     const widgetName = action.payload.widgetName
     const cursor = state.screen.bo.bc[bcName].cursor
     const dataItem = state.data[bcName].find(item => item.id === cursor)
-    const pendingChanges = state.view.pendingDataChanges[bcName] && state.view.pendingDataChanges[bcName][cursor]
-    const rowMeta = bcUrl
-        && state.view.rowMeta[bcName]
-        && state.view.rowMeta[bcName][bcUrl]
+    const pendingChanges = state.view.pendingDataChanges[bcName]?.[cursor]
+    const rowMeta = bcUrl && state.view.rowMeta[bcName]?.[bcUrl]
 
     // there is no row meta when parent bc custom operation's postaction triggers autosave, because custom operation call bcForceUpdate
     if (rowMeta) {
-        const fields = rowMeta && rowMeta.fields
+        const fields = rowMeta.fields
         for (const key in pendingChanges) {
             if (fields.find(item => item.key === key && item.disabled)) {
                 delete pendingChanges[key]
@@ -400,10 +398,10 @@ const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperat
         }
         let viewError: string = null
         let entityError: OperationErrorEntity = null
-        const operationError = e.response.data as OperationError
-        if (e.response.data === Object(e.response.data)) {
-            entityError = operationError.error.entity
-            viewError = operationError.error.popup && operationError.error.popup[0]
+        const operationError = e.response?.data as OperationError
+        if (e.response?.data === Object(e.response?.data)) {
+            entityError = operationError?.error?.entity
+            viewError = operationError?.error?.popup[0]
         }
         return Observable.of($do.bcSaveDataFail({ bcName, bcUrl, viewError, entityError }))
     })
@@ -419,9 +417,9 @@ const bcCancelCreateDataEpic: Epic = (action$, store) => action$.ofType(types.se
     const bc = state.screen.bo.bc[bcName]
     const cursor = bc.cursor
     const context = { widgetName: action.payload.widgetName }
-    const record = state.data[bcName] && state.data[bcName].find(item => item.id === bc.cursor)
-    const pendingRecordChange = state.view.pendingDataChanges[bcName] && state.view.pendingDataChanges[bcName][bc.cursor]
-    const data = record && { ...pendingRecordChange, vstamp: record && record.vstamp }
+    const record = state.data[bcName]?.find(item => item.id === bc.cursor)
+    const pendingRecordChange = state.view.pendingDataChanges[bcName]?.[bc.cursor]
+    const data = record && { ...pendingRecordChange, vstamp: record.vstamp }
     const params = { _action: action.payload.operationType }
     const cursorsMap: ObjectMap<string> = { [action.payload.bcName]: null }
     return api.customAction(screenName, bcUrl, data, context, params)
@@ -478,7 +476,7 @@ const saveAssociationsPassive: Epic = (action$, store) => action$.ofType(types.s
     const result = recordPrevData
     .filter(prevItem => {
         const removedItem = newValues.find(item => item.id === prevItem.id)
-        if (removedItem && !removedItem._associate) {
+        if (!removedItem?._associate) {
             return false
         }
         return true
@@ -548,7 +546,7 @@ const changeChildrenAssociations: Epic = (action$, store) => action$.ofType(type
 const changeChildrenAssociationsSameBc: Epic = (action$, store) => action$.ofType(types.changeChildrenAssociationsSameBc)
 .mergeMap(action => {
     const state = store.getState()
-    const data = state.depthData[action.payload.depth] && state.depthData[action.payload.depth][action.payload.bcName] || []
+    const data = state.depthData[action.payload.depth]?.[action.payload.bcName] || []
     return Observable.of($do.changeDataItems({
         bcName: action.payload.bcName,
         cursors: data.map(item => item.id),
@@ -632,9 +630,9 @@ const changeAssociation: Epic = (action$, store) => action$.ofType(types.changeA
     const parent: WidgetTableHierarchy = isRoot
         ? null
         : (hierarchy.find((item, index) => {
-            return hierarchy[index + 1] && hierarchy[index + 1].bcName === action.payload.bcName
+            return hierarchy[index + 1]?.bcName === action.payload.bcName
         }) || rootHierarchyDescriptor)
-    const parentItem = parent && state.data[parent.bcName].find(item => item.id === state.screen.bo.bc[parent.bcName].cursor)
+    const parentItem = state.data[parent?.bcName]?.find(item => item.id === state.screen.bo.bc[parent?.bcName].cursor)
     if (parent && hierarchyTraverse && selected) {
         if (hierarchyDescriptor.radio) {
             result.push(Observable.of($do.dropAllAssociations({
@@ -699,19 +697,18 @@ const changeAssociationSameBc: Epic = (action$, store) => action$.ofType(types.c
     const hierarchyTraverse = widget.options.hierarchyTraverse
 
     const currentData = (depth > 1)
-        ? state.depthData[depth] && state.depthData[depth][bcName]
+        ? state.depthData[depth]?.[bcName]
         : state.data[bcName]
 
     const parentCursor = (parentDepth)
         ? (parentDepth > 1)
-            ? state.screen.bo.bc[bcName].depthBc[parentDepth] && state.screen.bo.bc[bcName].depthBc[parentDepth].cursor
+            ? state.screen.bo.bc[bcName].depthBc[parentDepth]?.cursor
             : state.screen.bo.bc[bcName].cursor
         : null
 
     const parentItem = (parentCursor)
         ? (parentDepth > 1)
-            ? state.depthData[parentDepth] && state.depthData[parentDepth][bcName]
-                && state.depthData[parentDepth][bcName].find(item => item.id === parentCursor)
+            ? state.depthData[parentDepth]?.[bcName]?.find(item => item.id === parentCursor)
             : state.data[bcName].find(item => item.id === parentCursor)
         : null
 
@@ -770,7 +767,7 @@ const changeAssociationFull: Epic = (action$, store) => action$.ofType(types.cha
     const hierarchyGroupDeselection = widget.options.hierarchyGroupDeselection
 
     const currentLevelData = allData.filter(
-        (item) => item.level === depth && (item.level === 1 || (parentItem && item.parentId === parentItem.id))
+        (item) => item.level === depth && (item.level === 1 || (item.parentId === parentItem?.id))
     )
 
     if (rootRadio && hierarchyGroupDeselection && depth === 1) {
@@ -778,8 +775,8 @@ const changeAssociationFull: Epic = (action$, store) => action$.ofType(types.cha
             const delta = state.view.pendingDataChanges[bcName]
             const prevSelected = allData.find((dataItem) => {
                 if (dataItem.level === 1 && dataItem.id !== action.payload.dataItem.id) {
-                    const deltaItem = delta && delta[dataItem.id]
-                    if (deltaItem && deltaItem._associate || !deltaItem && dataItem._associate) {
+                    const deltaItem = delta?.[dataItem.id]
+                    if (deltaItem?._associate || !deltaItem && dataItem._associate) {
                         return true
                     }
                 }
@@ -857,11 +854,11 @@ const changeAssociationFull: Epic = (action$, store) => action$.ofType(types.cha
 })
 
 /**
- * Возвращает словарь дочерних бизнес-компонент на текущей view
- * Ключ - имя дочерней бизнес-компоненты
- * Значение - массив идентификаторов виджетов, которые эту бизнес-компоненту используют.
+ * Returns a dictionary of children business components for current iew
+ * Key - name of child business component
+ * Value - an array of widget ids which use this business component
  *
- * @param bcName Имя родительской БК
+ * @param bcName Parent business component name
  */
 function requestBcChildren(bcName: string) {
     const state = storeInstance.getState()
@@ -875,10 +872,10 @@ function requestBcChildren(bcName: string) {
             const widgetBcList: string[] = []
 
             widgetBcList.push(widget.bcName)
-            let parentName = bcMap[widget.bcName] && bcMap[widget.bcName].parentName
+            let parentName = bcMap[widget.bcName]?.parentName
             while (parentName) {
                 widgetBcList.push(parentName)
-                parentName = bcMap[parentName] && bcMap[parentName].parentName
+                parentName = bcMap[parentName]?.parentName
             }
 
             widgetBcList.some((expectedBcName) => {
@@ -895,11 +892,11 @@ function requestBcChildren(bcName: string) {
         }
     })
 
-    // Если виджет поддерживает иерархию, то поискать дочерний в ней
-    // TODO: сделать описание, разбить на хэлперы?
+    // If widgets supports hierarchy, try to find children though it
+    // TODO: need description and split to separate methods?
     const hierarchyWidget = state.view.widgets.find(item => {
-        const hierarchy = item.options && item.options.hierarchy
-        const nestedBc = hierarchy && hierarchy.map(nestedItem => nestedItem.bcName)
+        const hierarchy = item.options?.hierarchy
+        const nestedBc = hierarchy?.map(nestedItem => nestedItem.bcName)
         return hierarchy && (item.bcName === bcName || nestedBc.includes(bcName))
     }) as WidgetTableMeta
     if (hierarchyWidget) {
@@ -931,10 +928,10 @@ const removeMultivalueTag: Epic = (action$, store) => action$.ofType(types.remov
         const widget = state.view.widgets.find((checkWidget) =>
             checkWidget.bcName === action.payload.popupBcName && checkWidget.type === WidgetTypes.AssocListPopup
         )
-        if (widget && widget.options && widget.options.hierarchy) {
+        if (widget?.options?.hierarchy) {
             widget.options.hierarchy.some((hierarchyData) => {
                 const hierarchyDelta = state.view.pendingDataChanges[hierarchyData.bcName]
-                if (hierarchyDelta && hierarchyDelta[removedItemId]) {
+                if (hierarchyDelta?.[removedItemId]) {
                     removedItemBc = hierarchyData.bcName
                     return true
                 }
