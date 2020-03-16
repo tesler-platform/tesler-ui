@@ -70,12 +70,14 @@ const emptyData: AssociatedItem[] = []
 export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) => {
     const bcName = props.nestedByBc || props.meta.bcName
 
-    const hierarchyGroupSelection = props.meta.options && props.meta.options.hierarchyGroupSelection
-    const hierarchyRadio = props.meta.options && props.meta.options.hierarchyRadio
-    const hierarchyRadioAll = props.meta.options && props.meta.options.hierarchyRadioAll
-    const hierarchyDisableRoot = props.meta.options && props.meta.options.hierarchyDisableRoot
+    const {
+        hierarchyGroupSelection,
+        hierarchyRadio,
+        hierarchyRadioAll,
+        hierarchyDisableRoot
+    } = props.meta.options ?? {}
 
-    // TODO: Переделать в более понятный вид
+    // TODO: Simplify all this
     const {hierarchyLevels, nestedBcName, indentLevel} = props
     const hierarchyLevel = (props.nestedByBc)
         ? hierarchyLevels.find(item => item.bcName === props.nestedByBc)
@@ -85,8 +87,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
         : hierarchyLevels[0]
     const hasNested = indentLevel < hierarchyLevels.length
 
-    const isRadio = hierarchyLevel && hierarchyLevel.radio
-        || (!hierarchyLevel && hierarchyRadio)
+    const isRadio = hierarchyLevel?.radio || (!hierarchyLevel && hierarchyRadio)
     const selectedRecords = useAssocRecords(props.data, props.pendingChanges, isRadio)
 
     const rowSelection: TableRowSelection<DataItem> = React.useMemo(() => {
@@ -139,11 +140,11 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
         return undefined
     }, [bcName, props.onSelect, props.cursor, selectedRecords, props.assocValueKey])
 
-    const [currentCursor, setCurrentCursor] = React.useState()
+    const [currentCursor, setCurrentCursor] = React.useState(undefined)
     const [noChildRecords, setNoChildRecords] = React.useState([])
     const tableRecords = React.useMemo(
         () => {
-            return props.data && props.data.map((item) => {
+            return props.data?.map((item) => {
                 return {
                     ...item,
                     noChildren: noChildRecords.includes(item.id)
@@ -154,7 +155,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
     )
     const [userClosedRecords, setUserClosedRecords] = React.useState([])
     const expandedRowKeys = React.useMemo(() => {
-        if (currentCursor && !(props.childData && props.childData.length)) {
+        if (currentCursor && !(props.childData?.length)) {
             if (!noChildRecords.includes(currentCursor)) {
                 setNoChildRecords([...noChildRecords, currentCursor])
             }
@@ -270,20 +271,16 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
 function mapStateToProps(store: Store, ownProps: HierarchyTableOwnProps) {
     const bcMap = store.screen.bo.bc
     const bcName = ownProps.nestedByBc || ownProps.meta.bcName
-    const hierarchyLevels = ownProps.meta.options && ownProps.meta.options.hierarchy
+    const hierarchyLevels = ownProps.meta.options?.hierarchy
     const indentLevel = ownProps.nestedByBc
         ? hierarchyLevels.findIndex(item => item.bcName === ownProps.nestedByBc) + 1
         : 0
-    const nestedBcName = hierarchyLevels[indentLevel] && hierarchyLevels[indentLevel].bcName
-    const loading = bcMap[bcName] && bcMap[bcName].loading
+    const nestedBcName = hierarchyLevels[indentLevel]?.bcName
+    const loading = bcMap[bcName]?.loading
     const bcUrl = buildBcUrl(bcName, true)
-    const fields = bcUrl
-        && store.view.rowMeta[bcName]
-        && store.view.rowMeta[bcName][bcUrl]
-        && store.view.rowMeta[bcName][bcUrl].fields
-    const cursor = bcMap[bcName] && bcMap[bcName].cursor
-    const parentCursor = ownProps.nestedByBc && ownProps.parentBcName
-        && bcMap[ownProps.parentBcName] && bcMap[ownProps.parentBcName].cursor
+    const fields = bcUrl && store.view.rowMeta[bcName]?.[bcUrl]?.fields
+    const cursor = bcMap[bcName]?.cursor
+    const parentCursor = ownProps.nestedByBc && bcMap[ownProps.parentBcName]?.cursor
     const pendingChanges = store.view.pendingDataChanges[bcName]
     return {
         childData: loading ? emptyData : store.data[nestedBcName],

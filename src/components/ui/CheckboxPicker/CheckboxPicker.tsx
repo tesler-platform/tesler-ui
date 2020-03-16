@@ -43,7 +43,7 @@ const CheckboxPicker = (props: CheckboxPickerProps) => {
         <div className={styles.container}>
             {<Checkbox
                 checked={props.value as boolean}
-                disabled={metaField && metaField.disabled || props.readonly}
+                disabled={metaField?.disabled || props.readonly}
                 onChange={handleChange}
             >
                 {props.fieldLabel}
@@ -55,11 +55,8 @@ const CheckboxPicker = (props: CheckboxPickerProps) => {
 
 function mapStateToProps(store: Store, ownProps: CheckboxPickerOwnProps) {
     const bcUrl = buildBcUrl(ownProps.bcName, true)
-    const metaField = bcUrl
-        && store.view.rowMeta[ownProps.bcName]
-        && store.view.rowMeta[ownProps.bcName][bcUrl]
-        && store.view.rowMeta[ownProps.bcName][bcUrl].fields
-        && store.view.rowMeta[ownProps.bcName][bcUrl].fields.find(field => field.key === ownProps.fieldName)
+    const metaField = bcUrl && store.view.rowMeta[ownProps.bcName]?.[bcUrl]
+    ?.fields?.find(field => field.key === ownProps.fieldName)
     return {
         metaField
     }

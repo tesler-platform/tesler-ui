@@ -21,7 +21,7 @@ const MultiField: React.FunctionComponent<MultiFieldProps> = (props) => {
     return <div className={valuesStyle}>
         {props.fields.map(
             (fieldMeta) => {
-                const data = props.data && props.data[fieldMeta.key]
+                const data = props.data?.[fieldMeta.key]
 
                 return (data || data === 0)
                     ? <div key={fieldMeta.key} className={valueStyle}>

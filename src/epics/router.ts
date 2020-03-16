@@ -54,7 +54,7 @@ const changeLocation: Epic = (action$, store) => action$.ofType(types.changeLoca
     Object.entries(nextCursors).forEach(entry => {
         const [ bcName, cursor ] = entry
         const bc = state.screen.bo.bc[bcName]
-        if (!bc || bc && bc.cursor !== cursor) {
+        if (!bc || bc?.cursor !== cursor) {
             cursorsDiffMap[bcName] = cursor
         }
     })
@@ -134,7 +134,7 @@ const changeView: Epic = (action$, store) => action$.ofType(types.selectView)
     Object.entries(nextCursors).forEach(entry => {
         const [ bcName, cursor ] = entry
         const bc = state.screen.bo.bc[bcName]
-        if (!bc || bc && bc.cursor !== cursor) {
+        if (!bc || bc?.cursor !== cursor) {
             cursorsDiffMap[bcName] = cursor
         }
     })
@@ -221,7 +221,7 @@ const userDrillDown: Epic = (action$, store) => action$.ofType(types.userDrillDo
     .mergeMap(rowMeta => {
         const drillDownField = rowMeta.fields.find(field => field.key === fieldKey)
         const route = state.router
-        return (drillDownField && drillDownField.drillDown)
+        return drillDownField?.drillDown
             ? Observable.concat(
                 (drillDownField.drillDownType !== DrillDownType.inner)
                     ? Observable.of($do.bcFetchRowMetaSuccess({bcName, rowMeta, bcUrl, cursor}))

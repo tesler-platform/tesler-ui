@@ -19,7 +19,7 @@ interface ModalInvokeProps {
 const ModalInvoke: React.FunctionComponent<ModalInvokeProps> = (props) => {
     const {t} = useTranslation()
     const modal = Modal.confirm({
-        title: props.confirmOperation && props.confirmOperation.message || t('Perform an additional action?'),
+        title: props.confirmOperation?.message || t('Perform an additional action?'),
         content: t('Are you sure?'),
         okText: t('Ok'),
         cancelText: t('Cancel')

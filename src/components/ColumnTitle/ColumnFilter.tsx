@@ -202,15 +202,15 @@ function renderCheckbox(
         <li className={cn(styles.listItem, styles.header)}>
             <Checkbox
                 className={styles.checkbox}
-                indeterminate={value && value.length > 0 && value.length < filterValues.length}
-                checked={value && value.length === filterValues.length}
+                indeterminate={value?.length > 0 && value?.length < filterValues.length}
+                checked={value?.length === filterValues.length}
                 onChange={handleAll}
             />
             {title}
         </li>
         <ul className={styles.list}>
             {filterValues.map((item, index) => {
-                const checked = value && value.some(filterValue => item.value === filterValue)
+                const checked = value?.some(filterValue => item.value === filterValue)
                 return <li className={styles.listItem} key={index}>
                     <Checkbox
                         checked={checked}
@@ -227,8 +227,8 @@ function renderCheckbox(
 
 function mapStateToProps(store: Store, ownProps: ColumnFilterOwnProps) {
     const widget = store.view.widgets.find(item => item.name === ownProps.widgetName)
-    const bcName = widget && widget.bcName
-    const filter = store.screen.filters[bcName] && store.screen.filters[bcName].find(item => item.fieldName === ownProps.widgetMeta.key)
+    const bcName = widget?.bcName
+    const filter = store.screen.filters[bcName]?.find(item => item.fieldName === ownProps.widgetMeta.key)
     return {
         filter,
         bcName

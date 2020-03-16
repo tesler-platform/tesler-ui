@@ -18,7 +18,7 @@ export function useAssocRecords(
         let records = emptyData
         if (data) {
             records = data.filter(item => {
-                if (pendingChanges && pendingChanges[item.id]) {
+                if (pendingChanges?.[item.id]) {
                     return pendingChanges[item.id]._associate
                 }
 

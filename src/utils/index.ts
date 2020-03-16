@@ -1,4 +1,4 @@
-export {default as api} from './api'
-export {default as redux} from './redux'
-export {default as strings} from './strings'
-export {default as history} from './strings'
+export * as api from './api'
+export * as redux from './redux'
+export * as strings from './strings'
+export * as history from './history'
