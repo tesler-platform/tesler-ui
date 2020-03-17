@@ -1017,7 +1017,8 @@ export const needSaveAction = (action: string) => {
         types.selectTableCellInit,
         types.bcSelectRecord,
         types.showAllTableRecordsInit,
-        types.bcChangePage
+        types.bcChangePage,
+        types.sendOperation
     ]
 
     return actions.indexOf(action) > -1
