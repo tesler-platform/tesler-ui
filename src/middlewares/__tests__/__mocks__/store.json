@@ -1,0 +1,109 @@
+{
+  "screen": {
+    "screenName": "1event",
+    "bo": {
+      "activeBcName": null,
+      "bc": {
+        "1EventRoot1Response": {
+          "id": null,
+          "url": "1Event/:id/1EventRootReason/:id/1EventRoot1Response",
+          "defaultFilter": null,
+          "dimFilterSpec": null,
+          "filterGroups": null,
+          "defaultSort": null,
+          "cursor": "1049267",
+          "page": 1,
+          "limit": 5,
+          "hasNext": false,
+          "parentName": "1EventRootReason",
+          "name": "1EventRoot1Response",
+          "reportPeriod": null,
+          "binds": null,
+          "refresh": false,
+          "loading": false
+        }
+      }
+    }
+  },
+  "view": {
+    "widgets": [
+      {
+        "id": "20362",
+        "vstamp": 0,
+        "name": "1 Event Root 1 Response Create Form",
+        "widgetId": 5,
+        "position": 5,
+        "descriptionTitle": null,
+        "description": null,
+        "snippet": null,
+        "showExportStamp": false,
+        "limit": 0,
+        "type": "List",
+        "url": "1Event/:id/1EventRootReason/:id/1EventRoot1Response",
+        "bcName": "1EventRoot1Response",
+        "title": "AAA",
+        "fields": [
+          {
+            "title": "Номер",
+            "key": "1Event1ResponseName",
+            "drillDown": true,
+            "type": "input"
+          },
+          {
+            "title": "Описание",
+            "key": "1Event1ResponseDescription",
+            "type": "text"
+          },
+          {
+            "title": "Статус",
+            "key": "reasonResponseCd",
+            "type": "dictionary"
+          },
+          {
+            "title": "Обоснование",
+            "key": "reasonResponseDesc",
+            "type": "text"
+          }
+        ],
+        "options": {
+          "actionGroups": {
+            "exclude": [
+              "save",
+              "associate"
+            ]
+          }
+        },
+        "pivotFields": null,
+        "axisFields": [],
+        "showCondition": [],
+        "chart": [],
+        "graph": null,
+        "x": null,
+        "y": null,
+        "width": null,
+        "height": null,
+        "minHeight": null,
+        "maxHeight": null,
+        "minWidth": null,
+        "maxWidth": null,
+        "isDraggable": null,
+        "isResizable": null,
+        "gridWidth": 2,
+        "gridBreak": 0,
+        "hide": false
+      }
+    ],
+    "pendingDataChanges": {
+      "1EventRoot1Response": {
+        "1049267": {
+          "reasonResponseDesc": "12345678901"
+        }
+      }
+    },
+    "selectedCell": {
+      "widgetName": "1 Event Root 1 Response Create Form",
+      "rowId": "1049267",
+      "fieldKey": "reasonResponseDesc"
+    }
+  }
+}
