@@ -14,10 +14,20 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
 
             // TODO: Should offer to save pending changes or drop them
 
+            const actionBcName = action.payload.bcName
+            const isAnotherBc = Object.keys(state.view.pendingDataChanges)
+                .filter(key => key !== actionBcName).length > 0
+            const isSendOperation = action.type === types.sendOperation
+            const needToSaveTableChanges = isSendOperation && isAnotherBc
             const selectedCell = state.view.selectedCell
+            const isSelectTableCellInit = action.type === types.selectTableCellInit
             if (selectedCell
-                && (action.type !== types.selectTableCellInit
-                    || (selectedCell.widgetName !== action.payload.widgetName || selectedCell.rowId !== action.payload.rowId)
+                && (
+                    needToSaveTableChanges
+                    || (!isSelectTableCellInit && !isSendOperation)
+                    || (isSelectTableCellInit &&
+                        (selectedCell.widgetName !== action.payload.widgetName || selectedCell.rowId !== action.payload.rowId)
+                    )
                 )
             ) {
                 const widget = state.view.widgets.find((v: WidgetMeta) => v.name === selectedCell.widgetName)
