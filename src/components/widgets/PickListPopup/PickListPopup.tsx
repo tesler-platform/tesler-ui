@@ -2,7 +2,7 @@ import React, {FunctionComponent} from 'react'
 import {connect} from 'react-redux'
 import {$do} from '../../../actions/actions'
 import {Store} from '../../../interfaces/store'
-import {WidgetListField, WidgetTableMeta} from 'interfaces/widget'
+import {WidgetTableMeta} from 'interfaces/widget'
 import Popup from '../../ui/Popup/Popup'
 import {createMapDispatchToProps} from '../../../utils/redux'
 import styles from './PickListPopup.less'
@@ -16,6 +16,7 @@ import FullHierarchyTable from '../../FullHierarchyTable/FullHierarchyTable'
 import ColumnTitle from '../../ColumnTitle/ColumnTitle'
 import {RowMetaField} from '../../../interfaces/rowMeta'
 import {buildBcUrl} from '../../../utils/strings'
+import {FieldType} from '../../../interfaces/view'
 
 export interface PickListPopupActions {
     onChange: (payload: ChangeDataItemPayload) => void,
@@ -37,7 +38,9 @@ export interface PickListPopupProps extends PickListPopupOwnProps {
 }
 
 export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopupActions> = (props) => {
-    const columns: Array<ColumnProps<DataItem>> = props.widget.fields.map((item: WidgetListField) => {
+    const columns: Array<ColumnProps<DataItem>> = props.widget.fields
+    .filter(item => item.type !== FieldType.hidden)
+    .map(item => {
         const fieldRowMeta = props.rowMetaFields && props.rowMetaFields.find(field => field.key === item.key)
         return {
             title: <ColumnTitle
@@ -104,6 +107,7 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
                             onRow={onRow}
                         />
                 : <div>
+                    {/* TODO: Replace with TableWidget */}
                     <Table
                         className={styles.table}
                         columns={columns}
