@@ -1,3 +1,15 @@
+# Version 1.8.1
+
+## Fixes
+
+* `<ColumnSort />` component frequently crash the application due to missing null checks after 1.4.4 update.
+* `@types/antd` and `@types/axios` replaced with devDependencies as they have a potential of breaking client applications build pipe due to referencing latest versions instead of specified as peerDependencies.
+
+## Misc
+
+* Use typescript version 3.8.3
+* Use antd version 3.26.13
+
 # Version 1.8.0
 
 ## Features
@@ -18,7 +30,7 @@ See [FilterGroup class](https://github.com/tesler-platform/tesler/blob/master/te
 * Following field types will not be shown as sortable as there is no support for this in Tesler API: `multivalue`, `multivalueHover`, `multifield`, `hidden`, `fileUpload`, `inlinePickList`, `hint` (#130).
 * Padding should be consistent for fields with set `backgroundColor` property whenever they are displayed as part of `multifield` or as a separate field (#140).
 * When having an unsaved changes on a widget and calling an operation for another widget, autosave procedure should be initiated for the changes (#144).
-* Respect `hidden` field type in <PickListPopup /> (#146).
+* Respect `hidden` field type in `<PickListPopup />` (#146).
 
 # Version 1.7.3
 
