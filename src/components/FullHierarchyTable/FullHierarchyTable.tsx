@@ -57,12 +57,13 @@ const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllProps> = 
     const fields = props.meta.fields
     const depthLevel = props.depth || 1
     const indentLevel = depthLevel - 1
-
-    const hierarchyGroupSelection = props.meta.options && props.meta.options.hierarchyGroupSelection
-    const hierarchyGroupDeselection = props.meta.options && props.meta.options.hierarchyGroupDeselection
-    const hierarchyRadioAll = props.meta.options && props.meta.options.hierarchyRadioAll
-    const hierarchyRootRadio = props.meta.options && props.meta.options.hierarchyRadio
-    const hierarchyDisableRoot = props.meta.options && props.meta.options.hierarchyDisableRoot
+    const {
+        hierarchyGroupSelection,
+        hierarchyGroupDeselection,
+        hierarchyRadioAll,
+        hierarchyRadio: hierarchyRootRadio,
+        hierarchyDisableRoot
+    } = props.meta.options ?? {}
 
     const selectedRecords = useAssocRecords(props.data, props.pendingChanges)
     const [userOpenedRecords, setUserOpenedRecords] = React.useState([])
@@ -84,7 +85,7 @@ const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllProps> = 
     )
 
     const [preopenedRecordsInitiated, setPreopenedRecordsInitiated] = React.useState(false)
-    if (!preopenedRecordsInitiated && props.data && props.data.length) {
+    if (!preopenedRecordsInitiated && props.data?.length) {
         setPreopenedRecordsInitiated(true)
         setUserOpenedRecords(selectedRecords
             .filter((selectedItem) => {
@@ -223,7 +224,7 @@ const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllProps> = 
 function mapStateToProps(store: Store, ownProps: FullHierarchyTableOwnProps): FullHierarchyTableProps {
     const bcName = ownProps.meta.bcName
     const bc = store.screen.bo.bc[bcName]
-    const loading = bc && bc.loading
+    const loading = bc?.loading
     return {
         loading: loading,
         data: (loading) ? emptyData : store.data[bcName] as AssociatedItem[],

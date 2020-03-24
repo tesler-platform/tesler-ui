@@ -47,10 +47,10 @@ export const ColumnSort: FunctionComponent<ColumnSortProps> = (props) => {
 
 function mapStateToProps(store: Store, ownProps: ColumnSortOwnProps) {
     const widget = store.view.widgets.find(item => item.name === ownProps.widgetName)
-    const widgetName = widget.name
-    const bcName = widget && widget.bcName
-    const sorter = store.screen.sorters[bcName] && store.screen.sorters[bcName].find(item => item.fieldName === ownProps.fieldKey)
-    const page = store.screen.bo.bc[bcName].page
+    const widgetName = widget?.name
+    const bcName = widget?.bcName
+    const sorter = store.screen.sorters[bcName]?.find(item => item.fieldName === ownProps.fieldKey)
+    const page = store.screen.bo.bc[bcName]?.page
     const infiniteWidgets: string[] = store.view.infiniteWidgets || []
     const infinitePagination = infiniteWidgets.includes(widgetName)
     return {

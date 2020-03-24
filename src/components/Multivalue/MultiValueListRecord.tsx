@@ -33,7 +33,7 @@ const MultiValueListRecord: FunctionComponent<MultiValueListRecordProps> = (prop
     }) || null
 
     return <div className={styles.fieldAreaFloat}>
-        {singleValue.options && singleValue.options.hint &&
+        {singleValue.options?.hint &&
             <div>
                 <div className={cn(
                     styles.hint,

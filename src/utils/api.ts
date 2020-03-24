@@ -32,7 +32,7 @@ const onResponseHook = <ResponsePayload>(response: AxiosResponse<ResponsePayload
  * @param value 
  */
 function redirectOccurred(value: AxiosResponse<TeslerResponse>) {
-    if (value.data && value.data.redirectUrl) {
+    if (value.data?.redirectUrl) {
         let redirectUrl = value.data.redirectUrl
         if (!redirectUrl.startsWith('/') && !redirectUrl.match('^http(.?)://')) {
             redirectUrl = `${window.location.pathname}#/${redirectUrl}`
@@ -53,7 +53,7 @@ function redirectOccurred(value: AxiosResponse<TeslerResponse>) {
  * @param callContext 
  */
 function onErrorHook(error: AxiosError, callContext?: ApiCallContext) {
-    if (error.response && error.response.status === 418) {
+    if (error.response?.status === 418) {
         const typedError = error.response.data as OperationError
         if (typedError.error.popup) {
             const businessError: BusinessError = {
@@ -61,9 +61,9 @@ function onErrorHook(error: AxiosError, callContext?: ApiCallContext) {
                 message: typedError.error.popup[0]
             }
             getStoreInstance().dispatch($do.showViewError({ error: businessError }))
-            if (typedError.error.postActions && typedError.error.postActions[0]) {
+            if (typedError.error.postActions?.[0]) {
                 const widget = getStoreInstance().getState().view.widgets.find(item => item.name === callContext.widgetName)
-                const bcName = widget && widget.type
+                const bcName = widget?.type
                 getStoreInstance().dispatch($do.processPostInvoke({
                     bcName,
                     postInvoke: typedError.error.postActions[0],

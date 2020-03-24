@@ -85,8 +85,7 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
     const downloadParams = {
         source: props.fileSource,
         id: fileIdDelta || (
-            props.fileIdKey && props.fieldDataItem && props.fieldDataItem[props.fileIdKey]
-                && props.fieldDataItem[props.fileIdKey].toString()
+            props.fileIdKey && props.fieldDataItem?.[props.fileIdKey]?.toString()
         )
     }
     const uploadParams = {
@@ -109,11 +108,10 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
         if (props.snapshotKey && props.snapshotFileIdKey) {
             const diffDownloadParams = {
                 source: props.fileSource,
-                id: props.fieldDataItem && props.fieldDataItem[props.snapshotFileIdKey]
-                    && props.fieldDataItem[props.snapshotFileIdKey].toString()
+                id: props.fieldDataItem?.[props.snapshotFileIdKey]?.toString()
             }
             const diffDownloadUrl = applyParams(`${axiosInstance.defaults.baseURL || '/'}file`, diffDownloadParams)
-            const diffFileName = props.fieldDataItem && props.fieldDataItem[props.snapshotKey]
+            const diffFileName = props.fieldDataItem?.[props.snapshotKey]
 
             if ((diffDownloadParams.id || downloadParams.id) && diffDownloadParams.id !== downloadParams.id) {
                 return <div>
@@ -205,12 +203,10 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
 }
 
 function mapStateToProps(state: Store, props: FileUploadOwnProps ) {
-    const pendingData = state.view.pendingDataChanges[props.bcName]
-        && state.view.pendingDataChanges[props.bcName][props.cursor]
-
+    const pendingData = state.view.pendingDataChanges[props.bcName]?.[props.cursor]
     return {
-        fileIdDelta: (!props.readOnly) ? pendingData && pendingData[props.fileIdKey] : null,
-        fileNameDelta: !props.readOnly && pendingData && pendingData[props.fieldName]
+        fileIdDelta: !props.readOnly ? pendingData?.[props.fileIdKey] : null,
+        fileNameDelta: !props.readOnly && pendingData?.[props.fieldName]
     }
 }
 

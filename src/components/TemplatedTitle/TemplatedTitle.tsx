@@ -23,11 +23,11 @@ export const TemplatedTitle: FunctionComponent<TemplatedTitleProps> = (props) =>
 
 function mapStateToProps(store: Store, ownProps: TemplatedTitleOwnProps) {
     const widget = store.view.widgets.find(item => item.name === ownProps.widgetName)
-    const bcName = widget && widget.bcName
+    const bcName = widget?.bcName
     const bc = store.screen.bo.bc[bcName]
-    const cursor = bc && bc.cursor
+    const cursor = bc?.cursor
     const bcData = store.data[bcName]
-    const dataItem = bcData && bcData.find(item => item.id === cursor)
+    const dataItem = bcData?.find(item => item.id === cursor)
     return {
         templatedTitle: getFieldTitle(ownProps.title, dataItem)
     }

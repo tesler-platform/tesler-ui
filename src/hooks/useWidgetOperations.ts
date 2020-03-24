@@ -43,7 +43,7 @@ export function getIncludedOperations(
                     if (!include) {
                         return shouldPickOperation(operation, null, exclude)
                     }
-                    const nestedDescriptor = include && include.find(descriptor => getDescriptorValue(descriptor) === item.type)
+                    const nestedDescriptor = include.find(descriptor => getDescriptorValue(descriptor) === item.type)
                     const excludeAll = nestedDescriptor && typeof nestedDescriptor === 'string'
                         ? [ nestedDescriptor, ...(exclude || []) ]
                         : [ ...((nestedDescriptor as any).exclude || []), ...(exclude || []) ]

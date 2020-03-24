@@ -88,10 +88,10 @@ const NumberInput: React.FunctionComponent<NumberProps> = (props) => {
 
     const handleOnFocus = React.useCallback(
         () => {
-            // Фикс сброса курсора на начало в IE
-            // selectionStart и selectionEnd всегда 0 в Chrome внутри OnFocus
+            // Fix cusror resetting to start position on Internet Explorer
+            // selectionStart and selectionEnd are always 0 in Chrome during onFocus
             setTimeout(() => {
-                if (inputRef.current && inputRef.current.input) {
+                if (inputRef.current?.input) {
                     const target = inputRef.current.input
                     const value = target.value
                     const selectionStart = target.selectionStart
@@ -128,7 +128,7 @@ const NumberInput: React.FunctionComponent<NumberProps> = (props) => {
         (event: React.KeyboardEvent<HTMLInputElement>) => {
             const char = String.fromCharCode(event.keyCode || event.charCode)
             if (unformatValue(char) === ''
-                || (props.maxInput && valueText && valueText.length >= props.maxInput)
+                || (props.maxInput && valueText?.length >= props.maxInput)
             ) {
                 event.preventDefault()
             }

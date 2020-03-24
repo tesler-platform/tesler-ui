@@ -168,7 +168,7 @@ export function view(state = initialState, action: AnyAction, store: Store) {
                     [bcName]: {
                         ...(state.handledForceActive[bcName] || {}),
                         [cursor]: {
-                            ...(state.handledForceActive[bcName] && state.handledForceActive[bcName][cursor] || {}),
+                            ...(state.handledForceActive[bcName]?.[cursor] || {}),
                             ...handledForceActive
                         }
                     }
@@ -195,10 +195,10 @@ export function view(state = initialState, action: AnyAction, store: Store) {
             const prevPending = prevCursor || {}
             const nextPending = { ...prevPending, ...action.payload.dataItem }
             const bcUrl = buildBcUrl(action.payload.bcName, true, store)
-            const rowMeta = state.rowMeta[action.payload.bcName] && state.rowMeta[action.payload.bcName][bcUrl]
+            const rowMeta = state.rowMeta[action.payload.bcName]?.[bcUrl]
             const nextValidationFails: Record<string, string> = {}
             Object.keys(nextPending).forEach(fieldKey => {
-                const required = rowMeta && rowMeta.fields.find(item => item.required && item.key === fieldKey)
+                const required = rowMeta?.fields.find(item => item.required && item.key === fieldKey)
                 const isEmpty = nextPending[fieldKey] === null
                     || nextPending[fieldKey] === undefined
                     || nextPending[fieldKey] === ''

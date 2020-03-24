@@ -68,7 +68,7 @@ const formatString = (templatedString: string, item: DataItem): string => {
     }
     return templatedString.replace(TAG_PLACEHOLDER, (token, varName) => {
         const [key, defaultValue] = varName.split(':')
-        const result = String(item && item[key]
+        const result = String(item?.[key]
             || defaultValue
             || ''
         )

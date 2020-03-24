@@ -59,13 +59,13 @@ const emptyData: AssociatedItem[] = []
 export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> = (props) => {
     const bcName = props.meta.bcName
 
-    const hierarchyGroupSelection = props.meta.options && props.meta.options.hierarchyGroupSelection
-    const hierarchyRadioAll = props.meta.options && props.meta.options.hierarchyRadioAll
-    const hierarchyDisableRoot = props.meta.options && props.meta.options.hierarchyDisableRoot
+    const hierarchyGroupSelection = props.meta.options?.hierarchyGroupSelection
+    const hierarchyRadioAll = props.meta.options?.hierarchyRadioAll
+    const hierarchyDisableRoot = props.meta.options?.hierarchyDisableRoot
 
     const depthLevel = props.depth || 1
     const indentLevel = depthLevel - 1
-    const hasNested = props.data && props.data.length
+    const hasNested = props.data?.length
 
     const selectedRecords = useAssocRecords(props.data, props.pendingChanges, hierarchyRadioAll)
 
@@ -198,24 +198,24 @@ function mapStateToProps(store: Store, ownProps: SameBcHierarchyTableOwnProps) {
     const rootBc = bcMap[bcName]
     const currentBc = (depthLevel === 1)
         ? rootBc
-        : (rootBc.depthBc && rootBc.depthBc[ownProps.depth])
+        : rootBc.depthBc?.[ownProps.depth]
     const parentBc = (depthLevel === 1)
         ? null
         : (depthLevel === 2)
             ? rootBc
-            : rootBc.depthBc && rootBc.depthBc[ownProps.depth - 1]
+            : rootBc.depthBc?.[ownProps.depth - 1]
 
-    const loading = currentBc && currentBc.loading
+    const loading = currentBc?.loading
 
-    const cursor = currentBc && currentBc.cursor
-    const parentCursor = parentBc && parentBc.cursor
+    const cursor = currentBc?.cursor
+    const parentCursor = parentBc?.cursor
     const pendingChanges = store.view.pendingDataChanges[bcName]
     return {
         data: (loading)
             ? emptyData
             : (depthLevel === 1)
                 ? store.data[bcName]
-                : store.depthData[depthLevel] && store.depthData[depthLevel][bcName],
+                : store.depthData[depthLevel]?.[bcName],
         pendingChanges,
         cursor,
         parentCursor,

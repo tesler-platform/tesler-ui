@@ -32,7 +32,7 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
             ) {
                 const widget = state.view.widgets.find((v: WidgetMeta) => v.name === selectedCell.widgetName)
                 const bcName = widget.bcName
-                const cursor = state.screen.bo.bc[bcName] && state.screen.bo.bc[bcName].cursor
+                const cursor = state.screen.bo.bc[bcName]?.cursor
                 if (cursor === selectedCell.rowId && bcHasPendingAutosaveChanges(state, bcName, cursor)) {
                     return next($do.sendOperation({
                         bcName: bcName,
@@ -61,7 +61,7 @@ export function createAutoSaveMiddleware() {
  */
 function bcHasPendingAutosaveChanges(store: CoreStore, bcName: string, cursor: string) {
     const pendingChanges = store.view.pendingDataChanges
-    const cursorChanges = pendingChanges[bcName] && pendingChanges[bcName][cursor]
+    const cursorChanges = pendingChanges[bcName]?.[cursor]
     const result = cursorChanges && !Object.keys(cursorChanges).includes('_associate') && Object.values(cursorChanges).length
     return result
 }
