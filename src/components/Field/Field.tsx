@@ -36,6 +36,7 @@ interface FieldOwnProps {
     cursor: string,
     data?: DataItem,
     className?: string,
+    suffixClassName?: string,
     readonly?: boolean,
     disableDrillDown?: boolean,
     forceFocus?: boolean,
@@ -343,7 +344,11 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                         >
                             {value}
                         </ReadOnlyField>
-                        : <InteractiveInput suffix={handleDrilldown && <Icon type="link" />} onSuffixClick={handleDrilldown}>
+                        : <InteractiveInput
+                            suffixClassName={props.suffixClassName}
+                            suffix={handleDrilldown && <Icon type="link" />}
+                            onSuffixClick={handleDrilldown}
+                        >
                             <Input
                                 {...commonProps}
                                 value={localValue !== null ? localValue : (value ? String(value) : '')}

@@ -14,6 +14,7 @@ import cn from 'classnames'
 import styles from './InteractiveInput.less'
 
 export interface InteractiveInputProps {
+    suffixClassName?: string,
     suffix?: React.ReactNode,
     children: React.ReactNode,
     onSuffixClick?: () => void
@@ -24,7 +25,7 @@ export const InteractiveInput: FunctionComponent<InteractiveInputProps> = (props
         {props.children}
         { props.suffix &&
             <button
-                className={cn(styles.button, styles.suffix)}
+                className={cn(styles.button, styles.suffix, props.suffixClassName)}
                 onClick={props.onSuffixClick}
             >
                 {props.suffix}

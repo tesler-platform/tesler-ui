@@ -5,6 +5,7 @@ import {WidgetTypes, WidgetMeta} from '../../interfaces/widget'
 import {FieldType} from '../../interfaces/view'
 
 export const baseWidgetMeta: WidgetMeta = {
+    id: '111',
     name: 'mockWidget',
     bcName: 'selfEsteemList',
     position: 0,
