@@ -1,3 +1,9 @@
+# Version 1.8.2
+
+## Fixes
+
+* Dropdown components not showing their icons after 1.8.1 update
+
 # Version 1.8.1
 
 ## Fixes
