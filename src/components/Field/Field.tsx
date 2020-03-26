@@ -151,6 +151,13 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
         backgroundColor: bgColor,
         onDrillDown: handleDrilldown
     }
+    const commonInputProps = {
+        cursor: props.cursor,
+        meta: props.widgetFieldMeta,
+        className: cn(props.className),
+        disabled,
+        readOnly: props.readonly,
+    }
 
     if (!props.historyMode && props.widgetFieldMeta.snapshotKey && simpleDiffSupportedFieldTypes.includes(props.widgetFieldMeta.type)) {
         return <HistoryField
@@ -350,7 +357,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                             onSuffixClick={handleDrilldown}
                         >
                             <Input
-                                {...commonProps}
+                                {...commonInputProps}
                                 value={localValue !== null ? localValue : (value ? String(value) : '')}
                                 onChange={handleInputChange}
                                 onBlur={handleInputBlur}
