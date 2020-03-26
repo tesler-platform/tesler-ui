@@ -484,7 +484,7 @@ function mapStateToProps(store: Store, ownProps: TableWidgetOwnProps) {
         operations,
         metaInProgress: !!store.view.metaInProgress[bcName],
         filters,
-        filterGroups: store.screen.bo.bc[bcName].filterGroups
+        filterGroups: bc?.filterGroups
     }
 }
 
