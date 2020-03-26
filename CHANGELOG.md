@@ -1,8 +1,14 @@
+# Version 1.8.3
+
+## Fixes
+
+* Drilldown fields crashing the application after 1.8.0 update (#156).
+
 # Version 1.8.2
 
 ## Fixes
 
-* Dropdown components not showing their icons after 1.8.1 update
+* Dropdown components not showing their icons after 1.8.1 update.
 
 # Version 1.8.1
 
