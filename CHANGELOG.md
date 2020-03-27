@@ -1,3 +1,11 @@
+# Version 1.8.4
+
+## Fixes
+
+* Incorrect condition refactoring fpr required fields check after 1.8.1 may crash the application (#158).
+* Missing i18n tokens for `<ColumnTitle />`, `<FileUpload />`, `<Pagination />`, `<PickInput />`, `<Popup />` and `view` reducer (#161).
+* `<TableWidget />` column headers should not break words (#162).
+
 # Version 1.8.3
 
 ## Fixes

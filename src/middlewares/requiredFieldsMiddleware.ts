@@ -45,7 +45,7 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
                 }
                 itemFieldsCalc.forEach((widgetField: WidgetField) => {
                     const matchingRowMeta = rowMeta.fields.find(rowMetaField => rowMetaField.key === widgetField.key)
-                    if (!fieldsToCheck[widgetField.key] && !matchingRowMeta?.hidden) {
+                    if (!fieldsToCheck[widgetField.key] && matchingRowMeta && !matchingRowMeta.hidden) {
                         fieldsToCheck[widgetField.key] = matchingRowMeta
                     }
                 })
@@ -109,7 +109,6 @@ function operationRequiresAutosave(operationType: string, actions: Array<Operati
 function getRequiredFieldsMissing(record: DataItem, pendingChanges: PendingDataItem, fieldsMeta: RowMetaField[]) {
     const result: PendingDataItem = {}
     fieldsMeta.forEach(field => {
-
         const value = record?.[field.key] as string
         const pendingValue = pendingChanges?.[field.key]
         const effectiveValue = pendingValue !== undefined ? pendingValue : value

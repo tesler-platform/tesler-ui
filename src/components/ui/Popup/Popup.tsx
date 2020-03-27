@@ -1,5 +1,6 @@
 import React, {FunctionComponent} from 'react'
 import {Modal, Button} from 'antd'
+import {useTranslation} from 'react-i18next'
 import Pagination from '../../ui/Pagination/Pagination'
 import {PaginationMode} from '../../../interfaces/widget'
 
@@ -25,6 +26,7 @@ const widths = {
 export const Popup: FunctionComponent<PopupProps> = (props) => {
     const title = <h1 className={styles.title}>{props.title}</h1>
     const width = props.size ? widths[props.size] : widths.medium
+    const {t} = useTranslation()
     return <div>
         <Modal
             title={title}
@@ -40,10 +42,10 @@ export const Popup: FunctionComponent<PopupProps> = (props) => {
                     }
                     <div className={styles.actions}>
                         <Button onClick={props.onOkHandler} className={styles.buttonYellow}>
-                            Выбрать
+                            {t('Save')}
                         </Button>
                         <Button onClick={props.onCancelHandler} className={styles.buttonCancel}>
-                            Отмена
+                            {t('Cancel')}
                         </Button>
                     </div>
                 </div>

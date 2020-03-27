@@ -300,7 +300,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                             return item
                         })
                         : <Menu.Item disabled>
-                            Нет доступных операций
+                            {t('No operations available')}
                         </Menu.Item>
                 }
             </Menu>

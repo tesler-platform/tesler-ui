@@ -4,6 +4,7 @@ import {PendingDataItem} from '../interfaces/data'
 import {Store} from '../interfaces/store'
 import {OperationTypeCrud} from '../interfaces/operation'
 import {buildBcUrl} from '../utils/strings'
+import i18n from 'i18next'
 
 const initialState: ViewState  = {
     id: null,
@@ -203,7 +204,7 @@ export function view(state = initialState, action: AnyAction, store: Store) {
                     || nextPending[fieldKey] === undefined
                     || nextPending[fieldKey] === ''
                 if (required && isEmpty) {
-                    nextValidationFails[fieldKey] = 'Поле обязательно для заполнения'
+                    nextValidationFails[fieldKey] = i18n.t('This field is mandatory')
                 }
             })
             return {
