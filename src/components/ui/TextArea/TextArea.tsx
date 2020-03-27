@@ -135,7 +135,7 @@ const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
         return <Input.TextArea
             key={key}
             defaultValue={defaultValue}
-            autoSize={{
+            autosize={{ // todo change to autoSize in 2.0.0
                 minRows: props.minRows || 5,
                 maxRows: props.maxRows || 10
             }}

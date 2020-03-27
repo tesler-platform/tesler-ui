@@ -166,7 +166,6 @@ export interface WidgetOptions {
 }
 
 export interface WidgetMeta {
-    id?: string,
     name: string,
     type: WidgetTypes | string, // TODO: Как учитывать типы клиентских виджетов кроме string?
     title: string, // отображаемое название,
