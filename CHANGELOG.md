@@ -1,3 +1,14 @@
+# Version 1.9.0
+
+## Features
+
+* Add `suffixClassName` property for `<Field />` and `<InteractiveInput />` which is passed to input suffix icon (#152).
+* Export `<ColumnTitle />` component (#152).
+
+## Fixes
+
+* `<Field />` component throws console warnings for unknown html properties (#164). 
+
 # Version 1.8.4
 
 ## Fixes
