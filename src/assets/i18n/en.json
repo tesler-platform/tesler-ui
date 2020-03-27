@@ -6,9 +6,18 @@
         "Clear all filters": "Clear all filters",
         "Cancel": "Cancel",
         "Ok": "Ok",
+        "Save": "Save",
+        "Delete": "Delete",
         "Are you sure?": "Are you sure?",
         "Perform an additional action?": "Perform an additional action?",
         "The operation is not supported": "The operation is not supported",
-        "Show all": "Show all"
+        "No operations available": "No operations available",
+        "Show all": "Show all",
+        "select file": "select file",
+        "Download": "Download",
+        "Select value": "Select value",
+        "Load more": "Load more",
+        "Required fields are missing": "Required fields are missing",
+        "This field is mandatory": "This field is mandatory"
     }
 }

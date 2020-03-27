@@ -3,6 +3,7 @@ import {PaginationMode} from '../../../interfaces/widget'
 import {Button} from 'antd'
 import {connect} from 'react-redux'
 import {Dispatch} from 'redux'
+import {useTranslation} from 'react-i18next'
 import {Store} from '../../../interfaces/store'
 import styles from './Pagination.less'
 import {$do} from '../../../actions/actions'
@@ -29,6 +30,7 @@ interface PaginationDispatchProps {
 type PaginationAllProps = PaginationOwnProps & PaginationStateProps & PaginationDispatchProps
 
 const Pagination: React.FunctionComponent<PaginationAllProps> = (props) => {
+    const {t} = useTranslation()
     // disable pagination if not required
     if (!props.hasNext && props.page < 2) {
         return null
@@ -82,7 +84,7 @@ const Pagination: React.FunctionComponent<PaginationAllProps> = (props) => {
                     disabled={props.loading}
                     loading={props.loading}
                 >
-                    Загрузить ещё
+                    {t('Load more')}
                 </Button>
             </div>
             : null
