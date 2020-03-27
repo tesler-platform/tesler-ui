@@ -1,5 +1,6 @@
 import React from 'react'
 import {Input, Icon} from 'antd'
+import {useTranslation} from 'react-i18next'
 import styles from './PickInput.less'
 
 interface PickInputProps {
@@ -11,6 +12,7 @@ interface PickInputProps {
 }
 
 const PickInput: React.FunctionComponent<PickInputProps> = (props) => {
+    const {t} = useTranslation()
     const handleClick = React.useCallback(
         () => {
             if (!props.disabled && props.onClick) {
@@ -31,7 +33,7 @@ const PickInput: React.FunctionComponent<PickInputProps> = (props) => {
         <Input
             disabled={props.disabled}
             readOnly
-            placeholder="Выберите значение"
+            placeholder={t('Select value')}
             value={props.value || ''}
             suffix={clearButton}
             className={props.className}
