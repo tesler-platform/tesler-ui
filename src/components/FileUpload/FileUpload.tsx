@@ -9,6 +9,7 @@ import {DataItem} from '../../interfaces/data'
 import {Icon, Upload} from 'antd'
 import {UploadFile} from 'antd/es/upload/interface'
 import cn from 'classnames'
+import {useTranslation} from 'react-i18next'
 import {ChangeDataItemPayload} from '../Field/Field'
 import {axiosInstance} from '../../Provider'
 
@@ -40,6 +41,7 @@ export interface FileUploadActions {
 }
 
 const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps & FileUploadActions> = (props) => {
+    const {t} = useTranslation()
     const onUploadSuccess = React.useCallback(
         (response: any, file: UploadFile) => {
             props.onUploadFileDone({
@@ -149,7 +151,7 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
     const controls: {[key: string]: React.ReactNode} = {
         deleteButton:
             <div className={styles.deleteButton} onClick={onFileDelete} key="delete-btn">
-                <Icon type="delete" title="Удалить"/>
+                <Icon type="delete" title={t('Delete')} />
             </div>,
 
         uploadButton:
@@ -161,7 +163,7 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
                 )}
                 key="upload-btn"
             >
-                <span title="выберите файл" className={styles.uploadButtonText}>...</span>
+                <span title={t('select file')} className={styles.uploadButtonText}>...</span>
             </Upload>,
 
         uploadLink:
@@ -173,11 +175,13 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
                 )}
                 key="upload-lnk"
             >
-                <span className={styles.uploadLinkText} title="выберите файл">выберите файл</span>
+                <span className={styles.uploadLinkText} title={t('select file')}>
+                    {t('select file')}
+                </span>
             </Upload>,
 
         downloadLink:
-            <div className={styles.downloadLink} title={`Скачать ${fileName}`} key="download-lnk">
+            <div className={styles.downloadLink} title={`${t('Download')} ${fileName}`} key="download-lnk">
                 <a href={downloadUrl}>
                     <span className={styles.downloadLinkText}>{fileName}</span>
                 </a>
