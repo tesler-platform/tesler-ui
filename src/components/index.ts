@@ -12,6 +12,7 @@ export {default as MultivalueTag} from './ui/Multivalue/MultivalueTag'
 export {default as CheckboxPicker} from './ui/CheckboxPicker/CheckboxPicker'
 export {default as Pagination} from './ui/Pagination/Pagination'
 export {default as ErrorPopup} from './ui/ErrorPopup/ErrorPopup'
+export {default as ColumnTitle} from './ColumnTitle/ColumnTitle'
 // Containers
 export {default as TemplatedTitle} from './TemplatedTitle/TemplatedTitle'
 export {default as View} from './View/View'
