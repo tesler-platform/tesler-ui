@@ -138,6 +138,7 @@ export type WidgetListField = Extract<WidgetField, WidgetListFieldBase>
 
 /**
  * @param readOnly All widget fields are not editable
+ * @param tableOperations Options for allowed on table widget actions
  */
 export interface WidgetOptions {
     layout?: {
@@ -147,6 +148,7 @@ export interface WidgetOptions {
             cols: Array<{fieldKey: string, span?: number}>
         }>
     },
+    tableOperations?: TableOperations,
     hierarchy?: WidgetTableHierarchy[],
     hierarchySameBc?: boolean,
     hierarchyFull?: boolean,
@@ -224,6 +226,23 @@ export interface WidgetFormMeta extends WidgetMeta {
 export interface WidgetTableMeta extends WidgetMeta {
     type: WidgetTypes.List | WidgetTypes.DataGrid,
     fields: WidgetListField[]
+}
+
+/**
+ * Description of possible positioning options
+ */
+export const enum PositionTypes {
+    Top = 'Top',
+    Bottom = 'Bottom',
+    TopAndBottom = 'TopAndBottom'
+}
+
+/**
+ * Description of options of allowed on table widget actions
+ * @param position Describes position of tableOperations relatively of table
+ */
+export interface TableOperations {
+    position?: PositionTypes
 }
 
 export interface WidgetTableHierarchy {
