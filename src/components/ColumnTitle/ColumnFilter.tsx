@@ -30,7 +30,7 @@ export interface ColumnFilterProps extends ColumnFilterOwnProps {
 }
 
 export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
-    const {t} = useTranslation()
+
     const filter = props.filter
     const [value, setValue] = React.useState(filter ? filter.value : null)
     const [visible, setVisible] = React.useState(false)
@@ -142,6 +142,8 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
             break
         }
     }
+
+    const {t} = useTranslation()
 
     const content = <div className={styles.content}>
         <Form onSubmit={handleApply} layout="vertical">

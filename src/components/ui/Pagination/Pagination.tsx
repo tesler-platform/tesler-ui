@@ -30,7 +30,6 @@ interface PaginationDispatchProps {
 type PaginationAllProps = PaginationOwnProps & PaginationStateProps & PaginationDispatchProps
 
 const Pagination: React.FunctionComponent<PaginationAllProps> = (props) => {
-    const {t} = useTranslation()
     // disable pagination if not required
     if (!props.hasNext && props.page < 2) {
         return null
@@ -61,6 +60,8 @@ const Pagination: React.FunctionComponent<PaginationAllProps> = (props) => {
         },
         [props.bcName, props.page, props.changePage]
     )
+
+    const {t} = useTranslation()
 
     if (props.mode === PaginationMode.page) {
         return <div className={styles.paginationContainer}>
