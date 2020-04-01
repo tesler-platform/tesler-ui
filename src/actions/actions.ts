@@ -15,6 +15,7 @@ import {
     OperationTypeCrud,
     AssociatedItem,
     OperationErrorEntity,
+    OperationPostInvokeConfirm,
     OperationPreInvoke
 } from '../interfaces/operation'
 import {BcFilter, BcSorter} from '../interfaces/filters'
@@ -324,13 +325,17 @@ export class ActionPayloadTypes {
      * @param operationType Type of operation to be performed
      * @param widgetName What widget requires data
      * @param onSuccessAction Any other action
-     * @param confirmOperation params for confirm modal
+     * @param confirm params for confirm modal
      */
     sendOperation: {
         bcName: string,
         operationType: OperationTypeCrud | string,
         widgetName: string,
         onSuccessAction?: AnyAction,
+        confirm?: string,
+        /**
+         * @deprecated TODO: Remove in 2.0.0 in favor of sendOperationWithConfirm
+         */
         confirmOperation?: OperationPreInvoke
     } = z
 
@@ -390,6 +395,21 @@ export class ActionPayloadTypes {
         operationType: string
         widgetName: string
         preInvoke: OperationPreInvoke
+    } = z
+
+    /**
+     * Operation to perform postInvokeConfirm actions
+     * 
+     * @param bcName The business component to fetch data for
+     * @param operationType Type of operation to be performed
+     * @param widgetName What widget requires data
+     * @param postInvokeConfirm the action that will be performed after the main operation and confirmation
+     */
+    processPostInvokeConfirm: {
+        bcName: string,
+        operationType: string
+        widgetName: string
+        postInvokeConfirm: OperationPostInvokeConfirm
     } = z
 
     /**
@@ -632,7 +652,7 @@ export class ActionPayloadTypes {
             operationType: OperationTypeCrud | string,
             widgetName: string,
         },
-        confirmOperation: OperationPreInvoke
+        confirmOperation: OperationPostInvokeConfirm
     } = z
 
     /**

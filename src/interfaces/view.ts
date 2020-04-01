@@ -2,7 +2,7 @@ import {WidgetMeta} from '../interfaces/widget'
 import {RowMeta} from '../interfaces/rowMeta'
 import {PendingDataItem, PickMap} from '../interfaces/data'
 import {SystemNotification} from './objectMap'
-import {OperationTypeCrud, OperationPreInvoke} from './operation'
+import {OperationTypeCrud, OperationPostInvokeConfirm} from './operation'
 
 export interface ViewSelectedCell {
     widgetName: string,
@@ -42,7 +42,7 @@ export interface ViewState extends ViewMetaResponse {
             operationType: OperationTypeCrud | string,
             widgetName: string,
         }
-        confirmOperation: OperationPreInvoke
+        confirmOperation: OperationPostInvokeConfirm,
     },
 }
 
