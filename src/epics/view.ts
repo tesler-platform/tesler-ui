@@ -17,7 +17,9 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
 .mergeMap((action) => {
     const state = store.getState()
     const screenName = state.screen.screenName
-    const {bcName, operationType, widgetName, confirmOperation} = action.payload
+    const {bcName, operationType, widgetName} = action.payload
+    // TODO: Remove conformOperation n 2.0.0
+    const confirm = action.payload.confirmOperation?.type || action.payload.confirm
     const bcUrl = buildBcUrl(bcName, true)
     const bc = state.screen.bo.bc[bcName]
     const rowMeta = bcUrl && state.view.rowMeta[bcName]?.[bcUrl]
@@ -31,26 +33,36 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
         }
     }
     const data = record && { ...pendingRecordChange, vstamp: record.vstamp }
-    const params = confirmOperation
-        ? { _action: operationType, _confirm: confirmOperation.type }
+    const params = confirm
+        ? { _action: operationType, _confirm: confirm }
         : { _action: operationType }
     const context = { widgetName: action.payload.widgetName }
     return api.customAction(screenName, bcUrl, data, context, params)
     .mergeMap(response => {
         const postInvoke = response.postActions[0]
+        // TODO: Remove in 2.0.0 in favor of postInvokeConfirm
         const preInvoke = response.preInvoke
+        const postInvokeConfirm = response.postInvokeConfirm
         return Observable.concat(
             Observable.of($do.sendOperationSuccess({ bcName, cursor })),
             Observable.of($do.bcForceUpdate({ bcName })),
             postInvoke
                 ? Observable.of($do.processPostInvoke({ bcName, postInvoke, widgetName: context.widgetName }))
                 : Observable.empty<never>(),
+            postInvokeConfirm
+                ? Observable.of($do.processPostInvokeConfirm({
+                    bcName,
+                    operationType,
+                    widgetName,
+                    postInvokeConfirm,
+                }))
+                : Observable.empty<never>(),
             preInvoke
                 ? Observable.of($do.processPreInvoke({
                     bcName,
                     operationType,
                     widgetName,
-                    preInvoke
+                    preInvoke,
                 }))
                 : Observable.empty<never>(),
         )

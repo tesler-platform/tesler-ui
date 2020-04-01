@@ -8,7 +8,7 @@ import {
     OperationPostInvokeShowMessage,
     OperationPostInvokeDownloadFile,
     OperationPostInvokeDownloadFileByUrl,
-    OperationPreInvokeType
+    OperationPostInvokeConfirmType
 } from '../interfaces/operation'
 import {ObjectMap} from '../interfaces/objectMap'
 import {historyObj} from '../reducers/router'
@@ -110,19 +110,24 @@ const downloadFileByUrl: Epic = (action$, store) => action$.ofType(types.downloa
     return Observable.empty()
 })
 
-const processPreInvoke: Epic = (action$, store) => action$.ofType(types.processPreInvoke)
+const processPostInvokeConfirm: Epic = (action$, store) => action$.ofType(types.processPostInvokeConfirm, types.processPreInvoke)
 .mergeMap((action) => {
-    switch (action.payload.preInvoke.type) {
-        case OperationPreInvokeType.confirm:
-            const {bcName, operationType, widgetName, preInvoke} = action.payload
+    const {bcName, operationType, widgetName} = action.payload
+    const confirm = action.type === types.processPostInvokeConfirm
+        ? action.payload.postInvokeConfirm
+        : action.payload.preInvoke
+    switch (confirm.type) {
+        case OperationPostInvokeConfirmType.confirm:
+        case OperationPostInvokeConfirmType.confirmText: {
             return Observable.of($do.operationConfirmation({
                 operation: {
                     bcName,
                     operationType,
                     widgetName,
                 },
-                confirmOperation: preInvoke
+                confirmOperation: confirm
             }))
+        }
         default:
             return Observable.empty()
     }
@@ -132,5 +137,5 @@ export const screenEpics = combineEpics(
     processPostInvoke,
     downloadFile,
     downloadFileByUrl,
-    processPreInvoke
+    processPostInvokeConfirm
 )
