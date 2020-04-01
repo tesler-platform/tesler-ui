@@ -1,3 +1,7 @@
+# Version 1.9.1
+
+* Temporary fix for `<Pagination />` component crashing the page with #300 and #310 React invariants after 1.8.4 added i18n tokens (#167).
+
 # Version 1.9.0
 
 ## Features
