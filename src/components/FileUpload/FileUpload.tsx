@@ -41,7 +41,7 @@ export interface FileUploadActions {
 }
 
 const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps & FileUploadActions> = (props) => {
-    const {t} = useTranslation()
+
     const onUploadSuccess = React.useCallback(
         (response: any, file: UploadFile) => {
             props.onUploadFileDone({
@@ -76,6 +76,8 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
         },
         [props.onUploadFileFailed]
     )
+
+    const {t} = useTranslation()
 
     const {
         fileIdDelta,

@@ -12,7 +12,7 @@ interface PickInputProps {
 }
 
 const PickInput: React.FunctionComponent<PickInputProps> = (props) => {
-    const {t} = useTranslation()
+
     const handleClick = React.useCallback(
         () => {
             if (!props.disabled && props.onClick) {
@@ -21,6 +21,8 @@ const PickInput: React.FunctionComponent<PickInputProps> = (props) => {
         },
         [props.disabled, props.onClick]
     )
+
+    const {t} = useTranslation()
 
     const clearButton = props.onClear && !props.disabled && props.value
         ? <Icon
