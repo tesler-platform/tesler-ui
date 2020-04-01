@@ -22,7 +22,7 @@ export interface IAssocListRecord {
 
 export interface IAssocListActions {
     onSave: (bcNames: string[]) => void,
-    onCancel: (bcNames: string[]) => void,
+    onCancel: () => void,
     onClose: () => void
 }
 
@@ -57,7 +57,7 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
     }, [onSave, onClose])
 
     const cancelData = React.useCallback(() => {
-        onCancel(pendingBcNames)
+        onCancel()
         onClose()
     }, [onCancel, onClose])
 
@@ -113,19 +113,29 @@ const mapDispatchToProps = createMapDispatchToProps(
     (props: IAssocListOwnProps) => {
         return {
             bcName: props.widget.bcName, // TODO: use widgetName instead
-           // widgetName: props.widget.name,
+            // widgetName: props.widget.name,
+            isFullHierarchy: !!props.widget.options?.hierarchyFull
         }
     },
-    (ctx) => {
+    (ctx): IAssocListActions => {
         return {
-            onCancel: (bcNames: string[]) => {
+            onCancel: () => {
                 ctx.dispatch($do.closeViewPopup({ bcName: ctx.props.bcName }))
+                if (ctx.props.isFullHierarchy) {
+                    ctx.dispatch($do.bcCancelPendingChanges({ bcNames: [ctx.props.bcName] }))
+                }
             },
             onClose: () => {
                 ctx.dispatch($do.closeViewPopup({ bcName: ctx.props.bcName }))
+                if (ctx.props.isFullHierarchy) {
+                    ctx.dispatch($do.bcCancelPendingChanges({bcNames: [ctx.props.bcName]}))
+                }
             },
             onSave: (bcNames: string[]) => {
                 ctx.dispatch($do.saveAssociations({ bcNames }))
+                if (ctx.props.isFullHierarchy) {
+                    ctx.dispatch($do.bcCancelPendingChanges({bcNames: [ctx.props.bcName]}))
+                }
             }
         }
     }
