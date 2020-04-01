@@ -11,6 +11,7 @@ import {AxiosError} from 'axios'
 import {parseBcCursors} from '../utils/history'
 import {ObjectMap} from '../interfaces/objectMap'
 import {WidgetTypes} from '../interfaces/widget'
+import {MultivalueSingleValue, PendingDataItem} from '../interfaces/data'
 
 const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperation)
 .filter(action => !isCrud(action.payload.operationType))
@@ -237,11 +238,66 @@ const showAllTableRecordsInit: Epic = (action$, store) => action$.ofType(types.s
     return Observable.concat(...resultObservables)
 })
 
+// Set multivalues assoc pending data changes to the same state as in multivalue field. That allows us to clear popup pending changes
+// so popup cancel button work as expected and previously unsaved selections will not be preserved between popup opennings
+const showAssocPopup: Epic = (action$, store) => action$.ofType(types.showViewPopup)
+.filter(action => !!(action.payload.calleeBCName && action.payload.associateFieldKey))
+.mergeMap((action) => {
+    const {bcName, calleeBCName} = action.payload
+
+    const state = store.getState()
+
+    const assocWidget = state.view.widgets.find((widget) => widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup)
+    if (!assocWidget?.options?.hierarchyFull) {
+        return Observable.empty<never>()
+    }
+
+    const calleeCursor = state.screen.bo.bc[calleeBCName]?.cursor
+    const calleePendingChanges = calleeCursor && state.view.pendingDataChanges[calleeBCName]?.[calleeCursor]
+    const assocFieldKey = action.payload.associateFieldKey
+    const assocFieldChanges = (calleePendingChanges?.[assocFieldKey] as MultivalueSingleValue[])
+
+    if (assocFieldChanges) {
+        const popupInitPendingChanges: Record<string, PendingDataItem> = {}
+
+        assocFieldChanges.forEach((record) => {
+            popupInitPendingChanges[record.id] = {
+                id: record.id,
+                _associate: true,
+                _value: record.value
+            }
+        })
+
+        const calleeData = state.data[calleeBCName]?.find((dataRecord) => dataRecord.id === calleeCursor)
+        const assocIds = (calleeData?.[assocFieldKey] as MultivalueSingleValue[]).map((recordId) => recordId.id)
+        const assocPendingIds = assocFieldChanges.map((recordId) => recordId.id)
+        if (assocIds) {
+            assocIds.forEach((recordId) => {
+                if (!assocPendingIds.includes(recordId)) {
+                    popupInitPendingChanges[recordId] = {
+                        id: recordId,
+                        _associate: false
+                    }
+                }
+            })
+        }
+
+        return Observable.of($do.changeDataItems({
+            bcName,
+            cursors: Object.keys(popupInitPendingChanges),
+            dataItems: Object.values(popupInitPendingChanges)
+        }))
+    }
+
+    return Observable.empty<never>()
+})
+
 export const viewEpics = combineEpics(
     sendOperation,
     getRowMetaByForceActive,
     sendOperationAssociate,
     clearPendingDataChangesAfterCursorChange,
     selectTableCellInit,
-    showAllTableRecordsInit
+    showAllTableRecordsInit,
+    showAssocPopup
 )
