@@ -47,7 +47,7 @@ export type OperationType = OperationTypeCrud | string
  * @param scope - ???
  * @param preInvoke - действие, которое надо произвести прежде чем начать выполнять операцию
  * @param autoSaveBefore Validate the record for empty "required" fields before API call
- * @param confirmOperation Data for preInvoke confirm action
+ * @param confirmOperation Data for postInvokeConfirm action
  */
 export interface Operation {
     text: string,
@@ -148,6 +148,33 @@ export const enum OperationPostInvokeType {
      * Не использовать и убрать с Досье, когда определимся с форматом ответов
      */
     postDelete = 'postDelete'
+}
+
+/**
+ * The type of message that will be shown to the user for confirmation
+ */
+export enum OperationPostInvokeConfirmType {
+    /**
+     * Simple confirmation
+     */
+    confirm = 'confirm',
+    /**
+     * Сonfirmation with text from the user
+     */
+    confirmText = 'confirmText'
+}
+
+/**
+ * The action that will be performed after the user confirms it
+ *
+ * @param type Type of postInvokeConfirm action
+ * @param message Title for modal
+ * @param messageContent Additional text for modal
+ */
+export interface OperationPostInvokeConfirm {
+    type: OperationPostInvokeConfirmType | string,
+    message: string,
+    messageContent?: string
 }
 
 /**
