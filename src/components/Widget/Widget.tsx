@@ -65,7 +65,7 @@ export const Widget: FunctionComponent<WidgetProps> = (props) => {
             }
         </Card>
     }
-    return <div className={styles.container}>
+    return <div className={styles.container} data-widget-type={props.meta.type}>
         <h2 className={styles.title}>{props.meta.title}</h2>
         { showSkeleton && <Skeleton loading paragraph={skeletonParams} /> }
         { !showSkeleton &&
