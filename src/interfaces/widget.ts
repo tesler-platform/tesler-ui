@@ -27,9 +27,6 @@ export interface WidgetFieldBase {
     bgColor?: string,
     bgColorKey?: string,
     label?: string,
-    groupName?: string
-    newRow?: boolean,
-    break?: boolean,
     snapshotKey?: string,
 }
 
