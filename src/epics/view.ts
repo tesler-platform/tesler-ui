@@ -75,7 +75,7 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
         const operationError = e.response?.data as OperationError
         if (e.response?.data === Object(e.response?.data)) {
             entityError = operationError?.error?.entity
-            viewError = operationError?.error?.popup[0]
+            viewError = operationError?.error?.popup?.[0]
         }
         return Observable.of($do.sendOperationFail({ bcName, bcUrl, viewError, entityError }))
     })
