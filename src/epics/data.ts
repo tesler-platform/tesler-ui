@@ -401,7 +401,7 @@ const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperat
         const operationError = e.response?.data as OperationError
         if (e.response?.data === Object(e.response?.data)) {
             entityError = operationError?.error?.entity
-            viewError = operationError?.error?.popup[0]
+            viewError = operationError?.error?.popup?.[0]
         }
         return Observable.of($do.bcSaveDataFail({ bcName, bcUrl, viewError, entityError }))
     })
