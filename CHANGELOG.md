@@ -1,4 +1,41 @@
+# Version 1.10.0
+
+## Features
+
+* New contract for confirmation postInvokes with two types of confirmation (#170):
+  * `confirm` - Simple yes/no confirmation
+  * `confirmText` - Confirmation with input for user text that will be send to Tesler API
+```ts
+/**
+ * The action that will be performed after the user confirms it
+ *
+ * @param type Type of postInvokeConfirm action
+ * @param message Title for modal
+ * @param messageContent Additional text for modal
+ */
+export interface OperationPostInvokeConfirm {
+    type: OperationPostInvokeConfirmType | string,
+    message: string,
+    messageContent?: string
+}
+```
+
+Previous implementation is now deprecated and will be removed in 2.0.0.
+* Widget types are now exposed as `data-widget-type`  attribute on default card html node (#174).
+
+## Fixes
+
+* `AssocListPopup` widget opened for `multivalue` field may get out of sync after items removal so the popup and the field erroneously will show different sets of selected items (#171).
+* Router does not respect `primaryView` parameter of screen meta during `changeLocation` action (#178).
+* Missing `popup` existence check in ajax reposnse catch-handler causing application crash (#180).
+
+## Misc
+
+* Remove unused `groupName`, `newRow`, `break` properties from `WidgetFieldBase` interface as they were never implemented for Tesler
+
 # Version 1.9.1
+
+## Fixes
 
 * Temporary fix for `<Pagination />` component crashing the page with #300 and #310 React invariants after 1.8.4 added i18n tokens (#167).
 

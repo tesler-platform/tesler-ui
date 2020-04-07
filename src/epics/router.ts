@@ -71,7 +71,9 @@ const changeLocation: Epic = (action$, store) => action$.ofType(types.changeLoca
     if (needUpdateViews) {
         const nextView = nextViewName
             ? state.screen.views.find(item => item.name === nextViewName)
-            : state.screen.views[0]
+            : state.screen.primaryView
+                ? state.screen.views.find(item => item.name === state.screen.primaryView)
+                : state.screen.views[0]
         resultObservables.push(
             nextView
                 ? Observable.of($do.selectView(nextView))
