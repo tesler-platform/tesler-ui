@@ -4,11 +4,11 @@
  * @param viewName Identifier of view.
  */
 export interface ViewNavigationItem {
-    /** TODO identifier will be nullable in 2.0.0 */
-    id?: string
     // TODO: Should not be optional in 2.0.0
     viewName?: string,
     hidden?: boolean,
+    /** TODO: remove in 2.0.0 */
+    id?: string
 }
 
 /**
@@ -71,3 +71,25 @@ export function isViewNavigationGroup(item: MenuItem): item is ViewNavigationGro
  * The type of object to describe the menu items in the navigation.
  */
 export type MenuItem = ViewNavigationGroup | ViewNavigationCategory | ViewNavigationItem
+
+/**
+ * 1 - for static, top level navigation
+ * 2 - `SecondLevelMenu` tab widgets
+ * 2 - `ThirdLevelMenu` tab widgets
+ * 2 - `FourthLevelMenu` tab widgets
+ */
+export type NavigationLevel = 1 | 2 | 3 | 4
+
+/**
+ * Model for displayed tab item
+ */
+export interface NavigationTab {
+    /**
+     * View name where navigation tab will redirect the user
+     */
+    viewName: string,
+    /**
+     * Displayed title: either view name or a group name
+     */
+    title?: string
+}

@@ -1,0 +1,60 @@
+{
+  "menu": [
+    {
+      "viewName": "viewA"
+    },
+    {
+      "title": "categoryB",
+      "defaultView": "viewB2",
+      "child": [
+        {
+          "viewName": "viewB1"
+        },
+        {
+          "viewName": "viewB2"
+        }
+      ]
+    },
+    {
+      "title": "categoryC",
+      "child": [
+        {
+          "title": "categoryC_1_1",
+          "defaultView": "viewC_2_2",
+          "child": [
+            {
+              "viewName": "viewC_2_1"
+            },
+            {
+              "viewName": "viewC_2_2"
+            }
+          ]
+        },
+        {
+          "viewName": "viewC_1_2"
+        }
+      ]
+    },
+    {
+      "title": "categoryD",
+      "child": [
+        {
+          "title": "categoryD_1_1",
+          "child": [
+            {
+              "title": "categoryD_1_1_1",
+              "child": [
+                {
+                  "viewName": "viewD1"
+                },
+                {
+                  "viewName": "viewD2"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

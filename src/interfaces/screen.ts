@@ -2,13 +2,18 @@ import {ObjectMap} from '../interfaces/objectMap'
 import {ViewMetaResponse} from '../interfaces/view'
 import {BcMeta, BcMetaState} from '../interfaces/bc'
 import {BcFilter, BcSorter} from '../interfaces/filters'
+import {ViewNavigationGroup, ViewNavigationItem} from '../interfaces/navigation'
 
 export interface ScreenMetaResponse {
     bo: {
         bc: BcMeta[]
     },
     views: ViewMetaResponse[],
-    primary?: string
+    primary?: string,
+    // TODO: Will not be optional in 2.0.0
+    navigation?: {
+        menu: Array<ViewNavigationGroup | ViewNavigationItem>
+    }
 }
 
 export interface ScreenState {
