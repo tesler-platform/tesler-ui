@@ -24,6 +24,7 @@ import MultivalueHover from '../ui/Multivalue/MultivalueHover'
 import cn from 'classnames'
 import readOnlyFieldStyles from '../../components/ui/ReadOnlyField/ReadOnlyField.less'
 import CheckboxPicker from '../../components/ui/CheckboxPicker/CheckboxPicker'
+import RadioButton from '../../components/ui/RadioButton/RadioButton'
 import styles from './Field.less'
 import {CustomizationContext} from '../../components/View/View'
 import {InteractiveInput} from '../../components/ui/InteractiveInput/InteractiveInput'
@@ -76,8 +77,11 @@ const simpleDiffSupportedFieldTypes = [
     FieldType.checkbox,
     FieldType.pickList,
     FieldType.inlinePickList,
-    FieldType.dictionary
+    FieldType.dictionary,
+    FieldType.radio
 ]
+
+const emptyFieldMeta = [] as any
 
 export const Field: FunctionComponent<FieldProps> = (props) => {
     const [localValue, setLocalValue] = React.useState(null)
@@ -313,6 +317,14 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
             >
                 {value}
             </ReadOnlyField>
+            break
+        case FieldType.radio:
+            resultField = <RadioButton
+                {...commonProps}
+                value={value as any}
+                values={props.rowFieldMeta?.values || emptyFieldMeta}
+                onChange={handleChange}
+            />
             break
         default:
             resultField = <CustomizationContext.Consumer>
