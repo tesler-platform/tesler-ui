@@ -36,10 +36,14 @@ const changeLocation: Epic = (action$, store) => action$.ofType(types.changeLoca
         return Observable.of($do.handleRouter(state.router))
     }
 
-    // Если скрины не совпали, то надо просто их перезагрузить и все,
-    // т.к. вьюхи и курсоры зависят от скрина и перестают быть актуальны
+    // Reload screen if nextScreen and currentScreen not equal
+    // With the default route type use the first default screen, if not exist then first screen
     const currentScreenName = state.screen.screenName
-    const nextScreenName = state.router.screenName
+    const defaultScreenName = state.session.screens.find(screen => screen.defaultScreen)?.name
+        || state.session.screens[0]?.name
+    const nextScreenName = state.router.type === RouteType.default
+        ? defaultScreenName
+        : state.router.screenName
     if (nextScreenName !== currentScreenName) {
         const nextScreen = state.session.screens.find(item => item.name === nextScreenName)
         return nextScreen
