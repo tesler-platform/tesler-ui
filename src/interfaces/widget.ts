@@ -115,6 +115,10 @@ export type HiddenFieldMeta = AllWidgetTypeFieldBase & {
     type: FieldType.hidden
 }
 
+export type RadioButtonFieldMeta = AllWidgetTypeFieldBase & {
+    type: FieldType.radio
+}
+
 export type WidgetField = NumberFieldMeta
     | DateFieldMeta
     | DateTimeFieldMeta
@@ -129,6 +133,7 @@ export type WidgetField = NumberFieldMeta
     | FileUploadFieldMeta
     | CheckboxFieldMeta
     | HiddenFieldMeta
+    | RadioButtonFieldMeta
 
 export type WidgetFormField = Extract<WidgetField, WidgetFormFieldBase>
 

@@ -105,7 +105,8 @@ export const enum FieldType {
     multifield = 'multifield',
     multivalue = 'multivalue',
     multivalueHover = 'multivalueHover',
-    hint = 'hint'
+    hint = 'hint',
+    radio = 'radio'
 }
 
 export type ApplicationError = BusinessError | SystemError | ApplicationErrorBase
