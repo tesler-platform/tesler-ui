@@ -1,5 +1,6 @@
 import React from 'react'
 import {Button, notification} from 'antd'
+import i18n from 'i18next'
 
 export const openButtonWarningNotification = (
     description: string,
@@ -26,7 +27,7 @@ export const openButtonWarningNotification = (
     notification.warning({
         description,
         duration,
-        message: 'Внимание',
+        message: i18n.t('Attention'),
         btn: btn,
         key: notificationKey
     })
