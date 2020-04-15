@@ -88,8 +88,6 @@ export const Widget: FunctionComponent<WidgetProps> = (props) => {
  * @param children Widgets children component, returned in case type is unknown
  */
 function chooseWidgetType(widgetMeta: WidgetMeta, customWidgets?: ObjectMap<CustomWidget>, children?: React.ReactNode) {
-    const options = widgetMeta.options
-    const readOnly = options?.readOnly
     if (customWidgets?.[widgetMeta.type]) {
         const CustomWidgetComponent = customWidgets[widgetMeta.type]
         return <CustomWidgetComponent meta={widgetMeta} />
@@ -100,7 +98,6 @@ function chooseWidgetType(widgetMeta: WidgetMeta, customWidgets?: ObjectMap<Cust
             return <TableWidget
                 meta={widgetMeta as WidgetTableMeta}
                 showRowActions
-                allowEdit={!readOnly}
             />
         case WidgetTypes.Form:
             return <FormWidget meta={widgetMeta as WidgetFormMeta} />
