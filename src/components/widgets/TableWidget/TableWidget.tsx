@@ -38,7 +38,6 @@ interface TableWidgetOwnProps {
     meta: WidgetTableMeta,
     rowSelection?: TableRowSelection<DataItem>,
     showRowActions?: boolean,
-    allowEdit?: boolean,
     paginationMode?: PaginationMode,
     disablePagination?: boolean
 }
@@ -333,7 +332,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                         />
                     }
 
-                    const editMode = props.allowEdit && (props.selectedCell && item.key === props.selectedCell.fieldKey
+                    const editMode = !props.meta.options?.readOnly && (props.selectedCell && item.key === props.selectedCell.fieldKey
                         && props.meta.name === props.selectedCell.widgetName && dataItem.id === props.selectedCell.rowId
                         && props.cursor === props.selectedCell.rowId
                     )
@@ -351,7 +350,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                     </div>
                 },
                 onCell: (record, rowIndex) => {
-                    return (!props.allowEdit)
+                    return (props.meta.options?.readOnly)
                         ? null
                         : {
                             onDoubleClick: (event: React.MouseEvent) => {
