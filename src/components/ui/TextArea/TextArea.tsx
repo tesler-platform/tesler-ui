@@ -61,15 +61,6 @@ const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
         []
     )
 
-    const onChangeHandler = React.useCallback(
-        (e: React.FormEvent<HTMLTextAreaElement>) => {
-            if (props.maxInput && e.currentTarget.value.length > props.maxInput) {
-                e.currentTarget.value = e.currentTarget.value.slice(0, props.maxInput)
-            }
-        },
-        [props.maxInput]
-    )
-
     const onTextAreaShowed = React.useCallback(
         () => {
             if (textAreaRef.current) {
@@ -91,8 +82,14 @@ const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
         defaultValue
     } = props
 
-    // кеу для Input.TextArea равен defaultValue для того чтобы поле ввода обновлялось при приходе нового значения из props
-    const key = JSON.stringify(defaultValue)
+    React.useEffect(
+        () => {
+            textAreaRef.current.setValue(defaultValue ?? '')
+        },
+        [defaultValue]
+    )
+    const autosize = React.useMemo(() => { return {minRows: props.minRows || 5, maxRows: props.maxRows || 10 }},
+        [props.minRows, props.maxRows])
 
     if (popover) {
         const rcTooltipProps = { afterVisibleChange: onTextAreaShowed }
@@ -105,12 +102,11 @@ const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
                 <div className={styles.popoverCardInnerWrapper}>
                     <Input.TextArea
                         ref={textAreaRef}
-                        key={key}
                         defaultValue={defaultValue}
                         rows={4}
-                        onChange={onChangeHandler}
                         onBlur={popoverTextAreaBlurHandler}
                         disabled={disabled}
+                        maxLength={props.maxInput}
                     />
                     <Button
                         className={styles.popoverOkBtn}
@@ -133,18 +129,14 @@ const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
         </Popover>
     } else {
         return <Input.TextArea
-            key={key}
+            ref={textAreaRef}
             defaultValue={defaultValue}
-            autosize={{ // todo change to autoSize in 2.0.0
-                minRows: props.minRows || 5,
-                maxRows: props.maxRows || 10
-            }}
+            autoSize={autosize}
             disabled={disabled}
-            onChange={onChangeHandler}
             onBlur={popoverTextAreaBlurHandler}
             style={props.style}
             className={props.className}
-            autoFocus={props.forceFocus}
+            maxLength={props.maxInput}
         />
     }
 }
