@@ -534,13 +534,15 @@ export class ActionPayloadTypes {
      * @param associateFieldKey
      * @param assocValueKey
      * @param active
+     * @param isFilter
      */
     showViewPopup: {
         bcName: string,
         calleeBCName?: string,
         associateFieldKey?: string,
         assocValueKey?: string,
-        active?: boolean
+        active?: boolean,
+        isFilter?: boolean
     } = z
 
     /**

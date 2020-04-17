@@ -1,3 +1,30 @@
+# Version 1.11.0
+
+## Features
+
+* :red_circle: [Deprecation warning]: The description format for screen navigation structure will be changed in 2.0.0 [#78](https://github.com/tesler-platform/tesler-ui/issues/78). For the purposes of migration, a new `useViewTabs` hook is introduced:
+```tsx
+const tabs = useViewTabs(2) // Get tabs for second level menu
+return <ul>
+    {tabs.map(tab =>
+        <li key={tab.url}>
+            <a href={tab.url}>{tab.title}</a>
+        </li>
+    )}
+</ul>
+```
+* `<AssocListPopup />` now have a header showing a list of currently selected tabs (#173).
+
+## Fixes
+
+* `<AssocTable />` should have a functional `selectAll` checkbox (#193).
+* Required fields should not restore their previous value when they've been cleared and (#150).
+* Missing translation for warning notification (#160).
+* `changeLocation` action should respect default screen when type is `RouteType.default` (#186).
+* `<TableWidget />` should use respect `readOnly` flag from widgets meta (#189).
+* `<TextArea />` should not be recreated on every value change (#191). 
+
+
 # Version 1.10.0
 
 ## Features

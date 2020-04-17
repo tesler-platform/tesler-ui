@@ -1,6 +1,6 @@
 {
   "name": "@tesler-ui/core",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "main": "tesler-ui-core.js",
   "homepage": "https://tesler.io/",
   "types": "index.d.ts",
@@ -36,7 +36,7 @@
     "less-loader": "4.1.0",
     "react": "16.8.6",
     "react-dom": "16.8.6",
-    "react-redux": "7.1.0",
+    "react-redux": "7.2.0",
     "redux-observable": "0.14.1",
     "rxjs": "5.5.12",
     "style-loader": "0.23.0",

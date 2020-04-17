@@ -20,7 +20,8 @@ export interface AssocTableProps extends AssocTableOwnProps {
     data: AssociatedItem[],
     assocValueKey: string,
     pendingChanges: Record<string, PendingDataItem>,
-    onSelect: (bcName: string, dataItem: AssociatedItem, selected: boolean) => void
+    onSelect: (bcName: string, dataItem: AssociatedItem, selected: boolean) => void,
+    onSelectAll: (bcName: string, cursors: string[], dataItems: PendingDataItem[]) => void
 }
 
 export const AssocTable: FunctionComponent<AssocTableProps> = (props) => {
@@ -35,6 +36,13 @@ export const AssocTable: FunctionComponent<AssocTableProps> = (props) => {
                 _value: record[props.assocValueKey]
             }
             props.onSelect(props.meta.bcName, dataItem, selected)
+        },
+        onSelectAll: (selected: boolean, selectedRows: DataItem[], changedRows: DataItem[]) => {
+            props.onSelectAll(props.meta.bcName, changedRows.map(item => item.id), changedRows.map(item => ({
+                ...item,
+                _value: item[props.assocValueKey],
+                _associate: selected
+            })))
         }
     }
 
@@ -68,6 +76,9 @@ function mapDispatchToProps(dispatch: Dispatch) {
                     _associate: selected,
                 }
             }))
+        },
+        onSelectAll: (bcName: string, cursors: string[], dataItems: PendingDataItem[]) => {
+            dispatch($do.changeDataItems({ bcName, cursors, dataItems }))
         }
     }
 }

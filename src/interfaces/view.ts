@@ -70,13 +70,15 @@ export interface ViewMetaResponse {
  * @param associateFieldKey ???
  * @param assocValueKey ???
  * @param active Если этот флаг указан, то виджет отправляет выбранные значения на бэк по кнопке подтверждения в модальном окне
+ * @param filter this popup is filter form
  */
 export interface PopupData {
     bcName: string,
     calleeBCName?: string,
     associateFieldKey?: string,
     assocValueKey?: string,
-    active?: boolean
+    active?: boolean,
+    isFilter?: boolean
 }
 
 export const enum FieldType {

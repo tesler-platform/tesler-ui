@@ -12,7 +12,7 @@ interface PopupProps {
     size?: 'medium' | 'large',
     children: any,
     showed: boolean,
-    title?: string,
+    title?: React.ReactNode,
     bcName: string,
     widgetName?: string,
     disablePagination?: boolean,
@@ -24,7 +24,9 @@ const widths = {
 }
 
 export const Popup: FunctionComponent<PopupProps> = (props) => {
-    const title = <h1 className={styles.title}>{props.title}</h1>
+    const title = typeof props.title !== 'string'
+        ? props.title
+        : <h1 className={styles.title}>{props.title}</h1>
     const width = props.size ? widths[props.size] : widths.medium
     const {t} = useTranslation()
     return <div>

@@ -87,6 +87,7 @@ export type MultivalueFieldMeta = AllWidgetTypeFieldBase & {
     type: FieldType.multivalue | FieldType.multivalueHover,
     popupBcName?: string,
     assocValueKey?: string,
+    associateFieldKey?: string,
     displayedKey?: string,
 }
 
