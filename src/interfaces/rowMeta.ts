@@ -34,6 +34,7 @@ export interface RowMetaResponse extends TeslerResponse {
  * @param key - ключ поля, уникально его идентифицирующий (см. DataItem [fieldName: string])
  * @param currentValue - актуальное значение на бэке, присылаемое на случай конфликтов совместного изменения
  * @param disabled - доступно ли поле для редактирования
+ * @param placeholder - hint for filling the field
  * @param ephemeral - при любой операции поле будет отправляться на бэк, даже если не изменялось
  * @param hidden - поле не видно пользователю
  * @param required - поле обязательно для заполнения
@@ -49,6 +50,7 @@ export interface RowMetaField {
     defaultValue?: DataValue,
     currentValue: DataValue,
     disabled?: boolean,
+    placeholder?: string,
     ephemeral?: boolean, // TODO: Актуально еще? Вроде сейчас всегда запись целиком должна отправляться
     hidden?: boolean, // TODO: Работа с ABAP
     required?: boolean,
