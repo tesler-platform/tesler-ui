@@ -2,7 +2,7 @@ import React, {FormEvent, FunctionComponent} from 'react'
 import {Popover, Checkbox, Input, Button, Form, Icon, DatePicker} from 'antd'
 import {connect} from 'react-redux'
 import {RowMetaField} from '../../interfaces/rowMeta'
-import {WidgetListField} from '../../interfaces/widget'
+import {MultivalueFieldMeta, WidgetField, WidgetListField, WidgetMeta} from '../../interfaces/widget'
 import styles from './ColumnFilter.less'
 import {$do} from '../../actions/actions'
 import {Store} from '../../interfaces/store'
@@ -25,8 +25,10 @@ export interface ColumnFilterOwnProps {
 export interface ColumnFilterProps extends ColumnFilterOwnProps {
     bcName: string,
     filter: BcFilter,
+    widget: WidgetMeta,
     onApply: (bcName: string, filter: BcFilter) => void,
-    onCancel: (bcName: string, filter: BcFilter) => void
+    onCancel: (bcName: string, filter: BcFilter) => void,
+    onMultivalueAssocOpen: (bcName: string, calleeBCName: string, assocValueKey: string, associateFieldKey: string) => void,
 }
 
 export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
@@ -53,6 +55,11 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
 
     const handleDateValue = (date: Moment, dateString: string) => {
         setValue(dateString || null)
+    }
+
+    const handlePopup = (bcName: string, calleeBCName: string, assocValueKey: string, associateFieldKey: string) => {
+        props.onMultivalueAssocOpen(bcName, calleeBCName, assocValueKey, associateFieldKey)
+        handleVisibleChange()
     }
 
     const handleCheckboxValue = (e: CheckboxChangeEvent) => {
@@ -111,8 +118,7 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
     let columnFilterPopover
     switch (props.widgetMeta.type) {
         case (FieldType.dictionary) :
-        case (FieldType.pickList) :
-        case (FieldType.multivalue) : {
+        case (FieldType.pickList) : {
             columnFilterPopover =
                 renderCheckbox(props.widgetMeta.title, value as DataValue[], props.rowMeta.filterValues, setValue)
             break
@@ -145,7 +151,16 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
 
     const {t} = useTranslation()
 
-    const content = <div className={styles.content}>
+    const fieldMeta = props.widget.fields.find((field: WidgetField) => field.key === props.widgetMeta.key) as MultivalueFieldMeta
+    const isMultivalue = props.widgetMeta.type === FieldType.multivalue
+    React.useEffect(() => {
+        if (isMultivalue  && visible) {
+            handlePopup(fieldMeta.popupBcName, props.bcName, fieldMeta.assocValueKey, fieldMeta.associateFieldKey)
+        }
+    }, [isMultivalue, visible, props.bcName, fieldMeta])
+
+    const content = isMultivalue ? undefined
+        : <div className={styles.content}>
         <Form onSubmit={handleApply} layout="vertical">
             {columnFilterPopover}
             <div className={styles.operators}>
@@ -162,7 +177,7 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
     return <Popover
         trigger="click"
         content={content}
-        visible={visible}
+        visible={visible && props.widgetMeta.type !== FieldType.multivalue}
         onVisibleChange={handleVisibleChange}
     >
         <div
@@ -175,10 +190,10 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
 /**
  * TODO
  *
- * @param title 
- * @param value 
- * @param filterValues 
- * @param setValue 
+ * @param title
+ * @param value
+ * @param filterValues
+ * @param setValue
  */
 function renderCheckbox(
     title: string,
@@ -232,6 +247,7 @@ function mapStateToProps(store: Store, ownProps: ColumnFilterOwnProps) {
     const bcName = widget?.bcName
     const filter = store.screen.filters[bcName]?.find(item => item.fieldName === ownProps.widgetMeta.key)
     return {
+        widget,
         filter,
         bcName
     }
@@ -246,6 +262,15 @@ function mapDispatchToProps(dispatch: Dispatch) {
         onCancel: (bcName: string, filter: BcFilter) => {
             dispatch($do.bcRemoveFilter({ bcName, filter }))
             dispatch($do.bcForceUpdate({ bcName }))
+        },
+        onMultivalueAssocOpen: (bcName: string, calleeBCName: string, assocValueKey: string, associateFieldKey: string) => {
+            dispatch($do.showViewPopup({
+                bcName: bcName,
+                calleeBCName: calleeBCName,
+                assocValueKey: assocValueKey,
+                associateFieldKey: associateFieldKey,
+                isFilter: true
+            }))
         }
     }
 }
