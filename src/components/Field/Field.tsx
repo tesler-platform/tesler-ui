@@ -82,29 +82,12 @@ const simpleDiffSupportedFieldTypes = [
 export const Field: FunctionComponent<FieldProps> = (props) => {
     const [localValue, setLocalValue] = React.useState(null)
     let resultField: React.ReactChild = null
-    // todo: временный фикс для корректной работы с пиклистами
-    const undefinedValuesAllowed = [
-        FieldType.pickList,
-        FieldType.inlinePickList,
-        FieldType.fileUpload,
-        FieldType.date,
-        FieldType.dateTime,
-        FieldType.dateTimeWithSeconds,
-        FieldType.checkbox,
-        FieldType.dictionary,
-        FieldType.multivalue,
-        FieldType.number,
-        FieldType.money,
-        FieldType.percent
-    ]
+
     const value = ('forcedValue' in props)
         ? props.forcedValue
-        : (undefinedValuesAllowed.includes(props.widgetFieldMeta.type)
-            ? (props.pendingValue !== undefined)
-                ? props.pendingValue
-                : props.data?.[props.widgetFieldMeta.key]
-            : props.pendingValue || props.data?.[props.widgetFieldMeta.key]
-        )
+        : (props.pendingValue !== undefined)
+            ? props.pendingValue
+            : props.data?.[props.widgetFieldMeta.key]
 
     const disabled = (props.rowFieldMeta ? props.rowFieldMeta.disabled : true)
 
