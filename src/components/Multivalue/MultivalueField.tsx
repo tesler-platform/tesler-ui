@@ -55,7 +55,7 @@ function mapStateToProps(store: Store, ownProps: MultivalueFieldOwnProps) {
     // const widget = store.view.widgets.find(widget => widget.name === ownProps.widgetName)
     // const bc = store.screen.bo.bc[widget.bcName]
     return {
-        cursor: store.screen.bo.bc[ownProps.bcName].cursor,
+        cursor: store.screen.bo.bc[ownProps.bcName]?.cursor,
         page: 0,
         popupBcName: ownProps.widgetFieldMeta.popupBcName,
         assocValueKey: ownProps.widgetFieldMeta.assocValueKey,
