@@ -1,16 +1,19 @@
 import React, {FunctionComponent} from 'react'
 import {connect} from 'react-redux'
 import {$do} from '../../../actions/actions'
-import {DataValue} from '../../../interfaces/data'
+import {DataItem, DataValue, PendingDataItem} from '../../../interfaces/data'
 import {Store} from '../../../interfaces/store'
 import {WidgetTableMeta} from '../../../interfaces/widget'
 import Popup from '../../ui/Popup/Popup'
 import {createMapDispatchToProps} from '../../../utils/redux'
 import HierarchyTable from '../../../components/HierarchyTable/HierarchyTable'
 import AssocTable from './AssocTable'
-import {Skeleton} from 'antd'
+import {Skeleton, Tag} from 'antd'
 import SameBcHierarchyTable from '../../SameBcHierarchyTable/SameBcHierarchyTable'
 import FullHierarchyTable from '../../FullHierarchyTable/FullHierarchyTable'
+import {AssociatedItem} from '../../../interfaces/operation'
+import {BcFilter, FilterType} from '../../../interfaces/filters'
+import * as styles from '../../ui/Popup/Popup.less'
 
 export interface IAssocListRecord {
     id: string,
@@ -22,6 +25,8 @@ export interface IAssocListRecord {
 
 export interface IAssocListActions {
     onSave: (bcNames: string[]) => void,
+    onFilter: (bcName: string, filter: BcFilter) => void,
+    onDeleteTag: (bcName: string, dataItem: DataItem) => void
     onCancel: () => void,
     onClose: () => void
 }
@@ -33,7 +38,15 @@ export interface IAssocListOwnProps {
 export interface IAssocListProps extends IAssocListOwnProps {
     showed: boolean,
     assocValueKey?: string,
+    associateFieldKey?: string,
     bcLoading: boolean,
+    pendingDataChanges?: {
+        [bcName: string]: {
+            [cursor: string]: PendingDataItem
+        }
+    },
+    isFilter?: boolean,
+    calleeBCName?: string
 }
 
 export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActions> = (props) => {
@@ -45,6 +58,8 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         onCancel,
         onClose,
         onSave,
+        onFilter,
+        onDeleteTag,
     } = props
 
     const pendingBcNames = props.widget.options?.hierarchy
@@ -56,16 +71,79 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         onClose()
     }, [onSave, onClose])
 
+    const pendingDataValue = props.pendingDataChanges[props.widget.bcName]
+    const filterData = React.useCallback(() => {
+        const filterValue: string[] = []
+        for (const value in pendingDataValue) {
+            if (pendingDataValue[value]?.id && pendingDataValue[value]?._associate === true) {
+                filterValue.push(pendingDataValue[value].id.toString())
+            }
+        }
+        onFilter(props.calleeBCName, {
+            type: FilterType.equalsOneOf,
+            fieldName: props.associateFieldKey,
+            value: filterValue
+        })
+        onClose()
+    }, [onFilter, onClose, props.calleeBCName, props.associateFieldKey, pendingDataValue])
+
     const cancelData = React.useCallback(() => {
         onCancel()
         onClose()
     }, [onCancel, onClose])
 
+    const handleDeleteTag = React.useCallback((val: DataItem) => {
+        onDeleteTag(props.widget.bcName, val)
+    },
+        [props.onDeleteTag,props.widget.bcName]
+    )
+
+    const pendingCurrentData = props.pendingDataChanges[props.widget.bcName]
+    const pendingData = []
+    for (const key in pendingCurrentData) {
+        if (pendingCurrentData[key]._associate === true) {
+            pendingCurrentData[key].closable = true
+            pendingData.push(pendingCurrentData[key])
+        }
+    }
+
+    // Tag values limit
+    const tagLimit = 5
+    const tagBackgroundCount = pendingData.length - tagLimit
+    const visiblePendingData = pendingData.length > tagLimit
+        ? [ ...pendingData.slice(0, tagLimit), {
+            id: '99999999999999999999',
+            closable: false,
+            _associate: false,
+            _value: '... ' + tagBackgroundCount } ]
+        : pendingData
+
+    const title = visiblePendingData.length !== 0
+        ? <div>
+            <div><h1 className={styles.title}>{props.widget.title}</h1></div>
+            <div>
+                {visiblePendingData?.map(val => {
+                    return <Tag
+                        title={val._value?.toString()}
+                        closable={!!val.closable}
+                        id={val.id?.toString()}
+                        key={val.id?.toString()}
+                        onClose={() => {
+                            handleDeleteTag(val as AssociatedItem)
+                        }}
+                    >
+                        {val._value}
+                    </Tag>
+                })}
+            </div>
+        </div>
+        : props.widget.title
+
     return <Popup
-        title={props.widget.title}
+        title={title}
         showed
         size="large"
-        onOkHandler={saveData}
+        onOkHandler={props.isFilter ? filterData : saveData}
         onCancelHandler={cancelData}
         bcName={props.widget.bcName}
         widgetName={props.widget.name}
@@ -102,10 +180,16 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
 function mapStateToProps(store: Store, ownProps: IAssocListOwnProps) {
     const bcName = ownProps.widget.bcName
     const bc = store.screen.bo.bc[bcName]
+    const isFilter = store.view.popupData.isFilter
+    const calleeBCName = store.view.popupData.calleeBCName
     return {
         showed: store.view.popupData.bcName === ownProps.widget.bcName,
         assocValueKey: store.view.popupData.assocValueKey,
-        bcLoading: bc?.loading
+        associateFieldKey: store.view.popupData.associateFieldKey,
+        bcLoading: bc?.loading,
+        pendingDataChanges: store.view.pendingDataChanges,
+        isFilter: isFilter,
+        calleeBCName: calleeBCName
     }
 }
 
@@ -136,6 +220,22 @@ const mapDispatchToProps = createMapDispatchToProps(
                 if (ctx.props.isFullHierarchy) {
                     ctx.dispatch($do.bcCancelPendingChanges({bcNames: [ctx.props.bcName]}))
                 }
+            },
+            onFilter: (bcName: string, filter: BcFilter) => {
+                ctx.dispatch($do.bcAddFilter({ bcName, filter }))
+                ctx.dispatch($do.bcForceUpdate({ bcName }))
+            },
+            onDeleteTag: (
+                bcName: string,
+                val: AssociatedItem) => {
+                ctx.dispatch($do.changeDataItem({
+                    bcName,
+                    cursor: val.id,
+                    dataItem: {
+                        ...val,
+                        _associate: false,
+                    }
+                }))
             }
         }
     }
