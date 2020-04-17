@@ -7,8 +7,10 @@ import {
 import InputDefaultClass from 'antd/lib/input/TextArea'
 import styles from './TextArea.less'
 import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
+import {TextAreaProps as AntdTextAreaProps} from 'antd/lib/input/TextArea'
 
-export interface TextAreaProps {
+type AdditionalAntdTextAreaProps = Partial<Omit<AntdTextAreaProps, 'onChange'>>
+export interface TextAreaProps extends AdditionalAntdTextAreaProps {
     defaultValue?: string | null,
     maxInput?: number,
     onChange?: (value: string) => void,
@@ -20,8 +22,7 @@ export interface TextAreaProps {
     maxRows?: number,
     className?: string,
     backgroundColor?: string,
-    onDrillDown?: () => void,
-    forceFocus?: boolean,
+    onDrillDown?: () => void
 }
 
 const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
@@ -35,6 +36,20 @@ const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
         </ReadOnlyField>
     }
 
+    const {
+        defaultValue,
+        maxInput,
+        onChange,
+        popover,
+        disabled,
+        readOnly,
+        style,
+        minRows,
+        maxRows,
+        className,
+        backgroundColor,
+        onDrillDown,
+        ...rest} = props
     const inputRef = React.useRef<Input>(null)
     const textAreaRef = React.useRef<InputDefaultClass>(null)
 
@@ -76,12 +91,6 @@ const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
         []
     )
 
-    const {
-        popover,
-        disabled,
-        defaultValue
-    } = props
-
     React.useEffect(
         () => {
             textAreaRef.current.setValue(defaultValue ?? '')
@@ -107,6 +116,7 @@ const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
                         onBlur={popoverTextAreaBlurHandler}
                         disabled={disabled}
                         maxLength={props.maxInput}
+                        {...rest}
                     />
                     <Button
                         className={styles.popoverOkBtn}
@@ -137,6 +147,7 @@ const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
             style={props.style}
             className={props.className}
             maxLength={props.maxInput}
+            {...rest}
         />
     }
 }
