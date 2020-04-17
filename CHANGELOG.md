@@ -1,3 +1,10 @@
+# Version 1.11.1
+
+## Fixes
+
+* MultivalueField loses BC while screen changing (#197)
+
+
 # Version 1.11.0
 
 ## Features
