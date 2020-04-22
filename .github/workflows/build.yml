@@ -19,12 +19,6 @@ jobs:
         run: yarn install
       - name: linter
         run: yarn lint
-      - name: unit tests
-        run: yarn test --coverage --coverageProvider=v8
-      - name: Report coverage to Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: build
         run: yarn build
       - name: Publish dist to NPM
