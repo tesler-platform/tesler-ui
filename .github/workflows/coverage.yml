@@ -1,0 +1,24 @@
+name: Tests and Coverage
+
+on:
+  push:
+    branches:
+    - 'master'
+    - 'develop'
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: install
+      run: yarn install
+    - name: unit tests
+      run: yarn test --coverage --coverageProvider=v8
+    - name: Report coverage to Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
