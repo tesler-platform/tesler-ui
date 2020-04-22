@@ -17,13 +17,17 @@ jobs:
           always-auth: true
       - name: install
         run: yarn install
-      - name: unit tests
-        run: yarn test
       - name: linter
         run: yarn lint
+      - name: unit tests
+        run: yarn test --coverage --coverageProvider=v8
+      - name: Report coverage to Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: build
         run: yarn build
-      - name: navigate dist
+      - name: Publish dist to NPM
         run: |
           echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
           cd dist
@@ -31,11 +35,3 @@ jobs:
           cd ..
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-  src:
-    needs: assets
-    name: Create GitHub Release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: release-drafter/release-drafter@v5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
