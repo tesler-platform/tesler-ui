@@ -1,0 +1,39 @@
+on:
+  push:
+    branches:
+      - alpha
+
+name: Build
+
+jobs:
+  assets:
+    name: Create NPM Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+          always-auth: true
+      - name: Increase version
+        run: yarn version --prepatch
+      - name: install
+        run: yarn install
+      - name: linter
+        run: yarn lint
+      - name: unit tests
+        run: yarn test --coverage --coverageProvider=v8
+      - name: Report coverage to Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: build
+        run: yarn build
+      - name: Publish dist to NPM
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+          cd dist
+          yarn publish --prepatch --preid=alpha --tag alpha --access public
+          cd ..
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
