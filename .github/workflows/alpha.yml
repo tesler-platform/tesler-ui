@@ -19,7 +19,7 @@ jobs:
         run: |
           git config --global user.name "github"
           git config --global user.email "dergachev@hotmail.com"
-          yarn version --prepatch
+          yarn version --prepatch --preid=alpha
       - name: install
         run: yarn install
       - name: linter
@@ -30,7 +30,7 @@ jobs:
         run: |
           echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
           cd dist
-          yarn publish --prepatch --preid=alpha --tag alpha --access public
+          yarn publish --tag alpha --access public
           cd ..
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
