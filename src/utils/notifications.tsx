@@ -6,7 +6,7 @@ export const openButtonWarningNotification = (
     description: string,
     buttonText: string,
     duration: number = 0,
-    onButtonClick: () => void,
+    onButtonClick?: () => void,
     key?: string
 ): string => {
     if (key?.length > 0) {
@@ -15,7 +15,7 @@ export const openButtonWarningNotification = (
 
     const notificationKey = key ? key : `notification_${Date.now()}`
     const btnAction = () => {
-        onButtonClick()
+        onButtonClick?.()
         notification.close(notificationKey)
     }
     const btn = (
