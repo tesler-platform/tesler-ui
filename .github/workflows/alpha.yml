@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - master
+      - alpha
 
 name: Build
 
@@ -10,11 +10,16 @@ jobs:
     name: Create NPM Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
           node-version: '10.x'
           always-auth: true
+      - name: Increase version
+        run: |
+          git config --global user.name "github"
+          git config --global user.email "dergachev@hotmail.com"
+          yarn version --prepatch --preid=alpha
       - name: install
         run: yarn install
       - name: linter
@@ -25,7 +30,7 @@ jobs:
         run: |
           echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
           cd dist
-          yarn publish --access public
+          yarn publish --tag alpha --access public
           cd ..
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

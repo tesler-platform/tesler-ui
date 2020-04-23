@@ -1,6 +1,10 @@
 name: Pipeline
 
-on: pull_request
+on:
+  pull_request:
+    branches-ignore:
+    - 'master'
+    - 'alpha'
 
 jobs:
   build:
@@ -11,8 +15,6 @@ jobs:
     - uses: actions/checkout@v1
     - name: install
       run: yarn install
-    - name: unit tests
-      run: yarn test
     - name: linter
       run: yarn lint
     - name: build
