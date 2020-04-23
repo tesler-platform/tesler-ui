@@ -88,7 +88,7 @@ function onErrorHook(error: AxiosError, callContext?: ApiCallContext) {
                     notificationMessage,
                     'OK',
                     0,
-                    () => {},
+                    null,
                     'action_edit_error'
                 )
                 break
