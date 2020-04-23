@@ -10,13 +10,16 @@ jobs:
     name: Create NPM Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
           node-version: '10.x'
           always-auth: true
       - name: Increase version
-        run: yarn version --prepatch
+        run: |
+          git config --global user.name "github"
+          git config --global user.email "dergachev@hotmail.com"
+          yarn version --prepatch
       - name: install
         run: yarn install
       - name: linter
