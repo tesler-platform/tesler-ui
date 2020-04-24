@@ -115,7 +115,7 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
     const pendingChanges = state.view.pendingDataChanges[bcName][cursor]
     const handledForceActive = state.view.handledForceActive[bcName]?.[cursor] || {}
     const currentRecordData = state.data[bcName].find((record) => record.id === cursor)
-    const fieldsRowMeta = state.view.rowMeta[bcName][bcUrl]?.fields
+    const fieldsRowMeta = state.view.rowMeta[bcName][bcUrl].fields
     let changedFiledKey: string = null
 
     // среди forceActive-полей в дельте ищем то которое изменилось по отношению к обработанным forceActive
@@ -237,8 +237,8 @@ const showAllTableRecordsInit: Epic = (action$, store) => action$.ofType(types.s
 .mergeMap((action) => {
     const resultObservables: Array<Observable<AnyAction>> = []
 
-    const {bcName, cursor} = action.payload
-    const route = store.getState().router
+    const {bcName, route, cursor} = action.payload
+
     resultObservables.push(Observable.of(
         $do.bcChangeCursors({ cursorsMap: { [bcName]: null }})
     ))
@@ -253,6 +253,8 @@ const showAllTableRecordsInit: Epic = (action$, store) => action$.ofType(types.s
     return Observable.concat(...resultObservables)
 })
 
+// Set multivalues assoc pending data changes to the same state as in multivalue field. That allows us to clear popup pending changes
+// so popup cancel button work as expected and previously unsaved selections will not be preserved between popup opennings
 const showAssocPopup: Epic = (action$, store) => action$.ofType(types.showViewPopup)
 .filter(action => !!(action.payload.calleeBCName && action.payload.associateFieldKey))
 .mergeMap((action) => {
@@ -269,9 +271,10 @@ const showAssocPopup: Epic = (action$, store) => action$.ofType(types.showViewPo
     const calleePendingChanges = calleeCursor && state.view.pendingDataChanges[calleeBCName]?.[calleeCursor]
     const assocFieldKey = action.payload.associateFieldKey
     const assocFieldChanges = (calleePendingChanges?.[assocFieldKey] as MultivalueSingleValue[])
-    const popupInitPendingChanges: Record<string, PendingDataItem> = {}
 
     if (assocFieldChanges) {
+        const popupInitPendingChanges: Record<string, PendingDataItem> = {}
+
         assocFieldChanges.forEach((record) => {
             popupInitPendingChanges[record.id] = {
                 id: record.id,
@@ -293,22 +296,15 @@ const showAssocPopup: Epic = (action$, store) => action$.ofType(types.showViewPo
                 }
             })
         }
-    } else {
-        const assocDataValues = state.data[bcName].filter(dataItem => dataItem._associate)
-        assocDataValues.forEach((record) => {
-            popupInitPendingChanges[record.id] = {
-                ...record,
-                id: record.id,
-                _associate: true,
-                _value: record[action.payload.assocValueKey]
-            }
-        })
+
+        return Observable.of($do.changeDataItems({
+            bcName,
+            cursors: Object.keys(popupInitPendingChanges),
+            dataItems: Object.values(popupInitPendingChanges)
+        }))
     }
-    return Observable.of($do.changeDataItems({
-        bcName,
-        cursors: Object.keys(popupInitPendingChanges),
-        dataItems: Object.values(popupInitPendingChanges)
-    }))
+
+    return Observable.empty<never>()
 })
 
 export const viewEpics = combineEpics(
