@@ -85,7 +85,10 @@ const sendOperationAssociate: Epic = (action$, store) => action$.ofType(types.se
 .filter(action => action.payload.operationType === OperationTypeCrud.associate)
 .map(action => {
     return $do.showViewPopup({
-        bcName: `${action.payload.bcName}Assoc`,
+        // TODO: bcKey will not be optional in 2.0.0
+        bcName: action.payload.bcKey
+            ? `${action.payload.bcName}Assoc${action.payload.bcKey}`
+            : `${action.payload.bcName}Assoc`,
         calleeBCName: action.payload.bcName,
         active: true
     })
