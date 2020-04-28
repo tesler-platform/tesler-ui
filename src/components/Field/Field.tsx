@@ -129,7 +129,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
         }
     }, [localValue, handleChange])
 
-    const commonProps = {
+    const commonProps: any = {
         cursor: props.cursor,
         widgetName: props.widgetName,
         meta: props.widgetFieldMeta,
@@ -141,7 +141,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
         backgroundColor: bgColor,
         onDrillDown: handleDrilldown
     }
-    const commonInputProps = {
+    const commonInputProps: any = {
         cursor: props.cursor,
         meta: props.widgetFieldMeta,
         className: cn(props.className),
@@ -149,6 +149,18 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
         placeholder,
         readOnly: props.readonly,
     }
+
+    Object.keys(commonProps).forEach(key => {
+        if (commonProps[key] === undefined) {
+            delete commonProps[key]
+        }
+    })
+
+    Object.keys(commonInputProps).forEach(key => {
+        if (commonInputProps[key] === undefined) {
+            delete commonInputProps[key]
+        }
+    })
 
     if (!props.historyMode && props.widgetFieldMeta.snapshotKey && simpleDiffSupportedFieldTypes.includes(props.widgetFieldMeta.type)) {
         return <HistoryField
