@@ -8,7 +8,7 @@ import {
     OperationPostInvokeShowMessage,
     OperationPostInvokeDownloadFile,
     OperationPostInvokeDownloadFileByUrl,
-    OperationPostInvokeConfirmType
+    OperationPostInvokeConfirmType, OperationPreInvokeType
 } from '../interfaces/operation'
 import {ObjectMap} from '../interfaces/objectMap'
 import {historyObj} from '../reducers/router'
@@ -118,6 +118,8 @@ const processPostInvokeConfirm: Epic = (action$, store) => action$.ofType(types.
         : action.payload.preInvoke
     switch (confirm.type) {
         case OperationPostInvokeConfirmType.confirm:
+        case OperationPreInvokeType.info:
+        case OperationPreInvokeType.error:
         case OperationPostInvokeConfirmType.confirmText: {
             return Observable.of($do.operationConfirmation({
                 operation: {
