@@ -2,7 +2,7 @@ import React, {FunctionComponent} from 'react'
 import {createLocation} from 'history'
 import {historyObj} from '../../../reducers/router'
 
-interface LinkProps {
+export interface LinkProps {
     children: React.ReactNode,
     className: string,
     href: string
