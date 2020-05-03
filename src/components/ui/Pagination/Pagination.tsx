@@ -8,7 +8,7 @@ import {Store} from '../../../interfaces/store'
 import styles from './Pagination.less'
 import {$do} from '../../../actions/actions'
 
-interface PaginationOwnProps {
+export interface PaginationOwnProps {
     bcName: string,
     widgetName?: string,
     mode: PaginationMode,

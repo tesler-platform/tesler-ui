@@ -3,7 +3,7 @@ import {Input, Icon} from 'antd'
 import {useTranslation} from 'react-i18next'
 import styles from './PickInput.less'
 
-interface PickInputProps {
+export interface PickInputProps {
     disabled?: boolean,
     value?: string,
     onClick?: () => void,

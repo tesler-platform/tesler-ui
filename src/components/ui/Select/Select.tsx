@@ -2,7 +2,7 @@ import React from 'react'
 import {Select as AntdSelect} from 'antd'
 import {SelectProps as AntdSelectProps, SelectValue} from 'antd/lib/select'
 
-type SelectProps = AntdSelectProps & {
+export type SelectProps = AntdSelectProps & {
     forwardedRef?: React.RefObject<AntdSelect<string>>
 }
 
