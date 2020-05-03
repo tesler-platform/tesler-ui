@@ -5,7 +5,7 @@ import styles from './MultivalueList.less'
 import cn from 'classnames'
 import MultiValueListRecord from '../../Multivalue/MultiValueListRecord'
 
-interface MultivalueListOwnProps {
+export interface MultivalueListProps {
     fieldTitle: React.ReactNode,
     field: MultivalueFieldMeta,
     data: MultivalueSingleValue[],
@@ -14,7 +14,7 @@ interface MultivalueListOwnProps {
     isColumnDirection?: boolean
 }
 
-const MultivalueList: React.FunctionComponent<MultivalueListOwnProps> = (props) => {
+const MultivalueList: React.FunctionComponent<MultivalueListProps> = (props) => {
 
     return <div key={`${props.field.key}_${props.field.label}`} className={cn({
         [styles.fieldAreaFloat]: props.isFloat,

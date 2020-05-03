@@ -11,7 +11,7 @@ import styles from './CheckboxPicker.less'
 import {buildBcUrl} from '../../../utils/strings'
 import {ChangeDataItemPayload} from '../../Field/Field'
 
-interface CheckboxPickerOwnProps {
+export interface CheckboxPickerOwnProps {
     fieldName: string
     fieldLabel: string
     bcName: string,

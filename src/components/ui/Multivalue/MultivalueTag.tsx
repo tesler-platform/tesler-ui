@@ -5,7 +5,7 @@ import {MultivalueFieldMeta} from '../../../interfaces/widget'
 import styles from './MultivalueTag.less'
 import cn from 'classnames'
 
-interface MultivalueOwnProps {
+export interface MultivalueTagProps {
     disabled: boolean,
     value: MultivalueSingleValue[],
     widgetFieldMeta: MultivalueFieldMeta,
@@ -16,7 +16,7 @@ interface MultivalueOwnProps {
     onChange: (newValue: MultivalueSingleValue[], removedValue: MultivalueSingleValue) => void
 }
 
-const MultivalueTag: React.FunctionComponent<MultivalueOwnProps> = (props) => {
+const MultivalueTag: React.FunctionComponent<MultivalueTagProps> = (props) => {
     const handleOpen = React.useCallback(() => {
         const {disabled, onPopupOpen, bcName, page, widgetFieldMeta} = props
         if (!disabled) {
