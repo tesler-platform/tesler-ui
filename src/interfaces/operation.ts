@@ -178,6 +178,19 @@ export interface OperationPostInvokeConfirm {
 }
 
 /**
+ * Modal window operation types
+ *
+ * @param type Type of postInvokeConfirm action
+ * @param message Title for modal
+ * @param messageContent Additional text for modal
+ */
+export interface OperationModalInvokeConfirm {
+    type: OperationPostInvokeConfirmType | OperationPreInvokeType | string,
+    message: string,
+    messageContent?: string
+}
+
+/**
  * Действие, которое будет выполнено после операции пользователя
  *
  * @param type Тип действия

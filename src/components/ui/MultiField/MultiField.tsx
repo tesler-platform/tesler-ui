@@ -5,7 +5,7 @@ import styles from './MultiField.less'
 import Field from '../../Field/Field'
 import cn from 'classnames'
 
-interface MultiFieldProps {
+export interface MultiFieldProps {
     bcName: string,
     fields: WidgetField[],
     data: DataItem,

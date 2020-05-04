@@ -5,7 +5,7 @@ import {
 import {NumberTypes, fractionsRound, NumberInputFormat} from '../../../components/ui/NumberInput/formaters'
 import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
 
-interface NumberProps {
+export interface NumberInputProps {
     readOnly?: boolean,
     disabled?: boolean,
     backgroundColor?: string,
@@ -20,7 +20,7 @@ interface NumberProps {
     forceFocus?: boolean,
 }
 
-const NumberInput: React.FunctionComponent<NumberProps> = (props) => {
+const NumberInput: React.FunctionComponent<NumberInputProps> = (props) => {
     if (props.readOnly) {
         return <ReadOnlyField
             className={props.className}

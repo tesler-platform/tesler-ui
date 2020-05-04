@@ -6,7 +6,7 @@ import {PaginationMode} from '../../../interfaces/widget'
 
 import * as styles from './Popup.less'
 
-interface PopupProps {
+export interface PopupProps {
     onOkHandler?: () => void,
     onCancelHandler?: () => void,
     size?: 'medium' | 'large',

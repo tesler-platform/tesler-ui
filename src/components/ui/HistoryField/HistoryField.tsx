@@ -7,7 +7,7 @@ import {FieldType} from '../../../interfaces/view'
 import {diffWords} from 'diff'
 import cn from 'classnames'
 
-interface HistoryFieldProps {
+export interface HistoryFieldProps {
     fieldMeta: WidgetField,
     data: DataItem,
     bcName: string,

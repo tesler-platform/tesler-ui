@@ -4,7 +4,7 @@ import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
 import {RadioChangeEvent} from 'antd/es/radio'
 import {getIconByParams} from '../Dictionary/Dictionary'
 
-interface RadioButtonProps {
+export interface RadioButtonProps {
     value?: string | null,
     onChange?: (value: string) => void
     values: Array<{ value: string, icon?: string }>,
