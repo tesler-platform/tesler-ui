@@ -23,9 +23,10 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
         const record = state.data[bcName]?.find(item => item.id === cursor)
         const rowMeta = bcUrl && state.view.rowMeta[bcName]?.[bcUrl]
         const pendingValues = state.view.pendingDataChanges[bcName]?.[cursor]
+        const requiresAutosave = operationRequiresAutosave(operationType, rowMeta?.actions)
 
         // If operation marked as validation-sensetive, mark all 'required' fields which haven't been filled as dirty and invalid
-        if (operationRequiresAutosave(operationType, rowMeta?.actions)) {
+        if (requiresAutosave) {
             const widget = state.view.widgets.find(item => item.name === widgetName)
             // While `required` fields are assigned via rowMeta, only visually visible fields should be checked
             // to avoid situations when field is marked as `required` but not available for user to interact.
@@ -58,7 +59,7 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
         }
 
         // If operation is not validation-sensetive and validation failed, offer to drop pending changes
-        if (state.view.pendingValidationFails && Object.keys(state.view.pendingValidationFails).length) {
+        if (state.view.pendingValidationFails && Object.keys(state.view.pendingValidationFails).length && requiresAutosave !== false) {
             openButtonWarningNotification(
                 i18n.t('Required fields are missing'),
                 i18n.t('Cancel changes'),
@@ -83,16 +84,22 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
  * @param actions List of operations and/or operation groups
  */
 function operationRequiresAutosave(operationType: string, actions: Array<Operation | OperationGroup>) {
-    let result = false
+    let result: boolean
     if (!actions) {
         console.error('rowMeta is missing in the middle of "sendOperation" action')
-        return result
+        return undefined
     }
-    result = actions?.some(action => {
+    actions?.forEach(action => {
         if (isOperationGroup(action)) {
-            return action.actions.find(item => item.type === operationType && item.autoSaveBefore)
+            action.actions.forEach(item => {
+                if (item.type === operationType) {
+                    result = item.autoSaveBefore
+                }
+            })
         } else {
-            return action.type === operationType && action.autoSaveBefore
+            if (action.type === operationType) {
+                result = action.autoSaveBefore
+            }
         }
     })
     return result
