@@ -398,6 +398,8 @@ export function view(state = initialState, action: AnyAction, store: Store) {
         }
         case types.closeViewError:
             return { ...state, error: null }
+        case types.processPostInvoke:
+            return { ...state, selectedCell: null }
         default:
             return state
     }
