@@ -24,6 +24,7 @@
         "select file": "выберите файл",
         "Download": "Скачать",
         "Select value": "Выберите значение",
-        "Load more": "Загрузить еще"
+        "Load more": "Загрузить еще",
+        "Enter value": "Введите значение"
     }
 }

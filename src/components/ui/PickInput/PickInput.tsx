@@ -9,6 +9,7 @@ export interface PickInputProps {
     onClick?: () => void,
     onClear?: () => void,
     className?: string,
+    placeholder?:  string
 }
 
 const PickInput: React.FunctionComponent<PickInputProps> = (props) => {
@@ -35,7 +36,7 @@ const PickInput: React.FunctionComponent<PickInputProps> = (props) => {
         <Input
             disabled={props.disabled}
             readOnly
-            placeholder={t('Select value')}
+            placeholder={props.placeholder ?? t('Select value')}
             value={props.value || ''}
             suffix={clearButton}
             className={props.className}
