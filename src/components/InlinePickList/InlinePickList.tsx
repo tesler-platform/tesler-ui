@@ -11,6 +11,7 @@ import styles from './InlinePickList.less'
 import {Store} from '../../interfaces/store'
 import {useDebounce} from '../../hooks/useDebounce'
 import cn from 'classnames'
+import {useTranslation} from 'react-i18next'
 
 interface InlinePickListOwnProps {
     fieldName: string,
@@ -24,7 +25,8 @@ interface InlinePickListOwnProps {
     value?: string,
     className?: string,
     onDrillDown?: () => void,
-    backgroundColor?: string
+    backgroundColor?: string,
+    placeholder?:  string
 }
 
 interface InlinePickListProps extends InlinePickListOwnProps {
@@ -44,6 +46,8 @@ const InlinePickList: React.FunctionComponent<InlinePickListProps> = (props) => 
             {props.value}
         </ReadOnlyField>
     }
+
+    const {t} = useTranslation()
 
     const [searchTerm, setSearchTerm] = React.useState('')
     const debouncedSearchTerm = useDebounce(searchTerm, 500)
@@ -87,7 +91,7 @@ const InlinePickList: React.FunctionComponent<InlinePickListProps> = (props) => 
                 value={props.value}
                 allowClear={!!props.value}
                 showSearch
-                placeholder="Введите значение"
+                placeholder={props.placeholder ? props.placeholder : t('Enter value')}
                 defaultActiveFirstOption={false}
                 showArrow={false}
                 filterOption={false}

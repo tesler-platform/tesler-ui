@@ -13,7 +13,8 @@ export interface MultivalueFieldOwnProps {
     widgetFieldMeta: MultivalueFieldMeta,
     bcName: string,
     disabled: boolean,
-    metaError: string
+    metaError: string,
+    placeholder?: string
 }
 
 export interface MultivalueFieldProps extends MultivalueFieldOwnProps {
@@ -47,6 +48,7 @@ const MultivalueField: FunctionComponent<MultivalueFieldProps> = (props) => {
         page={props.page}
         bcName={props.bcName}
         metaError={props.metaError}
+        placeholder={props.placeholder}
     />
 }
 

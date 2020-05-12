@@ -18,6 +18,7 @@ interface IPickListWidgetInputOwnProps {
     className?: string,
     onDrillDown?: () => void,
     backgroundColor?: string,
+    placeholder?: string
 }
 
 interface IPickListWidgetInputProps extends IPickListWidgetInputOwnProps {
@@ -60,6 +61,7 @@ const PickListField: React.FunctionComponent<IPickListWidgetInputProps> = (props
         value={props.value}
         onClick={handleClick}
         onClear={handleClear}
+        placeholder={props.placeholder}
     />
 }
 
