@@ -48,3 +48,7 @@
 .error {
     border-color: red;
 }
+
+.enabled:empty:not(:focus):before {
+    content: attr(data-text)
+}
