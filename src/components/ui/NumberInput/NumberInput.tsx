@@ -1,9 +1,10 @@
-import React from 'react'
+import React, {RefAttributes} from 'react'
 import {
     Input
 } from 'antd'
 import {NumberTypes, fractionsRound, NumberInputFormat} from '../../../components/ui/NumberInput/formaters'
 import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
+import {InputProps} from 'antd/es/input'
 
 export interface NumberInputProps {
     readOnly?: boolean,
@@ -136,19 +137,22 @@ const NumberInput: React.FunctionComponent<NumberInputProps> = (props) => {
         [props.maxInput, valueText]
     )
 
-    return <Input
-        style={{ backgroundColor: props.backgroundColor || '#fff' }}
-        onChange={handleOnChange}
-        onBlur={handleOnBlur}
-        onFocus={handleOnFocus}
-        disabled={props.disabled}
-        value={valueText}
-        type="text"
-        ref={inputRef}
-        className={props.className}
-        onKeyPress={onKeyPress}
-        autoFocus={props.forceFocus}
-    />
+    const extendedProps: InputProps & RefAttributes<Input> = {
+        ...props,
+        style: {
+            backgroundColor: props.backgroundColor || '#fff'
+        },
+        onChange: handleOnChange,
+        onBlur: handleOnBlur,
+        onFocus: handleOnFocus,
+        value: valueText,
+        type: 'text',
+        ref: inputRef,
+        onKeyPress: onKeyPress,
+        autoFocus: props.forceFocus
+    }
+
+    return <Input {...extendedProps} />
 }
 
 /**
