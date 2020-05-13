@@ -11,6 +11,8 @@
         "Delete": "Delete",
         "Are you sure?": "Are you sure?",
         "Perform an additional action?": "Perform an additional action?",
+        "Action cannot be performed": "Action cannot be performed",
+        "Action has warning": "Action has warning",
         "The operation is not supported": "The operation is not supported",
         "No operations available": "No operations available",
         "No data": "No data",
@@ -20,6 +22,7 @@
         "Select value": "Select value",
         "Load more": "Load more",
         "Required fields are missing": "Required fields are missing",
-        "This field is mandatory": "This field is mandatory"
+        "This field is mandatory": "This field is mandatory",
+        "Enter value": "Enter value"
     }
 }

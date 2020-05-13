@@ -3,12 +3,13 @@ import {Input, Icon} from 'antd'
 import {useTranslation} from 'react-i18next'
 import styles from './PickInput.less'
 
-interface PickInputProps {
+export interface PickInputProps {
     disabled?: boolean,
     value?: string,
     onClick?: () => void,
     onClear?: () => void,
     className?: string,
+    placeholder?:  string
 }
 
 const PickInput: React.FunctionComponent<PickInputProps> = (props) => {
@@ -35,7 +36,7 @@ const PickInput: React.FunctionComponent<PickInputProps> = (props) => {
         <Input
             disabled={props.disabled}
             readOnly
-            placeholder={t('Select value')}
+            placeholder={props.placeholder ? props.placeholder : t('Select value')}
             value={props.value || ''}
             suffix={clearButton}
             className={props.className}

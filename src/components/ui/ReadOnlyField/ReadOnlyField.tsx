@@ -3,7 +3,7 @@ import styles from './ReadOnlyField.less'
 import cn from 'classnames'
 import ActionLink from '../ActionLink/ActionLink'
 
-interface ReadOnlyFieldProps {
+export interface ReadOnlyFieldProps {
     backgroundColor?: string,
     className?: string,
     onDrillDown?: () => void,

@@ -1,3 +1,23 @@
+# Version 1.13.0
+
+## Features
+
+* Added optional `bcKey` param to the `sendOperation.associate` action, which will be passed in the `bcName`. It is necessary for identifying the backend which BC to use for popup. (#214)
+* Add Modal Invoke window for info and error invoke types (#217)
+
+## Fixes
+
+* `Field`: Fixed overwriting the default Ant properties of components. If passed property is not defined then it is removed from commonProps and commonInputProps. (#215)
+* Exported ownProps interfaces of all `src/components/ui` components (#219)
+
+# Version 1.12.0
+
+## Features
+
+* New `radio` field type to display radiobutton controls
+* Support http codes 409 to warn about conflicting changes and 401 to logout when session expired
+* Support `placeholder` property for fields
+
 # Version 1.11.1
 
 ## Fixes

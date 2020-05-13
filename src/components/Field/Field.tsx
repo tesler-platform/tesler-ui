@@ -24,6 +24,7 @@ import MultivalueHover from '../ui/Multivalue/MultivalueHover'
 import cn from 'classnames'
 import readOnlyFieldStyles from '../../components/ui/ReadOnlyField/ReadOnlyField.less'
 import CheckboxPicker from '../../components/ui/CheckboxPicker/CheckboxPicker'
+import RadioButton from '../../components/ui/RadioButton/RadioButton'
 import styles from './Field.less'
 import {CustomizationContext} from '../../components/View/View'
 import {InteractiveInput} from '../../components/ui/InteractiveInput/InteractiveInput'
@@ -76,8 +77,11 @@ const simpleDiffSupportedFieldTypes = [
     FieldType.checkbox,
     FieldType.pickList,
     FieldType.inlinePickList,
-    FieldType.dictionary
+    FieldType.dictionary,
+    FieldType.radio
 ]
+
+const emptyFieldMeta = [] as any
 
 export const Field: FunctionComponent<FieldProps> = (props) => {
     const [localValue, setLocalValue] = React.useState(null)
@@ -90,6 +94,8 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
             : props.data?.[props.widgetFieldMeta.key]
 
     const disabled = (props.rowFieldMeta ? props.rowFieldMeta.disabled : true)
+
+    const placeholder = props.rowFieldMeta?.placeholder
 
     const handleChange = React.useCallback(eventValue => {
         const dataItem = { [props.widgetFieldMeta.key]: eventValue }
@@ -123,24 +129,38 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
         }
     }, [localValue, handleChange])
 
-    const commonProps = {
+    const commonProps: any = {
         cursor: props.cursor,
         widgetName: props.widgetName,
         meta: props.widgetFieldMeta,
         className: cn(props.className),
         metaError: props.metaError,
         disabled,
+        placeholder,
         readOnly: props.readonly,
         backgroundColor: bgColor,
         onDrillDown: handleDrilldown
     }
-    const commonInputProps = {
+    const commonInputProps: any = {
         cursor: props.cursor,
         meta: props.widgetFieldMeta,
         className: cn(props.className),
         disabled,
+        placeholder,
         readOnly: props.readonly,
     }
+
+    Object.keys(commonProps).forEach(key => {
+        if (commonProps[key] === undefined) {
+            delete commonProps[key]
+        }
+    })
+
+    Object.keys(commonInputProps).forEach(key => {
+        if (commonInputProps[key] === undefined) {
+            delete commonInputProps[key]
+        }
+    })
 
     if (!props.historyMode && props.widgetFieldMeta.snapshotKey && simpleDiffSupportedFieldTypes.includes(props.widgetFieldMeta.type)) {
         return <HistoryField
@@ -211,7 +231,6 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 {...commonProps}
                 defaultValue={value as any}
                 onChange={handleChange}
-                forceFocus={props.forceFocus}
             />
             break
         case FieldType.multifield:
@@ -248,25 +267,25 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
             />
             resultField = props.readonly
                 ? pickListField
-                : <InteractiveInput suffix={handleDrilldown && <Icon type="link" />} onSuffixClick={handleDrilldown}>
+                : <InteractiveInput suffix={handleDrilldown && <Icon type="link"/>} onSuffixClick={handleDrilldown}>
                     {pickListField}
                 </InteractiveInput>
             break
         }
         case FieldType.inlinePickList: {
             const pickListField = <InlinePickList
-                    {...commonProps}
-                    fieldName={props.widgetFieldMeta.key}
-                    searchSpec={props.widgetFieldMeta.searchSpec}
-                    bcName={props.bcName}
-                    popupBcName={props.widgetFieldMeta.popupBcName}
-                    cursor={props.cursor}
-                    value={value as string}
-                    pickMap={props.widgetFieldMeta.pickMap}
-                />
+                {...commonProps}
+                fieldName={props.widgetFieldMeta.key}
+                searchSpec={props.widgetFieldMeta.searchSpec}
+                bcName={props.bcName}
+                popupBcName={props.widgetFieldMeta.popupBcName}
+                cursor={props.cursor}
+                value={value as string}
+                pickMap={props.widgetFieldMeta.pickMap}
+            />
             resultField = props.readonly
                 ? pickListField
-                : <InteractiveInput suffix={handleDrilldown && <Icon type="link" />} onSuffixClick={handleDrilldown}>
+                : <InteractiveInput suffix={handleDrilldown && <Icon type="link"/>} onSuffixClick={handleDrilldown}>
                     {pickListField}
                 </InteractiveInput>
             break
@@ -314,41 +333,34 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 {value}
             </ReadOnlyField>
             break
+        case FieldType.radio:
+            resultField = <RadioButton
+                {...commonProps}
+                value={value as any}
+                values={props.rowFieldMeta?.values || emptyFieldMeta}
+                onChange={handleChange}
+            />
+            break
         default:
-            resultField = <CustomizationContext.Consumer>
-                {context => {
-                    const customFields = context.customFields
-                    if (customFields?.[props.widgetFieldMeta.type] || customFields?.[props.widgetFieldMeta.key]) {
-                        const CustomComponent = customFields?.[props.widgetFieldMeta.type] || customFields?.[props.widgetFieldMeta.key]
-                        return <CustomComponent
-                            {...commonProps}
-                            customProps={props.customProps}
-                            value={value}
-                            onBlur={handleInputBlur}
-                        />
-                    }
-
-                    return props.readonly
-                        ? <ReadOnlyField
-                            {...commonProps}
-                        >
-                            {value}
-                        </ReadOnlyField>
-                        : <InteractiveInput
-                            suffixClassName={props.suffixClassName}
-                            suffix={handleDrilldown && <Icon type="link" />}
-                            onSuffixClick={handleDrilldown}
-                        >
-                            <Input
-                                {...commonInputProps}
-                                value={localValue !== null ? localValue : (value ? String(value) : '')}
-                                onChange={handleInputChange}
-                                onBlur={handleInputBlur}
-                                autoFocus={props.forceFocus}
-                            />
-                        </InteractiveInput>
-                }}
-            </CustomizationContext.Consumer>
+            resultField = (props.readonly)
+                ? <ReadOnlyField
+                    {...commonProps}
+                >
+                    {value}
+                </ReadOnlyField>
+                : <InteractiveInput
+                    suffixClassName={props.suffixClassName}
+                    suffix={handleDrilldown && <Icon type="link"/>}
+                    onSuffixClick={handleDrilldown}
+                >
+                    <Input
+                        {...commonInputProps}
+                        value={localValue !== null ? localValue : (value ? String(value) : '')}
+                        onChange={handleInputChange}
+                        onBlur={handleInputBlur}
+                        autoFocus={props.forceFocus}
+                    />
+                </InteractiveInput>
     }
     if (props.metaError && !props.readonly && props.showErrorPopup) {
         return <Tooltip
@@ -363,7 +375,22 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
             </div>
         </Tooltip>
     }
-    return resultField
+    return <CustomizationContext.Consumer>
+        {context => {
+            const customFields = context.customFields
+            if (customFields?.[props.widgetFieldMeta.type] || customFields?.[props.widgetFieldMeta.key]) {
+                const CustomComponent = customFields?.[props.widgetFieldMeta.type] || customFields?.[props.widgetFieldMeta.key]
+                return <CustomComponent
+                    {...commonProps}
+                    customProps={props.customProps}
+                    value={value}
+                    onBlur={handleInputBlur}
+                    onChange={handleChange}
+                />
+            }
+            return resultField
+        }}
+    </CustomizationContext.Consumer>
 }
 
 function mapStateToProps(store: Store, ownProps: FieldOwnProps) {

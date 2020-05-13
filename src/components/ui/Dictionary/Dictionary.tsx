@@ -1,9 +1,9 @@
 import React from 'react'
 import {Icon, Select as AntdSelect} from 'antd'
-import Select from '../Select/Select'
+import Select, {SelectProps} from '../Select/Select'
 import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
 
-interface IDictionaryProps {
+export interface DictionaryProps {
     value?: string | null,
     onChange?: (value: string) => void
     values: Array<{value: string, icon: string}>,
@@ -19,7 +19,7 @@ interface IDictionaryProps {
     onDrillDown?: () => void,
 }
 
-const Dictionary: React.FunctionComponent<IDictionaryProps> = (props) => {
+const Dictionary: React.FunctionComponent<DictionaryProps> = (props) => {
     if (props.readOnly) {
         const readOnlyValue = (props.value !== null && props.value !== undefined) ? props.value : ''
 
@@ -61,21 +61,22 @@ const Dictionary: React.FunctionComponent<IDictionaryProps> = (props) => {
     if (props.value && props.values) {
         valueIndex = props.values.findIndex((v) => v.value === props.value)
     }
+    const currentValue = props.value ? props.value : undefined
+
+    const extendedProps: SelectProps = {
+        ...props,
+        value: valueIndex >= 0 ? valueIndex.toString() : currentValue,
+        allowClear: !!props.value,
+        showSearch: true,
+        onChange: handleOnChange,
+        dropdownMatchSelectWidth: false,
+        filterOption: handleFilter,
+        getPopupContainer: trigger => trigger.parentElement,
+        forwardedRef: selectRef
+    }
 
     return (
-        <Select
-            {...props}
-            disabled={props.disabled}
-            value={valueIndex >= 0 ? valueIndex.toString() : props.value }
-            allowClear={!!props.value}
-            showSearch
-            onChange={handleOnChange}
-            dropdownMatchSelectWidth={false}
-            filterOption={handleFilter}
-            getPopupContainer={trigger => trigger.parentElement}
-            forwardedRef={selectRef}
-            className={props.className}
-        >
+        <Select {...extendedProps} >
             {props.values?.length
                 ? props.values.map((el, index) => {
                     // @see https://github.com/ant-design/ant-design/issues/7138#issuecomment-324116471

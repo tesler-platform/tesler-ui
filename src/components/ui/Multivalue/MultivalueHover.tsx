@@ -4,14 +4,14 @@ import {DataValue, MultivalueSingleValue} from '../../../interfaces/data'
 import styles from './MultivalueHover.less'
 import cn from 'classnames'
 
-interface MultivalueHoverOwnProps {
+export interface MultivalueHoverProps {
     data: MultivalueSingleValue[],
     displayedValue: DataValue,
     onDrillDown?: () => void,
     className?: string
 }
 
-const Multivalue: React.FunctionComponent<MultivalueHoverOwnProps> = (props) => {
+const Multivalue: React.FunctionComponent<MultivalueHoverProps> = (props) => {
     const displayedItem = (props.displayedValue !== undefined && props.displayedValue !== null)
         ? <p className={cn(styles.displayedValue, props.className)} onClick={props.onDrillDown}>
             {props.displayedValue}
