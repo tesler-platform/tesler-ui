@@ -1,7 +1,7 @@
 import React from 'react'
 import {shallow} from 'enzyme'
 import {FormWidget} from './FormWidget'
-import {WidgetTypes, WidgetFormMeta} from 'interfaces/widget'
+import {WidgetFormMeta, WidgetTypes} from 'interfaces/widget'
 
 const widgetMeta = {
     name: '1',
@@ -75,5 +75,25 @@ describe('FormWidget columns and blocks test', () => {
         const row4 = rows.childAt(3)
         expect(row4.find('Col').length === 2)
         expect(row4.find('Col').at(0).props().span === 12)
+    })
+
+    it('should hide "hidden": true fields', () => {
+        const toHideWidgetMeta = {...widgetMeta} as any
+        toHideWidgetMeta.fields[0].hidden = true
+        const wrapper = shallow(
+            <FormWidget
+                cursor={null}
+                meta={toHideWidgetMeta as WidgetFormMeta}
+                fields={[]}
+                metaErrors={null}
+                missingFields={null}
+            />
+        )
+        const form = wrapper.find('Form')
+        const rows = form.find('Row').at(0)
+
+        const row1 = rows.childAt(0)
+        expect(row1.find('Col').length === 1)
+        expect(row1.props().children).toEqual([])
     })
 })
