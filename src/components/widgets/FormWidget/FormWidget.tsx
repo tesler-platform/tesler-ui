@@ -27,7 +27,7 @@ export const FormWidget: FunctionComponent<FormWidgetProps> = (props) => {
     const hiddenKeys: string[] = []
     const flattenWidgetFields = useFlatFormFields<WidgetFormField>(props.meta.fields)
         .filter(item => {
-            const isHidden = item.type === FieldType.hidden
+            const isHidden = item.type === FieldType.hidden || item.hidden
             if (isHidden) {
                 hiddenKeys.push(item.key)
             }
