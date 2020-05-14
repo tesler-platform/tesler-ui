@@ -43,7 +43,7 @@ interface TableWidgetOwnProps {
     disablePagination?: boolean
 }
 
-interface TableWidgetProps extends TableWidgetOwnProps {
+export interface TableWidgetProps extends TableWidgetOwnProps {
     data: DataItem[],
     rowMetaFields: RowMetaField[],
     limitBySelf: boolean,
@@ -314,7 +314,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
     }
 
     const columns: Array<ColumnProps<DataItem>> = props.meta.fields
-        .filter((item: WidgetListField) => item.type !== FieldType.hidden)
+        .filter((item: WidgetListField) => item.type !== FieldType.hidden && !item.hidden)
         .map((item: WidgetListField) => {
             const fieldRowMeta = props.rowMetaFields?.find(field => field.key === item.key)
             return {
