@@ -28,6 +28,7 @@ export interface WidgetFieldBase {
     bgColorKey?: string,
     label?: string,
     snapshotKey?: string,
+    hidden?: boolean
 }
 
 export interface WidgetListFieldBase extends WidgetFieldBase {
