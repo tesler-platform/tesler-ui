@@ -7,6 +7,7 @@ import cn from 'classnames'
 
 export interface MultivalueTagProps {
     disabled: boolean,
+    placeholder?: string,
     value: MultivalueSingleValue[],
     widgetFieldMeta: MultivalueFieldMeta,
     bcName: string,
@@ -41,7 +42,11 @@ const MultivalueTag: React.FunctionComponent<MultivalueTagProps> = (props) => {
                 { [styles.disabled]: props.disabled, [styles.error]: props.metaError })
             }
         >
-            <div className={cn({ [styles.disabled]: props.disabled })}>
+            <div
+                data-text={props.placeholder}
+                className={cn(
+                    styles.enabled,
+                    { [styles.disabled]: props.disabled })}>
                 { (props.value || []).map(val => {
                     return <Tag
                         title={val.value}
