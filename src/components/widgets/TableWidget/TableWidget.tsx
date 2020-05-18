@@ -338,7 +338,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
 
     const columns: Array<ColumnProps<DataItem>> = React.useMemo(() => {
         const fields = props.meta.fields
-            .filter((item: WidgetListField) => item.type !== FieldType.hidden)
+            .filter((item: WidgetListField) => item.type !== FieldType.hidden && !item.hidden)
             .map((item: WidgetListField) => {
                 const fieldRowMeta = props.rowMetaFields?.find(field => field.key === item.key)
                 return {
