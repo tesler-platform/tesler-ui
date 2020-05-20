@@ -270,7 +270,7 @@ export interface OperationPostInvokeShowMessage extends OperationPostInvoke {
  */
 export type OperationPostInvokeAny = OperationPostInvokeRefreshBc | OperationPostInvokeDownloadFile
     | OperationPostInvokeDownloadFileByUrl | OperationPostInvokeDrillDown
-    | OperationPostInvokeOpenPickList | OperationPostInvokeShowMessage
+    | OperationPostInvokeOpenPickList | OperationPostInvokeShowMessage | OperationPostInvokeConfirm
 
 /**
  * TODO: ???
