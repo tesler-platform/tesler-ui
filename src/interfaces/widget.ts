@@ -265,6 +265,13 @@ export interface TableOperations {
     position?: PositionTypes
 }
 
+/**
+ * ReactComponent here is just a union representing a component, so you say
+ * "our ColumnTitle can get some external React component as long as it have the same props contract
+ * and so can use it instead of our default implementation
+ */
+export type ReactComponent<props> = ConnectedComponentClass<any, props> | FunctionComponent<props>
+
 export interface WidgetTableHierarchy {
     bcName: string,
     assocValueKey?: string,
