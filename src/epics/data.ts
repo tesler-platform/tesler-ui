@@ -5,12 +5,7 @@ import {combineEpics} from 'redux-observable'
 import {$do, AnyAction, Epic, types} from '../actions/actions'
 import {Observable} from 'rxjs/Observable'
 import {Store} from '../interfaces/store'
-import {
-    OperationTypeCrud,
-    AssociatedItem,
-    OperationErrorEntity,
-    OperationError
-} from '../interfaces/operation'
+import {OperationTypeCrud, AssociatedItem, OperationErrorEntity, OperationError} from '../interfaces/operation'
 import {DataItem, MultivalueSingleValue} from '../interfaces/data'
 import {ObjectMap} from '../interfaces/objectMap'
 import {WidgetMeta, WidgetTableHierarchy, WidgetTableMeta, WidgetTypes} from '../interfaces/widget'
@@ -292,9 +287,8 @@ const inlinePickListFetchDataEpic: Epic = (action$, store) => action$.ofType(typ
 const bcNewDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperation)
 .filter(action => action.payload.operationType === OperationTypeCrud.create)
 .mergeMap((action) => {
-    const resultObservables: Array<Observable<AnyAction>> = []
-    const {bcName, disableRetry, operationType, widgetName} = action.payload
     const state = store.getState() as Store
+    const bcName = action.payload.bcName
     const bcUrl = buildBcUrl(bcName)
     const context = { widgetName: action.payload.widgetName }
     return api.newBcData(state.screen.screenName, bcUrl, context)
@@ -304,24 +298,15 @@ const bcNewDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperati
         data.row.fields.forEach(field => {
             dataItem[field.key] = field.currentValue
         })
-        const preInvoke = data.preInvoke
         const postInvoke = data.postActions[0]
         const cursor = dataItem.id
-        preInvoke && !disableRetry
-            ? resultObservables.push(
-                Observable.of($do.processPreInvoke({
-                    bcName,
-                    operationType,
-                    widgetName,
-                    preInvoke,
-                })))
-            : resultObservables.push(
-                Observable.of($do.bcNewDataSuccess({bcName, dataItem, bcUrl})),
-                Observable.of($do.bcFetchRowMetaSuccess({bcName, bcUrl: `${bcUrl}/${cursor}`, rowMeta, cursor})),
-                postInvoke
-                    ? Observable.of($do.processPostInvoke({bcName, postInvoke, cursor, widgetName: action.payload.widgetName}))
-                    : Observable.empty<never>())
-        return Observable.concat(...resultObservables)
+        return Observable.concat(
+            Observable.of($do.bcNewDataSuccess({ bcName, dataItem, bcUrl })),
+            Observable.of($do.bcFetchRowMetaSuccess({ bcName, bcUrl: `${bcUrl}/${cursor}`, rowMeta, cursor})),
+            postInvoke
+                ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName: action.payload.widgetName }))
+                : Observable.empty<never>()
+        )
     })
     .catch((error: any) => {
         console.log(error)

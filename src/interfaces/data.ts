@@ -1,4 +1,4 @@
-import {OperationPostInvokeAny, OperationPostInvokeConfirm, OperationPreInvokeAny} from './operation'
+import {OperationPostInvokeAny, OperationPostInvokeConfirm, OperationPreInvoke} from './operation'
 import {DrillDownType} from './router'
 
 /**
@@ -62,7 +62,7 @@ export interface DataItemResponse {
         /*
         * @deprecated TODO: Remove in 2.0.0 in favor of postInvokeConfirm
         */
-        preInvoke?: OperationPreInvokeAny
+        preInvoke?: OperationPreInvoke
     }
 }
 

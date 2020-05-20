@@ -1,5 +1,5 @@
 import {TeslerResponse} from './objectMap'
-import {Operation, OperationGroup, OperationPostInvokeAny, OperationPreInvokeAny} from './operation'
+import {Operation, OperationGroup, OperationPostInvokeAny} from './operation'
 import {DataValue} from './data'
 
 /**
@@ -22,8 +22,7 @@ export interface RowMeta {
 export interface RowMetaResponse extends TeslerResponse {
     data: {
         row: RowMeta,
-        postActions?: OperationPostInvokeAny[],
-        preInvoke?: OperationPreInvokeAny
+        postActions?: OperationPostInvokeAny[]
     }
 }
 

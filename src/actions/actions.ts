@@ -16,7 +16,7 @@ import {
     AssociatedItem,
     OperationErrorEntity,
     OperationPostInvokeConfirm,
-    OperationPreInvoke, OperationPreInvokeAny
+    OperationPreInvoke
 } from '../interfaces/operation'
 import {BcFilter, BcSorter} from '../interfaces/filters'
 
@@ -339,8 +339,7 @@ export class ActionPayloadTypes {
         /**
          * @deprecated TODO: Remove in 2.0.0 in favor of sendOperationWithConfirm
          */
-        confirmOperation?: OperationPreInvoke,
-        disableRetry?: boolean
+        confirmOperation?: OperationPreInvoke
     } = z
 
     /**
@@ -368,16 +367,6 @@ export class ActionPayloadTypes {
         bcName: string,
         cursor: string
     } = z
-
-    /**
-     * PreInvoke process was succesful
-     *
-     * @param bcName
-     */
-    processPreInvokeSuccess: {
-        bcName: string
-    } = z
-
 
     /**
      * TODO
@@ -408,7 +397,7 @@ export class ActionPayloadTypes {
         bcName: string,
         operationType: string
         widgetName: string
-        preInvoke: OperationPreInvokeAny
+        preInvoke: OperationPreInvoke
     } = z
 
     /**
