@@ -83,14 +83,14 @@ export interface OperationGroup {
  * @param message - сообщение, которое будет показано пользователю перед его операцией
  */
 export interface OperationPreInvoke {
-    type: OperationPreInvokeType,
+    type: OperationPreInvokeType | string,
     message: string
 }
 
 /**
  * Тип сообщения, которое будет показано пользователю перед его операцией
  */
-export enum OperationPreInvokeType {
+export const enum OperationPreInvokeType {
     /**
      * Перед операцией пользователя будет показано всплывающее сообщение "Да/Нет",
      * и операция произойдет только если пользователь скажет "Да"
@@ -104,9 +104,30 @@ export enum OperationPreInvokeType {
     /**
      * Перед операцией пользователя будет показано всплывающее сообщение
      * с иконкой ошибки и операция не будет выполнена (TODO: Будет или не будет? Проверить)
+     * before the user’s operation, there will be an attempt to save the specified Bc and widget
      */
-    error = 'error'
+    error = 'error',
+    /**
+     * Before the user’s operation, there will be an attempt to save the specified BC and widget
+     */
+    anotherBcSaved = 'anotherBcSaved'
 }
+
+/**
+ * Attempt to save the specified BC and widget
+ *
+ * @param bcName The business component to save data for
+ * @param widgetName Widget that need to save
+ */
+export interface OperationPreInvokeAnotherBcSaved extends OperationPreInvoke {
+    bcName: string,
+    widgetName: string
+}
+
+/**
+ * A generalization for all possible types of actions before a user operation
+ */
+export type OperationPreInvokeAny = OperationPreInvokeAnotherBcSaved | OperationPreInvoke
 
 /**
  * Тип действия, которое будет выполнено после операции пользователя
