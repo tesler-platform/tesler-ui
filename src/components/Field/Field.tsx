@@ -13,7 +13,7 @@ import NumberInput from '../../components/ui/NumberInput/NumberInput'
 import {NumberTypes} from '../../components/ui/NumberInput/formaters'
 import TextArea from '../../components/ui/TextArea/TextArea'
 import Dictionary from '../../components/ui/Dictionary/Dictionary'
-import {buildBcUrl} from '../../utils/strings'
+import {buildBcUrl, escapedSrc} from '../../utils/strings'
 import MultivalueField from '../Multivalue/MultivalueField'
 import MultiField from '../ui/MultiField/MultiField'
 import ReadOnlyField from '../ui/ReadOnlyField/ReadOnlyField'
@@ -29,6 +29,7 @@ import styles from './Field.less'
 import {CustomizationContext} from '../../components/View/View'
 import {InteractiveInput} from '../../components/ui/InteractiveInput/InteractiveInput'
 import HistoryField from '../../components/ui/HistoryField/HistoryField'
+import SearchHighlight from '../ui/SearchHightlight/SearchHightlight'
 
 interface FieldOwnProps {
     widgetFieldMeta: WidgetField,
@@ -52,6 +53,7 @@ interface FieldProps extends FieldOwnProps {
     rowFieldMeta: RowMetaField,
     metaError: string,
     showErrorPopup: boolean,
+    filterValue: string,
     onChange: (payload: ChangeDataItemPayload) => void,
     onDrillDown: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void,
 }
@@ -346,7 +348,12 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 ? <ReadOnlyField
                     {...commonProps}
                 >
-                    {value}
+                    {props.filterValue
+                        ? <SearchHighlight
+                            source={(value || '').toString()}
+                            search={escapedSrc(props.filterValue)}
+                            match={formatString => <b>{formatString}</b>}/>
+                        : value}
                 </ReadOnlyField>
                 : <InteractiveInput
                     suffixClassName={props.suffixClassName}
@@ -404,12 +411,16 @@ function mapStateToProps(store: Store, ownProps: FieldOwnProps) {
     ?.[ownProps.widgetFieldMeta.key]
     const widget = store.view.widgets.find(item => item.name === ownProps.widgetName)
     const showErrorPopup = widget?.type !== WidgetTypes.Form
+    const filterValue = store.screen.filters[ownProps.bcName]
+        ?.find(filter => filter.fieldName === ownProps.widgetFieldMeta.key)
+        ?.value.toString()
     return {
         data: ownProps.data || store.data[ownProps.bcName]?.find(item => item.id === ownProps.cursor),
         pendingValue,
         rowFieldMeta,
         metaError,
-        showErrorPopup
+        showErrorPopup,
+        filterValue
     }
 }
 

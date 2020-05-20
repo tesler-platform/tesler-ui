@@ -1,7 +1,7 @@
 import React, {FunctionComponent} from 'react'
 import {RowMetaField} from '../../interfaces/rowMeta'
-import {WidgetListField} from '../../interfaces/widget'
-import ColumnFilter from './ColumnFilter'
+import {ReactComponent, WidgetListField} from '../../interfaces/widget'
+import ColumnFilter, {ColumnFilterOwnProps} from './ColumnFilter'
 import ColumnSort from './ColumnSort'
 import styles from './ColumnTitle.less'
 import TemplatedTitle from '../TemplatedTitle/TemplatedTitle'
@@ -10,7 +10,10 @@ import {FieldType} from '../../interfaces/view'
 export interface ColumnTitle {
     widgetName: string,
     widgetMeta: WidgetListField,
-    rowMeta: RowMetaField
+    rowMeta: RowMetaField,
+    components?: {
+        filter?: ReactComponent<ColumnFilterOwnProps>
+    }
 }
 
 export const ColumnTitle: FunctionComponent<ColumnTitle> = (props) => {
@@ -43,11 +46,18 @@ export const ColumnTitle: FunctionComponent<ColumnTitle> = (props) => {
 
     const filterable = props.rowMeta.filterable
     const filter = filterable &&
-        <ColumnFilter
-            widgetName={props.widgetName}
-            widgetMeta={props.widgetMeta}
-            rowMeta={props.rowMeta}
-        />
+        (props.components?.filter
+                ? <props.components.filter
+                    widgetName={props.widgetName}
+                    widgetMeta={props.widgetMeta}
+                    rowMeta={props.rowMeta}
+                />
+                : <ColumnFilter
+                    widgetName={props.widgetName}
+                    widgetMeta={props.widgetMeta}
+                    rowMeta={props.rowMeta}
+                />
+        )
     return <div className={styles.container}>
         {title}
         {filter}

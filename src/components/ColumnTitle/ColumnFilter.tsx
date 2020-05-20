@@ -242,7 +242,13 @@ function renderCheckbox(
     </div>
 }
 
-function mapStateToProps(store: Store, ownProps: ColumnFilterOwnProps) {
+/**
+ * Create ColumnFilter props
+ *
+ * @param store Store instance for read-only access of different branches of Redux store
+ * @param ownProps ColumnFilter component props
+ */
+export function mapStateToProps(store: Store, ownProps: ColumnFilterOwnProps) {
     const widget = store.view.widgets.find(item => item.name === ownProps.widgetName)
     const bcName = widget?.bcName
     const filter = store.screen.filters[bcName]?.find(item => item.fieldName === ownProps.widgetMeta.key)

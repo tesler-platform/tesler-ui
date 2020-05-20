@@ -96,3 +96,29 @@ export function getFieldTitle(title: string, dataItem?: DataItem) {
         return formatString(title, dataItem)
     }
 }
+
+/**
+ * If there is a template in the field name then returns array of string
+ *
+ * Example:
+ * splitIntoTokens(`The quick brown fox jumps over the lazy dog. If the dog reacted, was it realdogly lazy?`, 'dog')
+ * ["The quick brown fox jumps over the lazy ", "dog", ". If the ", "dog", " reacted, was it real", "dog", "ly lazy?"]
+ *
+ * @param source Field name
+ * @param search An object in the fields of which tokens should be searched
+ */
+export function splitIntoTokens(source: string, search: string | RegExp) {
+    const tokenizer = search instanceof RegExp
+        ? search
+        : escapedSrc(search)
+    return source.split(tokenizer)
+}
+
+/**
+ * Convert string to RegExp
+ *
+ * @param str Source string
+ */
+export function escapedSrc(str: string) {
+    return new RegExp(`(${str?.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&')})`, 'gi')
+}
