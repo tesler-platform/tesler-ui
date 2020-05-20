@@ -3,7 +3,7 @@ import {types, Epic, $do, AnyAction} from '../actions/actions'
 import {Observable} from 'rxjs/Observable'
 import * as api from '../api/api'
 import {buildBcUrl} from '../utils/strings'
-import {isCrud, OperationTypeCrud, OperationError, OperationErrorEntity} from '../interfaces/operation'
+import {isCrud, OperationTypeCrud, OperationError, OperationErrorEntity, OperationModalInvokeConfirm, OperationPostInvokeConfirmType} from '../interfaces/operation'
 import {findBcDescendants} from '../utils/bo'
 import {buildLocation} from '../Provider'
 import {changeLocation} from '../reducers/router'
@@ -41,9 +41,9 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
     return api.customAction(screenName, bcUrl, data, context, params)
     .mergeMap(response => {
         const postInvoke = response.postActions[0]
-        // TODO: Remove in 2.0.0 in favor of postInvokeConfirm
+        // TODO: Remove in 2.0.0 in favor of postInvokeConfirm (is this todo needed?)
         const preInvoke = response.preInvoke
-        const postInvokeConfirm = response.postInvokeConfirm
+        const postInvokeConfirm = Object.values(OperationPostInvokeConfirmType).includes(postInvoke.type as OperationPostInvokeConfirmType)
         return Observable.concat(
             Observable.of($do.sendOperationSuccess({ bcName, cursor })),
             Observable.of($do.bcForceUpdate({ bcName })),
@@ -55,7 +55,7 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
                     bcName,
                     operationType,
                     widgetName,
-                    postInvokeConfirm,
+                    postInvokeConfirm: postInvoke as OperationModalInvokeConfirm
                 }))
                 : Observable.empty<never>(),
             preInvoke
