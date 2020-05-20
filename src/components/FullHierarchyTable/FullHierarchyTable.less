@@ -9,6 +9,36 @@
 
 .table {
     table-layout: fixed;
+
+    :global {
+        .ant-table .ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-column-has-filters {
+            .ant-table-filter-icon.ant-table-filter-open {
+                background: #fbfeff;
+            }
+
+        }
+
+        .ant-table .ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-column-has-filters:hover {
+            .ant-table-filter-icon:hover {
+                background: #fbfeff;
+            }
+        }
+
+        .ant-table .ant-table-thead > tr > th {
+            .ant-table-filter-icon {
+                display: inline-block;
+                width: 28px;
+                height: 50%;
+                align-self: center;
+                cursor: pointer;
+                margin: 5px;
+                top: 5px;
+                right: auto;
+                background: #fbfeff;
+                color: rgb(187, 187, 187);
+            }
+        }
+    }
 }
 
 .selectColumn {
