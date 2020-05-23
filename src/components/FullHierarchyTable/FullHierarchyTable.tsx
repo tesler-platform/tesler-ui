@@ -14,7 +14,7 @@ import Field from '../Field/Field'
 import {useAssocRecords} from '../../hooks/useAssocRecords'
 import {$do} from '../../actions/actions'
 
-interface FullHierarchyTableOwnProps {
+export interface FullHierarchyTableOwnProps {
     meta: WidgetTableMeta,
     assocValueKey?: string,
     depth?: number,
@@ -35,7 +35,7 @@ interface FullHierarchyTableDispatchProps {
     onSelectAll: (bcName: string, parentId: string, depth: number, assocValueKey: string, selected: boolean) => void,
 }
 
-type FullHierarchyTableAllProps = FullHierarchyTableOwnProps & FullHierarchyTableProps & FullHierarchyTableDispatchProps
+export type FullHierarchyTableAllProps = FullHierarchyTableOwnProps & FullHierarchyTableProps & FullHierarchyTableDispatchProps
 
 const emptyData: AssociatedItem[] = []
 const emptyMultivalue: MultivalueSingleValue[] = []
@@ -52,7 +52,7 @@ const Exp: FunctionComponent = (props: any) => {
     />
 }
 
-const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllProps> = (props) => {
+export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllProps> = (props) => {
     const bcName = props.meta.bcName
     const fields = props.meta.fields
     const depthLevel = props.depth || 1
@@ -174,7 +174,7 @@ const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllProps> = 
         return [
             indentColumn,
             ...fields
-                .filter((item: WidgetListField) => item.type !== FieldType.hidden)
+                .filter((item: WidgetListField) => item.type !== FieldType.hidden && !item.hidden)
                 .map((item: WidgetListField) => ({
                     title: item.title,
                     key: item.key,

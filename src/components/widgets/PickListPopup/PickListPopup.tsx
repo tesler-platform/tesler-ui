@@ -39,7 +39,7 @@ export interface PickListPopupProps extends PickListPopupOwnProps {
 
 export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopupActions> = (props) => {
     const columns: Array<ColumnProps<DataItem>> = props.widget.fields
-    .filter(item => item.type !== FieldType.hidden)
+    .filter(item => item.type !== FieldType.hidden && !item.hidden)
     .map(item => {
         const fieldRowMeta = props.rowMetaFields?.find(field => field.key === item.key)
         return {
