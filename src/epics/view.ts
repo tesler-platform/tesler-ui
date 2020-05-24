@@ -115,7 +115,7 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
     const pendingChanges = state.view.pendingDataChanges[bcName][cursor]
     const handledForceActive = state.view.handledForceActive[bcName]?.[cursor] || {}
     const currentRecordData = state.data[bcName].find((record) => record.id === cursor)
-    const fieldsRowMeta = state.view.rowMeta[bcName][bcUrl].fields
+    const fieldsRowMeta = state.view.rowMeta[bcName][bcUrl]?.fields
     let changedFiledKey: string = null
 
     // среди forceActive-полей в дельте ищем то которое изменилось по отношению к обработанным forceActive
