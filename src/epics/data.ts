@@ -368,7 +368,7 @@ const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperat
         const responseDataItem = data.record
         return Observable.concat(
             Observable.of($do.bcSaveDataSuccess({ bcName, cursor, dataItem: responseDataItem })),
-            Observable.of($do.bcFetchRowMeta({ widgetName, bcName })),
+            Observable.of($do.bcFetchDataRequest({ bcName, widgetName: action.payload.widgetName })),
             postInvoke
                 ? Observable.of($do.processPostInvoke({
                     bcName,
