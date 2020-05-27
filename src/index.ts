@@ -10,7 +10,8 @@ import Provider, {
     getBuildLocationInstance,
     getLocaleProviderInstance
 } from './Provider'
-import {$do, types} from './actions/actions'
+import {$do, types, ActionPayloadTypes, AnyAction} from './actions/actions'
+import {Action, uActionTypesMap, uActionsMap, AnyOfMap, createActionCreators, createActionTypes} from './actions/actions-utils'
 
 export * from './components'
 export * from './hooks'
@@ -35,6 +36,9 @@ export {
     connect,
     $do,
     types as coreActions,
+    ActionPayloadTypes,
+    AnyAction,
+    Action, uActionTypesMap, uActionsMap, AnyOfMap, createActionCreators, createActionTypes,
     historyObj,
     changeLocation,
     store,
