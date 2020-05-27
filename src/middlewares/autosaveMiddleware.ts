@@ -63,5 +63,6 @@ function bcHasPendingAutosaveChanges(store: CoreStore, bcName: string, cursor: s
     const pendingChanges = store.view.pendingDataChanges
     const cursorChanges = pendingChanges[bcName]?.[cursor]
     const result = cursorChanges && !Object.keys(cursorChanges).includes('_associate') && Object.values(cursorChanges).length
+    && !store.view.pendingValidationFails
     return result
 }
