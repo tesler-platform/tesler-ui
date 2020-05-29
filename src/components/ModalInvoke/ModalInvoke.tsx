@@ -29,23 +29,23 @@ const ModalInvoke: React.FunctionComponent<ModalInvokeProps> = (props) => {
         switch (props.confirmOperation.type) {
             case OperationPostInvokeConfirmType.confirm: {
                 return <div>
-                    <p>{props.confirmOperation?.message || t('Perform an additional action?')}</p>
+                    <p className={styles.multiline}>{props.confirmOperation?.message || t('Perform an additional action?')}</p>
                 </div>
             }
             case OperationPostInvokeConfirmType.confirmText: {
                 return <div>
-                    {props.confirmOperation?.message && <p>{props.confirmOperation?.message}</p>}
+                    {props.confirmOperation?.message && <p className={styles.multiline}>{props.confirmOperation?.message}</p>}
                     {<Input value={value} onChange={handleChange}/>}
                 </div>
             }
             case OperationPreInvokeType.info: {
                 return <div>
-                    <p>{props.confirmOperation?.message || t('Action has warning')}</p>
+                    <p className={styles.multiline}>{props.confirmOperation?.message || t('Action has warning')}</p>
                 </div>
             }
             case OperationPreInvokeType.error: {
                 return <div>
-                    <p>{props.confirmOperation?.message || t('Action cannot be performed')}</p>
+                    <p className={styles.multiline}>{props.confirmOperation?.message || t('Action cannot be performed')}</p>
                 </div>
             }
             default:
