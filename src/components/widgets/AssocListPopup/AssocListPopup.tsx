@@ -121,7 +121,7 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
     const title = visiblePendingData.length !== 0
         ? <div>
             <div><h1 className={styles.title}>{props.widget.title}</h1></div>
-            <div>
+            <div className={styles.tagArea}>
                 {visiblePendingData?.map(val => {
                     return <Tag
                         title={val._value?.toString()}
