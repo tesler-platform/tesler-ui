@@ -11,7 +11,7 @@ import {openButtonWarningNotification} from '../utils/notifications'
 import i18n from 'i18next'
 import {PendingDataItem, DataItem} from '../interfaces/data'
 import {RowMetaField} from '../interfaces/rowMeta'
-import {WidgetField, WidgetFieldBlock, isWidgetFieldBlock} from '../interfaces/widget'
+import {WidgetField, WidgetFieldBlock, isWidgetFieldBlock, TableLikeWidgetTypes} from '../interfaces/widget'
 
 const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) => (next: Dispatch) =>
 (action: AnyAction) => {
@@ -23,10 +23,9 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
         const record = state.data[bcName]?.find(item => item.id === cursor)
         const rowMeta = bcUrl && state.view.rowMeta[bcName]?.[bcUrl]
         const pendingValues = state.view.pendingDataChanges[bcName]?.[cursor]
-
+        const widget = state.view.widgets.find(item => item.name === widgetName)
         // If operation marked as validation-sensetive, mark all 'required' fields which haven't been filled as dirty and invalid
         if (operationRequiresAutosave(operationType, rowMeta?.actions)) {
-            const widget = state.view.widgets.find(item => item.name === widgetName)
             // While `required` fields are assigned via rowMeta, only visually visible fields should be checked
             // to avoid situations when field is marked as `required` but not available for user to interact.
             const fieldsToCheck: Record<string, RowMetaField> = {}
@@ -51,9 +50,12 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
                 })
             })
             const dataItem: PendingDataItem = getRequiredFieldsMissing(record, pendingValues, Object.values(fieldsToCheck))
+            // For tables, try to autofocus on first missing field
+            if (dataItem && TableLikeWidgetTypes.includes(widget?.type)) {
+                dispatch($do.selectTableCellInit({ widgetName, rowId: cursor, fieldKey: Object.keys(dataItem)[0] }))
+            }
             return dataItem
-                ? (dispatch($do.selectTableCellInit({ widgetName, rowId: cursor, fieldKey: Object.keys(dataItem)[0] })),
-                next($do.changeDataItem({ bcName, cursor, dataItem })))
+                ? next($do.changeDataItem({ bcName, cursor, dataItem }))
                 : next(action)
         }
 
