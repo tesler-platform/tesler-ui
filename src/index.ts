@@ -29,7 +29,7 @@ const parseLocation = getParseLocationInstance
 const buildLocation = getBuildLocationInstance
 
 import {isViewNavigationItem, isViewNavigationCategory, isViewNavigationGroup} from './interfaces/navigation'
-import {isWidgetFieldBlock} from './interfaces/widget'
+import {isWidgetFieldBlock, TableLikeWidgetTypes} from './interfaces/widget'
 
 export {
     Provider,
@@ -50,5 +50,6 @@ export {
     isViewNavigationItem,
     isViewNavigationCategory,
     isViewNavigationGroup,
-    isWidgetFieldBlock
+    isWidgetFieldBlock,
+    TableLikeWidgetTypes
 }

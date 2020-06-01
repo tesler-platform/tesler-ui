@@ -20,6 +20,17 @@ export const enum WidgetTypes {
     Text = 'Text'
 }
 
+/**
+ * Different widget types that are considered `tables` in nature for purposes of applying some shared features.
+ * For example, autofocus on missing required field should work for tables but not forms.
+ */
+export const TableLikeWidgetTypes: Array<WidgetTypes | string> = [
+    WidgetTypes.List,
+    WidgetTypes.DataGrid,
+    WidgetTypes.AssocListPopup,
+    WidgetTypes.PickListPopup
+]
+
 export interface WidgetFieldBase {
     type: FieldType,
     key: string,
