@@ -1,18 +1,12 @@
-import React, { FunctionComponent } from 'react'
+import React, {FunctionComponent} from 'react'
 import {connect} from 'react-redux'
 import {Dispatch} from 'redux'
-import {
-    Table,
-    Menu,
-    Dropdown,
-    Icon,
-    Skeleton
-} from 'antd'
+import {Dropdown, Icon, Menu, Skeleton, Table} from 'antd'
 import {ColumnProps, TableRowSelection} from 'antd/es/table'
 import ActionLink from '../../ui/ActionLink/ActionLink'
 import {$do} from '../../../actions/actions'
 import {Store} from '../../../interfaces/store'
-import {WidgetListField, WidgetTableMeta} from '../../../interfaces/widget'
+import {PaginationMode, WidgetListField, WidgetTableMeta} from '../../../interfaces/widget'
 import {RowMetaField} from '../../../interfaces/rowMeta'
 import {DataItem, MultivalueSingleValue, PendingDataItem} from '../../../interfaces/data'
 import {buildBcUrl} from '../../../utils/strings'
@@ -26,7 +20,6 @@ import {Operation, OperationGroup} from '../../../interfaces/operation'
 import ColumnTitle from '../../ColumnTitle/ColumnTitle'
 import cn from 'classnames'
 import Pagination from '../../ui/Pagination/Pagination'
-import {PaginationMode} from '../../../interfaces/widget'
 import HierarchyTable from '../../../components/HierarchyTable/HierarchyTable'
 import {BcFilter, FilterGroup} from '../../../interfaces/filters'
 import {useTranslation} from 'react-i18next'
@@ -40,7 +33,9 @@ interface TableWidgetOwnProps {
     showRowActions?: boolean,
     allowEdit?: boolean,
     paginationMode?: PaginationMode,
-    disablePagination?: boolean
+    disablePagination?: boolean,
+    disableDots?: boolean,
+    controlColumns?: Array<{column: ColumnProps<DataItem>, position: 'left' | 'right'}>
 }
 
 export interface TableWidgetProps extends TableWidgetOwnProps {
@@ -101,7 +96,9 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
             mouseAboveRow.current = true
 
             // Should compare hovered record id with event target id, because function is called twice, when cursor enters table
-            if (!floatMenuRef.current || !tableContainerRef.current || floatMenuHoveredRecord.current === recordId) {
+            if ((!props.disableDots && !floatMenuRef.current)
+                || !tableContainerRef.current
+                || floatMenuHoveredRecord.current === recordId) {
                 return
             }
 
@@ -112,7 +109,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
             expectedFloatMenuTopValue.current = floatMenuTopValue
 
             floatMenuHoveredRecord.current = recordId
-            if (!floatMenuIsOpened.current) {
+            if (!floatMenuIsOpened.current && floatMenuRef.current) {
                 floatMenuRef.current.style.top = floatMenuTopValue
             }
         }, []
@@ -229,9 +226,9 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                     props.onSelectRow(props.bcName, floatMenuHoveredRecord.current)
                 }
             } else {
-                if (!mouseAboveRow.current) {
+                if (!mouseAboveRow.current && floatMenuRef.current) {
                     floatMenuRef.current.classList.remove(styles.showMenu)
-                } else if (expectedFloatMenuTopValue.current) {
+                } else if (expectedFloatMenuTopValue.current && floatMenuRef.current) {
                     floatMenuRef.current.style.top = expectedFloatMenuTopValue.current
                 }
             }
@@ -313,55 +310,68 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
         props.onSelectCell(recordId, props.meta.name, fieldKey)
     }
 
-    const columns: Array<ColumnProps<DataItem>> = props.meta.fields
-        .filter((item: WidgetListField) => item.type !== FieldType.hidden && !item.hidden)
-        .map((item: WidgetListField) => {
-            const fieldRowMeta = props.rowMetaFields?.find(field => field.key === item.key)
-            return {
-                title: <ColumnTitle
-                    widgetName={props.meta.name}
-                    widgetMeta={item}
-                    rowMeta={fieldRowMeta}
-                />,
-                key: item.key,
-                dataIndex: item.key,
-                width: item.width,
-                render: (text, dataItem) => {
-                    if (item.type === FieldType.multivalue) {
-                        return <MultivalueHover
-                            data={(dataItem[item.key] || emptyMultivalue) as MultivalueSingleValue[]}
-                            displayedValue={item.displayedKey && dataItem[item.displayedKey]}
-                        />
-                    }
-
-                    const editMode = allowEdit && (props.selectedCell && item.key === props.selectedCell.fieldKey
-                        && props.meta.name === props.selectedCell.widgetName && dataItem.id === props.selectedCell.rowId
-                        && props.cursor === props.selectedCell.rowId
-                    )
-
-                    return <div>
-                        <Field
-                            data={dataItem}
-                            bcName={props.meta.bcName}
-                            cursor={dataItem.id}
-                            widgetName={props.meta.name}
-                            widgetFieldMeta={item}
-                            readonly={!editMode}
-                            forceFocus={editMode}
-                        />
-                    </div>
-                },
-                onCell: (record, rowIndex) => {
-                    return (!allowEdit)
-                        ? null
-                        : {
-                            onDoubleClick: (event: React.MouseEvent) => {
-                                processCellClick(record.id, item.key)
-                            }
+    const columns: Array<ColumnProps<DataItem>> = React.useMemo(() => {
+        return props.meta.fields
+            .filter((item: WidgetListField) => item.type !== FieldType.hidden && !item.hidden)
+            .map((item: WidgetListField) => {
+                const fieldRowMeta = props.rowMetaFields?.find(field => field.key === item.key)
+                return {
+                    title: <ColumnTitle
+                        widgetName={props.meta.name}
+                        widgetMeta={item}
+                        rowMeta={fieldRowMeta}
+                    />,
+                    key: item.key,
+                    dataIndex: item.key,
+                    width: item.width,
+                    render: (text: string, dataItem: DataItem) => {
+                        if (item.type === FieldType.multivalue) {
+                            return <MultivalueHover
+                                data={(dataItem[item.key] || emptyMultivalue) as MultivalueSingleValue[]}
+                                displayedValue={item.displayedKey && dataItem[item.displayedKey]}
+                            />
                         }
+
+                        const editMode = allowEdit && (props.selectedCell && item.key === props.selectedCell.fieldKey
+                            && props.meta.name === props.selectedCell.widgetName && dataItem.id === props.selectedCell.rowId
+                            && props.cursor === props.selectedCell.rowId
+                        )
+
+                        return <div>
+                            <Field
+                                data={dataItem}
+                                bcName={props.meta.bcName}
+                                cursor={dataItem.id}
+                                widgetName={props.meta.name}
+                                widgetFieldMeta={item}
+                                readonly={!editMode}
+                                forceFocus={editMode}
+                            />
+                        </div>
+                    },
+                    onCell: (record: DataItem, rowIndex: number) => {
+                        return (!allowEdit)
+                            ? null
+                            : {
+                                onDoubleClick: (event: React.MouseEvent) => {
+                                    processCellClick(record.id, item.key)
+                                }
+                            }
+                    }
                 }
-            }
+            })
+    }, [props.meta.fields])
+
+    const resultColumns = React.useMemo(() => {
+        const controlColumnsLeft: Array<ColumnProps<DataItem>> = []
+        const controlColumnsRight: Array<ColumnProps<DataItem>> = []
+        props.controlColumns?.map(item => {
+            item.position === 'left'
+                ? controlColumnsLeft.push(item.column)
+                : controlColumnsRight.push(item.column)
         })
+        return [...controlColumnsLeft, ...columns, ...controlColumnsRight]
+    }, [columns, props.controlColumns])
 
     const [filterGroupName, setFilterGroupName] = React.useState(null)
     const filtersExist = !!props.filters?.length
@@ -433,7 +443,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                 styles.table,
                 {[styles.tableWithRowMenu]: props.showRowActions}
             )}
-            columns={columns}
+            columns={resultColumns}
             dataSource={props.data}
             rowKey="id"
             rowSelection={props.rowSelection}
@@ -442,7 +452,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
         />
         {!props.disablePagination && <Pagination bcName={props.bcName} mode={props.paginationMode
         || PaginationMode.page} widgetName={props.meta.name}/>}
-        {(props.showRowActions) &&
+        {(props.showRowActions) && !props.disableDots &&
             <div
                 ref={floatMenuRef}
                 className={styles.floatMenu}
