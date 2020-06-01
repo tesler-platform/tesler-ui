@@ -44,6 +44,7 @@ interface FieldOwnProps {
     forcedValue?: DataValue,
     historyMode?: boolean,
     customProps?: Record<string, any>,
+    maxValueLength?: number
 }
 
 interface FieldProps extends FieldOwnProps {
@@ -86,12 +87,24 @@ const emptyFieldMeta = [] as any
 export const Field: FunctionComponent<FieldProps> = (props) => {
     const [localValue, setLocalValue] = React.useState(null)
     let resultField: React.ReactChild = null
+    const cutSring = (inputStr: string) => {
+        if (inputStr.length > props.maxValueLength) {
+            const endWordIndex = inputStr.indexOf(' ', props.maxValueLength)
+            return endWordIndex > 0
+              ? `${inputStr.substring(0, endWordIndex)}...`
+              : inputStr
+        }
+        else
+          return inputStr
+    }
 
     const value = ('forcedValue' in props)
         ? props.forcedValue
         : (props.pendingValue !== undefined)
             ? props.pendingValue
-            : props.data?.[props.widgetFieldMeta.key]
+            : (props.maxValueLength && typeof props.data?.[props.widgetFieldMeta.key] === 'string')
+              ? cutSring(props.data?.[props.widgetFieldMeta.key]?.toString())
+              : props.data?.[props.widgetFieldMeta.key]
 
     const disabled = (props.rowFieldMeta ? props.rowFieldMeta.disabled : true)
 

@@ -35,7 +35,8 @@ interface TableWidgetOwnProps {
     paginationMode?: PaginationMode,
     disablePagination?: boolean,
     disableDots?: boolean,
-    controlColumns?: Array<{column: ColumnProps<DataItem>, position: 'left' | 'right'}>
+    controlColumns?: Array<{column: ColumnProps<DataItem>, position: 'left' | 'right'}>,
+    maxFieldValueLength?: number
 }
 
 export interface TableWidgetProps extends TableWidgetOwnProps {
@@ -346,6 +347,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                                 widgetFieldMeta={item}
                                 readonly={!editMode}
                                 forceFocus={editMode}
+                                maxValueLength={props.maxFieldValueLength}
                             />
                         </div>
                     },
