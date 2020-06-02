@@ -123,6 +123,9 @@ export type FileUploadFieldMeta = AllWidgetTypeFieldBase & {
     snapshotFileIdKey?: string,
 }
 
+/**
+ * @deprecated TODO: Remove in 2.0.0 in favor of `hidden` flag of widget meta field description
+ */
 export type HiddenFieldMeta = AllWidgetTypeFieldBase & {
     type: FieldType.hidden
 }
