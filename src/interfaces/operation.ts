@@ -42,6 +42,7 @@ export type OperationType = OperationTypeCrud | string
  * @param text - отображаемое название действия
  * @param type - тип операции; строка, уникально идентифицирующая операцию на виджете
  * @param icon - иконка, которая будет показана на кнопке операции, по базе https://ant.design/components/icon/
+ * @param bcKey - key another assoc BC
  * @param showOnlyIcon - кнопка операции будет показана в виде одной иконки, без подписи
  * @param action - ???
  * @param scope - ???
@@ -55,6 +56,7 @@ export interface Operation {
     scope: OperationScope,
     action?: string,
     icon?: string,
+    bcKey?: string,
     showOnlyIcon: boolean,
     preInvoke?: OperationPreInvoke,
     autoSaveBefore?: boolean,
