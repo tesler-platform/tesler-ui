@@ -87,7 +87,9 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
     const state = store.getState() as Store
     const bcName = action.payload.bcName
     const widgetName = (action.payload as any).widgetName // TODO: interface should specify widgetName
-    const { cursor, page, limit } = state.screen.bo.bc[bcName]
+    const bc = state.screen.bo.bc[bcName]
+    const { cursor, page } = bc
+    const { limit } = state.view.widgets.find(i => i.bcName === bcName) || bc
     const filters = state.screen.filters[bcName] || []
     const sorters = state.screen.sorters[bcName]
 
@@ -108,7 +110,7 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
                 ? false
                 : (depthLevel === 2)
                     ? cursor
-                    : state.screen.bo.bc[bcName].depthBc[depthLevel - 1].cursor
+                    : bc.depthBc[depthLevel - 1].cursor
         })
     }
 
@@ -197,7 +199,9 @@ const bcLoadMore: Epic = (action$, store) => action$.ofType(types.bcLoadMore)
 .mergeMap((action) => {
     const state = store.getState() as Store
     const bcName = action.payload.bcName
-    const {cursor, page, limit} = state.screen.bo.bc[action.payload.bcName]
+    const bc = state.screen.bo.bc[bcName]
+    const {cursor, page} = bc
+    const {limit} = state.view.widgets.find(i => i.bcName === bcName) || bc
     const limitBySelfCursor = state.router.bcPath?.includes(`${bcName}/${cursor}`)
     const bcUrl = buildBcUrl(bcName, limitBySelfCursor)
     const filters = state.screen.filters[bcName] || []
@@ -220,7 +224,7 @@ const bcLoadMore: Epic = (action$, store) => action$.ofType(types.bcLoadMore)
     const normalFlow = api.fetchBcData(state.screen.screenName, bcUrl, fetchParams)
     .mergeMap(data => {
         const oldBcDataIds = state.data[bcName]?.map(i => i.id)
-        const newData = [...state.data[bcName], ...data.data.filter((bc: DataItem) => !oldBcDataIds.includes(bc.id))]
+        const newData = [...state.data[bcName], ...data.data.filter((i: DataItem) => !oldBcDataIds.includes(i.id))]
         return Observable.of($do.bcFetchDataSuccess({
             bcName,
             data: newData,
