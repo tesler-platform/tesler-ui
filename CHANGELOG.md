@@ -1,28 +1,52 @@
+# Version 1.14.0
+
+## Features
+
+* `placeholder` property from row meta field description now supported by following additional field types: `dictionary`, `pickList`, `inline-pickList`, `number`, `money`, `percent`, `multivalue` ([#210](https://github.com/tesler-platform/tesler-ui/issues/210))
+* `hidden` field is now supported in widget meta field description; it will replace the `hidden` field type as it's serve the same purpose but keeps original field type intact, i.e. allows properly typed filtration of hidden fields ([#230](https://github.com/tesler-platform/tesler-ui/issues/230)) 
+* :red_circle: [Deprecation warning]: `hidden` field _type_ is now deprecated in favor of `hidden` flag in widget meta field description and will be removed in 2.0.0 ([#230](https://github.com/tesler-platform/tesler-ui/issues/230))
+* Actions utility helpers now are exported to allow proper typescript typings for actions in client application ([#253](https://github.com/tesler-platform/tesler-ui/issues/253))
+* `<ModalInvoke />` component (and `preInvokes` that utilize it) now supports line breaking as per css `white-space: pre-wrap` rule ([#255](https://github.com/tesler-platform/tesler-ui/issues/255))
+* `<TableWidget />` component now supports `controlColumns` property for customization table interaction, e.g. edit button, delete button, more options button all can be implemented through this property. Columns are described by default column descriptor and have an additional `position` parameter which will state where the new columns will be appended ([#234](https://github.com/tesler-platform/tesler-ui/issues/234))
+* Export `TableLikeWidgetTypes` array for some shared features between table like widgets; intention is that it's available for customization by client app, although we might move to a getter instead ([#258](https://github.com/tesler-platform/tesler-ui/pull/258))
+* Support `limit` property in widget meta description which will take precedence over the `limit` parameter of business component ([#261](https://github.com/tesler-platform/tesler-ui/issues/261))
+* Tesler API `bcKey` parameter for `associate` operation now allows setting a custom business component name ([#213](https://github.com/tesler-platform/tesler-ui/issues/213))
+ 
+## Fixes
+
+* `processPostInvoke` action should clear `selectedCell` state as its value will not be viable ([#224](https://github.com/tesler-platform/tesler-ui/issues/224))
+* :red_circle: `postInvokeConfirm` is excluded from the contract of operation response as it was never implemented by Tesler API; now this is considered a regular post invoke type ([#237](https://github.com/tesler-platform/tesler-ui/issues/237))
+* operations no longer fail if there are no `postActions` section in Tesler API response ([#243](https://github.com/tesler-platform/tesler-ui/issues/243))
+* Selected items tags will no longer overflow outside of popup window ([#249](https://github.com/tesler-platform/tesler-ui/issues/249)
+* Data fetch should be initiated on record save to properly refresh all descendent records ([#247](https://github.com/tesler-platform/tesler-ui/issues/247))
+* Autosave middleware reserved for tables erroneously applied to other widgets by `requiredFieldsMiddleware` ([#257](https://github.com/tesler-platform/tesler-ui/issues/257))
+* `multivalue` field no longer lose already selected values after selecting additional values in popup ([#226](https://github.com/tesler-platform/tesler-ui/issues/226))
+
 # Version 1.13.0
 
 ## Features
 
-* Added optional `bcKey` param to the `sendOperation.associate` action, which will be passed in the `bcName`. It is necessary for identifying the backend which BC to use for popup. (#214)
-* Add Modal Invoke window for info and error invoke types (#217)
+* Added optional `bcKey` param to the `sendOperation.associate` action, which will be passed in the `bcName`. It is necessary for identifying the backend which BC to use for popup. ([#214](https://github.com/tesler-platform/tesler-ui/issues/214))
+* Add Modal Invoke window for info and error invoke types ([#217](https://github.com/tesler-platform/tesler-ui/issues/217))
 
 ## Fixes
 
-* `Field`: Fixed overwriting the default Ant properties of components. If passed property is not defined then it is removed from commonProps and commonInputProps. (#215)
-* Exported ownProps interfaces of all `src/components/ui` components (#219)
+* `Field`: Fixed overwriting the default Ant properties of components. If passed property is not defined then it is removed from commonProps and commonInputProps. ([#215](https://github.com/tesler-platform/tesler-ui/issues/215))
+* Exported ownProps interfaces of all `src/components/ui` components ([#219](https://github.com/tesler-platform/tesler-ui/issues/219))
 
 # Version 1.12.0
 
 ## Features
 
-* New `radio` field type to display radiobutton controls
-* Support http codes 409 to warn about conflicting changes and 401 to logout when session expired
-* Support `placeholder` property for fields
+* New `radio` field type to display radiobutton controls ([#202](https://github.com/tesler-platform/tesler-ui/issues/202))
+* Support http codes 409 to warn about conflicting changes and 401 to logout when session expired ([#200](https://github.com/tesler-platform/tesler-ui/issues/200))
+* Support `placeholder` property for fields ([#210](https://github.com/tesler-platform/tesler-ui/issues/210))
 
 # Version 1.11.1
 
 ## Fixes
 
-* MultivalueField loses BC while screen changing (#197)
+* MultivalueField loses BC while screen changing ([#197](https://github.com/tesler-platform/tesler-ui/issues/197))
 
 
 # Version 1.11.0
