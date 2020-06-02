@@ -94,7 +94,7 @@ export const enum FieldType {
     pickList = 'pickList',
     inlinePickList = 'inline-pickList',
     dictionary = 'dictionary',
-    hidden = 'hidden',
+    hidden = 'hidden', // @deprecated TODO: Remove in 2.0.0 in favor of `hidden` flag of widget meta field description
     text = 'text',
     percent = 'percent',
     fileUpload = 'fileUpload',
