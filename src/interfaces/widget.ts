@@ -188,6 +188,7 @@ export interface WidgetMeta {
     title: string, // отображаемое название,
     bcName: string,
     position: number,
+    limit?: number,
     gridWidth: number, // 1-24
     fields: object[],
     options?: WidgetOptions,
