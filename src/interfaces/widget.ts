@@ -20,6 +20,17 @@ export const enum WidgetTypes {
     Text = 'Text'
 }
 
+/**
+ * Different widget types that are considered `tables` in nature for purposes of applying some shared features.
+ * For example, autofocus on missing required field should work for tables but not forms.
+ */
+export const TableLikeWidgetTypes: Array<WidgetTypes | string> = [
+    WidgetTypes.List,
+    WidgetTypes.DataGrid,
+    WidgetTypes.AssocListPopup,
+    WidgetTypes.PickListPopup
+]
+
 export interface WidgetFieldBase {
     type: FieldType,
     key: string,
@@ -112,6 +123,9 @@ export type FileUploadFieldMeta = AllWidgetTypeFieldBase & {
     snapshotFileIdKey?: string,
 }
 
+/**
+ * @deprecated TODO: Remove in 2.0.0 in favor of `hidden` flag of widget meta field description
+ */
 export type HiddenFieldMeta = AllWidgetTypeFieldBase & {
     type: FieldType.hidden
 }
@@ -177,6 +191,7 @@ export interface WidgetMeta {
     title: string, // отображаемое название,
     bcName: string,
     position: number,
+    limit?: number,
     gridWidth: number, // 1-24
     fields: object[],
     options?: WidgetOptions,

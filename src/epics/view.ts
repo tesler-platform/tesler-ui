@@ -87,7 +87,7 @@ const sendOperationAssociate: Epic = (action$, store) => action$.ofType(types.se
     return $do.showViewPopup({
         // TODO: bcKey will not be optional in 2.0.0
         bcName: action.payload.bcKey
-            ? `${action.payload.bcName}Assoc${action.payload.bcKey}`
+            ? `${action.payload.bcKey}`
             : `${action.payload.bcName}Assoc`,
         calleeBCName: action.payload.bcName,
         active: true
@@ -253,8 +253,6 @@ const showAllTableRecordsInit: Epic = (action$, store) => action$.ofType(types.s
     return Observable.concat(...resultObservables)
 })
 
-// Set multivalues assoc pending data changes to the same state as in multivalue field. That allows us to clear popup pending changes
-// so popup cancel button work as expected and previously unsaved selections will not be preserved between popup opennings
 const showAssocPopup: Epic = (action$, store) => action$.ofType(types.showViewPopup)
 .filter(action => !!(action.payload.calleeBCName && action.payload.associateFieldKey))
 .mergeMap((action) => {
@@ -271,10 +269,9 @@ const showAssocPopup: Epic = (action$, store) => action$.ofType(types.showViewPo
     const calleePendingChanges = calleeCursor && state.view.pendingDataChanges[calleeBCName]?.[calleeCursor]
     const assocFieldKey = action.payload.associateFieldKey
     const assocFieldChanges = (calleePendingChanges?.[assocFieldKey] as MultivalueSingleValue[])
+    const popupInitPendingChanges: Record<string, PendingDataItem> = {}
 
     if (assocFieldChanges) {
-        const popupInitPendingChanges: Record<string, PendingDataItem> = {}
-
         assocFieldChanges.forEach((record) => {
             popupInitPendingChanges[record.id] = {
                 id: record.id,
@@ -296,15 +293,22 @@ const showAssocPopup: Epic = (action$, store) => action$.ofType(types.showViewPo
                 }
             })
         }
-
-        return Observable.of($do.changeDataItems({
-            bcName,
-            cursors: Object.keys(popupInitPendingChanges),
-            dataItems: Object.values(popupInitPendingChanges)
-        }))
+    } else {
+        const assocDataValues = state.data[bcName].filter(dataItem => dataItem._associate)
+        assocDataValues.forEach((record) => {
+            popupInitPendingChanges[record.id] = {
+                ...record,
+                id: record.id,
+                _associate: true,
+                _value: record[assocFieldKey]
+            }
+        })
     }
-
-    return Observable.empty<never>()
+    return Observable.of($do.changeDataItems({
+        bcName,
+        cursors: Object.keys(popupInitPendingChanges),
+        dataItems: Object.values(popupInitPendingChanges)
+    }))
 })
 
 export const viewEpics = combineEpics(
