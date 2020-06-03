@@ -89,7 +89,7 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
     const widgetName = (action.payload as any).widgetName // TODO: interface should specify widgetName
     const bc = state.screen.bo.bc[bcName]
     const { cursor, page } = bc
-    const { limit } = state.view.widgets.find(i => i.bcName === bcName) || bc
+    const limit = state.view.widgets.find(i => i.bcName === bcName)?.limit || bc.limit
     const filters = state.screen.filters[bcName] || []
     const sorters = state.screen.sorters[bcName]
 
@@ -201,7 +201,7 @@ const bcLoadMore: Epic = (action$, store) => action$.ofType(types.bcLoadMore)
     const bcName = action.payload.bcName
     const bc = state.screen.bo.bc[bcName]
     const {cursor, page} = bc
-    const {limit} = state.view.widgets.find(i => i.bcName === bcName) || bc
+    const limit = state.view.widgets.find(i => i.bcName === bcName)?.limit || bc.limit
     const limitBySelfCursor = state.router.bcPath?.includes(`${bcName}/${cursor}`)
     const bcUrl = buildBcUrl(bcName, limitBySelfCursor)
     const filters = state.screen.filters[bcName] || []
