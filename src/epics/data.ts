@@ -520,10 +520,6 @@ const saveAssociationsActive: Epic = (action$, store) => action$.ofType(types.sa
     ] || {})
     let params = {}
     action.payload.bcNames.forEach(bcName => params = {...params, _bcName: bcName})
-
-    return api.associate(state.screen.screenName, bcUrl, Object.values(pendingChanges) as AssociatedItem[], params)
-    let params = {}
-    action.payload.bcNames.forEach(bcName => params = {...params, _bcName: bcName})
     return api.associate(state.screen.screenName, bcUrl, Object.values(pendingChanges) as AssociatedItem[], params)
     .mergeMap(response => {
         return Observable.concat(
