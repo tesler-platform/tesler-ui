@@ -1,3 +1,10 @@
+# Version 1.14.1
+
+## Fixes
+
+* `limit` calculated incorrectly after 1.14.0 leading to broken pagination ([#264](https://github.com/tesler-platform/tesler-ui/issues/264))
+* `<TableWidget />` does not recalculate columns after 1.14.0 due to missing prop dependency leading to missing filtration and sorting ([#270](https://github.com/tesler-platform/tesler-ui/issues/270))
+
 # Version 1.14.0
 
 ## Features
