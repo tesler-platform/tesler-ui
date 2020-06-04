@@ -360,7 +360,9 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                     }
                 }
             })
-    }, [props.meta.fields])
+    }, [props.meta.fields, props.rowMetaFields, props.meta.name, props.selectedCell, props.cursor, allowEdit,
+        props.selectedCell?.fieldKey, props.selectedCell?.rowId, props.selectedCell?.widgetName
+    ])
 
     const resultColumns = React.useMemo(() => {
         const controlColumnsLeft: Array<ColumnProps<DataItem>> = []
