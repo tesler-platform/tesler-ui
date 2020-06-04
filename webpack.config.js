@@ -32,8 +32,9 @@ module.exports = (env, options) => {
     return  smp.wrap({
             entry: ['./src/index.ts'],
             mode: options.mode || 'development',
+            watch: isProduction,
             devServer: {
-                watch: true,
+                // watch: true,
                 writeToDisk: false,
                 port: 8081
             },

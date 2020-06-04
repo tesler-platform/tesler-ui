@@ -149,7 +149,7 @@ css-loader, and
 less-loader took 0.059 secs
   module count = 31
 ```
- - Rebuild:
+ - Rebuild (if code changed):
  ``` SMP  ⏱  
     General output time took 4.087 secs
     
@@ -160,8 +160,33 @@ less-loader took 0.059 secs
     ts-loader took 1.38 secs
       module count = 4
 ```
-**But** there is no detection of changes in files which contains only interfaces.
+ - Rebuild (if changed file with interfaces):
+ ```
+<w> [webpack.Progress] 3297ms building
+<i> [webpack.Progress] 37ms chunk graph
+<i> [webpack.Progress] 16ms advanced chunk optimization
+<i> [webpack.Progress] 15ms before module ids
+<i> [webpack.Progress] 44ms hashing
+<i> [webpack.Progress] 38ms chunk assets processing
+<i> [webpack.Progress] 11ms additional chunk assets processing
+<w> [webpack.Progress] 1729ms after chunk asset optimization
+<w> [webpack.Progress] 10629ms after seal <------------------ still work slow
+<i> [webpack.Progress] 68ms emitting
+98% after emitting CopyPlugin
 
+ SMP  ⏱  
+General output time took 15.92 secs
+
+ SMP  ⏱  Plugins
+CopyPlugin took 0.004 secs
+
+ SMP  ⏱  Loaders
+ts-loader took 3.29 secs
+  module count = 30
+
+```
+With this config value of interface in /dist changes, but slooooowly 
+Config:
 
 
 
