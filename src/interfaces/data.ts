@@ -2,7 +2,7 @@ import {OperationPostInvokeAny, OperationPreInvoke} from './operation'
 import {DrillDownType} from './router'
 
 /**
- * Ответ API на запрос данных бизнес-компоненты
+ * API's response on Business Component's data request
  */
 export interface BcDataResponse {
     data: DataItem[],
@@ -10,12 +10,12 @@ export interface BcDataResponse {
 }
 
 /**
- * Запись, экземпляр данных бизнес-компоненты.
- * Имеет неограниченное число иных полей, доступных виджету
+ * Instance of `Business component` data
+ * Has unlimited number of fields, which available to widget
  *
- * @param id Идентификатор записи
- * @param vstamp Версия последнего редактирования записи
- * @param [fieldName] Пользовательские поля
+ * @param id Record's identificator
+ * @param vstamp Version of last record's edit
+ * @param [fieldName] User fields
  */
 export interface DataItem {
     id: string,
@@ -24,19 +24,19 @@ export interface DataItem {
 }
 
 /**
- * Отредактированные изменения
+ * Edited changes
  */
 export interface PendingDataItem {
     [fieldName: string]: DataValue
 }
 
 /**
- * Возможные типы значений полей
+ * Possible types of fields values
  */
-export type DataValue = string | number | boolean | null | MultivalueSingleValue[] | undefined
+export type DataValue = string | number | boolean | null | MultivalueSingleValue[] | undefined | DataItem[]
 
 /**
- * Состояние data в глобальном сторе
+ * State of `data` in global store
  */
 export interface DataState {
     [bcName: string]: DataItem[]
@@ -49,10 +49,10 @@ export interface DepthDataState {
 }
 
 /**
- * Результат сохранения записи, возвращенный бэком
+ * Result of saving record, which back-end returns
  *
- * @param record Сохраненная запись
- * @param postActions Действия, которые надо выполнить после сохранения
+ * @param record Saved record
+ * @param postActions Actions which have to do after saving
  */
 export interface DataItemResponse {
     data: {
@@ -72,10 +72,10 @@ export const enum RecordSnapshotState {
 }
 
 /**
- * Структура, в которой хранятся значения Multivalue - поля
+ * Structure which contain `Multivalue` field's values
  *
- * @param id идентификатор записи
- * @param value Отображаемое значение записи
+ * @param id Record's identificator
+ * @param value Showed value
  */
 export interface MultivalueSingleValue {
     id: string
@@ -84,9 +84,9 @@ export interface MultivalueSingleValue {
 }
 
 /**
- * Опции Multivalue - поля
+ * `Multivalue` field's options
  *
- * @param hint подсказка для значения
+ * @param hint Hint for value
  */
 export interface MultivalueSingleValueOptions {
     hint?: string,
@@ -96,7 +96,9 @@ export interface MultivalueSingleValueOptions {
 }
 
 /**
- * Пикмап.
+ * `key` is name of field, for which the value will be setted up.
+ *  A value of `key` is name of field, from which the value will be gotten.
+ *  Пикмап.
  * Ключ указывает название поля, куда будет подставлено значение. Значение этого ключа указывает название поля, из которого будет взято
  * значение.
  */
