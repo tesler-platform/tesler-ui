@@ -506,6 +506,7 @@ const saveAssociationsActive: Epic = (action$, store) => action$.ofType(types.sa
 .switchMap((action) => {
     const state = store.getState()
     const calleeBCName = state.view.popupData.calleeBCName
+    const bcNames = action.payload.bcNames
     // TODO: Доделать иерархию
     // const isHierarchy = !Array.isArray(action.payload.delta)
     // const data = isHierarchy
@@ -516,13 +517,15 @@ const saveAssociationsActive: Epic = (action$, store) => action$.ofType(types.sa
     //     : buildBcUrl(calleeBCName, true)
     const bcUrl = buildBcUrl(calleeBCName, true)
     const pendingChanges = (state.view.pendingDataChanges[
-        action.payload.bcNames[0]
+        bcNames[0]
     ] || {})
-
-    return api.associate(state.screen.screenName, bcUrl, Object.values(pendingChanges) as AssociatedItem[])
+    const params: Record<string, any> = bcNames.length
+        ? {_bcName: bcNames[bcNames.length - 1]}
+        : {}
+    return api.associate(state.screen.screenName, bcUrl, Object.values(pendingChanges) as AssociatedItem[], params)
     .mergeMap(response => {
         return Observable.concat(
-            Observable.of($do.bcCancelPendingChanges({ bcNames: action.payload.bcNames })),
+            Observable.of($do.bcCancelPendingChanges({ bcNames: bcNames })),
             Observable.of($do.bcForceUpdate({ bcName: calleeBCName }))
         )
     })
