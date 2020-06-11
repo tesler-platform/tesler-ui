@@ -16,7 +16,7 @@ import Field, {emptyMultivalue} from '../../Field/Field'
 import MultivalueHover from '../../ui/Multivalue/MultivalueHover'
 import {Route} from '../../../interfaces/router'
 import {useWidgetOperations} from '../../../hooks'
-import {Operation, OperationGroup} from '../../../interfaces/operation'
+import {Operation, OperationGroup, OperationPreInvoke} from '../../../interfaces/operation'
 import ColumnTitle from '../../ColumnTitle/ColumnTitle'
 import cn from 'classnames'
 import Pagination from '../../ui/Pagination/Pagination'
@@ -68,7 +68,7 @@ export interface TableWidgetProps extends TableWidgetOwnProps {
     onDrillDown?: (widgetName: string, bcName: string, cursor: string, fieldKey: string) => void,
     // TODO: Remove `route` in 2.0 as it is accessible from the store; remove `bcName`
     onShowAll: (bcName: string, cursor: string, route: Route, widgetName: string) => void,
-    onOperationClick: (bcName: string, operationType: string, widgetName: string) => void,
+    onOperationClick: (bcName: string, operationType: string, widgetName: string, preInvoke?: OperationPreInvoke) => void,
     onSelectRow: (bcName: string, cursor: string) => void,
     onSelectCell: (cursor: string, widgetName: string, fieldKey: string) => void,
     onRemoveFilters: (bcName: string) => void,
@@ -289,7 +289,12 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                             key={item.type}
                             onClick={() => {
                                 onMenuVisibilityChange(false) // Dropdown bug: doesn't call onVisibleChange on menu item click
-                                props.onOperationClick(props.meta.bcName, ungroupedOperation.type, props.meta.name)
+                                props.onOperationClick(
+                                    props.meta.bcName,
+                                    ungroupedOperation.type,
+                                    props.meta.name,
+                                    ungroupedOperation.preInvoke
+                                )
                             }}
                         >
                             { ungroupedOperation.icon && <Icon type={ungroupedOperation.icon} className={styles.icon} /> }
@@ -532,8 +537,15 @@ function mapDispatchToProps(dispatch: Dispatch) {
          * @deprecated TODO: Remove in 2.0
          */
         onDrillDown: null as (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void,
-        onOperationClick: (bcName: string, operationType: string, widgetName: string) => {
-            dispatch($do.sendOperation({ bcName, operationType, widgetName }))
+        onOperationClick: (bcName: string, operationType: string, widgetName: string, preInvoke: OperationPreInvoke) => {
+            preInvoke
+                ? dispatch($do.processPreInvoke({
+                    bcName,
+                    operationType,
+                    widgetName,
+                    preInvoke,
+                }))
+                : dispatch($do.sendOperation({bcName, operationType, widgetName}))
         },
         onSelectRow: (bcName: string, cursor: string) => {
             dispatch($do.bcSelectRecord({ bcName, cursor }))
