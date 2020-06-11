@@ -300,7 +300,7 @@ const showAssocPopup: Epic = (action$, store) => action$.ofType(types.showViewPo
                 ...record,
                 id: record.id,
                 _associate: true,
-                _value: record[assocFieldKey]
+                _value: record[action.payload.assocValueKey]
             }
         })
     }
