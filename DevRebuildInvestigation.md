@@ -47,8 +47,7 @@ Rebuild result:
    module count = 2
 ```
 #####Выводы:
-При пересборке `ts-loader` работает довольно быстро (1 сек. в среднем). 
-Но эммитится  (` [emitted] `) все `.d.ts`. Пока непонятно зачем.
+While rebuild `ts-loader` pretty fast (near 1 sec.). 
 
 #####To check:
 
@@ -186,11 +185,6 @@ ts-loader took 3.29 secs
 
 ```
 With this config value of interface in /dist changes, but slooooowly 
-Config:
 
-
-
-
-
-##Results
-* `writeToDisk: false` allows not to restart client project
+##Conclusion
+For the first iteration decided to accept config from current webpack.config.js and tsconfig.json
