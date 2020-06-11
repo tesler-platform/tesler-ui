@@ -16,7 +16,7 @@ import Field, {emptyMultivalue} from '../../Field/Field'
 import MultivalueHover from '../../ui/Multivalue/MultivalueHover'
 import {Route} from '../../../interfaces/router'
 import {useWidgetOperations} from '../../../hooks'
-import {Operation, OperationGroup} from '../../../interfaces/operation'
+import {Operation, OperationGroup, OperationPreInvoke} from '../../../interfaces/operation'
 import ColumnTitle from '../../ColumnTitle/ColumnTitle'
 import cn from 'classnames'
 import Pagination from '../../ui/Pagination/Pagination'
@@ -55,7 +55,7 @@ export interface TableWidgetProps extends TableWidgetOwnProps {
     filterGroups: FilterGroup[],
     onDrillDown: (widgetName: string, bcName: string, cursor: string, fieldKey: string) => void,
     onShowAll: (bcName: string, cursor: string, route: Route, widgetName: string) => void,
-    onOperationClick: (bcName: string, operationType: string, widgetName: string) => void,
+    onOperationClick: (bcName: string, operationType: string, widgetName: string, preInvoke?: OperationPreInvoke) => void,
     onSelectRow: (bcName: string, cursor: string) => void,
     onSelectCell: (cursor: string, widgetName: string, fieldKey: string) => void,
     onRemoveFilters: (bcName: string) => void,
@@ -251,7 +251,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                                     key={operation.type}
                                     onClick={() => {
                                         onMenuVisibilityChange(false) // Dropdown bug: doesn't call onVisibleChange on menu item click
-                                        props.onOperationClick(props.bcName, operation.type, props.meta.name)
+                                        props.onOperationClick(props.bcName, operation.type, props.meta.name, operation.preInvoke)
                                     }}
                                 >
                                     { operation.icon && <Icon type={operation.icon} className={styles.icon} /> }
@@ -276,7 +276,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                             key={item.type}
                             onClick={() => {
                                 onMenuVisibilityChange(false) // Dropdown bug: doesn't call onVisibleChange on menu item click
-                                props.onOperationClick(props.bcName, ungroupedOperation.type, props.meta.name)
+                                props.onOperationClick(props.bcName, ungroupedOperation.type, props.meta.name, ungroupedOperation.preInvoke)
                             }}
                         >
                             { ungroupedOperation.icon && <Icon type={ungroupedOperation.icon} className={styles.icon} /> }
@@ -512,8 +512,15 @@ function mapDispatchToProps(dispatch: Dispatch) {
         onDrillDown: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => {
             dispatch($do.userDrillDown({widgetName, cursor, bcName, fieldKey}))
         },
-        onOperationClick: (bcName: string, operationType: string, widgetName: string) => {
-            dispatch($do.sendOperation({ bcName, operationType, widgetName }))
+        onOperationClick: (bcName: string, operationType: string, widgetName: string, preInvoke: OperationPreInvoke) => {
+            preInvoke
+                ? dispatch($do.processPreInvoke({
+                    bcName,
+                    operationType,
+                    widgetName,
+                    preInvoke,
+                }))
+                : dispatch($do.sendOperation({bcName, operationType, widgetName}))
         },
         onSelectRow: (bcName: string, cursor: string) => {
             dispatch($do.bcSelectRecord({ bcName, cursor }))
