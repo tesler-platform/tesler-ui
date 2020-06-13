@@ -13,6 +13,7 @@ export {default as CheckboxPicker} from './ui/CheckboxPicker/CheckboxPicker'
 export {default as RadioButton} from './ui/RadioButton/RadioButton'
 export {default as Pagination} from './ui/Pagination/Pagination'
 export {default as ErrorPopup} from './ui/ErrorPopup/ErrorPopup'
+export {default as Popup} from './ui/Popup/Popup'
 export {default as ColumnTitle} from './ColumnTitle/ColumnTitle'
 // Containers
 export {default as TemplatedTitle} from './TemplatedTitle/TemplatedTitle'

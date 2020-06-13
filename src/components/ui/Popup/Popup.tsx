@@ -3,7 +3,6 @@ import {Modal, Button} from 'antd'
 import {useTranslation} from 'react-i18next'
 import Pagination from '../../ui/Pagination/Pagination'
 import {PaginationMode} from '../../../interfaces/widget'
-
 import * as styles from './Popup.less'
 
 export interface PopupProps {
@@ -16,6 +15,8 @@ export interface PopupProps {
     bcName: string,
     widgetName?: string,
     disablePagination?: boolean,
+    OkText?: string,
+    cancelText?: string,
 }
 
 const widths = {
@@ -44,10 +45,10 @@ export const Popup: FunctionComponent<PopupProps> = (props) => {
                     }
                     <div className={styles.actions}>
                         <Button onClick={props.onOkHandler} className={styles.buttonYellow}>
-                            {t('Save')}
+                            {props.OkText ?? t('Save')}
                         </Button>
                         <Button onClick={props.onCancelHandler} className={styles.buttonCancel}>
-                            {t('Cancel')}
+                            {props.cancelText ?? t('Cancel')}
                         </Button>
                     </div>
                 </div>

@@ -14,6 +14,7 @@ import {initHistory} from './reducers/router'
 import {combineReducers} from './utils/redux'
 import {createAutoSaveMiddleware} from './middlewares/autosaveMiddleware'
 import {createRequiredFieldsMiddleware} from './middlewares/requiredFieldsMiddleware'
+import {createPreInvokeMiddleware} from './middlewares/preInvokeMiddleware'
 import {initLocale} from './imports/i18n'
 import {Resource, i18n} from 'i18next'
 
@@ -122,7 +123,8 @@ export function configureStore<ClientState, ClientActions extends Action<any>>(
     })
     const middlewares: Middleware[] = [
         createAutoSaveMiddleware(),
-        createRequiredFieldsMiddleware()
+        createRequiredFieldsMiddleware(),
+        createPreInvokeMiddleware()
     ]
     if (useEpics) {
         const epics = combineEpics(coreEpics, customEpics)
