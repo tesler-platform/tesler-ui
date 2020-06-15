@@ -14,6 +14,8 @@ export {default as RadioButton} from './ui/RadioButton/RadioButton'
 export {default as Pagination} from './ui/Pagination/Pagination'
 export {default as ErrorPopup} from './ui/ErrorPopup/ErrorPopup'
 export {default as ColumnTitle} from './ColumnTitle/ColumnTitle'
+export {default as MultivalueField} from './Multivalue/MultivalueField'
+export {default as MultiValueListRecord} from './Multivalue/MultiValueListRecord'
 // Containers
 export {default as TemplatedTitle} from './TemplatedTitle/TemplatedTitle'
 export {default as View} from './View/View'
