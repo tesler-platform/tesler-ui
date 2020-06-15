@@ -11,12 +11,13 @@ export interface MultivalueListProps {
     data: MultivalueSingleValue[],
     isFloat: boolean,
     noLineSeparator: boolean,
-    isColumnDirection?: boolean
+    isColumnDirection?: boolean,
+    className?: string
 }
 
 const MultivalueList: React.FunctionComponent<MultivalueListProps> = (props) => {
 
-    return <div key={`${props.field.key}_${props.field.label}`} className={cn({
+    return <div key={`${props.field.key}_${props.field.label}`} className={cn(props.className, {
         [styles.fieldAreaFloat]: props.isFloat,
         [styles.fieldAreaBase]: !props.isFloat,
         [styles.noFieldSeparator]: props.noLineSeparator,
