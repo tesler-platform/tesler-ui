@@ -365,6 +365,12 @@ const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperat
         }
     }
 
+    const fetchChildrenBcData = Object.entries(requestBcChildren(bcName))
+    .map(entry => {
+        const [childBcName, widgetNames] = entry
+        return $do.bcFetchDataRequest({ bcName: childBcName, widgetName: widgetNames[0] })
+    })
+
     const context = { widgetName: action.payload.widgetName }
     return api.saveBcData(state.screen.screenName, bcUrl, { ...pendingChanges, vstamp: dataItem.vstamp }, context)
     .mergeMap(data => {
@@ -372,7 +378,8 @@ const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperat
         const responseDataItem = data.record
         return Observable.concat(
             Observable.of($do.bcSaveDataSuccess({ bcName, cursor, dataItem: responseDataItem })),
-            Observable.of($do.bcFetchDataRequest({ bcName, widgetName: action.payload.widgetName })),
+            Observable.of($do.bcFetchRowMeta({ widgetName, bcName })),
+            Observable.of(...fetchChildrenBcData),
             postInvoke
                 ? Observable.of($do.processPostInvoke({
                     bcName,
