@@ -6,7 +6,6 @@ import {WidgetTypes} from 'interfaces/widget'
 import {FieldType} from 'interfaces/view'
 import {AssociatedItem} from 'interfaces/operation'
 
-
 describe('FullHierarchyTable test', () => {
     const toHideOwnProps: FullHierarchyTableOwnProps = {
         meta: {
@@ -39,6 +38,7 @@ describe('FullHierarchyTable test', () => {
         onSelect: jest.fn(),
         onDeselectAll: jest.fn(),
         onSelectAll: jest.fn(),
+        onSelectFullTable: jest.fn(),
     }
 
     it('should hide "hidden": true fields', () => {
