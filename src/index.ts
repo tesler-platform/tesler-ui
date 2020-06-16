@@ -18,12 +18,14 @@ export * from './hooks'
 
 import {historyObj, changeLocation} from './reducers/router'
 export {
+    applyParams,
     axiosForApi,
     axiosGet, axiosPost, axiosPut, axiosDelete
 } from './utils/api'
 export {buildBcUrl} from './utils/strings'
 export {combineReducers} from './utils/redux'
 export {buildUrl, parseBcCursors} from './utils/history'
+export {getFilters} from './utils/filters'
 export {fetchBcDataAll} from './api/api'
 const parseLocation = getParseLocationInstance
 const buildLocation = getBuildLocationInstance
