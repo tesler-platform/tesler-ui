@@ -77,6 +77,7 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
     )
 
     return <Popup
+        title={<div><h1 className={styles.title}>{props.widget.title}</h1></div>}
         showed={props.showed}
         size="large"
         onOkHandler={props.onClose}
@@ -84,9 +85,9 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
         bcName={props.widget.bcName}
         widgetName={props.widget.name}
         disablePagination={props.widget.options?.hierarchyFull}
+        disableFooterButtons
     >
         <div>
-            <h2 className={styles.title}>{props.widget.title}</h2>
             {(props.bcLoading)
             ? <Skeleton loading paragraph={{rows: 5}} />
             : (props.widget.options?.hierarchy || props.widget.options?.hierarchySameBc || props.widget.options?.hierarchyFull)
