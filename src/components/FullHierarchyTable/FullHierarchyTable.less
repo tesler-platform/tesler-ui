@@ -9,8 +9,56 @@
 
 .table {
     table-layout: fixed;
+
+    :global {
+        .ant-table .ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-column-has-filters {
+            .ant-table-filter-icon.ant-table-filter-open {
+                background: #fbfeff;
+            }
+
+        }
+
+        .ant-table .ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-column-has-filters:hover {
+            .ant-table-filter-icon:hover {
+                background: #fbfeff;
+            }
+        }
+
+        .ant-table .ant-table-thead > tr > th {
+            .ant-table-filter-icon {
+                width: 28px;
+                height: 50%;
+                align-self: center;
+                cursor: pointer;
+                margin: 5px;
+                top: 5px;
+                background: #fbfeff;
+                color: rgb(187, 187, 187);
+            }
+        }
+    }
 }
 
 .selectColumn {
     text-align: center;
 }
+
+.filterContent {
+    padding: 7px;
+}
+
+.operators {
+    display: flex;
+    margin-top: 8px;
+
+    :global {
+        .ant-btn:not(.ant-btn-icon-only):not(.ant-input-search-button):not(.ant-btn-circle) {
+            background: none;
+            color: #0088bb;
+            border: none;
+            min-width: 75px;
+        }
+    }
+}
+
+
