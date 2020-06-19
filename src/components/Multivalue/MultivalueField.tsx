@@ -47,6 +47,7 @@ const MultivalueField: FunctionComponent<MultivalueFieldProps> = (props) => {
         widgetFieldMeta={props.widgetFieldMeta}
         page={props.page}
         bcName={props.bcName}
+        popupBcName={props.popupBcName}
         metaError={props.metaError}
         placeholder={props.placeholder}
     />

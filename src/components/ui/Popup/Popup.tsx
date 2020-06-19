@@ -17,6 +17,8 @@ export interface PopupProps {
     widgetName?: string,
     disablePagination?: boolean,
     disableFooterButtons?: boolean,
+    OkText?: string,
+    cancelText?: string,
 }
 
 const widths = {
@@ -45,10 +47,10 @@ export const Popup: FunctionComponent<PopupProps> = (props) => {
                     }
                     {!props.disableFooterButtons && <div className={styles.actions}>
                         <Button onClick={props.onOkHandler} className={styles.buttonYellow}>
-                            {t('Save')}
+                            {props.OkText ? props.OkText : t('Save')}
                         </Button>
                         <Button onClick={props.onCancelHandler} className={styles.buttonCancel}>
-                            {t('Cancel')}
+                            {props.cancelText ? props.cancelText : t('Cancel')}
                         </Button>
                     </div>}
                 </div>
