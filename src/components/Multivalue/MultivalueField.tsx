@@ -6,6 +6,7 @@ import {$do} from '../../actions/actions'
 import {MultivalueSingleValue} from '../../interfaces/data'
 import MultivalueTag from '../ui/Multivalue/MultivalueTag'
 import {MultivalueFieldMeta} from '../../interfaces/widget'
+import {buildBcUrl} from '../../utils/strings'
 
 export interface MultivalueFieldOwnProps {
     widgetName: string, // TODO: for future pagination support
@@ -21,6 +22,7 @@ export interface MultivalueFieldProps extends MultivalueFieldOwnProps {
     cursor: string,
     page: number,
     popupBcName: string,
+    popupRowMetaDone: boolean,
     fieldKey: string,
     onRemove: (
         bcName: string,
@@ -47,6 +49,7 @@ const MultivalueField: FunctionComponent<MultivalueFieldProps> = (props) => {
         widgetFieldMeta={props.widgetFieldMeta}
         page={props.page}
         bcName={props.bcName}
+        loading={props.popupBcName && !props.popupRowMetaDone}
         metaError={props.metaError}
         placeholder={props.placeholder}
     />
@@ -56,12 +59,16 @@ function mapStateToProps(store: Store, ownProps: MultivalueFieldOwnProps) {
     // TODO: for future pagination support
     // const widget = store.view.widgets.find(widget => widget.name === ownProps.widgetName)
     // const bc = store.screen.bo.bc[widget.bcName]
+    const popupBcName = ownProps.widgetFieldMeta.popupBcName
+    const bcUrl = buildBcUrl(popupBcName, true)
+    const popupRowMetaDone = !!store.view.rowMeta[popupBcName]?.[bcUrl]?.fields
     return {
         cursor: store.screen.bo.bc[ownProps.bcName]?.cursor,
         page: 0,
-        popupBcName: ownProps.widgetFieldMeta.popupBcName,
+        popupBcName: popupBcName,
         assocValueKey: ownProps.widgetFieldMeta.assocValueKey,
-        fieldKey: ownProps.widgetFieldMeta.key
+        fieldKey: ownProps.widgetFieldMeta.key,
+        popupRowMetaDone: popupRowMetaDone
     }
 }
 

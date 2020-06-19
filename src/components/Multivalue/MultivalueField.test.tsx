@@ -14,6 +14,7 @@ import Field from '../Field/Field'
 import {buildBcUrl} from '../..'
 
 const testBcName = 'bcExample'
+const testPopupBcName = 'testAssoc'
 
 const testCursor = '4'
 
@@ -63,6 +64,16 @@ describe('Multivalue test', () => {
                     key: widgetFieldMeta.key,
                     disabled: false,
                     currentValue: testMultivalueData
+                }]
+            }
+        }
+        store.getState().view.rowMeta[testPopupBcName] = {
+            [buildBcUrl(testPopupBcName, true)]: {
+                actions: [],
+                fields: [{
+                    key: '1',
+                    disabled: false,
+                    currentValue:'Value'
                 }]
             }
         }
