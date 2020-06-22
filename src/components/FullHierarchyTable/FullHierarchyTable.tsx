@@ -125,7 +125,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
         while (filteredData.length > 0) {
             const tempItem = filteredData.shift()
             childs.push(tempItem)
-            const tmpChilds = checkData.filter(item => item.parentId === tempItem.id)
+            const tmpChilds = checkData?.filter(item => item.parentId === tempItem.id)
             if (tmpChilds.length > 0) {
                 tmpChilds.forEach(child => filteredData.push(child))
             }
@@ -138,7 +138,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
         let filtered: AssociatedItem[] = bcFilter?.[0] && checkData && checkFiltered(bcFilter[0], checkData) || []
         bcFilter?.forEach(filterItem => {
             const tmpFiltered = checkFiltered(filterItem, checkData)
-            filtered = filtered.filter(item => tmpFiltered.includes(item))
+            filtered = filtered?.filter(item => tmpFiltered.includes(item))
         })
         return filtered
     }
@@ -187,11 +187,11 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
             if (props?.bcFilter?.length > 0) {
                 const filteredItems = findFiltered(props.bcFilter, props.data)
                 setUserOpenedRecords(Array.from(new Set([...filteredItems, ...findParent(filteredItems, props.data)]))
-                    .filter(item => data.find((dataItem) => dataItem.parentId === item.id)).map(item => item.id))
+                    ?.filter(item => data.find((dataItem) => dataItem.parentId === item.id)).map(item => item.id))
                 setPreopenedRecordsInitiated(true)
             } else {
                 setUserOpenedRecords(selectedRecords
-                    .filter((selectedItem) => {
+                    ?.filter((selectedItem) => {
                         const recordData = tableRecords.find((item) => item.id === selectedItem.id)
                         return !recordData || !recordData.noChildren
                     })
@@ -208,7 +208,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
         if (expanded) {
             setUserOpenedRecords((prevState => [...prevState,dataItem.id]))
         } else {
-            setUserOpenedRecords((prevState => prevState.filter(item => item !== dataItem.id)))
+            setUserOpenedRecords((prevState => prevState?.filter(item => item !== dataItem.id)))
         }
     }
 
@@ -289,7 +289,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
     const nestedHierarchy = (record: DataItem, index: number, indent: number, expanded: boolean) => {
         return <ConnectedFullHierarchyTable
             meta={props.meta}
-            nestedData={data.filter(item => item.level > depthLevel)}
+            nestedData={data?.filter(item => item.level > depthLevel)}
             assocValueKey={props.assocValueKey}
             depth={depthLevel + 1}
             parentId={record.id}
@@ -342,7 +342,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
         </div>
 
     const dropDown = (filterableFieldsKey: RowMetaField[], key: string) => {
-        const filterKeys = filterableFieldsKey.filter(field => !!field.filterable).map(field => field.key)
+        const filterKeys = filterableFieldsKey?.filter(field => !!field.filterable).map(field => field.key)
         if (filterKeys?.indexOf(key) > -1) {
             return {
                 filterDropdown: (dropdownProps: FilterDropdownProps) => customDropdown(dropdownProps, key),
@@ -364,7 +364,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
         return [
             indentColumn,
             ...fields
-                .filter((item: WidgetListField) => item.type !== FieldType.hidden && !item.hidden)
+                ?.filter((item: WidgetListField) => item.type !== FieldType.hidden && !item.hidden)
                 .map((item: WidgetListField) => ({
                     title: item.title,
                     key: item.key,
