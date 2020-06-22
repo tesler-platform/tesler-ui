@@ -86,7 +86,8 @@ export interface OperationGroup {
  */
 export interface OperationPreInvoke {
     type: OperationPreInvokeType,
-    message: string
+    message: string,
+    bcName?: string
 }
 
 /**
@@ -107,7 +108,11 @@ export enum OperationPreInvokeType {
      * Перед операцией пользователя будет показано всплывающее сообщение
      * с иконкой ошибки и операция не будет выполнена (TODO: Будет или не будет? Проверить)
      */
-    error = 'error'
+    error = 'error',
+    /**
+     * Before the user’s operation popup BC with custom confirmation will be shown
+     */
+    bc = 'bc'
 }
 
 /**
