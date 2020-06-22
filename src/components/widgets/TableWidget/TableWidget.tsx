@@ -28,7 +28,12 @@ import {parseFilters} from '../../../utils/filters'
 import Select from '../../ui/Select/Select'
 
 type AdditionalAntdTableProps = Partial<Omit<TableProps<DataItem>, 'rowSelection'>>
-interface TableWidgetOwnProps extends AdditionalAntdTableProps{
+interface TableWidgetOwnProps extends AdditionalAntdTableProps {
+    columnTitleComponent?: (options?: {
+        widgetName: string,
+        widgetMeta: WidgetListField,
+        rowMeta: RowMetaField
+    }) => React.ReactNode,
     meta: WidgetTableMeta,
     rowSelection?: TableRowSelection<DataItem>,
     showRowActions?: boolean,
@@ -363,7 +368,9 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
             .map((item: WidgetListField) => {
                 const fieldRowMeta = props.rowMetaFields?.find(field => field.key === item.key)
                 return {
-                    title: <ColumnTitle
+                    title: props.columnTitleComponent
+                        ? props.columnTitleComponent({widgetName: props.meta.name, widgetMeta: item, rowMeta: fieldRowMeta})
+                        : <ColumnTitle
                         widgetName={props.meta.name}
                         widgetMeta={item}
                         rowMeta={fieldRowMeta}
