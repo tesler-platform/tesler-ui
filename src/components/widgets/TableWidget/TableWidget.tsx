@@ -2,7 +2,7 @@ import React, {FunctionComponent} from 'react'
 import {connect} from 'react-redux'
 import {Dispatch} from 'redux'
 import {Dropdown, Icon, Menu, Skeleton, Table} from 'antd'
-import {ColumnProps, TableRowSelection} from 'antd/es/table'
+import {ColumnProps, TableProps, TableRowSelection} from 'antd/es/table'
 import ActionLink from '../../ui/ActionLink/ActionLink'
 import {$do} from '../../../actions/actions'
 import {Store} from '../../../interfaces/store'
@@ -27,7 +27,8 @@ import FullHierarchyTable from '../../../components/FullHierarchyTable/FullHiera
 import {parseFilters} from '../../../utils/filters'
 import Select from '../../ui/Select/Select'
 
-interface TableWidgetOwnProps {
+type AdditionalAntdTableProps = Partial<Omit<TableProps<DataItem>, 'rowSelection'>>
+interface TableWidgetOwnProps extends AdditionalAntdTableProps {
     columnTitleComponent?: (options?: {
         widgetName: string,
         widgetMeta: WidgetListField,
@@ -82,6 +83,39 @@ export interface TableWidgetProps extends TableWidgetOwnProps {
 }
 
 export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
+    const {
+        meta,
+        rowSelection,
+        showRowActions,
+        allowEdit,
+        paginationMode,
+        disablePagination,
+        disableDots,
+        controlColumns,
+        data,
+        rowMetaFields,
+        limitBySelf,
+        bcName,
+        widgetName,
+        route,
+        cursor,
+        selectedCell,
+        pendingDataItem,
+        hasNext,
+        operations,
+        metaInProgress,
+        filters,
+        filterGroups,
+        onDrillDown,
+        onShowAll,
+        onOperationClick,
+        onSelectRow,
+        onSelectCell,
+        onRemoveFilters,
+        onApplyFilter,
+        onForceUpdate,
+        ...rest
+    } = props
     if (props.meta.options) {
         if (props.meta.options.hierarchyFull) {
             return <FullHierarchyTable
@@ -97,7 +131,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
             />
         }
     }
-    const allowEdit = (props.allowEdit ?? true) && !props.meta.options?.readOnly
+    const isAllowEdit = (props.allowEdit ?? true) && !props.meta.options?.readOnly
     const {t} = useTranslation()
 
     // Refs for row operations popup
@@ -254,12 +288,12 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
         [props.cursor, props.onSelectRow, props.meta.bcName, props.meta.name]
     )
 
-    const operations = useWidgetOperations(props.operations, props.meta)
+    const operationList = useWidgetOperations(props.operations, props.meta)
 
     const rowActionsMenu = React.useMemo(
         () => {
             const menuItemList: React.ReactNode[] = []
-            operations.forEach((item: Operation | OperationGroup, index) => {
+            operationList.forEach((item: Operation | OperationGroup, index) => {
                 if ((item as OperationGroup).actions) {
                     const groupOperations: React.ReactNode[] = [];
                     (item as OperationGroup).actions.forEach(operation => {
@@ -321,7 +355,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                 }
             </Menu>
         },
-        [operations, props.meta.name, props.onOperationClick, props.meta.bcName, props.metaInProgress]
+        [operationList, props.meta.name, props.onOperationClick, props.meta.bcName, props.metaInProgress]
     )
 
     const processCellClick = (recordId: string, fieldKey: string) => {
@@ -352,7 +386,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                             />
                         }
 
-                        const editMode = allowEdit && (props.selectedCell && item.key === props.selectedCell.fieldKey
+                        const editMode = isAllowEdit && (props.selectedCell && item.key === props.selectedCell.fieldKey
                             && props.meta.name === props.selectedCell.widgetName && dataItem.id === props.selectedCell.rowId
                             && props.cursor === props.selectedCell.rowId
                         )
@@ -370,7 +404,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                         </div>
                     },
                     onCell: (record: DataItem, rowIndex: number) => {
-                        return (!allowEdit)
+                        return (!isAllowEdit)
                             ? null
                             : {
                                 onDoubleClick: (event: React.MouseEvent) => {
@@ -380,7 +414,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                     }
                 }
             })
-    }, [props.meta.fields, props.rowMetaFields, props.meta.name, props.selectedCell, props.cursor, allowEdit,
+    }, [props.meta.fields, props.rowMetaFields, props.meta.name, props.selectedCell, props.cursor, isAllowEdit,
         props.selectedCell?.fieldKey, props.selectedCell?.rowId, props.selectedCell?.widgetName
     ])
 
@@ -471,6 +505,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
             rowSelection={props.rowSelection}
             pagination={false}
             onRow={(props.showRowActions) ? onTableRow : null}
+            {...rest}
         />
         {!props.disablePagination && <Pagination bcName={props.meta.bcName} mode={props.paginationMode
         || PaginationMode.page} widgetName={props.meta.name}/>}
