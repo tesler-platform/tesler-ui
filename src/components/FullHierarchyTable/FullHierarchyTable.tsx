@@ -5,7 +5,7 @@ import {AssociatedItem} from '../../interfaces/operation'
 import {Store} from '../../interfaces/store'
 import {Dispatch} from 'redux'
 import {connect} from 'react-redux'
-import {Button, Form, Icon, Input, Table} from 'antd'
+import {Button, Form, Icon, Input, Skeleton, Table} from 'antd'
 import {ColumnProps, TableRowSelection, TableEventListeners} from 'antd/lib/table'
 import {DataItem, MultivalueSingleValue, PendingDataItem} from '../../interfaces/data'
 import {FieldType} from '../../interfaces/view'
@@ -75,6 +75,7 @@ const Exp: FunctionComponent = (props: any) => {
 export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllProps> = (props) => {
     const bcName = props.meta.bcName
     const fields = props.meta.fields
+    const loading = props.loading
     const depthLevel = props.depth || 1
     const indentLevel = depthLevel - 1
     const {t} = useTranslation()
@@ -122,11 +123,11 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
     const findChild = (filteredData: AssociatedItem[], checkData: AssociatedItem[]) => {
         // BFS tree find algorithm
         const childs = []
-        while (filteredData.length > 0) {
+        while (filteredData?.length > 0) {
             const tempItem = filteredData.shift()
             childs.push(tempItem)
             const tmpChilds = checkData?.filter(item => item.parentId === tempItem.id)
-            if (tmpChilds.length > 0) {
+            if (tmpChilds?.length > 0) {
                 tmpChilds.forEach(child => filteredData.push(child))
             }
         }
@@ -190,12 +191,18 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                     ?.filter(item => data.find((dataItem) => dataItem.parentId === item.id)).map(item => item.id))
                 setPreopenedRecordsInitiated(true)
             } else {
-                setUserOpenedRecords(selectedRecords
-                    ?.filter((selectedItem) => {
-                        const recordData = tableRecords.find((item) => item.id === selectedItem.id)
-                        return !recordData || !recordData.noChildren
-                    })
-                    .map((selectedItem) => selectedItem.id))
+                const openedTreeRecord: AssociatedItem[] = []
+                selectedRecords.forEach((record) => {
+                    let tmpItem = record
+                    while (tmpItem?.level > 0) {
+                        if (data?.find((dataItem) => dataItem.parentId === tmpItem.id)) {
+                            openedTreeRecord.push(tmpItem)
+                        }
+                        const tmpParent = tmpItem.parentId
+                        tmpItem = data?.find(item => item.id === tmpParent)
+                    }
+                })
+                setUserOpenedRecords(openedTreeRecord.map((dataItem) => dataItem.id))
                 setPreopenedRecordsInitiated(true)
             }
         } else {
@@ -206,7 +213,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
 
     const handleExpand = (expanded: boolean, dataItem: DataItem) => {
         if (expanded) {
-            setUserOpenedRecords((prevState => [...prevState,dataItem.id]))
+            setUserOpenedRecords((prevState => prevState ? [...prevState,dataItem.id] : [dataItem.id]))
         } else {
             setUserOpenedRecords((prevState => prevState?.filter(item => item !== dataItem.id)))
         }
@@ -249,7 +256,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                 type: 'checkbox',
                 selectedRowKeys: selectedRecords.map(item => item.id),
                 onSelectAll: () => {
-                    const selected = selectedRecords.length ? false : true
+                    const selected = selectedRecords?.length ? false : true
                     props.onSelectFullTable(bcName, props.data, props.assocValueKey, selected)
                 },
                 onSelect: (record: AssociatedItem, selected: boolean) => {
@@ -390,34 +397,37 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
         ]
     }, [inputPlaceholder, indentLevel, fields, props.meta.name, props.bcFilter])
 
-    return <div className={styles.container}>
-        <Table
-            className={styles.table}
-            rowSelection={rowSelection}
-            rowKey="id"
-            columns={columns}
-            pagination={false}
-            showHeader={depthLevel === 1}
-            expandIcon={Exp as any}
-            defaultExpandedRowKeys={undefined}
-            expandedRowKeys={userOpenedRecords}
-            onExpand={handleExpand}
-            dataSource={tableRecords}
-            expandedRowRender={nestedHierarchy}
-            expandIconAsCell={false}
-            expandIconColumnIndex={(props.selectable) ? 1 : 0}
-            loading={props.loading}
-            onRow={!(hierarchyDisableRoot && depthLevel === 1) && props.onRow}
-            getPopupContainer={trigger => trigger}
-        />
-    </div>
+    return loading
+        ? <Skeleton loading paragraph={{rows: 5}}/>
+        : <div className={styles.container}>
+            <Table
+                className={styles.table}
+                rowSelection={rowSelection}
+                rowKey="id"
+                columns={columns}
+                pagination={false}
+                showHeader={depthLevel === 1}
+                expandIcon={Exp as any}
+                defaultExpandedRowKeys={undefined}
+                expandedRowKeys={userOpenedRecords}
+                onExpand={handleExpand}
+                dataSource={tableRecords}
+                expandedRowRender={nestedHierarchy}
+                expandIconAsCell={false}
+                expandIconColumnIndex={(props.selectable) ? 1 : 0}
+                loading={loading}
+                onRow={!(hierarchyDisableRoot && depthLevel === 1) && props.onRow}
+                getPopupContainer={trigger => trigger}
+            />
+        </div>
 }
 
 function mapStateToProps(store: Store, ownProps: FullHierarchyTableOwnProps): FullHierarchyTableProps {
     const bcName = ownProps.meta.bcName
     const bc = store.screen.bo.bc[bcName]
     const bcUrl = buildBcUrl(bcName, true)
-    const loading = bc?.loading
+    const rowMeta = bcUrl && store.view.rowMeta[bcName]?.[bcUrl]
+    const loading = bc?.loading || !rowMeta
     return {
         loading: loading,
         data: (loading) ? emptyData : store.data[bcName] as AssociatedItem[],
