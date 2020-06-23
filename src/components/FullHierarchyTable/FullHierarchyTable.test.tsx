@@ -39,6 +39,7 @@ describe('FullHierarchyTable test', () => {
         onSelect: jest.fn(),
         onDeselectAll: jest.fn(),
         onSelectAll: jest.fn(),
+        onSelectFullTable: jest.fn(),
     }
 
     it('should hide "hidden": true fields', () => {

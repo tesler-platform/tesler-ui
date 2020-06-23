@@ -6,7 +6,7 @@ import {LoginResponse, SessionScreen} from '../interfaces/session'
 import {Action as HistoryAction} from 'history'
 import {DrillDownType, Route} from '../interfaces/router'
 import {ViewMetaResponse, ApplicationError} from '../interfaces/view'
-import {DataItem, MultivalueSingleValue, PendingDataItem, PickMap} from '../interfaces/data'
+import {DataItem, MultivalueSingleValue, PendingDataItem, PickMap, DataValue} from '../interfaces/data'
 import {Store as CoreStore} from '../interfaces/store'
 import {RowMeta} from '../interfaces/rowMeta'
 import {ObjectMap, AppNotificationType} from '../interfaces/objectMap'
@@ -366,6 +366,26 @@ export class ActionPayloadTypes {
     sendOperationSuccess: {
         bcName: string,
         cursor: string
+    } = z
+
+    /**
+     * Fetch number of table records
+     * 
+     * @param bcName Business component that initiated data fetch
+     */
+    bcFetchRecordCounter: {
+        bcName: string,
+    } = z
+
+    /**
+     * Fetch number of table records request was succesful
+     * 
+     * @param bcName Business component that initiated data fetch
+     * @param countRecords number of table records
+     */
+    bcFetchRecordCounterSuccess: {
+        bcName: string,
+        countRecords: DataValue,
     } = z
 
     /**
