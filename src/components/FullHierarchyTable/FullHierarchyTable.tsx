@@ -13,6 +13,7 @@ import MultivalueHover from '../ui/Multivalue/MultivalueHover'
 import Field from '../Field/Field'
 import {useAssocRecords} from '../../hooks/useAssocRecords'
 import {$do} from '../../actions/actions'
+import cn from 'classnames'
 import {useTranslation} from 'react-i18next'
 import filterIcon from '../ColumnTitle/filter-solid.svg'
 import {BcFilter, FilterType} from '../../interfaces/filters'
@@ -311,8 +312,8 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
         title: '',
         key: '_indentColumn',
         dataIndex: null as string,
-        className: styles.selectColumn,
-        width: `${50 + indentLevel * 50}px`,
+        className: cn(styles.selectColumn, styles[`padding${indentLevel}`]),
+        width: '100px',
         render: (text: string, dataItem: AssociatedItem): React.ReactNode => {
             return null
         }
@@ -376,6 +377,8 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                     title: item.title,
                     key: item.key,
                     dataIndex: item.key,
+                    width: item.width || null,
+                    className: cn({[styles[`padding${indentLevel}`]]: fields[0].key === item.key && indentLevel}),
                     ...dropDown(props.filterableFieldsKey, item.key),
                     render: (text: string, dataItem: AssociatedItem) => {
                         if (item.type === FieldType.multivalue) {
