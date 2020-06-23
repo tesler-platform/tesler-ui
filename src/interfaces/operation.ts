@@ -79,35 +79,41 @@ export interface OperationGroup {
 }
 
 /**
- * Действие, которое будет выполнено перед операцией пользователя
+ * The action that will be performed before the user operation
  *
- * @param type - тип действия (всплывающего сообщения, другие не поддерживаются)
- * @param message - сообщение, которое будет показано пользователю перед его операцией
+ * @param type - action type
+ * @param message - message will be shown to the user before his operation
+ * @param bcName - name BC with custom confirmation
  */
 export interface OperationPreInvoke {
     type: OperationPreInvokeType,
-    message: string
+    message: string,
+    bcName?: string
 }
 
 /**
- * Тип сообщения, которое будет показано пользователю перед его операцией
+ * Type of message that will be shown to the user before his operation.
  */
 export enum OperationPreInvokeType {
     /**
-     * Перед операцией пользователя будет показано всплывающее сообщение "Да/Нет",
-     * и операция произойдет только если пользователь скажет "Да"
+     * Before the user’s operation, a Yes / No pop-up message will be displayed,
+     * operation will be performed if the user choose "Yes"
      */
     confirm = 'confirm',
     /**
-     * Перед операцией пользователя будет показано всплывающее сообщение
-     * с иконкой информации
+     * message will be shown to the user before his operation
+     * with info icon
      */
     info = 'info',
     /**
-     * Перед операцией пользователя будет показано всплывающее сообщение
-     * с иконкой ошибки и операция не будет выполнена (TODO: Будет или не будет? Проверить)
+     * message will be shown to the user before his operation
+     * with an error icon and the operation will not be performed
      */
-    error = 'error'
+    error = 'error',
+    /**
+     * Before the user’s operation popup BC with custom confirmation will be shown
+     */
+    bc = 'bc'
 }
 
 /**

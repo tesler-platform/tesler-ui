@@ -8,7 +8,7 @@ import {
     OperationPostInvokeShowMessage,
     OperationPostInvokeDownloadFile,
     OperationPostInvokeDownloadFileByUrl,
-    OperationPostInvokeConfirmType, OperationPreInvokeType
+    OperationPostInvokeConfirmType, OperationPreInvokeType, OperationPreInvoke
 } from '../interfaces/operation'
 import {ObjectMap} from '../interfaces/objectMap'
 import {historyObj} from '../reducers/router'
@@ -128,6 +128,15 @@ const processPostInvokeConfirm: Epic = (action$, store) => action$.ofType(types.
                     widgetName,
                 },
                 confirmOperation: confirm
+            }))
+        }
+        case OperationPreInvokeType.bc: {
+            const preInvokeConfirm = confirm as OperationPreInvoke
+            return Observable.of($do.showViewPopup({
+                bcName: preInvokeConfirm.bcName,
+                calleeBCName: bcName,
+                assocValueKey: operationType,
+                associateFieldKey: widgetName
             }))
         }
         default:
