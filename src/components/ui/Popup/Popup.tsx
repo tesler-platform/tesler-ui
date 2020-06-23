@@ -16,6 +16,8 @@ export interface PopupProps {
     bcName: string,
     widgetName?: string,
     disablePagination?: boolean,
+    OkText?: string,
+    cancelText?: string,
     footer?: React.ReactNode
 }
 
@@ -39,10 +41,10 @@ export const Popup: FunctionComponent<PopupProps> = (props) => {
         }
         {<div className={styles.actions}>
             <Button onClick={props.onOkHandler} className={styles.buttonYellow}>
-                {t('Save')}
+                {props.OkText ? props.OkText : t('Save')}
             </Button>
             <Button onClick={props.onCancelHandler} className={styles.buttonCancel}>
-                {t('Cancel')}
+                {props.cancelText ? props.cancelText : t('Cancel')}
             </Button>
         </div>}
     </div>

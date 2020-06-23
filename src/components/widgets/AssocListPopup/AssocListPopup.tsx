@@ -205,12 +205,14 @@ const mapDispatchToProps = createMapDispatchToProps(
         return {
             onCancel: () => {
                 ctx.dispatch($do.closeViewPopup({ bcName: ctx.props.bcName }))
+                ctx.dispatch($do.bcRemoveAllFilters({ bcName: ctx.props.bcName }))
                 if (ctx.props.isFullHierarchy) {
                     ctx.dispatch($do.bcCancelPendingChanges({ bcNames: [ctx.props.bcName] }))
                 }
             },
             onClose: () => {
                 ctx.dispatch($do.closeViewPopup({ bcName: ctx.props.bcName }))
+                ctx.dispatch($do.bcRemoveAllFilters({ bcName: ctx.props.bcName }))
                 if (ctx.props.isFullHierarchy) {
                     ctx.dispatch($do.bcCancelPendingChanges({bcNames: [ctx.props.bcName]}))
                 }

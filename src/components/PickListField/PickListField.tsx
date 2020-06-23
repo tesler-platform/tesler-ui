@@ -62,6 +62,7 @@ const PickListField: React.FunctionComponent<IPickListWidgetInputProps> = (props
         onClick={handleClick}
         onClear={handleClear}
         placeholder={props.placeholder}
+        popupBcName={props.bcName}
     />
 }
 
