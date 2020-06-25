@@ -1,0 +1,83 @@
+# This is a basic workflow to help you get started with Actions
+
+name: build-alpha-from-pr
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  check-commentator:
+    name: Check if commentator is a member of tesler-team
+    runs-on: ubuntu-latest
+    env:
+      TOKEN: ${{ secrets.READ_MEMBERS_TOKEN }}
+    outputs:
+      output1: ${{ steps.step1.outputs.member_check }}
+    steps:
+      - name: Grep commentator
+        id: step1
+        run: |
+          result=`curl -u github:$TOKEN https://api.github.com/orgs/tesler-platform/teams/tesler-team/members | grep -Eo "(\"login\": \"${{ github.event.comment.user.login }}\")" | wc -l`;
+          echo "number of entries: $result";
+          echo "##[set-output name=member_check;]$result"
+
+  build-alpha:
+    name: Build alpha package
+    needs: check-commentator
+    env:
+      TOKEN: ${{ secrets.READ_MEMBERS_TOKEN }}
+    if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/alpha') && needs.check-commentator.outputs.output1 > 0
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Get package version
+        uses: nyaascii/package-version@v1
+
+      - name: Show env
+        run: |
+          echo "Package version ${{ env.PACKAGE_VERSION }}"
+
+      - name: Grep version fron NPM registry
+        id: grep_version
+        run: |
+          echo "##[set-output name=current_version;]$(yarn info @tesler-ui/core versions | grep -Eo "${{ env.PACKAGE_VERSION }}(-alpha[0-9]{1,})?" | sort -r | head -1 | xargs echo)"
+
+      - name: Bump release version
+        id: bump_version
+        uses: DRITE/increment-semantic-version@fix/incrementation-preversion
+        with:
+          current-version: '${{ steps.grep_version.outputs.current_version }}'
+          version-fragment: 'alpha'
+
+      - name: Check bump
+        run: echo "bumped.. ${{ steps.bump_version.outputs.next-version }}"
+
+      - name: Increase version
+        run: |
+          git config --global user.name "github"
+          git config --global user.email "dergachev@hotmail.com"
+          yarn version --new-version ${{ steps.bump_version.outputs.next-version }}
+
+      - name: install
+        run: yarn install
+
+      - name: linter
+        run: yarn lint
+
+      - name: build
+        run: yarn build
+
+      - name: Publish dist to NPM
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+          cd dist
+          yarn publish --tag alpha --access public
+          cd ..
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
