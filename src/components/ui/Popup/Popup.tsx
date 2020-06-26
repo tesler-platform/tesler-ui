@@ -16,6 +16,7 @@ export interface PopupProps {
     bcName: string,
     widgetName?: string,
     disablePagination?: boolean,
+    footer?: React.ReactNode
 }
 
 const widths = {
@@ -29,6 +30,23 @@ export const Popup: FunctionComponent<PopupProps> = (props) => {
         : <h1 className={styles.title}>{props.title}</h1>
     const width = props.size ? widths[props.size] : widths.medium
     const {t} = useTranslation()
+
+    const defaultFooter = <div className={styles.footerContainer}>
+        {!props.disablePagination &&
+            <div className={styles.pagination}>
+                <Pagination bcName={props.bcName} mode={PaginationMode.page} widgetName={props.widgetName}/>
+            </div>
+        }
+        <div className={styles.actions}>
+            <Button onClick={props.onOkHandler} className={styles.buttonYellow}>
+                {t('Save')}
+            </Button>
+            <Button onClick={props.onCancelHandler} className={styles.buttonCancel}>
+                {t('Cancel')}
+            </Button>
+        </div>
+    </div>
+
     return <div>
         <Modal
             title={title}
@@ -36,21 +54,9 @@ export const Popup: FunctionComponent<PopupProps> = (props) => {
             visible={props.showed}
             width={width}
             onCancel={props.onCancelHandler}
-            footer={<div className={styles.footerContainer}>
-                    {!props.disablePagination &&
-                        <div className={styles.pagination}>
-                            <Pagination bcName={props.bcName} mode={PaginationMode.page} widgetName={props.widgetName}/>
-                        </div>
-                    }
-                    <div className={styles.actions}>
-                        <Button onClick={props.onOkHandler} className={styles.buttonYellow}>
-                            {t('Save')}
-                        </Button>
-                        <Button onClick={props.onCancelHandler} className={styles.buttonCancel}>
-                            {t('Cancel')}
-                        </Button>
-                    </div>
-                </div>
+            footer={props.footer === null
+                ? null
+                : props.footer || defaultFooter
             }
         >
             {props.children}
