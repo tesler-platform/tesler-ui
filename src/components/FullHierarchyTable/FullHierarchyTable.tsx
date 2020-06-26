@@ -33,6 +33,7 @@ interface FullHierarchyTableDispatchProps {
     onSelect: (bcName: string, depth: number, dataItem: AssociatedItem, widgetName: string, assocValueKey: string) => void,
     onDeselectAll: (bcName: string, depthFrom: number) => void,
     onSelectAll: (bcName: string, parentId: string, depth: number, assocValueKey: string, selected: boolean) => void,
+    onSelectFullTable?: (bcName: string, dataItems: AssociatedItem[], assocValueKey: string, selected: boolean) => void
 }
 
 export type FullHierarchyTableAllProps = FullHierarchyTableOwnProps & FullHierarchyTableProps & FullHierarchyTableDispatchProps
@@ -113,6 +114,10 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
             return {
                 type: 'checkbox',
                 selectedRowKeys: selectedRecords.map(item => item.id),
+                onSelectAll: () => {
+                    const selected = selectedRecords.length ? false : true
+                    props.onSelectFullTable(bcName, props.data, props.assocValueKey, selected)
+                },
                 onSelect: (record: AssociatedItem, selected: boolean) => {
                     const dataItem = {
                         ...record,
@@ -242,6 +247,9 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: FullHierarchyTableOwnP
         },
         onSelectAll: (bcName: string, parentId: string, depth: number, assocValueKey: string, selected: boolean) => {
             dispatch($do.changeDescendantsAssociationsFull({ bcName, parentId, depth, assocValueKey, selected }))
+        },
+        onSelectFullTable: (bcName: string, dataItems: AssociatedItem[], assocValueKey: string, selected: boolean) => {
+            dispatch($do.changeChildrenAssociations({ bcName, assocValueKey, selected }))
         }
     }
 }
