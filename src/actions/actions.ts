@@ -369,6 +369,26 @@ export class ActionPayloadTypes {
     } = z
 
     /**
+     * Fetch number of table records
+     * 
+     * @param widgetName What widget requires data
+     */
+    bcFetchRecordCounter: {
+        widgetName: string,
+    } = z
+
+    /**
+     * Fetch number of table records request was succesful
+     * 
+     * @param widgetName Business component that initiated data fetch
+     * @param countRecords number of table records
+     */
+    bcFetchRecordCounterSuccess: {
+        widgetName: string,
+        countRecords: number,
+    } = z
+
+    /**
      * TODO
      * 
      * @param postInvoke
