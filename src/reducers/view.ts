@@ -25,8 +25,7 @@ const initialState: ViewState  = {
     ignoreHistory: null,
     systemNotifications: [],
     error: null,
-    modalInvoke: null,
-    countRecords: null
+    modalInvoke: null
 }
 
 /**
@@ -102,16 +101,6 @@ export function view(state = initialState, action: AnyAction, store: Store) {
                 metaInProgress: {
                     ...state.metaInProgress,
                     [action.payload.bcName]: false
-                }
-            }
-        }
-        case types.bcFetchRecordCounterSuccess: {
-            const widget = state.widgets.find(item => item.name === action.payload.widgetName)
-            return {
-                ...state,
-                countRecords: {
-                    ...state.countRecords,
-                    [widget.bcName]: action.payload.countRecords as number
                 }
             }
         }
