@@ -96,7 +96,6 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
         </div>}
     >
         <div>
-            <h2 className={styles.title}>{props.widget.title}</h2>
             {(props.bcLoading)
             ? <Skeleton loading paragraph={{rows: 5}} />
             : (props.widget.options?.hierarchy || props.widget.options?.hierarchySameBc || props.widget.options?.hierarchyFull)
