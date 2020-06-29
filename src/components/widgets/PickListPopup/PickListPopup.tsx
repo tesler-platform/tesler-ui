@@ -78,8 +78,19 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
         [props.pickMap, props.onChange, props.parentBCName, props.cursor]
     )
 
+    const title = React.useMemo(() => <div><h1 className={styles.title}>{props.widget.title}</h1></div>, [props.widget.title])
+    const footer = React.useMemo(() =>
+        <div className={styles.footerContainer}>
+            {!props.widget.options?.hierarchyFull &&
+                <div className={styles.pagination}>
+                    <Pagination bcName={props.widget.bcName} mode={PaginationMode.page} widgetName={props.widget.name}/>
+                </div>
+            }
+        </div>,
+        [props.widget.options?.hierarchyFull, props.widget.bcName, props.widget.name]
+    )
     return <Popup
-        title={<div><h1 className={styles.title}>{props.widget.title}</h1></div>}
+        title={title}
         showed={props.showed}
         size="large"
         onOkHandler={props.onClose}
@@ -87,13 +98,7 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
         bcName={props.widget.bcName}
         widgetName={props.widget.name}
         disablePagination={props.widget.options?.hierarchyFull}
-        footer={<div className={styles.footerContainer}>
-            {!props.widget.options?.hierarchyFull &&
-                <div className={styles.pagination}>
-                    <Pagination bcName={props.widget.bcName} mode={PaginationMode.page} widgetName={props.widget.name}/>
-                </div>
-            }
-        </div>}
+        footer={footer}
     >
         <div>
             {(props.bcLoading)
