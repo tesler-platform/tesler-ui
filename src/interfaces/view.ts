@@ -44,9 +44,6 @@ export interface ViewState extends ViewMetaResponse {
         }
         confirmOperation: OperationPostInvokeConfirm,
     },
-    countRecords?: {
-        [bcName: string]: number
-    }
 }
 
 export interface ViewMetaResponse {
