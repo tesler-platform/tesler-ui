@@ -3,9 +3,14 @@ import {DataValue} from '../interfaces/data'
 import qs from 'query-string'
 
 /**
- * TODO
+ * Map an input array of BcFilter objects into a dictionary of GET-request params
  * 
- * @param filters
+ * Name of the param formed as `${filter.fieldName}.${filter.type}`
+ * Value of the param is a stringified JSON array with each `filter.value` item turned
+ * to string if `filter.value` is an array or just `filter.value` otherwise.
+ * 
+ * @param filters Filters for business components
+ * @returns Dictionary of query-params for GET-request
  */
 export function getFilters(filters: BcFilter[]) {
     if (!filters || !filters.length) {
