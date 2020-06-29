@@ -31,21 +31,24 @@ export const Popup: FunctionComponent<PopupProps> = (props) => {
     const width = props.size ? widths[props.size] : widths.medium
     const {t} = useTranslation()
 
-    const defaultFooter = <div className={styles.footerContainer}>
-        {!props.disablePagination &&
-            <div className={styles.pagination}>
-                <Pagination bcName={props.bcName} mode={PaginationMode.page} widgetName={props.widgetName}/>
+    const defaultFooter = React.useMemo(() =>
+        <div className={styles.footerContainer}>
+            {!props.disablePagination &&
+                <div className={styles.pagination}>
+                    <Pagination bcName={props.bcName} mode={PaginationMode.page} widgetName={props.widgetName}/>
+                </div>
+            }
+            <div className={styles.actions}>
+                <Button onClick={props.onOkHandler} className={styles.buttonYellow}>
+                    {t('Save')}
+                </Button>
+                <Button onClick={props.onCancelHandler} className={styles.buttonCancel}>
+                    {t('Cancel')}
+                </Button>
             </div>
-        }
-        <div className={styles.actions}>
-            <Button onClick={props.onOkHandler} className={styles.buttonYellow}>
-                {t('Save')}
-            </Button>
-            <Button onClick={props.onCancelHandler} className={styles.buttonCancel}>
-                {t('Cancel')}
-            </Button>
-        </div>
-    </div>
+        </div>,
+        [props.disablePagination, props.bcName, props.widgetName, props.onOkHandler, props.onCancelHandler]
+    )
 
     return <div>
         <Modal
