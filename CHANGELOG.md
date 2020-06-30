@@ -1,3 +1,16 @@
+# Version 1.16.0
+
+## Features
+
+* New `columnTitleComponent` prop which allows to pass custom component to column title ([#218](https://github.com/tesler-platform/tesler-ui/issues/218))
+* New `Select all` checkbox in `FullHierarchyTable` ([#277](https://github.com/tesler-platform/tesler-ui/issues/277))
+* `TableWidgetOwnProps` now extends antd's `TableProps` in purposes of passing properties from client project ([#295](https://github.com/tesler-platform/tesler-ui/issues/295))
+* New `footer` property for `<Popup />`, applied `footer` and `title` and different title styling for `<PickListPopup />` widget ([#293](https://github.com/tesler-platform/tesler-ui/pull/293))
+* Export `getFilters` utility for mapping `BcFilter` descriptors to a dictionary of query params for GET-request ([#290](https://github.com/tesler-platform/tesler-ui/pull/290))
+* `<PickInput />` and `<MultivalueTag />` now support `loading` property for showing spinner instead of control button; `<PickListField />` and `<MultivalueField />` now take advantage of it to show spinners while fetching row meta to avoid situations when user tries to interact with the field before its row meta is ready ([#299](https://github.com/tesler-platform/tesler-ui/issues/299))
+* Export `<Popup />` and provide `defaultOkText` and `defaultCancelText` properties
+* preInvoke Middleware to handle `sendOperation` actions having assigned pre-invoke ([#283](https://github.com/tesler-platform/tesler-ui/issues/283))
+
 # Version 1.15.0
 
 ## Features
