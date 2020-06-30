@@ -10,6 +10,7 @@ export interface PickInputProps {
     onClear?: () => void,
     className?: string,
     placeholder?:  string
+    loading?: boolean,
 }
 
 const PickInput: React.FunctionComponent<PickInputProps> = (props) => {
@@ -40,8 +41,9 @@ const PickInput: React.FunctionComponent<PickInputProps> = (props) => {
             value={props.value || ''}
             suffix={clearButton}
             className={props.className}
-            addonAfter={
-                <Icon
+            addonAfter={props.loading
+                ? <Icon type="loading" spin/>
+                : <Icon
                     className={props.disabled ? styles.disabledButton : null}
                     type="paper-clip"
                     onClick={!props.disabled ? handleClick : null}
@@ -52,3 +54,4 @@ const PickInput: React.FunctionComponent<PickInputProps> = (props) => {
 }
 
 export default React.memo(PickInput)
+
