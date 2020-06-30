@@ -32,7 +32,10 @@ export interface IAssocListActions {
 }
 
 export interface IAssocListOwnProps {
-    widget: WidgetTableMeta
+    widget: WidgetTableMeta,
+    components?: {
+        footer?: React.ReactNode
+    }
 }
 
 export interface IAssocListProps extends IAssocListOwnProps {
@@ -148,6 +151,7 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         bcName={props.widget.bcName}
         widgetName={props.widget.name}
         disablePagination={props.widget.options?.hierarchyFull}
+        footer={props.components?.footer}
     >
         {(props.bcLoading)
             ? <Skeleton loading paragraph={{rows: 5}} />

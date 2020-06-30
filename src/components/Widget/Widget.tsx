@@ -44,11 +44,8 @@ export const Widget: FunctionComponent<WidgetProps> = (props) => {
     if (!props.showWidget) {
         return null
     }
-    if (props.meta.type === WidgetTypes.AssocListPopup) {
-        return <AssocListPopup widget={props.meta as WidgetTableMeta} />
-    }
-    if (props.meta.type === WidgetTypes.PickListPopup) {
-        return <PickListPopup widget={props.meta as WidgetTableMeta} />
+    if (props.meta.type === WidgetTypes.AssocListPopup || props.meta.type === WidgetTypes.PickListPopup) {
+        return <> {chooseWidgetType(props.meta, props.customWidgets, props.children)} </>
     }
 
     const showSpinner = !!(props.loading && (props.rowMetaExists || props.dataExists))
@@ -78,7 +75,7 @@ export const Widget: FunctionComponent<WidgetProps> = (props) => {
 
 /**
  * Return component instance based on type specified in widget meta
- * 
+ *
  * `customWidgets` dictionary can be used to extend this function with new widget types,
  *  with custom declaration having a priority when it is specified for core widget type
  * `children` is returned in case of unknown widget type
@@ -103,6 +100,10 @@ function chooseWidgetType(widgetMeta: WidgetMeta, customWidgets?: ObjectMap<Cust
             return <FormWidget meta={widgetMeta as WidgetFormMeta} />
         case WidgetTypes.Text:
             return <TextWidget meta={widgetMeta as WidgetTextMeta} />
+        case WidgetTypes.AssocListPopup:
+            return <AssocListPopup widget={widgetMeta as WidgetTableMeta} />
+        case WidgetTypes.PickListPopup:
+            return <PickListPopup widget={widgetMeta as WidgetTableMeta} />
         default:
             return children
     }
@@ -131,10 +132,10 @@ function mapStateToProps(store: Store, ownProps: WidgetOwnProps) {
 /**
  * TODO
  *
- * @param condition 
- * @param bcMap 
- * @param data 
- * @param view 
+ * @param condition
+ * @param bcMap
+ * @param data
+ * @param view
  */
 function checkShowCondition(condition: WidgetShowCondition, bcMap: Record<string, BcMetaState>, data: DataState, view: ViewState) {
     const { bcName, isDefault, params } = condition
