@@ -9,8 +9,6 @@
   "scripts": {
     "build": "webpack --mode=production",
     "start": "webpack --watch",
-    "start:progress": "yarn start --progress --profile",
-    "build:stats": "webpack --env production --json > stats.json",
     "test": "jest",
     "lint": "yarn tslint --project .",
     "check": "yarn run lint && yarn run test"
@@ -46,14 +44,14 @@
     "svg-inline-loader": "0.8.0",
     "ts-import-plugin": "1.5.4",
     "ts-jest": "24.0.2",
-    "ts-loader": "6.2.2",
+    "ts-loader": "4.5.0",
     "tslint": "6.1.0",
     "tslint-eslint-rules": "5.4.0",
     "typed-css-modules": "0.3.5",
     "typescript": "~3.8.3",
     "typings-for-css-modules-loader": "1.7.0",
     "url-loader": "0.6.2",
-    "webpack": "4.43.0",
+    "webpack": "4.34.0",
     "webpack-cli": "3.1.0",
     "webpack-rxjs-externals": "1.1.0"
   },
