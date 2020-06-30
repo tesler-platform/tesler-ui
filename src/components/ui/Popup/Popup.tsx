@@ -3,7 +3,6 @@ import {Modal, Button} from 'antd'
 import {useTranslation} from 'react-i18next'
 import Pagination from '../../ui/Pagination/Pagination'
 import {PaginationMode} from '../../../interfaces/widget'
-
 import * as styles from './Popup.less'
 
 export interface PopupProps {
@@ -18,7 +17,7 @@ export interface PopupProps {
     disablePagination?: boolean,
     footer?: React.ReactNode,
     defaultOkText?: string,
-    defaultCancelText?: string,
+    defaultCancelText?: string
 }
 
 const widths = {
