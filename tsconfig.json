@@ -31,7 +31,7 @@
         "preserveConstEnums": true,
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
-        "outDir": "dist",
+        "outDir": "",
         "jsx": "react",
         "forceConsistentCasingInFileNames": true,
         "noUnusedLocals": true,
