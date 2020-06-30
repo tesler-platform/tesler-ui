@@ -897,7 +897,10 @@ export class ActionPayloadTypes {
     showAllTableRecordsInit: {
         bcName: string,
         cursor: string,
-        route: Route
+        /**
+         * @deprecated Remove in 2.0 (accessible from the store)
+         */
+        route?: Route
     } = z
 
     /**

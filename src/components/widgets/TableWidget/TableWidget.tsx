@@ -2,7 +2,7 @@ import React, {FunctionComponent} from 'react'
 import {connect} from 'react-redux'
 import {Dispatch} from 'redux'
 import {Dropdown, Icon, Menu, Skeleton, Table} from 'antd'
-import {ColumnProps, TableRowSelection} from 'antd/es/table'
+import {ColumnProps, TableProps, TableRowSelection} from 'antd/es/table'
 import ActionLink from '../../ui/ActionLink/ActionLink'
 import {$do} from '../../../actions/actions'
 import {Store} from '../../../interfaces/store'
@@ -27,7 +27,13 @@ import FullHierarchyTable from '../../../components/FullHierarchyTable/FullHiera
 import {parseFilters} from '../../../utils/filters'
 import Select from '../../ui/Select/Select'
 
-interface TableWidgetOwnProps {
+type AdditionalAntdTableProps = Partial<Omit<TableProps<DataItem>, 'rowSelection'>>
+interface TableWidgetOwnProps extends AdditionalAntdTableProps {
+    columnTitleComponent?: (options?: {
+        widgetName: string,
+        widgetMeta: WidgetListField,
+        rowMeta: RowMetaField
+    }) => React.ReactNode,
     meta: WidgetTableMeta,
     rowSelection?: TableRowSelection<DataItem>,
     showRowActions?: boolean,
@@ -42,18 +48,31 @@ export interface TableWidgetProps extends TableWidgetOwnProps {
     data: DataItem[],
     rowMetaFields: RowMetaField[],
     limitBySelf: boolean,
-    bcName: string,
+    /**
+     * @deprecated TODO: Remove in 2.0 in favor of `widgetName`
+     */
+    bcName?: string,
     widgetName?: string,
-    route: Route,
+    /**
+     * @deprecated TODO: Remove 2.0 as it is accessible from the store
+     */
+    route?: Route,
     cursor: string,
     selectedCell: ViewSelectedCell,
-    pendingDataItem: PendingDataItem,
+    /**
+     * @deprecated TODO: Remove 2.0 as it is never used
+     */
+    pendingDataItem?: PendingDataItem,
     hasNext: boolean,
     operations: Array<Operation | OperationGroup>,
     metaInProgress: boolean,
     filters: BcFilter[],
     filterGroups: FilterGroup[],
-    onDrillDown: (widgetName: string, bcName: string, cursor: string, fieldKey: string) => void,
+    /**
+     * @deprecated TODO: Remove 2.0 as it is never used
+     */
+    onDrillDown?: (widgetName: string, bcName: string, cursor: string, fieldKey: string) => void,
+    // TODO: Remove `route` in 2.0 as it is accessible from the store; remove `bcName`
     onShowAll: (bcName: string, cursor: string, route: Route, widgetName: string) => void,
     onOperationClick: (bcName: string, operationType: string, widgetName: string) => void,
     onSelectRow: (bcName: string, cursor: string) => void,
@@ -64,6 +83,39 @@ export interface TableWidgetProps extends TableWidgetOwnProps {
 }
 
 export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
+    const {
+        meta,
+        rowSelection,
+        showRowActions,
+        allowEdit,
+        paginationMode,
+        disablePagination,
+        disableDots,
+        controlColumns,
+        data,
+        rowMetaFields,
+        limitBySelf,
+        bcName,
+        widgetName,
+        route,
+        cursor,
+        selectedCell,
+        pendingDataItem,
+        hasNext,
+        operations,
+        metaInProgress,
+        filters,
+        filterGroups,
+        onDrillDown,
+        onShowAll,
+        onOperationClick,
+        onSelectRow,
+        onSelectCell,
+        onRemoveFilters,
+        onApplyFilter,
+        onForceUpdate,
+        ...rest
+    } = props
     if (props.meta.options) {
         if (props.meta.options.hierarchyFull) {
             return <FullHierarchyTable
@@ -79,17 +131,17 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
             />
         }
     }
-    const allowEdit = (props.allowEdit ?? true) && !props.meta.options?.readOnly
+    const isAllowEdit = (props.allowEdit ?? true) && !props.meta.options?.readOnly
     const {t} = useTranslation()
 
-    // Набор рефов для работы меню операций строки
+    // Refs for row operations popup
     const floatMenuRef = React.useRef(null)
     const tableContainerRef = React.useRef(null)
     const tableBodyRef = React.useRef(null)
     const floatMenuHoveredRecord = React.useRef('')
     const floatMenuIsOpened = React.useRef(false)
     const mouseAboveRow = React.useRef(false)
-    const expectedFloatMenuTopValue = React.useRef('') // положение меню, которое должно быть выставлено после закрытия
+    const expectedFloatMenuTopValue = React.useRef('') // menu position after closing
 
     const onRowMouseEnterHandler = React.useCallback(
         (target: HTMLElement, recordId: string) => {
@@ -223,7 +275,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
             floatMenuIsOpened.current = visibility
             if (visibility) {
                 if (floatMenuHoveredRecord.current && floatMenuHoveredRecord.current !== props.cursor) {
-                    props.onSelectRow(props.bcName, floatMenuHoveredRecord.current)
+                    props.onSelectRow(props.meta.bcName, floatMenuHoveredRecord.current)
                 }
             } else {
                 if (!mouseAboveRow.current && floatMenuRef.current) {
@@ -233,15 +285,15 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                 }
             }
         },
-        [props.cursor, props.onSelectRow, props.bcName, props.meta.name]
+        [props.cursor, props.onSelectRow, props.meta.bcName, props.meta.name]
     )
 
-    const operations = useWidgetOperations(props.operations, props.meta)
+    const operationList = useWidgetOperations(props.operations, props.meta)
 
     const rowActionsMenu = React.useMemo(
         () => {
             const menuItemList: React.ReactNode[] = []
-            operations.forEach((item: Operation | OperationGroup, index) => {
+            operationList.forEach((item: Operation | OperationGroup, index) => {
                 if ((item as OperationGroup).actions) {
                     const groupOperations: React.ReactNode[] = [];
                     (item as OperationGroup).actions.forEach(operation => {
@@ -251,7 +303,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                                     key={operation.type}
                                     onClick={() => {
                                         onMenuVisibilityChange(false) // Dropdown bug: doesn't call onVisibleChange on menu item click
-                                        props.onOperationClick(props.bcName, operation.type, props.meta.name)
+                                        props.onOperationClick(props.meta.bcName, operation.type, props.meta.name)
                                     }}
                                 >
                                     { operation.icon && <Icon type={operation.icon} className={styles.icon} /> }
@@ -276,7 +328,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                             key={item.type}
                             onClick={() => {
                                 onMenuVisibilityChange(false) // Dropdown bug: doesn't call onVisibleChange on menu item click
-                                props.onOperationClick(props.bcName, ungroupedOperation.type, props.meta.name)
+                                props.onOperationClick(props.meta.bcName, ungroupedOperation.type, props.meta.name)
                             }}
                         >
                             { ungroupedOperation.icon && <Icon type={ungroupedOperation.icon} className={styles.icon} /> }
@@ -303,7 +355,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                 }
             </Menu>
         },
-        [operations, props.meta.name, props.onOperationClick, props.bcName, props.metaInProgress]
+        [operationList, props.meta.name, props.onOperationClick, props.meta.bcName, props.metaInProgress]
     )
 
     const processCellClick = (recordId: string, fieldKey: string) => {
@@ -316,7 +368,9 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
             .map((item: WidgetListField) => {
                 const fieldRowMeta = props.rowMetaFields?.find(field => field.key === item.key)
                 return {
-                    title: <ColumnTitle
+                    title: props.columnTitleComponent
+                        ? props.columnTitleComponent({widgetName: props.meta.name, widgetMeta: item, rowMeta: fieldRowMeta})
+                        : <ColumnTitle
                         widgetName={props.meta.name}
                         widgetMeta={item}
                         rowMeta={fieldRowMeta}
@@ -332,7 +386,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                             />
                         }
 
-                        const editMode = allowEdit && (props.selectedCell && item.key === props.selectedCell.fieldKey
+                        const editMode = isAllowEdit && (props.selectedCell && item.key === props.selectedCell.fieldKey
                             && props.meta.name === props.selectedCell.widgetName && dataItem.id === props.selectedCell.rowId
                             && props.cursor === props.selectedCell.rowId
                         )
@@ -350,7 +404,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                         </div>
                     },
                     onCell: (record: DataItem, rowIndex: number) => {
-                        return (!allowEdit)
+                        return (!isAllowEdit)
                             ? null
                             : {
                                 onDoubleClick: (event: React.MouseEvent) => {
@@ -360,7 +414,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                     }
                 }
             })
-    }, [props.meta.fields, props.rowMetaFields, props.meta.name, props.selectedCell, props.cursor, allowEdit,
+    }, [props.meta.fields, props.rowMetaFields, props.meta.name, props.selectedCell, props.cursor, isAllowEdit,
         props.selectedCell?.fieldKey, props.selectedCell?.rowId, props.selectedCell?.widgetName
     ])
 
@@ -379,12 +433,12 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
     const filtersExist = !!props.filters?.length
 
     const handleShowAll = () => {
-        props.onShowAll(props.bcName, props.cursor, props.route, props.widgetName)
+        props.onShowAll(props.meta.bcName, props.cursor, null, props.widgetName)
     }
 
     const handleRemoveFilters = () => {
-        props.onRemoveFilters(props.bcName)
-        props.onForceUpdate(props.bcName)
+        props.onRemoveFilters(props.meta.bcName)
+        props.onForceUpdate(props.meta.bcName)
     }
 
     const handleAddFilters = React.useMemo(
@@ -393,12 +447,12 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                 const filterGroup = props.filterGroups.find(item => item.name === value)
                 const parsedFilters = parseFilters(filterGroup.filters)
                 setFilterGroupName(filterGroup.name)
-                props.onRemoveFilters(props.bcName)
-                parsedFilters.forEach(item => props.onApplyFilter(props.bcName, item))
-                props.onForceUpdate(props.bcName)
+                props.onRemoveFilters(props.meta.bcName)
+                parsedFilters.forEach(item => props.onApplyFilter(props.meta.bcName, item))
+                props.onForceUpdate(props.meta.bcName)
             }
         },
-        [props.filterGroups, props.bcName]
+        [props.filterGroups, props.meta.bcName]
     )
 
     React.useEffect(
@@ -451,8 +505,9 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
             rowSelection={props.rowSelection}
             pagination={false}
             onRow={(props.showRowActions) ? onTableRow : null}
+            {...rest}
         />
-        {!props.disablePagination && <Pagination bcName={props.bcName} mode={props.paginationMode
+        {!props.disablePagination && <Pagination bcName={props.meta.bcName} mode={props.paginationMode
         || PaginationMode.page} widgetName={props.meta.name}/>}
         {(props.showRowActions) && !props.disableDots &&
             <div
@@ -489,11 +544,17 @@ function mapStateToProps(store: Store, ownProps: TableWidgetOwnProps) {
         rowMetaFields: fields,
         limitBySelf,
         bcName,
-        route: store.router,
+        /**
+         * @deprecated
+         */
+        route: null as Route,
         cursor,
         hasNext,
         selectedCell: store.view.selectedCell,
-        pendingDataItem: cursor && store.view.pendingDataChanges[bcName]?.[cursor],
+        /**
+         * @deprecated
+         */
+        pendingDataItem: null as PendingDataItem,
         operations,
         metaInProgress: !!store.view.metaInProgress[bcName],
         filters,
@@ -506,12 +567,13 @@ function mapDispatchToProps(dispatch: Dispatch) {
         onSelectCell: (cursor: string, widgetName: string, fieldKey: string) => {
             dispatch($do.selectTableCellInit({ widgetName, rowId: cursor, fieldKey }))
         },
-        onShowAll: (bcName: string, cursor: string, route: Route) => {
-            dispatch($do.showAllTableRecordsInit({ bcName, cursor, route }))
+        onShowAll: (bcName: string, cursor: string, route?: Route) => {
+            dispatch($do.showAllTableRecordsInit({ bcName, cursor }))
         },
-        onDrillDown: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => {
-            dispatch($do.userDrillDown({widgetName, cursor, bcName, fieldKey}))
-        },
+        /**
+         * @deprecated TODO: Remove in 2.0
+         */
+        onDrillDown: null as (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void,
         onOperationClick: (bcName: string, operationType: string, widgetName: string) => {
             dispatch($do.sendOperation({ bcName, operationType, widgetName }))
         },

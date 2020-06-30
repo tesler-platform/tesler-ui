@@ -11,6 +11,7 @@ export interface MultivalueTagProps {
     value: MultivalueSingleValue[],
     widgetFieldMeta: MultivalueFieldMeta,
     bcName: string,
+    loading?: boolean,
     page: number,
     metaError: string,
     onPopupOpen: (bcName: string, widgetFieldMeta: MultivalueFieldMeta, page: number) => void,
@@ -18,6 +19,7 @@ export interface MultivalueTagProps {
 }
 
 const MultivalueTag: React.FunctionComponent<MultivalueTagProps> = (props) => {
+    const loading = props.loading
     const handleOpen = React.useCallback(() => {
         const {disabled, onPopupOpen, bcName, page, widgetFieldMeta} = props
         if (!disabled) {
@@ -61,17 +63,16 @@ const MultivalueTag: React.FunctionComponent<MultivalueTagProps> = (props) => {
                     </Tag>
                 })}
             </div>
-            <div
-                className={cn(
-                    styles.iconContainer,
-                    {[styles.disabled]: props.disabled}
-                )}
-                onClick={handleOpen}
-            >
-                <Icon type="folder-open"/>
+            <div className={cn(styles.iconContainer, {[styles.disabled]: props.disabled})}
+                 onClick={loading ? undefined : handleOpen}>
+                <Icon
+                    type={loading ? 'loading' : 'folder-open'}
+                    spin={loading}
+                />
             </div>
         </div>
     )
 }
 
 export default React.memo(MultivalueTag)
+

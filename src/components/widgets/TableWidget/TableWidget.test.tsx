@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {ReactElement} from 'react'
 import {shallow} from 'enzyme'
 import {TableWidget, TableWidgetProps} from './TableWidget'
 import {WidgetTableMeta, WidgetTypes} from 'interfaces/widget'
@@ -72,5 +72,22 @@ describe('TableWidget test', () => {
         />)
         expect(wrapper.find(Table).length).toEqual(1)
         expect(wrapper.find(Table).props().columns.length).toEqual(1)
+    })
+
+    it('should render custom column title', () => {
+        const customTitleText = 'Some title'
+        const wrapper1 = shallow(<TableWidget
+            {...restProps}
+            meta={{...hideFieldProps}}
+        />)
+        const wrapper = shallow(<TableWidget
+            {...restProps}
+            meta={{...hideFieldProps}}
+            columnTitleComponent={() => <div>{customTitleText}</div>}
+        />)
+        expect(wrapper.find(Table).props().columns.findIndex(i => (i.title as ReactElement).props.children === customTitleText)).toEqual(0)
+        expect(wrapper1.find(Table).props().columns.findIndex(
+            i => (i.title as ReactElement).props.widgetName === hideFieldProps.name
+            )).toEqual(0)
     })
 })

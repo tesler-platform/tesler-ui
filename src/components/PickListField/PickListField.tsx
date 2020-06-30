@@ -5,6 +5,8 @@ import {connect} from 'react-redux'
 import {PickMap} from '../../interfaces/data'
 import ReadOnlyField from '../ui/ReadOnlyField/ReadOnlyField'
 import {ChangeDataItemPayload} from '../Field/Field'
+import {Store} from '../../interfaces/store'
+import {buildBcUrl} from '../../utils/strings'
 
 interface IPickListWidgetInputOwnProps {
     parentBCName: string,
@@ -22,7 +24,8 @@ interface IPickListWidgetInputOwnProps {
 }
 
 interface IPickListWidgetInputProps extends IPickListWidgetInputOwnProps {
-    onClick: (bcName: string, pickMap: PickMap) => void
+    onClick: (bcName: string, pickMap: PickMap) => void,
+    popupRowMetaDone: boolean
 }
 
 const PickListField: React.FunctionComponent<IPickListWidgetInputProps> = (props) => {
@@ -62,7 +65,18 @@ const PickListField: React.FunctionComponent<IPickListWidgetInputProps> = (props
         onClick={handleClick}
         onClear={handleClear}
         placeholder={props.placeholder}
+        loading={props.bcName && !props.popupRowMetaDone}
     />
+}
+
+function mapStateToProps(store: Store,ownProps: IPickListWidgetInputOwnProps) {
+    const popupBcName = ownProps?.bcName
+    const bcUrl = buildBcUrl(popupBcName, true)
+    const popupRowMetaDone = !!store.view.rowMeta[popupBcName]?.[bcUrl]?.fields
+
+    return {
+        popupRowMetaDone: popupRowMetaDone,
+    }
 }
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -75,4 +89,4 @@ const mapDispatchToProps = (dispatch: any) => ({
     }
 })
 
-export default connect(null, mapDispatchToProps)(PickListField)
+export default connect(mapStateToProps, mapDispatchToProps)(PickListField)

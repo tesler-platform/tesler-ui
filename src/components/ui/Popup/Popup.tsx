@@ -15,8 +15,9 @@ export interface PopupProps {
     bcName: string,
     widgetName?: string,
     disablePagination?: boolean,
-    OkText?: string,
-    cancelText?: string,
+    footer?: React.ReactNode,
+    defaultOkText?: string,
+    defaultCancelText?: string
 }
 
 const widths = {
@@ -30,6 +31,26 @@ export const Popup: FunctionComponent<PopupProps> = (props) => {
         : <h1 className={styles.title}>{props.title}</h1>
     const width = props.size ? widths[props.size] : widths.medium
     const {t} = useTranslation()
+
+    const defaultFooter = React.useMemo(() =>
+        <div className={styles.footerContainer}>
+            {!props.disablePagination &&
+                <div className={styles.pagination}>
+                    <Pagination bcName={props.bcName} mode={PaginationMode.page} widgetName={props.widgetName}/>
+                </div>
+            }
+            <div className={styles.actions}>
+                <Button onClick={props.onOkHandler} className={styles.buttonYellow}>
+                    {props.defaultOkText ?? t('Save')}
+                </Button>
+                <Button onClick={props.onCancelHandler} className={styles.buttonCancel}>
+                    {props.defaultCancelText ?? t('Cancel')}
+                </Button>
+            </div>
+        </div>,
+        [props.disablePagination, props.bcName, props.widgetName, props.onOkHandler, props.onCancelHandler]
+    )
+
     return <div>
         <Modal
             title={title}
@@ -37,21 +58,9 @@ export const Popup: FunctionComponent<PopupProps> = (props) => {
             visible={props.showed}
             width={width}
             onCancel={props.onCancelHandler}
-            footer={<div className={styles.footerContainer}>
-                    {!props.disablePagination &&
-                        <div className={styles.pagination}>
-                            <Pagination bcName={props.bcName} mode={PaginationMode.page} widgetName={props.widgetName}/>
-                        </div>
-                    }
-                    <div className={styles.actions}>
-                        <Button onClick={props.onOkHandler} className={styles.buttonYellow}>
-                            {props.OkText ?? t('Save')}
-                        </Button>
-                        <Button onClick={props.onCancelHandler} className={styles.buttonCancel}>
-                            {props.cancelText ?? t('Cancel')}
-                        </Button>
-                    </div>
-                </div>
+            footer={props.footer === null
+                ? null
+                : props.footer || defaultFooter
             }
         >
             {props.children}

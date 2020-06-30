@@ -1,3 +1,15 @@
+# Version 1.15.0
+
+## Features
+
+* The type `DataValue` extended by `DataItem[]` for cases if need to store nested structure in `pendingDataChanges` (#274).
+*  :red_circle: [Deprecation warning]: Deprecate `bcName`, `route`, `pendingDataItem` and `onDrillDown` properties for `<TableWidget />`; deprecate a `route` from `showAllTableRecordsInit` action; export `<MultivalueField />` and `<MultivalueListRecord />` components; add `className` property to `<MultivalueList />` component (#285)
+
+## Fixes
+
+* AssocListPopup Tag value not displayed due to incorrectly accessing value by `assocFieldKey` instead of `assocValueKey` (#279)
+* Replace data fetch request for save operiations with meta fetch and children bc data fetch, as the data of the source bc might be isolated during the draft stage and unavailable until the record is saved (#247)
+
 # Version 1.14.1
 
 ## Fixes
