@@ -2,7 +2,7 @@ const path = require('path')
 // const webpack = require('webpack');
 const tsImportPluginFactory = require('ts-import-plugin')
 const rxjsExternals = require('webpack-rxjs-externals')
-const {CleanWebpackPlugin} = require('clean-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 /* Dependencies from package.json that ship in ES2015 module format */
@@ -20,16 +20,15 @@ const es2015modules = [
 //     }
 //     return [{ loader: 'style-loader' }].concat(rules);
 // }
-const isProduction = process.argv.some(arg => arg === '-p' || arg === '--production' || arg === '--prod')
 
 module.exports = (env, options) => {
     env = env || {}
-    return {
+    return  {
         entry: ['./src/index.ts'],
         mode: options.mode || 'development',
-        watch: isProduction,
         devServer: {
-            writeToDisk: false,
+            watch: true,
+            writeToDisk: true,
             port: 8081
         },
         output: {
@@ -39,73 +38,72 @@ module.exports = (env, options) => {
             libraryTarget: 'commonjs'
         },
         resolve: {
-            extensions: ['.tsx', '.ts', '.js'],
+            extensions: [ '.tsx', '.ts', '.js' ],
             modules: ['src', 'node_modules'],
         },
         externals: [
             rxjsExternals(),
             {
-                antd: {
-                    root: 'antd',
-                    commonjs2: 'antd',
-                    commonjs: 'antd',
-                    amd: 'antd'
-                },
-                axios: {
-                    root: 'axios',
-                    commonjs2: 'axios',
-                    commonjs: 'axios',
-                    amd: 'axios'
-                },
-                react: {
-                    root: 'React',
-                    commonjs2: 'react',
-                    commonjs: 'react',
-                    amd: 'react'
-                },
-                'react-dom': {
-                    root: 'ReactDOM',
-                    commonjs2: 'react-dom',
-                    commonjs: 'react-dom',
-                    amd: 'react-dom'
-                },
-                'react-redux': {
-                    root: 'ReactRedux',
-                    commonjs2: 'react-redux',
-                    commonjs: 'react-redux',
-                    amd: 'react-redux'
-                },
-                'redux-observable': {
-                    root: 'ReduxObservable',
-                    commonjs2: 'redux-observable',
-                    commonjs: 'redux-observable',
-                    amd: 'redux-observable'
-                },
-                'rxjs': {
-                    root: 'RxJs',
-                    commonjs2: 'rxjs',
-                    commonjs: 'rxjs',
-                    amd: 'rxjs'
-                },
-                'moment': {
-                    root: 'moment',
-                    commonjs2: 'moment',
-                    commonjs: 'moment',
-                    amd: 'moment'
-                }
-            }],
+            antd: {
+                root: 'antd',
+                commonjs2: 'antd',
+                commonjs: 'antd',
+                amd: 'antd'
+            },
+            axios: {
+                root: 'axios',
+                commonjs2: 'axios',
+                commonjs: 'axios',
+                amd: 'axios'
+            },
+            react: {
+                root: 'React',
+                commonjs2: 'react',
+                commonjs: 'react',
+                amd: 'react'
+            },
+            'react-dom': {
+                root: 'ReactDOM',
+                commonjs2: 'react-dom',
+                commonjs: 'react-dom',
+                amd: 'react-dom'
+            },
+            'react-redux': {
+                root: 'ReactRedux',
+                commonjs2: 'react-redux',
+                commonjs: 'react-redux',
+                amd: 'react-redux'
+            },
+            'redux-observable': {
+                root: 'ReduxObservable',
+                commonjs2: 'redux-observable',
+                commonjs: 'redux-observable',
+                amd: 'redux-observable'
+            },
+            'rxjs': {
+                root: 'RxJs',
+                commonjs2: 'rxjs',
+                commonjs: 'rxjs',
+                amd: 'rxjs'
+            },
+            'moment': {
+                root: 'moment',
+                commonjs2: 'moment',
+                commonjs: 'moment',
+                amd: 'moment'
+            }
+        }],
         devtool: 'source-map',
         module: {
             rules: [
                 {
                     test: /\.tsx?$/,
                     include: [path.resolve(__dirname, 'src')],
-                    exclude: [/(\.test.tsx?$)/,
-                        path.resolve(__dirname, 'src', 'tests')],
+                    exclude: [/(\.test.tsx?$)/, path.resolve(__dirname, 'src', 'tests')],
                     use: {
                         loader: 'ts-loader',
                         options: {
-                            getCustomTransformers: function () {
+                            getCustomTransformers: function() {
                                 return {
                                     before: [
                                         tsImportPluginFactory({
@@ -131,17 +129,12 @@ module.exports = (env, options) => {
                         path.resolve(__dirname, 'src')
                     ],
                     use: [
-                        {loader: 'style-loader'},
-                        {
-                            loader: 'css-loader', options: {
-                                modules: true,
-                                localIdentName: '[name]__[local]___[hash:base64:5]'
-                            }
-                        },
-                        {
-                            loader: 'less-loader',
-                            options: {javascriptEnabled: true}
-                        }
+                        { loader: 'style-loader' },
+                        { loader: 'css-loader', options: {
+                            modules: true,
+                            localIdentName: '[name]__[local]___[hash:base64:5]'
+                        } },
+                        { loader: 'less-loader', options: { javascriptEnabled: true } }
                     ]
                 },
                 {
@@ -180,11 +173,11 @@ module.exports = (env, options) => {
         plugins: [
             // new CleanWebpackPlugin(),
             new CopyWebpackPlugin([
-                {from: 'package.json'},
-                {from: 'README.md'},
-                {from: 'LICENSE'},
-                {from: 'CHANGELOG.md'},
-                {from: 'CONTRIBUTING.md'}
+                { from: 'package.json' },
+                { from: 'README.md' },
+                { from: 'LICENSE' },
+                { from: 'CHANGELOG.md' },
+                { from: 'CONTRIBUTING.md' }
             ])
         ]
     }
