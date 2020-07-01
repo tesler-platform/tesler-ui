@@ -5,6 +5,8 @@ const rxjsExternals = require('webpack-rxjs-externals')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
+const isProduction = process.argv.some(arg => arg === '-p' || arg === '--production' || arg === '--prod')
+
 /* Dependencies from package.json that ship in ES2015 module format */
 const es2015modules = [
     'marked'
@@ -26,9 +28,9 @@ module.exports = (env, options) => {
     return  {
         entry: ['./src/index.ts'],
         mode: options.mode || 'development',
+        watch: !isProduction,
         devServer: {
-            watch: true,
-            writeToDisk: true,
+            writeToDisk: false,
             port: 8081
         },
         output: {
