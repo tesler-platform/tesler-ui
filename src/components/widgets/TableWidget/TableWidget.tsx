@@ -28,7 +28,7 @@ import {parseFilters} from '../../../utils/filters'
 import Select from '../../ui/Select/Select'
 
 type AdditionalAntdTableProps = Partial<Omit<TableProps<DataItem>, 'rowSelection'>>
-interface TableWidgetOwnProps extends AdditionalAntdTableProps {
+export interface TableWidgetOwnProps extends AdditionalAntdTableProps {
     columnTitleComponent?: (options?: {
         widgetName: string,
         widgetMeta: WidgetListField,

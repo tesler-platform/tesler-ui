@@ -151,7 +151,7 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
 
     const {t} = useTranslation()
 
-    const fieldMeta = props.widget.fields.find((field: WidgetField) => field.key === props.widgetMeta.key) as MultivalueFieldMeta
+    const fieldMeta = props.widget?.fields.find((field: WidgetField) => field.key === props.widgetMeta.key) as MultivalueFieldMeta
     const isMultivalue = props.widgetMeta.type === FieldType.multivalue
     React.useEffect(() => {
         if (isMultivalue  && visible) {
