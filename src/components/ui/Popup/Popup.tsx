@@ -4,66 +4,86 @@ import {useTranslation} from 'react-i18next'
 import Pagination from '../../ui/Pagination/Pagination'
 import {PaginationMode} from '../../../interfaces/widget'
 import * as styles from './Popup.less'
+import {ModalProps} from 'antd/lib/modal'
 
-export interface PopupProps {
+type AdditionalAntdModalProps = ModalProps
+
+export interface PopupProps extends AdditionalAntdModalProps {
     onOkHandler?: () => void,
     onCancelHandler?: () => void,
     size?: 'medium' | 'large',
     children: any,
     showed: boolean,
-    title?: React.ReactNode,
     bcName: string,
     widgetName?: string,
     disablePagination?: boolean,
-    footer?: React.ReactNode,
     defaultOkText?: string,
     defaultCancelText?: string
 }
 
-const widths = {
+export const widths = {
     medium: '570px',
     large: '808px'
 }
 
 export const Popup: FunctionComponent<PopupProps> = (props) => {
-    const title = typeof props.title !== 'string'
-        ? props.title
-        : <h1 className={styles.title}>{props.title}</h1>
-    const width = props.size ? widths[props.size] : widths.medium
+    const {
+        onOkHandler,
+        onCancelHandler,
+        size,
+        children,
+        showed,
+        bcName,
+        widgetName,
+        disablePagination,
+        defaultOkText,
+        defaultCancelText,
+
+        width,
+        title,
+        footer,
+        ...rest
+    } = props
+    const computedTitle = typeof title !== 'string'
+        ? title
+        : <h1 className={styles.title}>{title}</h1>
+    const computedWidth = width || (size ? widths[size] : widths.medium)
     const {t} = useTranslation()
 
     const defaultFooter = React.useMemo(() =>
         <div className={styles.footerContainer}>
-            {!props.disablePagination &&
+            {!disablePagination &&
                 <div className={styles.pagination}>
-                    <Pagination bcName={props.bcName} mode={PaginationMode.page} widgetName={props.widgetName}/>
+                    <Pagination bcName={bcName} mode={PaginationMode.page} widgetName={widgetName}/>
                 </div>
             }
             <div className={styles.actions}>
-                <Button onClick={props.onOkHandler} className={styles.buttonYellow}>
-                    {props.defaultOkText ?? t('Save')}
+                <Button onClick={onOkHandler} className={styles.buttonYellow}>
+                    {defaultOkText ?? t('Save')}
                 </Button>
-                <Button onClick={props.onCancelHandler} className={styles.buttonCancel}>
-                    {props.defaultCancelText ?? t('Cancel')}
+                <Button onClick={onCancelHandler} className={styles.buttonCancel}>
+                    {defaultCancelText ?? t('Cancel')}
                 </Button>
             </div>
         </div>,
-        [props.disablePagination, props.bcName, props.widgetName, props.onOkHandler, props.onCancelHandler]
+        [disablePagination, bcName, widgetName, onOkHandler, onCancelHandler, defaultOkText, defaultCancelText]
     )
 
     return <div>
         <Modal
-            title={title}
+            title={computedTitle}
             className={styles.popupModal}
-            visible={props.showed}
-            width={width}
-            onCancel={props.onCancelHandler}
-            footer={props.footer === null
+            visible={showed}
+            getContainer={false}
+            width={computedWidth}
+            onCancel={onCancelHandler}
+            footer={footer === null
                 ? null
-                : props.footer || defaultFooter
+                : footer || defaultFooter
             }
+            {...rest}
         >
-            {props.children}
+            {children}
         </Modal>
     </div>
 }
