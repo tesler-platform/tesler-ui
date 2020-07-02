@@ -9,6 +9,11 @@ interface TextWidgetOwnProps {
     meta: WidgetTextMeta
 }
 
+/**
+ * @deprecated TODO: remove in 2.0 as unused
+ * TODO: remove 'marked' and 'html-react-parser' from package.json
+ * TODO: fix `webpack.config.js` according deletions
+ */
 const TextWidget: React.FunctionComponent<TextWidgetOwnProps> = (props) => {
     const description = props.meta.description
     const htmlText = parse(marked(description))
