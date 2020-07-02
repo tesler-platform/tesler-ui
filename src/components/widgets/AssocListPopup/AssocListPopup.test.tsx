@@ -1,13 +1,11 @@
 import React from 'react'
-import {PickListPopup, PickListPopupOwnProps, PickListPopupProps} from './PickListPopup'
+import {AssocListPopup, IAssocListActions, IAssocListProps} from './AssocListPopup'
+import {WidgetTypes} from 'interfaces/widget'
 import {FieldType} from 'interfaces/view'
 import {shallow} from 'enzyme'
-import {PickMap} from 'interfaces/data'
-import {WidgetTypes} from 'interfaces/widget'
-import {Table} from 'antd'
 
-describe('PickListPopup test', () => {
-    const toHideProps: PickListPopupOwnProps = {
+describe('AssocListPopup test', () => {
+    const defProps: IAssocListProps = {
         widget: {
             name: 'UserPopup',
             title: 'Users',
@@ -28,34 +26,28 @@ describe('PickListPopup test', () => {
                     type: FieldType.input
                 }
             ]
-        }
-    }
-    const props: PickListPopupProps = {
-        widget: toHideProps.widget,
-        data: [],
+        },
         showed: true,
-        pickMap: {} as PickMap,
-        cursor: '',
-        parentBCName: '',
+        assocValueKey: 'assocValueKey',
+        associateFieldKey: 'associateFieldKey',
         bcLoading: false,
-        rowMetaFields: [],
+        pendingDataChanges: {},
+        isFilter: false,
+        calleeBCName: 'calleeBCName'
     }
-    const actionsProps = {
-        onChange: jest.fn(),
+    const actionProps: IAssocListActions = {
+        onSave: jest.fn(),
+        onFilter: jest.fn(),
+        onDeleteTag: jest.fn(),
+        onCancel: jest.fn(),
         onClose: jest.fn(),
     }
 
-    it('should hide "hidden": true fields', () => {
-        const wrapper = shallow(<PickListPopup {...props} {...actionsProps}/>)
-        expect(wrapper.find(Table).length).toEqual(1)
-        expect(wrapper.find(Table).props().columns.length).toEqual(1)
-
-    })
-
-    it('should render default title and footer', () => {
-        const wrapper = shallow(<PickListPopup {...props} {...actionsProps} showed={true}/>)
-        expect(shallow(wrapper.props().title.props.children).text()).toEqual(toHideProps.widget.title)
-        expect(shallow(wrapper.props().footer).find('Connect(Pagination)').length).toEqual(1)
+    it('should render default title, table and footer', () => {
+        const wrapper = shallow(<AssocListPopup {...defProps} {...actionProps}/>)
+        expect(wrapper.props().title).toEqual(defProps.widget.title)
+        expect(wrapper.props().footer).toEqual(undefined)
+        expect(wrapper.find('Connect(AssocTable)').length).toEqual(1)
     })
 
     it('should render custom title, table and footer', () => {
@@ -64,9 +56,9 @@ describe('PickListPopup test', () => {
         const customTable = <p>{customTableText}</p>
         const customFooterText = 'custom Footer'
         const customFooter = <i>{customFooterText}</i>
-        const wrapper = shallow(<PickListPopup
-            {...props}
-            {...actionsProps}
+        const wrapper = shallow(<AssocListPopup
+            {...defProps}
+            {...actionProps}
             components={{
                 title: customTitle,
                 table: customTable,
@@ -76,6 +68,5 @@ describe('PickListPopup test', () => {
         expect(wrapper.props().title).toEqual(customTitle)
         expect(wrapper.props().footer).toEqual(customFooter)
         expect(shallow(wrapper.props().children).text()).toEqual(customTableText)
-
     })
 })

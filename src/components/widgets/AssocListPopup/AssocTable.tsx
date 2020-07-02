@@ -83,4 +83,6 @@ function mapDispatchToProps(dispatch: Dispatch) {
     }
 }
 
+AssocTable.displayName = 'AssocTable'
+
 export default connect(mapStateToProps, mapDispatchToProps)(AssocTable)

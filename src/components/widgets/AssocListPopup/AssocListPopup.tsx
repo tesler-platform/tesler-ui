@@ -4,7 +4,7 @@ import {$do} from '../../../actions/actions'
 import {DataItem, DataValue, PendingDataItem} from '../../../interfaces/data'
 import {Store} from '../../../interfaces/store'
 import {WidgetTableMeta} from '../../../interfaces/widget'
-import Popup from '../../ui/Popup/Popup'
+import Popup, {PopupProps} from '../../ui/Popup/Popup'
 import {createMapDispatchToProps} from '../../../utils/redux'
 import HierarchyTable from '../../../components/HierarchyTable/HierarchyTable'
 import AssocTable from './AssocTable'
@@ -31,9 +31,11 @@ export interface IAssocListActions {
     onClose: () => void
 }
 
-export interface IAssocListOwnProps {
+export interface IAssocListOwnProps extends Omit<PopupProps, 'bcName' | 'children' | 'showed'> {
     widget: WidgetTableMeta,
     components?: {
+        title?: React.ReactNode,
+        table?: React.ReactNode,
         footer?: React.ReactNode
     }
 }
@@ -63,6 +65,19 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         onSave,
         onFilter,
         onDeleteTag,
+
+        width,
+        components,
+        widget,
+
+        showed,
+        assocValueKey,
+        associateFieldKey,
+        bcLoading,
+        pendingDataChanges,
+        isFilter,
+        calleeBCName,
+        ...rest
     } = props
 
     const pendingBcNames = props.widget.options?.hierarchy
@@ -121,7 +136,7 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
             _value: '... ' + tagBackgroundCount } ]
         : pendingData
 
-    const title = visiblePendingData.length !== 0
+    const defaultTitle = visiblePendingData.length !== 0
         ? <div>
             <div><h1 className={styles.title}>{props.widget.title}</h1></div>
             <div className={styles.tagArea}>
@@ -142,9 +157,37 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         </div>
         : props.widget.title
 
+    const title = props.components?.title === undefined ? defaultTitle : props.components.title
+
+    const defaultTable = (props.widget.options?.hierarchy || props.widget.options?.hierarchySameBc || props.widget.options?.hierarchyFull)
+        ? (props.widget.options.hierarchyFull)
+            ? <FullHierarchyTable
+                meta={props.widget}
+                assocValueKey={props.assocValueKey}
+                selectable
+            />
+            : (props.widget.options.hierarchySameBc)
+                ? <SameBcHierarchyTable
+                    meta={props.widget}
+                    assocValueKey={props.assocValueKey}
+                    selectable
+                />
+                : <HierarchyTable
+                    meta={props.widget}
+                    assocValueKey={props.assocValueKey}
+                    selectable
+                />
+        : <AssocTable
+            meta={props.widget}
+            disablePagination={true}
+        />
+
+    const table = props.components?.table === undefined ? defaultTable : props.components.table
+
     return <Popup
         title={title}
         showed
+        width={props.width}
         size="large"
         onOkHandler={props.isFilter ? filterData : saveData}
         onCancelHandler={cancelData}
@@ -152,31 +195,11 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         widgetName={props.widget.name}
         disablePagination={props.widget.options?.hierarchyFull}
         footer={props.components?.footer}
+        {...rest}
     >
         {(props.bcLoading)
             ? <Skeleton loading paragraph={{rows: 5}} />
-            : (props.widget.options?.hierarchy || props.widget.options?.hierarchySameBc || props.widget.options?.hierarchyFull)
-                ? (props.widget.options.hierarchyFull)
-                    ? <FullHierarchyTable
-                        meta={props.widget}
-                        assocValueKey={props.assocValueKey}
-                        selectable
-                    />
-                    : (props.widget.options.hierarchySameBc)
-                        ? <SameBcHierarchyTable
-                            meta={props.widget}
-                            assocValueKey={props.assocValueKey}
-                            selectable
-                        />
-                        : <HierarchyTable
-                            meta={props.widget}
-                            assocValueKey={props.assocValueKey}
-                            selectable
-                        />
-                : <AssocTable
-                    meta={props.widget}
-                    disablePagination={true}
-                />
+            :  {...table}
         }
     </Popup>
 }

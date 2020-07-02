@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {$do} from '../../../actions/actions'
 import {Store} from '../../../interfaces/store'
 import {WidgetTableMeta} from 'interfaces/widget'
-import Popup from '../../ui/Popup/Popup'
+import Popup, {PopupProps} from '../../ui/Popup/Popup'
 import {createMapDispatchToProps} from '../../../utils/redux'
 import styles from './PickListPopup.less'
 import {Table, Skeleton} from 'antd'
@@ -25,8 +25,13 @@ export interface PickListPopupActions {
     onClose: () => void,
 }
 
-export interface PickListPopupOwnProps {
+export interface PickListPopupOwnProps extends Omit<PopupProps, 'bcName' | 'children' | 'showed'> {
     widget: WidgetTableMeta,
+    components?: {
+        title?: React.ReactNode,
+        table?: React.ReactNode,
+        footer?: React.ReactNode,
+    }
 }
 
 export interface PickListPopupProps extends PickListPopupOwnProps {
@@ -40,6 +45,23 @@ export interface PickListPopupProps extends PickListPopupOwnProps {
 }
 
 export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopupActions> = (props) => {
+    const {
+        onChange,
+        onClose,
+
+        widget,
+        components,
+
+        data,
+        showed,
+        pickMap,
+        cursor,
+        parentBCName,
+        bcLoading,
+        rowMetaFields,
+
+        ...rest
+    } = props
     const columns: Array<ColumnProps<DataItem>> = props.widget.fields
     .filter(item => item.type !== FieldType.hidden && !item.hidden)
     .map(item => {
@@ -78,8 +100,10 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
         [props.pickMap, props.onChange, props.parentBCName, props.cursor]
     )
 
-    const title = React.useMemo(() => <div><h1 className={styles.title}>{props.widget.title}</h1></div>, [props.widget.title])
-    const footer = React.useMemo(() =>
+    const defaultTitle = React.useMemo(() => <div><h1 className={styles.title}>{props.widget.title}</h1></div>, [props.widget.title])
+    const title = props.components?.title === undefined ? defaultTitle : props.components.title
+
+    const defaultFooter = React.useMemo(() =>
         <div className={styles.footerContainer}>
             {!props.widget.options?.hierarchyFull &&
                 <div className={styles.pagination}>
@@ -89,6 +113,36 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
         </div>,
         [props.widget.options?.hierarchyFull, props.widget.bcName, props.widget.name]
     )
+    const footer = props.components?.footer === undefined ? defaultFooter : props.components.footer
+
+    const defaultTable = (props.widget.options?.hierarchy || props.widget.options?.hierarchySameBc || props.widget.options?.hierarchyFull)
+        ? props.widget.options.hierarchyFull
+            ? <FullHierarchyTable
+                meta={props.widget}
+                onRow={onRow}
+            />
+            : (props.widget.options.hierarchySameBc)
+                ? <SameBcHierarchyTable
+                    meta={props.widget}
+                    onRow={onRow}
+                />
+                : <HierarchyTable
+                    meta={props.widget}
+                    onRow={onRow}
+                />
+        : <div>
+            {/* TODO: Replace with TableWidget */}
+            <Table
+                className={styles.table}
+                columns={columns}
+                dataSource={props.data}
+                rowKey="id"
+                onRow={onRow}
+                pagination={false}
+            />
+        </div>
+    const table = props.components?.table === undefined ? defaultTable : props.components.table
+
     return <Popup
         title={title}
         showed={props.showed}
@@ -99,36 +153,12 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
         widgetName={props.widget.name}
         disablePagination={props.widget.options?.hierarchyFull}
         footer={footer}
+        {...rest}
     >
         <div>
             {(props.bcLoading)
-            ? <Skeleton loading paragraph={{rows: 5}} />
-            : (props.widget.options?.hierarchy || props.widget.options?.hierarchySameBc || props.widget.options?.hierarchyFull)
-                ? props.widget.options.hierarchyFull
-                    ? <FullHierarchyTable
-                        meta={props.widget}
-                        onRow={onRow}
-                    />
-                    : (props.widget.options.hierarchySameBc)
-                        ? <SameBcHierarchyTable
-                            meta={props.widget}
-                            onRow={onRow}
-                        />
-                        : <HierarchyTable
-                            meta={props.widget}
-                            onRow={onRow}
-                        />
-                : <div>
-                    {/* TODO: Replace with TableWidget */}
-                    <Table
-                        className={styles.table}
-                        columns={columns}
-                        dataSource={props.data}
-                        rowKey="id"
-                        onRow={onRow}
-                        pagination={false}
-                    />
-                </div>
+                ? <Skeleton loading paragraph={{rows: 5}}/>
+                : {...table}
             }
         </div>
     </Popup>
