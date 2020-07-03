@@ -291,30 +291,32 @@ const bcNewDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperati
 .filter(action => action.payload.operationType === OperationTypeCrud.create)
 .mergeMap((action) => {
     const state = store.getState() as Store
-    const bcName = action.payload.bcName
+    const {bcName, operationType, widgetName, onSuccessAction, confirm, confirmOperation, ...customParam} = action.payload
     const bcUrl = buildBcUrl(bcName)
-    const context = { widgetName: action.payload.widgetName }
-    return api.newBcData(state.screen.screenName, bcUrl, context)
-    .mergeMap(data => {
-        const rowMeta = data.row
-        const dataItem: DataItem = { id: null, vstamp: -1 }
-        data.row.fields.forEach(field => {
-            dataItem[field.key] = field.currentValue
+    if (Object.keys(customParam).length) {
+        return Observable.empty<never>()
+    }
+    return api.newBcData(state.screen.screenName, bcUrl, {widgetName})
+        .mergeMap(data => {
+            const rowMeta = data.row
+            const dataItem: DataItem = {id: null, vstamp: -1}
+            data.row.fields.forEach(field => {
+                dataItem[field.key] = field.currentValue
+            })
+            const postInvoke = data.postActions[0]
+            const cursor = dataItem.id
+            return Observable.concat(
+                Observable.of($do.bcNewDataSuccess({bcName, dataItem, bcUrl})),
+                Observable.of($do.bcFetchRowMetaSuccess({bcName, bcUrl: `${bcUrl}/${cursor}`, rowMeta, cursor})),
+                postInvoke
+                    ? Observable.of($do.processPostInvoke({bcName, postInvoke, cursor, widgetName}))
+                    : Observable.empty<never>()
+            )
         })
-        const postInvoke = data.postActions[0]
-        const cursor = dataItem.id
-        return Observable.concat(
-            Observable.of($do.bcNewDataSuccess({ bcName, dataItem, bcUrl })),
-            Observable.of($do.bcFetchRowMetaSuccess({ bcName, bcUrl: `${bcUrl}/${cursor}`, rowMeta, cursor})),
-            postInvoke
-                ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName: action.payload.widgetName }))
-                : Observable.empty<never>()
-        )
-    })
-    .catch((error: any) => {
-        console.log(error)
-        return Observable.of($do.bcNewDataFail({ bcName }))
-    })
+        .catch((error: any) => {
+            console.log(error)
+            return Observable.of($do.bcNewDataFail({bcName}))
+        })
 })
 
 const bcDeleteDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperation)
