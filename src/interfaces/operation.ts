@@ -56,6 +56,9 @@ export interface Operation {
     scope: OperationScope,
     action?: string,
     icon?: string,
+    /**
+     * @deprecated TODO: Remove in 2.0.0 in favor of customParam
+     */
     bcKey?: string,
     showOnlyIcon: boolean,
     preInvoke?: OperationPreInvoke,

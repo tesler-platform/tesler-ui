@@ -344,6 +344,7 @@ export class ActionPayloadTypes {
      * @param onSuccessAction Any other action
      * @param confirm params for confirm modal
      * @param bcKey key called bk
+     * @param customParam custom any parameter
      */
     sendOperation: {
         bcName: string,
@@ -351,7 +352,9 @@ export class ActionPayloadTypes {
         widgetName: string,
         onSuccessAction?: AnyAction,
         confirm?: string,
-        // TODO: Will not be optional in 2.0.0
+        /**
+         * @deprecated TODO: Remove in 2.0.0
+         */
         bcKey?: string,
         /**
          * @deprecated TODO: Remove in 2.0.0 in favor of sendOperationWithConfirm
