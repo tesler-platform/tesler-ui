@@ -126,7 +126,7 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
             <div><h1 className={styles.title}>{props.widget.title}</h1></div>
             <div className={styles.tagArea}>
                 {visiblePendingData?.map(val => {
-                    return <Tag
+                    return val._value && <Tag
                         title={val._value?.toString()}
                         closable={!!val.closable}
                         id={val.id?.toString()}
