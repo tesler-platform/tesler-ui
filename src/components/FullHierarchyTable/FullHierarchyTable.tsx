@@ -63,7 +63,8 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
         hierarchyGroupDeselection,
         hierarchyRadioAll,
         hierarchyRadio: hierarchyRootRadio,
-        hierarchyDisableRoot
+        hierarchyDisableRoot,
+        hierarchyDisableParent
     } = props.meta.options ?? {}
 
     const selectedRecords = useAssocRecords(props.data, props.pendingChanges)
@@ -221,7 +222,9 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
             expandIconAsCell={false}
             expandIconColumnIndex={(props.selectable) ? 1 : 0}
             loading={props.loading}
-            onRow={!(hierarchyDisableRoot && depthLevel === 1) && props.onRow}
+            onRow={!(hierarchyDisableRoot && depthLevel === 1)
+            && !(hierarchyDisableParent && !tableRecords.find(item => item.noChildren))
+            && props.onRow}
         />
     </div>
 }
