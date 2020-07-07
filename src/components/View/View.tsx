@@ -29,14 +29,15 @@ export const View: FunctionComponent<ViewProps> = (props) => {
             card={props.card}
             skipWidgetTypes={props.skipWidgetTypes}
         />
+    } else {
+        layout = <DashboardLayout
+            widgets={props.widgets}
+            customWidgets={props.customWidgets}
+            card={props.card}
+            skipWidgetTypes={props.skipWidgetTypes}
+        />
     }
 
-    layout = <DashboardLayout
-        widgets={props.widgets}
-        customWidgets={props.customWidgets}
-        card={props.card}
-        skipWidgetTypes={props.skipWidgetTypes}
-    />
     return <CustomizationContext.Provider value={{ customFields: props.customFields }}>
         {layout}
     </CustomizationContext.Provider>
