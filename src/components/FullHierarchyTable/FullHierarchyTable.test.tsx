@@ -37,8 +37,8 @@ describe('FullHierarchyTable test', () => {
         data: [] as AssociatedItem[],
         loading: false,
         pendingChanges: {},
-        bcFilter: [],
-        filterableFieldsKey: [],
+        bcFilters: [],
+        rowMetaFields: [],
         onSelect: jest.fn(),
         onDeselectAll: jest.fn(),
         onSelectAll: jest.fn(),
@@ -113,7 +113,7 @@ describe('FullHierarchyTable test', () => {
             ['desc']: 'third description'
         }
     ]
-    const prefilter: BcFilter[] = [
+    const prefilters: BcFilter[] = [
         {
             type: FilterType.contains,
             fieldName: 'desc',
@@ -125,8 +125,8 @@ describe('FullHierarchyTable test', () => {
         data: dataItems as AssociatedItem[],
         loading: false,
         pendingChanges: {},
-        bcFilter: prefilter,
-        filterableFieldsKey: [{currentValue: '11111',key: 'desc'}],
+        bcFilters: prefilters,
+        rowMetaFields: [{currentValue: '11111',key: 'desc'}],
         onSelect: jest.fn(),
         onDeselectAll: jest.fn(),
         onSelectAll: jest.fn(),

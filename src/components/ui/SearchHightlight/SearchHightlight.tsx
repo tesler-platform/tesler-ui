@@ -13,14 +13,18 @@ const SearchHighlight: React.FC<SearchHighlightProps> = (props) => {
     return <>
         { tokens
             .filter(item => !!item)
-            .map(item => {
+            .map((item, index) => {
                 const isMatch = props.search instanceof RegExp
                     ? props.search.test(item)
                     : item === props.search
                 if (isMatch) {
-                    return props.match?.(item) || item
+                    return <React.Fragment key={index}>
+                        {props.match(item) || item}
+                    </React.Fragment>
                 }
-                return props.notMatch?.(item) || item
+                return <React.Fragment key={index}>
+                    {props.notMatch?.(item) || item}
+                </React.Fragment>
             })}
     </>
 }

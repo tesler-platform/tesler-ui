@@ -350,7 +350,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 >
                     {props.filterValue
                         ? <SearchHighlight
-                            source={value.toString()}
+                            source={(value || '').toString()}
                             search={escapedSrc(props.filterValue)}
                             match={formatString => <b>{formatString}</b>}/>
                         : value}
