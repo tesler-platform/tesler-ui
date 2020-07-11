@@ -1,3 +1,20 @@
+/*
+ * TESLER-UI
+ * Copyright (C) 2018-2020 Tesler Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import * as util from './actions-utils'
 import {ActionsObservable as rActionsObservable} from 'redux-observable'
 import {Observable} from 'rxjs/Observable'
@@ -521,7 +538,9 @@ export class ActionPayloadTypes {
      * @param cursor
      */
     forceActiveRmUpdate: {
-        // данные текущей записи, для которой вызывалось обновление rowMeta
+        /**
+         * current data for record that initiated rowMeta fetch
+         */
         currentRecordData: DataItem,
         rowMeta: RowMeta,
         bcName: string,
@@ -582,7 +601,9 @@ export class ActionPayloadTypes {
      */
     saveAssociations: {
         bcNames: string[],
-        // Для использования вне попапа (multivalue не открывая)
+        /**
+         * For usage outside of Popup (without opening multivalue)
+         */
         calleeBcName?: string,
         associateFieldKey?: string
     } = z
@@ -1054,7 +1075,10 @@ export const needSaveAction = (action: string) => {
 // action-creators
 export const $do = util.createActionCreators(new ActionPayloadTypes())
 export type ActionsMap = util.uActionsMap<ActionPayloadTypes>
-// тип для любого action
+
+/**
+ * Any of the core actions
+ */
 export type AnyAction = util.AnyOfMap<ActionsMap> | {type: ' UNKNOWN ACTION '}
 
 export interface ActionsObservable<T extends AnyAction> extends rActionsObservable<T> {
@@ -1065,5 +1089,8 @@ export interface ActionsObservable<T extends AnyAction> extends rActionsObservab
      */
     ofType<K extends keyof ActionPayloadTypes>(...key: K[]): ActionsObservable<ActionsMap[K]>
 }
-// тип любого Epic
+
+/**
+ * Epic for any of core actions
+ */
 export type Epic = (action$: ActionsObservable<AnyAction>, store: Store<CoreStore>) => Observable<AnyAction>

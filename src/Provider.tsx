@@ -24,8 +24,8 @@ export interface ProviderProps<ClientState, ClientActions> {
     customActions?: any,
     customEpics?: any,
     axiosInstance?: AxiosInstance
-    parseLocation?: (loc: Location<any>) => Route, // TODO: демо, убрать
-    buildLocation?: (route: Route) => string, // TODO: демо, убрать
+    parseLocation?: (loc: Location<any>) => Route, // TODO: Combine into configuration object
+    buildLocation?: (route: Route) => string, // TODO: Combine into configuration object
     useEpics?: boolean,
     lang?: string,
     langDictionary?: Resource
@@ -98,9 +98,9 @@ export function configureStore<ClientState, ClientActions extends Action<any>>(
     useEpics: boolean = true
 ): Store<ClientState & CoreStore> {
     type CombinedActions = AnyAction & ClientActions
-    // В случае совпадающих имен редьюсеров в ядре и на клиенте
-    // сначала выполняется ядровой, и над получившимся состоянием выполняется клиентский
-    // TODO: Вынести логику по объединению редьюсеров с типизацией
+    // If core reducer slices have a matching client app reducer slice
+    // launch the core first and then client
+    // TODO: Extract this to an utility
     const reducers = { ...coreReducers } as CombinedReducersMapObject<CoreStore & ClientState, CombinedActions>
     Object.keys(customReducers).forEach((reducerName: Extract<keyof ClientState, string>) => {
         const coreInitialState = coreReducers[reducerName]
@@ -167,10 +167,10 @@ export function defaultParseLocation(loc: Location<any>): Route {
     const params = qs.parse(loc.search)
     const tokens = path.split('/').map(decodeURIComponent)
 
-    // возможные варианты URL:
-    // - / - страница по-умолчанию
-    // - /screen/name/view/name/... - стандартная навигация
-    // - /router/... - универсальная ссылка
+    // possible urls are:
+    // - / - default page
+    // - /screen/name/view/name/... - local navigation handled by Tesler UI
+    // - /router/... - universal link handled by Tesler API
 
     let type = RouteType.unknown
     let screenName = null
@@ -178,13 +178,13 @@ export function defaultParseLocation(loc: Location<any>): Route {
     let bcPath = null
 
     if (tokens.length > 0 && tokens[0] === 'router') {
-        // универсальная ссылка
+        // universal link
         type = RouteType.router
     } else if (tokens.length === 1) {
-        // экран по-умолчанию
+        // default screen
         type = RouteType.default
     } else if (tokens.length >= 2 && tokens[0] === 'screen') {
-        // навигация
+        // navigation
         let bcIndex = 2
         type = RouteType.screen
         screenName = tokens[1]
