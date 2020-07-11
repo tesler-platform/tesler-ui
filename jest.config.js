@@ -1,5 +1,5 @@
-const { compilerOptions } = require('./tsconfig');
-// Отключить в тестах предупреждения о неиспользуемых переменных
+const { compilerOptions } = require('./tsconfig')
+// Tests should not complain about unused variables
 compilerOptions.noUnusedLocals = false
 
 module.exports = {

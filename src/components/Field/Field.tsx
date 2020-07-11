@@ -56,7 +56,7 @@ interface FieldProps extends FieldOwnProps {
     onDrillDown: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void,
 }
 
-export interface ChangeDataItemPayload { // TODO: Может из карты в actions/actions подтащить?
+export interface ChangeDataItemPayload {
     bcName: string,
     cursor: string,
     dataItem: PendingDataItem

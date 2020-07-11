@@ -1,4 +1,4 @@
 /**
- * Как в тестах будут отображться импортированные ассеты (картинки, иконки и т.д.)
+ * How tests will handle assets import (images, icons, etc.)
  */
 module.exports = 'test-file-stub'
