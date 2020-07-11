@@ -19,6 +19,7 @@ import {RowMetaField} from '../../interfaces/rowMeta'
 import FullHierarchyFilter from './FullHierarchyFilter'
 import ColumnTitle from '../ColumnTitle/ColumnTitle'
 import cn from 'classnames'
+import {HierarchySearchCache} from './hierarchySearchCache'
 
 export interface FullHierarchyTableOwnProps {
     meta: WidgetTableMeta,
@@ -59,6 +60,8 @@ export type FullHierarchyTableAllProps = FullHierarchyTableOwnProps & FullHierar
 const emptyData: AssociatedItem[] = []
 const emptyMultivalue: MultivalueSingleValue[] = []
 const components = { filter: FullHierarchyFilter }
+const ancestorsKeysCache = new HierarchySearchCache()
+const descendantsKeysCache = new HierarchySearchCache()
 
 const Exp: FunctionComponent = (props: any) => {
     if (!props.onExpand || props.record.noChildren) {
@@ -91,24 +94,32 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
             [FilterType.contains, FilterType.equals].includes(filter.type)),
         [props.bcFilters]
     )
-
-    const searchedAncestorsKeys: Set<string> = React.useMemo(() => {
+    React.useEffect(() => {
+        const clearSearchCache = () => {
+            if (depthLevel === 1) {
+                ancestorsKeysCache.clear(props.meta.name)
+                descendantsKeysCache.clear(props.meta.name)
+            }
+        }
+        clearSearchCache()
+        return clearSearchCache()
+    }, [props.meta.name, props.data, depthLevel === 1])
+    const searchedAncestorsKeys: Set<string> = ancestorsKeysCache.getValue(() => {
         const result: string[] = []
         props.data.forEach(item => {
             bcFilterMatchedAncestors(item as FullHierarchyDataItem, props.data as FullHierarchyDataItem[], textFilters)
                 ?.forEach(key => result.push(key))
         })
         return new Set(result)
-    }, [props.data, textFilters])
-
-    const searchedDescendantsKeys: Set<string> = React.useMemo(() => {
+    }, props.meta.name, props.data, props.bcFilters)
+    const searchedDescendantsKeys: Set<string> = descendantsKeysCache.getValue(() => {
         const result: string[] = []
         props.data.forEach(item => {
             bcFilterMatchedDescendants(item as FullHierarchyDataItem, props.data as FullHierarchyDataItem[], textFilters)
                 ?.forEach(key => result.push(key))
         })
         return new Set(result)
-    }, [props.data, textFilters])
+    }, props.meta.name, props.data, props.bcFilters)
 
     const filteredData = React.useMemo(() => {
         return textFilters?.length
