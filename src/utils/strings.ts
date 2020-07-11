@@ -1,7 +1,3 @@
-/**
- * Утилиты для работы со строками
- */
-
 import {store as globalStore} from '../Provider'
 import {Store} from '../interfaces/store'
 import moment from 'moment'
@@ -24,10 +20,11 @@ export function getTemplate(literals: TemplateStringsArray, ...placeholders: any
 }
 
 /**
- * Формирует полный путь к бизнес-компоненте с учетом курсоров и родительских БК
+ * Forms a string representation of business components hierarchy with
+ * respect to business components ancestors and their corresponding cursors
  *
- * @param bcName Имя бизнес-компоненты, для которой надо построить путь
- * @param includeSelf Включать ли в путь собственный курс бизнес-компоненты
+ * @param bcName Business component name
+ * @param includeSelf If result hierarchy should include target bc or only ancestors
  * @param store
  */
 export function buildBcUrl(bcName: string, includeSelf: boolean = false, store?: Store) {

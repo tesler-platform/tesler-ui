@@ -18,7 +18,7 @@ const widgetMeta = {
     id: '1',
     name: '1',
     type: WidgetTypes.Form,
-    title: 'Форма',
+    title: 'Form',
     bcName: exampleBcName,
     position: 1,
     gridWidth: 1,

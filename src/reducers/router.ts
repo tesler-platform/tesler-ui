@@ -4,7 +4,7 @@ import {Route, RouteType} from '../interfaces/router'
 import {shallowCompare} from '../utils/redux'
 import {parseLocation, store} from '../Provider'
 
-/* Общий инстанс истории для всего приложения */
+/* Global instance */
 export const historyObj = createHashHistory()
 
 /**

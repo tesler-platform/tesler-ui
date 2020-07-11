@@ -1,3 +1,20 @@
+/*
+ * TESLER-UI
+ * Copyright (C) 2018-2020 Tesler Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import {applyParams, applyRawParams, axiosDelete, axiosGet, axiosPost, axiosPut, ApiCallContext} from '../utils/api'
 import {buildUrl} from '../utils/history'
 import {ObjectMap} from '../interfaces/objectMap'
@@ -76,10 +93,10 @@ export function fetchRowMeta(screenName: string, bcUrl: string, params?: GetPara
 }
 
 /**
- * Запрос создания новой записи
+ * Request to create a new data record
  *
- * @param screenName Имя скрина
- * @param bcUrl Путь к бизнес-компоненте, в которой создается запись
+ * @param screenName Screen name
+ * @param bcUrl Business component cursors hierarchy
  * @param params
  */
 export function newBcData(screenName: string, bcUrl: string, context: ApiCallContext, params?: GetParamsMap) {
@@ -91,11 +108,12 @@ export function newBcData(screenName: string, bcUrl: string, context: ApiCallCon
 }
 
 /**
- * Запрос сохранения записи
+ * Request to save a data record
  *
- * @param screenName Имя скрина
- * @param bcUrl Путь к сохраняемой записи в бизнес-компоненте
- * @param data Сохраняемая запись (измененные поля)
+ * @param screenName Screen name
+ * @param bcUrl Business component cursors hierarchy
+ * @param data Changed fields
+ * @param context Call context
  * @param params
  */
 export function saveBcData(
@@ -110,11 +128,11 @@ export function saveBcData(
 }
 
 /**
- * Запрос удаления записи
+ * Request to delete a data record
  *
- * @param screenName Имя скрина
- * @param bcUrl Путь к бизнес-компоненте, над которой выполняется операция
- * @param data Запись, над которой выполняется операция
+ * @param screenName Screen name
+ * @param bcUrl Business component cursors hierarchy
+ * @param context Call context
  * @param params
  */
 export function deleteBcData(screenName: string, bcUrl: string, context: ApiCallContext, params?: GetParamsMap) {
@@ -126,11 +144,12 @@ export function deleteBcData(screenName: string, bcUrl: string, context: ApiCall
 }
 
 /**
- * Запрос пользовательской бизнес-операции (кроме CRUD)
+ * Request for a custom operation
  *
- * @param screenName Имя скрина
- * @param bcUrl Путь к бизнес-компоненте, над которой выполняется операция
- * @param data Запись, над которой выполняется операция
+ * @param screenName Screen name
+ * @param bcUrl Business component cursors hierarchy
+ * @param data Changed fields
+ * @param context Call context
  * @param params
  */
 export function customAction(
@@ -148,20 +167,21 @@ export function customAction(
 }
 
 /**
- * Запрос на сохранение ассоциации (связь многие ко многим)
- * Если запрос идет с указанием bcUrl, то в теле должен быть просто массив записей с флагом, выставить им ассоциацию или снять ее.
- * Если запрос идет без указания bcUrl, то в теле должен быть словарь, где ключом выступает путь к бизнес-компоненте,
- * а значением - массив записей с флагом.
+ * Request to save an association (many-to-many relation)
+ * - When request doest specify `bcUrl`, request body should have an array of records with a flag
+ * to set or drop an association.
+ * - When request does not specify `bcUrl`, request body should have a dictionary where key is `bcUrl`
+ * for business component and value is an array of records with associate flag
  *
- * @param screenName Имя скрина
- * @param bcUrl Путь к бизнес-компоненте, над которой выполняется операция
- * @param data Массив записей или словарь
+ * @param screenName Screen name
+ * @param bcUrl Business component cursors hierarchy
+ * @param data An array of records or a dictionary
  * @param params
  */
 export function associate(
     screenName: string, bcUrl: string, data: AssociatedItem[] | Record<string, AssociatedItem[]>, params?: GetParamsMap
 ) {
-    // TODO: А чегой-то оно с бэка приходит как _associate, а назад хочет associated?
+    // TODO: Why Tesler API sends underscored `_associate` but expects `associated` in return?
     const processedData = Array.isArray(data)
         ? data.map(item => ({
             id: item.id,
@@ -177,11 +197,11 @@ export function associate(
 }
 
 /**
- * Предоставление дельты изменений формы, запрос новой роу-меты и forcedValue's(рачетных/форсированных значений)
+ * Request row meta with preview of force-active changes
  *
- * @param screenName Имя скрина
- * @param bcUrl Путь к сохраняемой записи в бизнес-компоненте
- * @param data Сохраняемая запись (измененные поля)
+ * @param screenName Screen name
+ * @param bcUrl Business component cursors hierarchy
+ * @param data Changed fields
  * @param params
  */
 export function getRmByForceActive(screenName: string, bcUrl: string, data: PendingDataItem & { vstamp: number }, params?: GetParamsMap) {

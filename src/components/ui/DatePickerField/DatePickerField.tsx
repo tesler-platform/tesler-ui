@@ -92,7 +92,6 @@ const DatePickerField: React.FunctionComponent<IDatePickerFieldProps> = (props) 
         style: {
             backgroundColor: props.backgroundColor,
         },
-        // TODO после того как добьемся, что при скороллинге будет скролиться body, можно убрать
         getCalendarContainer: (props.calendarContainer) ? getCalendarContainer : null,
         ref: datePickerRef
     }

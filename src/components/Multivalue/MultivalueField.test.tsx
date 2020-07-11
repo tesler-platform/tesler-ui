@@ -107,7 +107,7 @@ describe('Multivalue test', () => {
         expect(multivalue.findWhere(x => x.type() === Tag && x.text() === 'test3').length).toBe(1)
     })
 
-    // TODO: Поломал
+    // TODO: fix this test
     it.skip('component should delete tags', () => {
         const wrapper = mount(
             <Provider store={store}>

@@ -6,7 +6,7 @@ import {WidgetFormMeta, WidgetTypes} from 'interfaces/widget'
 const widgetMeta = {
     name: '1',
     type: WidgetTypes.Form,
-    title: 'Форма',
+    title: 'Form',
     bcName: 'bcExample',
     position: 1,
     gridWidth: 1,
