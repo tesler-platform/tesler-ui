@@ -1,7 +1,6 @@
 /**
  * Для эпиков работы с маршрутизацией
  */
-import {combineEpics} from 'redux-observable'
 import {$do, AnyAction, Epic, types} from '../actions/actions'
 import {Observable} from 'rxjs/Observable'
 import * as api from '../api/api'
@@ -261,7 +260,7 @@ const handleRouter: Epic = (action$, store) => action$.ofType(types.handleRouter
     })
 })
 
-export const routerEpics = combineEpics(
+export const routerEpics = {
     changeLocation,
     loginDone,
     changeScreen,
@@ -269,4 +268,4 @@ export const routerEpics = combineEpics(
     drillDown,
     userDrillDown,
     handleRouter
-)
+}

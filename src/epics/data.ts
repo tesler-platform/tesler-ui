@@ -1,7 +1,6 @@
 /**
  * Для эпиков работы с записями
  */
-import {combineEpics} from 'redux-observable'
 import {$do, AnyAction, Epic, types} from '../actions/actions'
 import {Observable} from 'rxjs/Observable'
 import {Store} from '../interfaces/store'
@@ -973,7 +972,7 @@ const removeMultivalueTag: Epic = (action$, store) => action$.ofType(types.remov
     )
 })
 
-export const dataEpics = combineEpics(
+export const dataEpics = {
     bcFetchRowMetaRequest,
     bcFetchDataEpic,
     bcSelectRecord,
@@ -994,4 +993,6 @@ export const dataEpics = combineEpics(
     changeDescendantsAssociationsFull,
     bcLoadMore,
     removeMultivalueTag
-)
+}
+
+export default dataEpics

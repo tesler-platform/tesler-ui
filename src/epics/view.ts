@@ -1,4 +1,3 @@
-import {combineEpics} from 'redux-observable'
 import {types, Epic, $do, AnyAction} from '../actions/actions'
 import {Observable} from 'rxjs/Observable'
 import * as api from '../api/api'
@@ -311,7 +310,7 @@ const showAssocPopup: Epic = (action$, store) => action$.ofType(types.showViewPo
     }))
 })
 
-export const viewEpics = combineEpics(
+export const viewEpics = {
     sendOperation,
     getRowMetaByForceActive,
     sendOperationAssociate,
@@ -319,4 +318,4 @@ export const viewEpics = combineEpics(
     selectTableCellInit,
     showAllTableRecordsInit,
     showAssocPopup
-)
+}
