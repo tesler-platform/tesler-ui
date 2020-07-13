@@ -1,4 +1,3 @@
-import {combineEpics} from 'redux-observable'
 import {$do, types, Epic, AnyAction} from '../actions/actions'
 import {Observable} from 'rxjs/Observable'
 import {
@@ -135,9 +134,11 @@ const processPostInvokeConfirm: Epic = (action$, store) => action$.ofType(types.
     }
 })
 
-export const screenEpics = combineEpics(
+export const screenEpics = {
     processPostInvoke,
     downloadFile,
     downloadFileByUrl,
     processPostInvokeConfirm
-)
+}
+
+export default screenEpics
