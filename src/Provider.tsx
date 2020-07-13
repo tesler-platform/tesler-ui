@@ -1,13 +1,12 @@
 import React from 'react'
 import {Action, applyMiddleware, compose, createStore, Middleware, Store, StoreCreator} from 'redux'
 import {Provider as ReduxProvider} from 'react-redux'
-import {combineEpics, createEpicMiddleware} from 'redux-observable'
+import {createEpicMiddleware, Epic, combineEpics as legacyCombineEpics} from 'redux-observable'
 import {reducers as coreReducers} from './reducers/index'
-import {epics as coreEpics} from './epics/index'
 import {Route, RouteType} from './interfaces/router'
 import {ClientReducersMapObject, CombinedReducersMapObject, CoreReducer, Store as CoreStore} from './interfaces/store'
 import {Location} from 'history'
-import {AnyAction, Epic} from './actions/actions'
+import {AnyAction} from './actions/actions'
 import {AxiosInstance} from 'axios'
 import qs from 'query-string'
 import {initHistory} from './reducers/router'
@@ -17,12 +16,15 @@ import {createRequiredFieldsMiddleware} from './middlewares/requiredFieldsMiddle
 import {createPreInvokeMiddleware} from './middlewares/preInvokeMiddleware'
 import {initLocale} from './imports/i18n'
 import {Resource, i18n} from 'i18next'
+import CustomEpics, {isLegacyCustomEpics, AnyEpic} from './interfaces/customEpics'
+import combineEpics from './utils/combineEpics'
+import {legacyCoreEpics} from './epics'
 
 export interface ProviderProps<ClientState, ClientActions> {
     children: React.ReactNode,
     customReducers?: ClientReducersMapObject<ClientState, ClientActions>,
     customActions?: any,
-    customEpics?: any,
+    customEpics?: CustomEpics | AnyEpic,
     axiosInstance?: AxiosInstance
     parseLocation?: (loc: Location<any>) => Route, // TODO: Combine into configuration object
     buildLocation?: (route: Route) => string, // TODO: Combine into configuration object
@@ -94,7 +96,7 @@ export function getLocaleProviderInstance() {
  */
 export function configureStore<ClientState, ClientActions extends Action<any>>(
     customReducers = {} as ClientReducersMapObject<ClientState, ClientActions>,
-    customEpics: Epic = null,
+    customEpics: CustomEpics | Epic<any, ClientState>= null,
     useEpics: boolean = true
 ): Store<ClientState & CoreStore> {
     type CombinedActions = AnyAction & ClientActions
@@ -127,7 +129,9 @@ export function configureStore<ClientState, ClientActions extends Action<any>>(
         createPreInvokeMiddleware()
     ]
     if (useEpics) {
-        const epics = combineEpics(coreEpics, customEpics)
+        const epics = isLegacyCustomEpics(customEpics)
+            ? legacyCombineEpics(legacyCoreEpics, customEpics)
+            : combineEpics(customEpics)
         middlewares.push(createEpicMiddleware(epics))
     }
     return compose(
