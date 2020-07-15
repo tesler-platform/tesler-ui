@@ -57,7 +57,7 @@ export interface Operation {
     action?: string,
     icon?: string,
     /**
-     * @deprecated TODO: Remove in 2.0.0 in favor of customParam
+     * @deprecated TODO: Remove in 2.0.0
      */
     bcKey?: string,
     showOnlyIcon: boolean,
