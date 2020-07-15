@@ -83,16 +83,12 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
 const sendOperationAssociate: Epic = (action$, store) => action$.ofType(types.sendOperation)
 .filter(action => action.payload.operationType === OperationTypeCrud.associate)
 .map(action => {
-    const {bcName, operationType, widgetName, onSuccessAction, confirm, confirmOperation, ...customParam} = action.payload
-    /**
-     * If action have some customParam, then do another implementation
-     */
-    if (Object.keys(customParam).length) {
-        return $do.emptyAction(null)
-    }
     return $do.showViewPopup({
-        bcName: `${bcName}Assoc`,
-        calleeBCName: bcName,
+        // TODO: bcKey will not be optional in 2.0.0
+        bcName: action.payload.bcKey
+            ? `${action.payload.bcKey}`
+            : `${action.payload.bcName}Assoc`,
+        calleeBCName: action.payload.bcName,
         active: true
     })
 })

@@ -344,7 +344,6 @@ export class ActionPayloadTypes {
      * @param onSuccessAction Any other action
      * @param confirm params for confirm modal
      * @param bcKey key called bk
-     * @param customParam custom any parameter
      */
     sendOperation: {
         bcName: string,
