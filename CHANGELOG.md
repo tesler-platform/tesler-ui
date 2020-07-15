@@ -1,3 +1,18 @@
+# Version 1.17.0
+
+## Features
+
+* `<AssocListPopup />` and `<PickListPopup />` components now support `title`, `table` and `footer` properties to customize render slots ([#319](https://github.com/tesler-platform/tesler-ui/issues/319))
+* `<FullHierarchyTable />` now supports client-side search and search results highlighting ([#241](https://github.com/tesler-platform/tesler-ui/issues/241))
+* `<FullHierarchyTable />` now supports `hierarchyDisableParent` widget options to allowing selecting only leaf nodes ([#317](https://github.com/tesler-platform/tesler-ui/issues/317))
+* `<FullHierarchyTable />` now respects column `width` property ([#304](https://github.com/tesler-platform/tesler-ui/pull/304))
+* New `customEpics` implementation allowing to disable and override core epics ([#330](https://github.com/tesler-platform/tesler-ui/issues/330))
+* :red_circle: [Deprecation warning]: Deprecate `bcKey` parameter in `sendOperation` action payload in favor of epics overriding ([#321](https://github.com/tesler-platform/tesler-ui/issues/321))
+
+## Fixes
+
+* Default view layout should not override custom one ([#326](https://github.com/tesler-platform/tesler-ui/issues/326))
+
 # Version 1.16.0
 
 ## Features
@@ -16,7 +31,7 @@
 ## Features
 
 * The type `DataValue` extended by `DataItem[]` for cases if need to store nested structure in `pendingDataChanges` (#274).
-*  :red_circle: [Deprecation warning]: Deprecate `bcName`, `route`, `pendingDataItem` and `onDrillDown` properties for `<TableWidget />`; deprecate a `route` from `showAllTableRecordsInit` action; export `<MultivalueField />` and `<MultivalueListRecord />` components; add `className` property to `<MultivalueList />` component (#285)
+* :red_circle: [Deprecation warning]: Deprecate `bcName`, `route`, `pendingDataItem` and `onDrillDown` properties for `<TableWidget />`; deprecate a `route` from `showAllTableRecordsInit` action; export `<MultivalueField />` and `<MultivalueListRecord />` components; add `className` property to `<MultivalueList />` component (#285)
 
 ## Fixes
 
