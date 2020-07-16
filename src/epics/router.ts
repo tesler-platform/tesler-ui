@@ -212,9 +212,14 @@ const drillDown: Epic = (action$, store) => action$.ofType(types.drillDown)
 
 const userDrillDown: Epic = (action$, store) => action$.ofType(types.userDrillDown)
 .map(action => {
-    store.dispatch(
-        $do.bcChangeCursors({ cursorsMap: { [action.payload.bcName]: action.payload.cursor } })
-    )
+    const state = store.getState()
+    const widget = state.view.widgets.find(item => item.name === action.payload.widgetName)
+    const cursor = state.screen.bo.bc[widget?.bcName]?.cursor
+    if (cursor !== action.payload.cursor) {
+        store.dispatch(
+            $do.bcChangeCursors({ cursorsMap: { [action.payload.bcName]: action.payload.cursor } })
+        )
+    }
     return action
 })
 .switchMap(action => {
@@ -226,7 +231,7 @@ const userDrillDown: Epic = (action$, store) => action$.ofType(types.userDrillDo
     .mergeMap(rowMeta => {
         const drillDownField = rowMeta.fields.find(field => field.key === fieldKey)
         const route = state.router
-        return drillDownField?.drillDown
+        return drillDownField?.drillDown || drillDownField?.drillDown !== route.path
             ? Observable.concat(
                 (drillDownField.drillDownType !== DrillDownType.inner)
                     ? Observable.of($do.bcFetchRowMetaSuccess({bcName, rowMeta, bcUrl, cursor}))
