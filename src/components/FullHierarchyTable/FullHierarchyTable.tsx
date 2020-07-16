@@ -146,7 +146,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                 // Filter out leafs without children
                 ? ancestorsData?.filter(item => ancestorsData.some(child => item.id === child.parentId)).map(item => item.id)
                 : []
-            const newExpandedKeys = new Set([...selectedRecords, ...expandManual, ...expandAssoc,...expandFiltered]) 
+            const newExpandedKeys = new Set([...selectedRecords, ...expandManual, ...expandAssoc,...expandFiltered])
             if (newExpandedKeys.size > 0) {
                 setUserOpenedRecords(Array.from(newExpandedKeys))
             }
