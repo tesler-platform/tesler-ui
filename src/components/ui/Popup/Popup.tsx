@@ -6,9 +6,7 @@ import {PaginationMode} from '../../../interfaces/widget'
 import * as styles from './Popup.less'
 import {ModalProps} from 'antd/lib/modal'
 
-type AdditionalAntdModalProps = ModalProps
-
-export interface PopupProps extends AdditionalAntdModalProps {
+export interface PopupProps extends ModalProps {
     onOkHandler?: () => void,
     onCancelHandler?: () => void,
     size?: 'medium' | 'large',
