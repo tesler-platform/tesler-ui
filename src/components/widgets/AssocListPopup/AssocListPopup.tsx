@@ -14,6 +14,7 @@ import FullHierarchyTable from '../../FullHierarchyTable/FullHierarchyTable'
 import {AssociatedItem} from '../../../interfaces/operation'
 import {BcFilter, FilterType} from '../../../interfaces/filters'
 import * as styles from '../../ui/Popup/Popup.less'
+import {useAssocRecords} from '../../../hooks/useAssocRecords'
 
 export interface IAssocListRecord {
     id: string,
@@ -46,12 +47,18 @@ export interface IAssocListProps extends IAssocListOwnProps {
     associateFieldKey?: string,
     bcLoading: boolean,
     pendingDataChanges?: {
-        [bcName: string]: {
-            [cursor: string]: PendingDataItem
-        }
+        [cursor: string]: PendingDataItem
     },
+    data?: AssociatedItem[],
     isFilter?: boolean,
     calleeBCName?: string
+}
+
+const emptyData: AssociatedItem[] = []
+
+type AssociatedItemTag = Omit<AssociatedItem, 'vstamp'> & {
+    _closable?: boolean,
+    _value?: string
 }
 
 export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActions> = (props) => {
@@ -84,26 +91,26 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
     ? [props.widget.bcName, ...props.widget.options?.hierarchy.map(item => item.bcName)]
     : [props.widget.bcName]
 
+    const selectedRecords = useAssocRecords(props.data, props.pendingDataChanges)
+
     const saveData = React.useCallback(() => {
         onSave(pendingBcNames)
         onClose()
     }, [onSave, onClose])
 
-    const pendingDataValue = props.pendingDataChanges[props.widget.bcName]
+
     const filterData = React.useCallback(() => {
-        const filterValue: string[] = []
-        for (const value in pendingDataValue) {
-            if (pendingDataValue[value]?.id && pendingDataValue[value]?._associate === true) {
-                filterValue.push(pendingDataValue[value].id.toString())
-            }
-        }
+        const filterValue = selectedRecords
+        .filter(item => item._associate)
+        .map(item => item.id)
+
         onFilter(props.calleeBCName, {
             type: FilterType.equalsOneOf,
             fieldName: props.associateFieldKey,
             value: filterValue
         })
         onClose()
-    }, [onFilter, onClose, props.calleeBCName, props.associateFieldKey, pendingDataValue])
+    }, [onFilter, onClose, props.calleeBCName, props.associateFieldKey, selectedRecords])
 
     const cancelData = React.useCallback(() => {
         onCancel()
@@ -116,36 +123,29 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         [props.onDeleteTag,props.widget.bcName]
     )
 
-    const pendingCurrentData = props.pendingDataChanges[props.widget.bcName]
-    const pendingData = []
-    for (const key in pendingCurrentData) {
-        if (pendingCurrentData[key]._associate === true) {
-            pendingCurrentData[key].closable = true
-            pendingData.push(pendingCurrentData[key])
-        }
-    }
-
     // Tag values limit
     const tagLimit = 5
-    const tagBackgroundCount = pendingData.length - tagLimit
-    const visiblePendingData = pendingData.length > tagLimit
-        ? [ ...pendingData.slice(0, tagLimit), {
-            id: '99999999999999999999',
-            closable: false,
-            _associate: false,
-            _value: '... ' + tagBackgroundCount } ]
-        : pendingData
+    const visibleTags = selectedRecords.slice(0, tagLimit).map(item => ({
+        ...item,
+        _value: String(item[props.assocValueKey] || ''),
+        _closable: true
+    }))
+    const hiddenTagsCount = visibleTags.length - tagLimit
+    const tags: AssociatedItemTag[] = visibleTags.length > tagLimit
+        ? [
+            ...visibleTags,
+            { id: 'control', _associate: false, _value: `... ${hiddenTagsCount}` }
+        ]
+        : selectedRecords.map(item => ({ ...item, _value: String(item[props.assocValueKey] || ''), _closable: true }))
 
-    const defaultTitle = visiblePendingData.length !== 0
+    const defaultTitle = tags.length
         ? <div>
             <div><h1 className={styles.title}>{props.widget.title}</h1></div>
             <div className={styles.tagArea}>
-                {visiblePendingData
-                ?.filter(val => val._value !== undefined && val._value !== null && val._value !== '')
-                ?.map(val => {
+                {tags?.map(val => {
                     return <Tag
                         title={val._value?.toString()}
-                        closable={!!val.closable}
+                        closable={val._closable}
                         id={val.id?.toString()}
                         key={val.id?.toString()}
                         onClose={() => {
@@ -207,18 +207,19 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
 }
 
 function mapStateToProps(store: Store, ownProps: IAssocListOwnProps) {
-    const bcName = ownProps.widget.bcName
+    const bcName = ownProps.widget?.bcName
     const bc = store.screen.bo.bc[bcName]
     const isFilter = store.view.popupData.isFilter
     const calleeBCName = store.view.popupData.calleeBCName
     return {
-        showed: store.view.popupData.bcName === ownProps.widget.bcName,
+        showed: store.view.popupData.bcName === bcName,
         assocValueKey: store.view.popupData.assocValueKey,
         associateFieldKey: store.view.popupData.associateFieldKey,
         bcLoading: bc?.loading,
-        pendingDataChanges: store.view.pendingDataChanges,
-        isFilter: isFilter,
-        calleeBCName: calleeBCName
+        pendingDataChanges: store.view.pendingDataChanges[bcName],
+        data: store.data[bcName] || emptyData,
+        isFilter,
+        calleeBCName
     }
 }
 
