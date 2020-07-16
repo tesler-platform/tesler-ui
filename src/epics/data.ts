@@ -486,7 +486,7 @@ const saveAssociationsPassive: Epic = (action$, store) => action$.ofType(types.s
     const result = recordPrevData
     .filter(prevItem => {
         const removedItem = newValues.find(item => item.id === prevItem.id)
-        if (!removedItem?._associate) {
+        if (removedItem && removedItem?._associate === false) {
             return false
         }
         return true
