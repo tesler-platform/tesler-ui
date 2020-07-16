@@ -1,3 +1,11 @@
+# Version 1.17.2
+
+## Fixes
+
+* `<FullHierarchyComponent />` in 1.17.0 erroneously collapses the whole tree after selecting node ([#341](https://github.com/tesler-platform/tesler-ui/issues/341))
+* `<AssocListPopup />` doesn't show already selected records in tags section; `saveAssociationsPassive` erroneously clears selected records ([#339](https://github.com/tesler-platform/tesler-ui/issues/339))
+* User drilldown to the current cursor and `bcPath` shouldn't drop current cursor and fire drilldown respectively ([#343](https://github.com/tesler-platform/tesler-ui/issues/343))
+
 # Version 1.17.1
 
 ## Fixes
