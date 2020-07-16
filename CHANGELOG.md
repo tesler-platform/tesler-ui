@@ -1,3 +1,9 @@
+# Version 1.17.1
+
+## Fixes
+
+* Wrong typings and missing properties when importing `<Popup />` component
+
 # Version 1.17.0
 
 ## Features
