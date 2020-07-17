@@ -32,6 +32,7 @@ const buildLocation = getBuildLocationInstance
 import {isViewNavigationItem, isViewNavigationCategory, isViewNavigationGroup} from './interfaces/navigation'
 import {isWidgetFieldBlock, TableLikeWidgetTypes} from './interfaces/widget'
 
+
 export {
     Provider,
     connect,
