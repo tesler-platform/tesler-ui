@@ -1,6 +1,7 @@
-import {createStore, combineReducers} from 'redux'
+import {createStore} from 'redux'
 import {reducers} from '../reducers/index'
 import {setStoreInstance} from '../Provider'
+import {combineReducers} from '../utils/redux'
 
 /**
  * redux-стор для использования в тестах
