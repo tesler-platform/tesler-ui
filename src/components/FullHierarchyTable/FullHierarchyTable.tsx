@@ -19,11 +19,12 @@ import {RowMetaField} from '../../interfaces/rowMeta'
 import FullHierarchyFilter from './FullHierarchyFilter'
 import ColumnTitle from '../ColumnTitle/ColumnTitle'
 import cn from 'classnames'
-import {HierarchySearchCache} from './hierarchySearchCache'
+import {useHierarchyCache} from './utils/useHierarchyCache'
+import {useExpandedKeys} from './utils/useExpandedKeys'
 
 export interface FullHierarchyTableOwnProps {
     meta: WidgetTableMeta,
-    nestedData?: AssociatedItem[],
+    nestedData?: FullHierarchyDataItem[],
     assocValueKey?: string,
     depth?: number,
     parentId?: string,
@@ -34,7 +35,7 @@ export interface FullHierarchyTableOwnProps {
 }
 
 interface FullHierarchyTableProps {
-    data: AssociatedItem[],
+    data: FullHierarchyDataItem[],
     loading: boolean,
     pendingChanges: Record<string, PendingDataItem>,
     bcFilters: BcFilter[],
@@ -50,27 +51,24 @@ interface FullHierarchyTableDispatchProps {
     removeFilter?: (bcName: string, filter: BcFilter) => void,
 }
 
-interface FullHierarchyDataItem extends AssociatedItem {
+export interface FullHierarchyDataItem extends AssociatedItem {
     parentId: string,
     level: number
 }
 
 export type FullHierarchyTableAllProps = FullHierarchyTableOwnProps & FullHierarchyTableProps & FullHierarchyTableDispatchProps
 
-const emptyData: AssociatedItem[] = []
+const emptyData: FullHierarchyDataItem[] = []
 const emptyMultivalue: MultivalueSingleValue[] = []
 const components = { filter: FullHierarchyFilter }
-const ancestorsKeysCache = new HierarchySearchCache()
-const descendantsKeysCache = new HierarchySearchCache()
 
 const Exp: FunctionComponent = (props: any) => {
     if (!props.onExpand || props.record.noChildren) {
         return null
     }
-    const type = props.expanded ? 'minus-square' : 'plus-square'
     return <Icon
         style={{ fontSize: '20px' }}
-        type={type}
+        type={props.expanded ? 'minus-square' : 'plus-square'}
         onClick={e => props.onExpand(props.record, e)}
     />
 }
@@ -81,51 +79,12 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
     const loading = props.loading
     const depthLevel = props.depth || 1
     const indentLevel = depthLevel - 1
-    const [userOpenedRecords, setUserOpenedRecords] = React.useState([])
-
-    React.useEffect(
-        () => {
-            if (props?.expandedRowKeys) {setUserOpenedRecords(props.expandedRowKeys)}
-        },
-        [props.expandedRowKeys]
-    )
 
     const textFilters = React.useMemo(() => props.bcFilters?.filter(filter =>
             [FilterType.contains, FilterType.equals].includes(filter.type)),
         [props.bcFilters]
     )
-    React.useEffect(() => {
-        const clearSearchCache = () => {
-            if (depthLevel === 1) {
-                ancestorsKeysCache.clear(props.meta.name)
-                descendantsKeysCache.clear(props.meta.name)
-            }
-        }
-        clearSearchCache()
-        return clearSearchCache()
-    }, [props.meta.name, props.data, depthLevel === 1])
-    const searchedAncestorsKeys: Set<string> = ancestorsKeysCache.getValue(() => {
-        const result: string[] = []
-        props.data.forEach(item => {
-            bcFilterMatchedAncestors(item as FullHierarchyDataItem, props.data as FullHierarchyDataItem[], textFilters)
-                ?.forEach(key => result.push(key))
-        })
-        return new Set(result)
-    }, props.meta.name, props.data, props.bcFilters)
-    const searchedDescendantsKeys: Set<string> = descendantsKeysCache.getValue(() => {
-        const result: string[] = []
-        props.data.forEach(item => {
-            bcFilterMatchedDescendants(item as FullHierarchyDataItem, props.data as FullHierarchyDataItem[], textFilters)
-                ?.forEach(key => result.push(key))
-        })
-        return new Set(result)
-    }, props.meta.name, props.data, props.bcFilters)
-
-    const filteredData = React.useMemo(() => {
-        return textFilters?.length
-            ? props.data.filter(item => searchedAncestorsKeys.has(item.id) || searchedDescendantsKeys.has(item.id))
-            : props.data
-    }, [searchedAncestorsKeys, searchedDescendantsKeys, props.data, textFilters])
+    const [filteredData, searchedAncestorsKeys] = useHierarchyCache(props.meta.name, textFilters, props.data, props.depth)
 
     const data = (props?.nestedData?.length > 0 && depthLevel > 1)
         ? props.nestedData
@@ -135,24 +94,17 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
 
     const selectedRecords = useAssocRecords(data, props.pendingChanges)
 
-    // get expand row keys
-    React.useEffect(
-        () => {
-            const expandManual = props.expandedRowKeys || []
-            const expandAssoc = selectedRecords?.filter(item => selectedRecords.some(child => item.id === child.parentId))
-                .map(item => item.id) || []
-            const ancestorsData = filteredData?.filter(item => searchedAncestorsKeys.has(item.id))
-            const expandFiltered = textFilters?.length
-                // Filter out leafs without children
-                ? ancestorsData?.filter(item => ancestorsData.some(child => item.id === child.parentId)).map(item => item.id)
-                : []
-            const newExpandedKeys = new Set([...selectedRecords, ...expandManual, ...expandAssoc,...expandFiltered])
-            if (newExpandedKeys.size > 0) {
-                setUserOpenedRecords(Array.from(newExpandedKeys))
-            }
-        },
-        [props.expandedRowKeys, textFilters, filteredData, selectedRecords]
+    const [expandedKeys, setExpandedKeys] = useExpandedKeys(
+        props.expandedRowKeys, selectedRecords, filteredData,
+        textFilters, searchedAncestorsKeys
     )
+
+    const handleExpand = (expanded: boolean, dataItem: DataItem) => {
+        setExpandedKeys(expanded
+            ? [ ...expandedKeys, dataItem.id ]
+            : [ ...expandedKeys ].filter(item => item !== dataItem.id)
+        )
+    }
 
     const {
         hierarchyGroupSelection,
@@ -177,14 +129,6 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
         },
         [data, props.parentId, depthLevel]
     )
-
-    const handleExpand = (expanded: boolean, dataItem: DataItem) => {
-        if (expanded) {
-            setUserOpenedRecords((prevState => prevState ? [...prevState,dataItem.id] : [dataItem.id]))
-        } else {
-            setUserOpenedRecords((prevState => prevState?.filter(item => item !== dataItem.id)))
-        }
-    }
 
     const rowSelection: TableRowSelection<DataItem> = React.useMemo(() => {
         if (props.selectable) {
@@ -302,7 +246,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                 showHeader={depthLevel === 1}
                 expandIcon={Exp as any}
                 defaultExpandedRowKeys={undefined}
-                expandedRowKeys={userOpenedRecords || []}
+                expandedRowKeys={expandedKeys}
                 onExpand={handleExpand}
                 dataSource={tableRecords}
                 expandedRowRender={nestedHierarchy}
@@ -317,69 +261,6 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
         </div>
 }
 
-
-/**
- * Function match whether filters are assigned to the input data element
- *
- * @param dataItem item to be checked
- * @param filters array of applied filters
- */
-function bcFilterTextMatch(dataItem: FullHierarchyDataItem, filters: BcFilter[]) {
-    if (filters?.length === 0) {
-        return true
-    }
-    return filters?.every(filter => {
-        const filterable = typeof dataItem[filter.fieldName] === 'string' || typeof dataItem[filter.fieldName] === 'number'
-        const searchExpression = String(filter.value).toLowerCase()
-        const value = String(dataItem[filter.fieldName]).toLowerCase()
-        return filterable && value.includes(searchExpression)
-    })
-}
-
-/**
- * Function search ancestors id in tree by input element dataItem
- *
- * @param dataItem item to be checked
- * @param dataItems full tree dataItems
- * @param filters array of applied filters
- */
-function bcFilterMatchedAncestors(dataItem: FullHierarchyDataItem, dataItems: FullHierarchyDataItem[], filters: BcFilter[]) {
-    const result: string[] = []
-    if (bcFilterTextMatch(dataItem, filters)) {
-        let current = dataItem
-        // sibling include
-        // dataItems.filter(sibling => sibling.parentId === current.parentId).forEach(sibling => result.push(sibling.id))
-        do {
-            result.push(current.id)
-            current = dataItems.find(item => item.id === current.parentId)
-        } while(current?.parentId)
-    }
-    return result
-}
-
-/**
- * Function search descendants id in tree by input element dataItem
- *
- * @param dataItem item to be checked
- * @param dataItems full tree dataItems
- * @param filters array of applied filters
- */
-function bcFilterMatchedDescendants(dataItem: FullHierarchyDataItem, dataItems: FullHierarchyDataItem[], filters: BcFilter[]) {
-    const result: string[] = []
-    if (bcFilterTextMatch(dataItem, filters)) {
-        const filteredData = [dataItem]
-        while (filteredData?.length > 0) {
-            const tempAncestor = filteredData.shift()
-            result.push(tempAncestor.id)
-            const tmpDescendant = dataItems?.filter(item => item.parentId === tempAncestor.id)
-            if (tmpDescendant?.length > 0) {
-                tmpDescendant.forEach(child => filteredData.push(child))
-            }
-        }
-    }
-    return result
-}
-
 function mapStateToProps(store: Store, ownProps: FullHierarchyTableOwnProps): FullHierarchyTableProps {
     const bcName = ownProps.meta.bcName
     const bc = store.screen.bo.bc[bcName]
@@ -388,7 +269,7 @@ function mapStateToProps(store: Store, ownProps: FullHierarchyTableOwnProps): Fu
     const loading = bc?.loading || !rowMeta
     return {
         loading: loading,
-        data: (loading) ? emptyData : store.data[bcName] as AssociatedItem[],
+        data: (loading) ? emptyData : store.data[bcName] as FullHierarchyDataItem[],
         pendingChanges: store.view.pendingDataChanges[bcName],
         bcFilters: store.screen.filters[bcName],
         rowMetaFields: store.view.rowMeta[bcName]?.[bcUrl]?.fields,
