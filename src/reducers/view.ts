@@ -342,9 +342,18 @@ export function view(state = initialState, action: AnyAction, store: Store) {
             return { ...state, pendingValidationFails: initialState.pendingValidationFails }
         }
         case types.showViewPopup: {
+            const { bcName, calleeBCName, associateFieldKey, assocValueKey, active, isFilter } = action.payload
+            const widgetValueKey = store.view.widgets.find(item => item.bcName === bcName)?.options?.displayedValueKey
             return {
                 ...state,
-                popupData: action.payload,
+                popupData: {
+                    bcName,
+                    calleeBCName,
+                    associateFieldKey,
+                    assocValueKey: assocValueKey ?? widgetValueKey,
+                    active,
+                    isFilter
+                },
             }
         }
         case types.viewPutPickMap:

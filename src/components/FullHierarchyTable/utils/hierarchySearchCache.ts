@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import {AssociatedItem} from '../../interfaces/operation'
-import {BcFilter} from '../../interfaces/filters'
+import {AssociatedItem} from '../../../interfaces/operation'
+import {BcFilter} from '../../../interfaces/filters'
 
 /**
  * Function to memoize

@@ -1,10 +1,9 @@
 import React from 'react'
 import {shallow} from 'enzyme'
 import {Table} from 'antd'
-import {FullHierarchyTable, FullHierarchyTableAllProps, FullHierarchyTableOwnProps} from './FullHierarchyTable'
+import {FullHierarchyTable, FullHierarchyTableAllProps, FullHierarchyTableOwnProps, FullHierarchyDataItem} from './FullHierarchyTable'
 import {WidgetTypes} from 'interfaces/widget'
 import {FieldType} from 'interfaces/view'
-import {AssociatedItem} from 'interfaces/operation'
 import {BcFilter, FilterType} from '../../interfaces/filters'
 
 
@@ -34,7 +33,7 @@ describe('FullHierarchyTable test', () => {
     }
     const props: FullHierarchyTableAllProps = {
         meta: toHideOwnProps.meta,
-        data: [] as AssociatedItem[],
+        data: [] as FullHierarchyDataItem[],
         loading: false,
         pendingChanges: {},
         bcFilters: [],
@@ -84,13 +83,14 @@ describe('FullHierarchyTable test', () => {
             ]
         }
     }
-    const dataItems: AssociatedItem[] = [
+    const dataItems: FullHierarchyDataItem[] = [
         {
             _associate: true,
             id: '1',
             vstamp: 1,
             parentId: '0',
             depth: 1,
+            level: 1,
             ['name']: 'first name',
             ['desc']: 'first description'
         },
@@ -100,6 +100,7 @@ describe('FullHierarchyTable test', () => {
             vstamp: 1,
             parentId: '0',
             depth: 1,
+            level: 1,
             ['name']: 'second name',
             ['desc']: 'second description'
         },
@@ -109,6 +110,7 @@ describe('FullHierarchyTable test', () => {
             vstamp: 1,
             parentId: '1',
             depth: 2,
+            level: 2,
             ['name']: 'third name',
             ['desc']: 'third description'
         }
@@ -122,7 +124,7 @@ describe('FullHierarchyTable test', () => {
     ]
     const props: FullHierarchyTableAllProps = {
         meta: toHideOwnProps.meta,
-        data: dataItems as AssociatedItem[],
+        data: dataItems,
         loading: false,
         pendingChanges: {},
         bcFilters: prefilters,

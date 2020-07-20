@@ -167,6 +167,9 @@ export interface WidgetOptions {
         }>
     },
     tableOperations?: TableOperations,
+    /**
+     * TODO: Move all hierarchy-specific properties to a single property
+     */
     hierarchy?: WidgetTableHierarchy[],
     hierarchySameBc?: boolean,
     hierarchyFull?: boolean,
@@ -181,9 +184,14 @@ export interface WidgetOptions {
     actionGroups?: WidgetOperations,
     readOnly?: boolean,
     /**
-     * @deprecated TODO: Удалить в 0.2.0
+     * @deprecated TODO: Remove in 2.0.0 in favor of actionGroups
      */
     hideActionGroups?: string[],
+    /**
+     * Record field which value will be used as a title for the whole record
+     * for this particular widget
+     */
+    displayedValueKey?: string
 }
 
 export interface WidgetMeta {
