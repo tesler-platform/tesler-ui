@@ -1,3 +1,10 @@
+# Version 1.17.3
+
+## Fixes
+
+* Refactor `<FullHierarchyComponent />` expanded rows routine to cover all cases of erroneous collapses of the whole tree after selecting node (#341)
+* Unit tests stumble on reducers accessing other slices of store due to not using project implementation of `combineReducers`
+
 # Version 1.17.2
 
 ## Fixes
