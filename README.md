@@ -63,10 +63,10 @@ export default connect(mapStateToProps)(ClientComponent)
 # Documentation
 
 The documentation is divided into several sections:
-* [Tutorial](./docs/tutorial.md)
-* [Components Overview](./docs/components-overview.md)
-* [Features](./docs/features.md)
-* [API Reference](./docs/api-reference.md)
+* [Tutorial](http://idocs.tesler.io/ui/#/screen/tutorial)
+* [Components Overview](http://idocs.tesler.io/ui/#/screen/components)
+* [Features](http://idocs.tesler.io/ui/#/screen/features)
+* [API Reference](http://idocs.tesler.io/ui/#/screen/api-reference)
 
 You could also check our [changelog section](https://github.com/tesler-platform/tesler-ui/blob/master/CHANGELOG.md).
 
