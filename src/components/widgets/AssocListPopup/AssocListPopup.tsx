@@ -142,7 +142,7 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         ? <div>
             <div><h1 className={styles.title}>{props.widget.title}</h1></div>
             <div className={styles.tagArea}>
-                {tags?.map(val => {
+                {props.assocValueKey && tags?.map(val => {
                     return <Tag
                         title={val._value?.toString()}
                         closable={val._closable}

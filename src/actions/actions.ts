@@ -561,7 +561,13 @@ export class ActionPayloadTypes {
      * @param isFilter
      */
     showViewPopup: {
+        /**
+         * @deprecated TODO: Remove in 2.0.0 in favor of widget name
+         */
         bcName: string,
+        /**
+         * @deprecated TODO: Remove in 2.0.0 in favor of widget name
+         */
         calleeBCName?: string,
         associateFieldKey?: string,
         assocValueKey?: string,
