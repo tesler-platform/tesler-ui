@@ -460,7 +460,7 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                         [action.payload.bcName]: {
                             ...state.bo.bc[action.payload.bcName],
                             page: 1,
-                            loading: true
+                            loading: action.payload.bcName !== action.payload.calleeBCName
                         }
                     }
                 }

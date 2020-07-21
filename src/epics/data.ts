@@ -92,6 +92,14 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
     const filters = state.screen.filters[bcName] || []
     const sorters = state.screen.sorters[bcName]
 
+    /**
+     * If popup has the same bc as initiator no data fetching required, it will be
+     * handled by initiator widget instead
+     */
+    if (action.type === types.showViewPopup && action.payload.bcName === action.payload.calleeBCName) {
+        return Observable.empty()
+    }
+
     const anyHierarchyWidget = state.view.widgets.find((widget) => {
         return widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup
             && (widget.options?.hierarchy || widget.options?.hierarchySameBc || widget.options?.hierarchyFull)
