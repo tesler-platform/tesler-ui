@@ -66,7 +66,7 @@ export function useExpandedKeys(
      * All ancestors of search result record should be expanded
      */
     React.useEffect(() => {
-        if (filters?.length) {
+        if (!filters?.length) {
             return
         }
         const ancestorsData = filters && data.filter(item => searchAncestorsKeys.has(item.id))
