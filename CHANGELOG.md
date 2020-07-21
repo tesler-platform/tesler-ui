@@ -1,8 +1,15 @@
+# Version 1.17.4
+
+## Fixes
+
+* Hierarchy filter effect erroneously has reversed condition for early return ([#341](https://github.com/tesler-platform/tesler-ui/issues/341))
+* `showViewPopup` action should not initiate data fetch when popup BC is the same as in the initiator widget
+
 # Version 1.17.3
 
 ## Fixes
 
-* Refactor `<FullHierarchyComponent />` expanded rows routine to cover all cases of erroneous collapses of the whole tree after selecting node (#341)
+* Refactor `<FullHierarchyComponent />` expanded rows routine to cover all cases of erroneous collapses of the whole tree after selecting node ([#341](https://github.com/tesler-platform/tesler-ui/issues/341))
 * Unit tests stumble on reducers accessing other slices of store due to not using project implementation of `combineReducers`
 
 # Version 1.17.2
