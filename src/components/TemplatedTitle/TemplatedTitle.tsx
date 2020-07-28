@@ -32,4 +32,5 @@ function mapStateToProps(store: Store, ownProps: TemplatedTitleOwnProps) {
         templatedTitle: getFieldTitle(ownProps.title, dataItem)
     }
 }
+TemplatedTitle.displayName = 'TemplatedTitle'
 export default connect(mapStateToProps)(TemplatedTitle)

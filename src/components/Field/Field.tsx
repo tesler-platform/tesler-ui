@@ -438,5 +438,5 @@ function mapDispatchToProps(dispatch: Dispatch) {
         }
     }
 }
-
+Field.displayName = 'Field'
 export default connect(mapStateToProps, mapDispatchToProps)(Field)
