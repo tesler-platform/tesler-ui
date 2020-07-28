@@ -4,7 +4,7 @@
 
 import {AnyAction, Dispatch, Middleware, MiddlewareAPI} from 'redux'
 import {$do, types, ActionPayloadTypes} from '../actions/actions'
-import {isOperationGroup, Operation, OperationGroup} from '../interfaces/operation'
+import {Operation, OperationGroup} from '../interfaces/operation'
 import {Store as CoreStore} from '../interfaces/store'
 import {buildBcUrl} from '../utils/strings'
 import {openButtonWarningNotification} from '../utils/notifications'
@@ -12,6 +12,7 @@ import i18n from 'i18next'
 import {PendingDataItem, DataItem} from '../interfaces/data'
 import {RowMetaField} from '../interfaces/rowMeta'
 import {WidgetField, WidgetFieldBlock, isWidgetFieldBlock, TableLikeWidgetTypes} from '../interfaces/widget'
+import {flattenOperations} from '../utils/operations'
 
 const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) => (next: Dispatch) =>
 (action: AnyAction) => {
@@ -90,13 +91,7 @@ function operationRequiresAutosave(operationType: string, actions: Array<Operati
         console.error('rowMeta is missing in the middle of "sendOperation" action')
         return result
     }
-    result = actions?.some(action => {
-        if (isOperationGroup(action)) {
-            return action.actions.find(item => item.type === operationType && item.autoSaveBefore)
-        } else {
-            return action.type === operationType && action.autoSaveBefore
-        }
-    })
+    result = flattenOperations(actions).some(action => action.autoSaveBefore)
     return result
 }
 

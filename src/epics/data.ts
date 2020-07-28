@@ -16,6 +16,7 @@ import {getFilters, getSorters} from '../utils/filters'
 import {AxiosError} from 'axios'
 import i18n from 'i18next'
 import {FilterType} from '../interfaces/filters'
+import {matchOperationRole} from '../utils/operations'
 
 const maxDepthLevel = 10
 
@@ -296,9 +297,9 @@ const inlinePickListFetchDataEpic: Epic = (action$, store) => action$.ofType(typ
 })
 
 const bcNewDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperation)
-.filter(action => action.payload.operationType === OperationTypeCrud.create)
+.filter(action => matchOperationRole(OperationTypeCrud.create, action.payload, store.getState()))
 .mergeMap((action) => {
-    const state = store.getState() as Store
+    const state = store.getState()
     const bcName = action.payload.bcName
     const bcUrl = buildBcUrl(bcName)
     const context = { widgetName: action.payload.widgetName }
@@ -326,7 +327,7 @@ const bcNewDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperati
 })
 
 const bcDeleteDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperation)
-.filter(action => action.payload.operationType === OperationTypeCrud.delete)
+.filter(action => matchOperationRole(OperationTypeCrud.delete, action.payload, store.getState()))
 .mergeMap((action) => {
     const widgetName = action.payload.widgetName
     const state = store.getState() as Store
@@ -351,7 +352,7 @@ const bcDeleteDataEpic: Epic = (action$, store) => action$.ofType(types.sendOper
 })
 
 const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperation)
-.filter(action => action.payload.operationType === OperationTypeCrud.save)
+.filter(action => matchOperationRole(OperationTypeCrud.save, action.payload, store.getState()))
 .mergeMap((action) => {
     const state = store.getState() as Store
     const bcName = action.payload.bcName
@@ -426,7 +427,7 @@ const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperat
 })
 
 const bcCancelCreateDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperation)
-.filter(action => action.payload.operationType === OperationTypeCrud.cancelCreate)
+.filter(action => matchOperationRole(OperationTypeCrud.cancelCreate, action.payload, store.getState()))
 .mergeMap((action) => {
     const state = store.getState()
     const screenName = state.screen.screenName
