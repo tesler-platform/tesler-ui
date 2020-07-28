@@ -32,8 +32,23 @@ jobs:
     if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/alpha') && needs.check-commentator.outputs.output1 > 0
     runs-on: ubuntu-latest
     steps:
+      - name: Get PR
+        id: get_pr
+        run: |
+          echo "github.event.issue.pull_request.url=${{ github.event.issue.pull_request.url }}"
+          pr=`curl -u drite:$TOKEN ${{ github.event.issue.pull_request.url }} | tr '\n' ' '`
+          echo "##[set-output name=pr_data;]$pr"
+
+      - name: Get branch
+        id: get_branch
+        run: |
+          echo "branch_name=${{ fromJson(steps.get_pr.outputs.pr_data).head.ref }}"
+          echo "##[set-output name=branch_name;]${{ fromJson(steps.get_pr.outputs.pr_data).head.ref }}"
+
       - name: Checkout repo
         uses: actions/checkout@v2
+        with:
+          ref: ${{ steps.get_branch.outputs.branch_name }}
 
       - name: Get package version
         uses: nyaascii/package-version@v1
