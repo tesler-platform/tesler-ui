@@ -105,7 +105,7 @@ const DatePickerField: React.FunctionComponent<IDatePickerFieldProps> = (props) 
         : <DatePicker {...extendedProps} />
 }
 
-const getFormat = (showTime?: boolean, showSeconds?: boolean, monthYear?: boolean) => {
+export const getFormat = (showTime?: boolean, showSeconds?: boolean, monthYear?: boolean) => {
     if (showSeconds) {
         return outputDateTimeWithSecondsFormat
     } else if (showTime) {
