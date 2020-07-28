@@ -2,7 +2,7 @@ import {types, Epic, $do, AnyAction} from '../actions/actions'
 import {Observable} from 'rxjs/Observable'
 import * as api from '../api/api'
 import {buildBcUrl} from '../utils/strings'
-import {isCrud, OperationTypeCrud, OperationError, OperationErrorEntity, OperationModalInvokeConfirm, OperationPostInvokeConfirmType} from '../interfaces/operation'
+import {OperationTypeCrud, OperationError, OperationErrorEntity, OperationModalInvokeConfirm, OperationPostInvokeConfirmType} from '../interfaces/operation'
 import {findBcDescendants} from '../utils/bo'
 import {buildLocation} from '../Provider'
 import {changeLocation} from '../reducers/router'
@@ -11,9 +11,10 @@ import {parseBcCursors} from '../utils/history'
 import {ObjectMap} from '../interfaces/objectMap'
 import {WidgetTypes} from '../interfaces/widget'
 import {MultivalueSingleValue, PendingDataItem} from '../interfaces/data'
+import {matchOperationRole} from '../utils/operations'
 
 const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperation)
-.filter(action => !isCrud(action.payload.operationType))
+.filter(action => matchOperationRole('none', action.payload, store.getState()))
 .mergeMap((action) => {
     const state = store.getState()
     const screenName = state.screen.screenName
@@ -81,7 +82,7 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
 })
 
 const sendOperationAssociate: Epic = (action$, store) => action$.ofType(types.sendOperation)
-.filter(action => action.payload.operationType === OperationTypeCrud.associate)
+.filter(action => matchOperationRole(OperationTypeCrud.associate, action.payload, store.getState()))
 .map(action => {
     return $do.showViewPopup({
         // TODO: bcKey will not be optional in 2.0.0

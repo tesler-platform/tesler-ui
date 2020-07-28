@@ -6,7 +6,7 @@ import {AnyAction, Dispatch, Middleware, MiddlewareAPI} from 'redux'
 import {$do, types} from '../actions/actions'
 import {Store as CoreStore} from '../interfaces/store'
 import {buildBcUrl} from '../utils/strings'
-import {Operation, OperationGroup} from '../interfaces/operation'
+import {flattenOperations} from '../utils/operations'
 
 const preInvokeAction = ({getState, dispatch}: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) => (next: Dispatch) =>
     (action: AnyAction) => {
@@ -17,17 +17,7 @@ const preInvokeAction = ({getState, dispatch}: MiddlewareAPI<Dispatch<AnyAction>
             const bcName = state.view.widgets.find(widgetItem => widgetItem.name === widgetName).bcName
             const bcUrl = buildBcUrl(bcName, true)
             const rowMeta = bcUrl && state.view.rowMeta[bcName]?.[bcUrl]
-            const actions: Operation[] = []
-            rowMeta.actions.forEach(item => {
-                if ((item as OperationGroup).actions) {
-                    const currentOperation = item as OperationGroup
-                    currentOperation.actions.forEach(OperationItem => {
-                        actions.push(OperationItem)
-                    })
-                } else {
-                    actions.push(item as Operation)
-                }
-            })
+            const actions = flattenOperations(rowMeta.actions)
             const preInvoke = actions.find(item => item.type === operationType)?.preInvoke
 
             return preInvoke && !action.payload.confirm
