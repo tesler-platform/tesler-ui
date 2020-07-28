@@ -14,7 +14,8 @@ import {CheckboxChangeEvent} from 'antd/lib/checkbox'
 import cn from 'classnames'
 import filterIcon from './filter-solid.svg'
 import {useTranslation} from 'react-i18next'
-import {Moment} from 'moment'
+import moment, {Moment} from 'moment'
+import {getFormat} from '../ui/DatePickerField/DatePickerField'
 
 export interface ColumnFilterOwnProps {
     widgetName: string,
@@ -54,7 +55,7 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
     }
 
     const handleDateValue = (date: Moment, dateString: string) => {
-        setValue(dateString || null)
+        setValue(date?.toISOString())
     }
 
     const handlePopup = (bcName: string, calleeBCName: string, assocValueKey: string, associateFieldKey: string) => {
@@ -144,7 +145,9 @@ export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
                 <DatePicker
                     autoFocus
                     onChange={handleDateValue}
-                    format={'YYYY-MM-DD' + 'T' + 'HH:mm:SS'}/>
+                    value={value ? moment(value as string, moment.ISO_8601) : null}
+                    format={getFormat()}
+                />
             break
         }
     }
