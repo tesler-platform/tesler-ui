@@ -1,3 +1,9 @@
+# Verson 1.18.1
+
+## Fixes
+
+* Export `matchOperationRole` and `flattenOperations` utilities
+
 # Verson 1.18.0
 
 ## Features
