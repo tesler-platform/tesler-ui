@@ -9,20 +9,29 @@ import cn from 'classnames'
 import styles from './ColumnSort.less'
 
 export interface ColumnSortOwnProps {
-    className: string,
+    className?: string,
     widgetName: string,
     fieldKey: string
 }
 
 export interface ColumnSortProps extends ColumnSortOwnProps {
     sorter: BcSorter,
+    /**
+     * @deprecated TODO: Remove in 2.0.0 in favor of widget name
+     */
     bcName: string,
+    /**
+     * @deprecated TODO: Remove in 2.0.0, get page directly from the store
+     */
     page: number,
     infinitePagination: boolean,
     onSort: (bcName: string, sorter: BcSorter, page: number, widgetName: string, infinitePagination: boolean) => void
 }
 
 export const ColumnSort: FunctionComponent<ColumnSortProps> = (props) => {
+    if (!props.bcName) {
+        return null
+    }
     let icon = 'caret-down'
     if (props.sorter) {
         icon = props.sorter.direction === 'asc' ? 'caret-up' : 'caret-down'
@@ -47,15 +56,12 @@ export const ColumnSort: FunctionComponent<ColumnSortProps> = (props) => {
 
 function mapStateToProps(store: Store, ownProps: ColumnSortOwnProps) {
     const widget = store.view.widgets.find(item => item.name === ownProps.widgetName)
-    const widgetName = widget?.name
     const bcName = widget?.bcName
     const sorter = store.screen.sorters[bcName]?.find(item => item.fieldName === ownProps.fieldKey)
     const page = store.screen.bo.bc[bcName]?.page
-    const infiniteWidgets: string[] = store.view.infiniteWidgets || []
-    const infinitePagination = infiniteWidgets.includes(widgetName)
+    const infinitePagination = store.view.infiniteWidgets?.includes(ownProps.widgetName)
     return {
         bcName,
-        widgetName,
         infinitePagination,
         sorter,
         page

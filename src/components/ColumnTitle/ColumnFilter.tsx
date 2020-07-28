@@ -1,21 +1,17 @@
-import React, {FormEvent, FunctionComponent} from 'react'
-import {Popover, Checkbox, Input, Button, Form, Icon, DatePicker} from 'antd'
-import {connect} from 'react-redux'
+import React from 'react'
+import {Popover} from 'antd'
+import {connect, useDispatch} from 'react-redux'
 import {RowMetaField} from '../../interfaces/rowMeta'
 import {MultivalueFieldMeta, WidgetField, WidgetListField, WidgetMeta} from '../../interfaces/widget'
 import styles from './ColumnFilter.less'
 import {$do} from '../../actions/actions'
 import {Store} from '../../interfaces/store'
-import {BcFilter, FilterType} from '../../interfaces/filters'
+import {BcFilter} from '../../interfaces/filters'
 import {FieldType} from '../../interfaces/view'
-import {Dispatch} from 'redux'
-import {DataValue} from '../../interfaces/data'
-import {CheckboxChangeEvent} from 'antd/lib/checkbox'
 import cn from 'classnames'
 import filterIcon from './filter-solid.svg'
-import {useTranslation} from 'react-i18next'
-import moment, {Moment} from 'moment'
-import {getFormat} from '../ui/DatePickerField/DatePickerField'
+import FilterPopup from '../FilterPopup/FilterPopup'
+import FilterField from '../ui/FilterField/FilterField'
 
 export interface ColumnFilterOwnProps {
     widgetName: string,
@@ -24,225 +20,87 @@ export interface ColumnFilterOwnProps {
 }
 
 export interface ColumnFilterProps extends ColumnFilterOwnProps {
-    bcName: string,
+    /**
+     * @deprecated TODO: Remove in 2.0.0 in favor of widget
+     */
+    bcName?: string,
     filter: BcFilter,
     widget: WidgetMeta,
-    onApply: (bcName: string, filter: BcFilter) => void,
-    onCancel: (bcName: string, filter: BcFilter) => void,
-    onMultivalueAssocOpen: (bcName: string, calleeBCName: string, assocValueKey: string, associateFieldKey: string) => void,
+    components?: {
+        popup: React.ReactNode
+    },
+    /**
+     * @deprecated TODO: Remove in 2.0.0, handled by ColumnFilterPopup now
+     */
+    onApply?: (bcName: string, filter: BcFilter) => void,
+    /**
+     * @deprecated TODO: Remove in 2.0.0, handled by ColumnFilterPopup now
+     */
+    onCancel?: (bcName: string, filter: BcFilter) => void,
+    /**
+     * @deprecated TODO: Remove in 2.0.0, handled internally
+     */
+    onMultivalueAssocOpen?: (bcName: string, calleeBCName: string, assocValueKey: string, associateFieldKey: string) => void,
 }
 
-export const ColumnFilter: FunctionComponent<ColumnFilterProps> = (props) => {
-
-    const filter = props.filter
-    const [value, setValue] = React.useState(filter ? filter.value : null)
+export const ColumnFilter: React.FC<ColumnFilterProps> = (props) => {
+    const [value, setValue] = React.useState(props.filter?.value)
     const [visible, setVisible] = React.useState(false)
+    const dispatch = useDispatch()
 
-    React.useEffect(
-        () => {
-            setValue(filter ? filter.value : null)
-        },
-        [filter]
-    )
-
-    const handleVisibleChange = () => {
-        setVisible((prevVisibleState) => !prevVisibleState)
-    }
-
-    const handleInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const textValue = e.target.value.substr(0, 100)
-        setValue(textValue || null)
-    }
-
-    const handleDateValue = (date: Moment, dateString: string) => {
-        setValue(date?.toISOString())
-    }
-
-    const handlePopup = (bcName: string, calleeBCName: string, assocValueKey: string, associateFieldKey: string) => {
-        props.onMultivalueAssocOpen(bcName, calleeBCName, assocValueKey, associateFieldKey)
-        handleVisibleChange()
-    }
-
-    const handleCheckboxValue = (e: CheckboxChangeEvent) => {
-        setValue(e.target.value || null)
-    }
-
-    const handleApply = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        setVisible(false)
-        let type: FilterType
-        switch (props.widgetMeta.type) {
-            case(FieldType.dictionary): {
-                type = FilterType.equalsOneOf
-                break
-            }
-            case(FieldType.checkbox): {
-                type = FilterType.specified
-                break
-            }
-            case(FieldType.date):
-            case(FieldType.number):
-            case(FieldType.pickList):
-            case(FieldType.multivalue): {
-                type = FilterType.equals
-                break
-            }
-            case(FieldType.input):
-            case(FieldType.text): {
-                type = FilterType.contains
-                break
-            }
-            default:
-                type = FilterType.equals
-        }
-
-        const newFilter: BcFilter = {
-            type,
-            value,
-            fieldName: props.widgetMeta.key
-        }
-        if (!value) {
-            props.onCancel(props.bcName, filter)
-        } else {
-            props.onApply(props.bcName, newFilter)
-        }
-    }
-
-    const handleCancel = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-        e.preventDefault()
-        setVisible(false)
-        if (props.filter) {
-            props.onCancel(props.bcName, filter)
-        }
-    }
-
-    let columnFilterPopover
-    switch (props.widgetMeta.type) {
-        case (FieldType.dictionary) :
-        case (FieldType.pickList) : {
-            columnFilterPopover =
-                renderCheckbox(props.widgetMeta.title, value as DataValue[], props.rowMeta.filterValues, setValue)
-            break
-        }
-        case (FieldType.checkbox) : {
-            columnFilterPopover =
-                <Checkbox onChange={handleCheckboxValue}/>
-            break
-        }
-        case (FieldType.input) :
-        case (FieldType.text) :
-        case (FieldType.number) : {
-            columnFilterPopover =
-                <Input
-                    autoFocus
-                    value={value as string}
-                    suffix={<Icon type="search"/>}
-                    onChange={handleInputValue}/>
-            break
-        }
-        case (FieldType.date) : {
-            columnFilterPopover =
-                <DatePicker
-                    autoFocus
-                    onChange={handleDateValue}
-                    value={value ? moment(value as string, moment.ISO_8601) : null}
-                    format={getFormat()}
-                />
-            break
-        }
-    }
-
-    const {t} = useTranslation()
-
-    const fieldMeta = props.widget?.fields.find((field: WidgetField) => field.key === props.widgetMeta.key) as MultivalueFieldMeta
-    const isMultivalue = props.widgetMeta.type === FieldType.multivalue
     React.useEffect(() => {
-        if (isMultivalue  && visible) {
-            handlePopup(fieldMeta.popupBcName, props.bcName, fieldMeta.assocValueKey, fieldMeta.associateFieldKey)
-        }
-    }, [isMultivalue, visible, props.bcName, fieldMeta])
+        setValue(props.filter?.value)
+    }, [props.filter?.value])
 
-    const content = isMultivalue ? undefined
-        : <div className={styles.content}>
-        <Form onSubmit={handleApply} layout="vertical">
-            {columnFilterPopover}
-            <div className={styles.operators}>
-                <Button className={styles.button} htmlType="submit">
-                    {t('Apply')}
-                </Button>
-                <Button className={styles.button} onClick={handleCancel}>
-                    {t('Clear')}
-                </Button>
-            </div>
-        </Form>
-    </div>
+    const isMultivalue = props.widgetMeta.type === FieldType.multivalue
+    const fieldMeta = props.widget?.fields.find((field: WidgetField) => field.key === props.widgetMeta.key) as MultivalueFieldMeta
+
+    const handleVisibleChange = (eventVisible: boolean) => {
+        if (isMultivalue && eventVisible) {
+            setVisible(false)
+            dispatch($do.showViewPopup({
+                bcName: fieldMeta.popupBcName,
+                calleeBCName: props.widget?.bcName,
+                assocValueKey: fieldMeta.assocValueKey,
+                associateFieldKey: fieldMeta.associateFieldKey,
+                isFilter: true
+            }))
+        } else {
+            setVisible(!visible)
+        }
+    }
+
+    const content = props.components?.popup ??
+        <FilterPopup
+            widgetName={props.widgetName}
+            fieldKey={props.widgetMeta.key}
+            value={value}
+            onApply={() => {
+                setVisible(false)
+            }}
+            onCancel={() => {
+                setVisible(false)
+            }}
+        >
+            <FilterField
+                widgetFieldMeta={props.widgetMeta}
+                rowFieldMeta={props.rowMeta}
+                value={value}
+                onChange={setValue}
+            />
+        </FilterPopup>
 
     return <Popover
         trigger="click"
-        content={content}
-        visible={visible && props.widgetMeta.type !== FieldType.multivalue}
+        content={!isMultivalue && content}
+        visible={!isMultivalue && visible}
         onVisibleChange={handleVisibleChange}
     >
         <div
-            className={cn(styles.icon, { [styles.active]: !!filter })}
+            className={cn(styles.icon, { [styles.active]: !!props.filter })}
             dangerouslySetInnerHTML={{ __html: filterIcon }}
         />
     </Popover>
-}
-
-/**
- * TODO
- *
- * @param title
- * @param value
- * @param filterValues
- * @param setValue
- */
-function renderCheckbox(
-    title: string,
-    value: DataValue[],
-    filterValues: Array<{ value: string }>,
-    setValue: React.Dispatch<DataValue[]>
-) {
-    const handleCheckbox = (e: CheckboxChangeEvent) => {
-        const prevValues = value as DataValue[] || []
-        const newValues = e.target.checked
-            ? [ ...prevValues, e.target.value ]
-            : prevValues.filter(item => item !== e.target.value)
-        setValue(newValues.length ? newValues : null)
-    }
-
-    const handleAll = (e: CheckboxChangeEvent) => {
-        const newValues = e.target.checked
-            ? filterValues.map(item => item.value)
-            : null
-        setValue(newValues)
-    }
-    return <div>
-        <li className={cn(styles.listItem, styles.header)}>
-            <Checkbox
-                className={styles.checkbox}
-                indeterminate={value?.length > 0 && value?.length < filterValues.length}
-                checked={value?.length === filterValues.length}
-                onChange={handleAll}
-            />
-            {title}
-        </li>
-        <ul className={styles.list}>
-            {filterValues.map((item, index) => {
-                const checked = value?.some(filterValue => item.value === filterValue)
-                return <li className={styles.listItem} key={index}>
-                    <Checkbox
-                        checked={checked}
-                        className={styles.checkbox}
-                        value={item.value}
-                        onChange={handleCheckbox}
-                    />
-                    {item.value}
-                </li>
-            })}
-        </ul>
-    </div>
 }
 
 /**
@@ -262,26 +120,4 @@ export function mapStateToProps(store: Store, ownProps: ColumnFilterOwnProps) {
     }
 }
 
-function mapDispatchToProps(dispatch: Dispatch) {
-    return {
-        onApply: (bcName: string, filter: BcFilter) => {
-            dispatch($do.bcAddFilter({ bcName, filter }))
-            dispatch($do.bcForceUpdate({ bcName }))
-        },
-        onCancel: (bcName: string, filter: BcFilter) => {
-            dispatch($do.bcRemoveFilter({ bcName, filter }))
-            dispatch($do.bcForceUpdate({ bcName }))
-        },
-        onMultivalueAssocOpen: (bcName: string, calleeBCName: string, assocValueKey: string, associateFieldKey: string) => {
-            dispatch($do.showViewPopup({
-                bcName: bcName,
-                calleeBCName: calleeBCName,
-                assocValueKey: assocValueKey,
-                associateFieldKey: associateFieldKey,
-                isFilter: true
-            }))
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ColumnFilter)
+export default connect(mapStateToProps)(ColumnFilter)

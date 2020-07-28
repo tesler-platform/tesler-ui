@@ -1,6 +1,7 @@
 import {BcFilter, BcSorter, FilterType} from '../interfaces/filters'
 import {DataValue} from '../interfaces/data'
 import qs from 'query-string'
+import {FieldType} from '../interfaces/view'
 
 /**
  * Map an input array of BcFilter objects into a dictionary of GET-request params
@@ -102,4 +103,32 @@ export function parseSorters(sorters: string) {
         result.push({ fieldName: item.fieldName, direction: item.direction as 'asc' | 'desc' })
     })
     return result
+}
+
+/**
+ * Returns appropriate filtration type for specified field type.
+ * 
+ * - Text-based fields use `contains`
+ * - Checkbox fields use `specified` (boolean)
+ * - Dictionary fiels use `equalsOneOf`
+ * 
+ * All other field types use strict `equals`
+ * 
+ * @param fieldType Field type
+ */
+export function getFilterType(fieldType: FieldType) {
+    switch (fieldType) {
+        case(FieldType.dictionary): {
+            return FilterType.equalsOneOf
+        }
+        case(FieldType.checkbox): {
+            return FilterType.specified
+        }
+        case(FieldType.input):
+        case(FieldType.text): {
+            return FilterType.contains
+        }
+        default:
+            return FilterType.equals
+    }
 }

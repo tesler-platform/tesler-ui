@@ -1,4 +1,5 @@
 import React, {FunctionComponent} from 'react'
+import cn from 'classnames'
 import {RowMetaField} from '../../interfaces/rowMeta'
 import {ReactComponent, WidgetListField} from '../../interfaces/widget'
 import ColumnFilter, {ColumnFilterOwnProps} from './ColumnFilter'
@@ -13,8 +14,19 @@ export interface ColumnTitle {
     rowMeta: RowMetaField,
     components?: {
         filter?: ReactComponent<ColumnFilterOwnProps>
-    }
+    },
+    className?: string,
 }
+
+export const notSortableFields: readonly FieldType[] = [
+    FieldType.multivalue,
+    FieldType.multivalueHover,
+    FieldType.multifield,
+    FieldType.hidden,
+    FieldType.fileUpload,
+    FieldType.inlinePickList,
+    FieldType.hint
+]
 
 export const ColumnTitle: FunctionComponent<ColumnTitle> = (props) => {
     if (!props.widgetMeta && !props.rowMeta) {
@@ -28,37 +40,26 @@ export const ColumnTitle: FunctionComponent<ColumnTitle> = (props) => {
         return <div>{title}</div>
     }
 
-    const noSortable = [
-        FieldType.multivalue,
-        FieldType.multivalueHover,
-        FieldType.multifield,
-        FieldType.hidden,
-        FieldType.fileUpload,
-        FieldType.inlinePickList,
-        FieldType.hint
-    ].includes(props.widgetMeta.type)
-
-    const sort = !noSortable && <ColumnSort
+    const sort = !notSortableFields.includes(props.widgetMeta.type) && <ColumnSort
         widgetName={props.widgetName}
         fieldKey={props.widgetMeta.key}
         className={styles.sort}
     />
 
-    const filterable = props.rowMeta.filterable
-    const filter = filterable &&
+    const filter = props.rowMeta.filterable &&
         (props.components?.filter
-                ? <props.components.filter
-                    widgetName={props.widgetName}
-                    widgetMeta={props.widgetMeta}
-                    rowMeta={props.rowMeta}
-                />
-                : <ColumnFilter
-                    widgetName={props.widgetName}
-                    widgetMeta={props.widgetMeta}
-                    rowMeta={props.rowMeta}
-                />
+            ? <props.components.filter
+                widgetName={props.widgetName}
+                widgetMeta={props.widgetMeta}
+                rowMeta={props.rowMeta}
+            />
+            : <ColumnFilter
+                widgetName={props.widgetName}
+                widgetMeta={props.widgetMeta}
+                rowMeta={props.rowMeta}
+            />
         )
-    return <div className={styles.container}>
+    return <div className={cn(styles.container, props.className)}>
         {title}
         {filter}
         {sort}

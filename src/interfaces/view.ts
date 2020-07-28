@@ -30,7 +30,7 @@ export interface ViewState extends ViewMetaResponse {
         [bcName: string]: boolean
     },
     popupData?: PopupData,
-    infiniteWidgets?: [],
+    infiniteWidgets?: string[],
     pickMap?: PickMap,
     selectedCell?: ViewSelectedCell,
     systemNotifications?: SystemNotification[],
@@ -89,7 +89,13 @@ export const enum FieldType {
     dateTime = 'dateTime',
     dateTimeWithSeconds = 'dateTimeWithSeconds',
     checkbox = 'checkbox',
+    /**
+     * @deprecated TODO: project-specific, remove in 2.0.0
+     */
     checkboxSql = 'checkboxSql',
+    /**
+     * @deprecated TODO: project-specific, remove in 2.0.0
+     */
     DMN = 'DMN',
     pickList = 'pickList',
     inlinePickList = 'inline-pickList',
@@ -99,6 +105,9 @@ export const enum FieldType {
     percent = 'percent',
     fileUpload = 'fileUpload',
     money = 'money',
+    /**
+     * @deprecated TODO: project-specific, remove in 2.0.0
+     */
     comboCondition = 'combo-condition',
     richText = 'richText',
     printForm = 'printForm',
