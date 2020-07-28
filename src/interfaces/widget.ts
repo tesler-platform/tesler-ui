@@ -5,6 +5,7 @@ import {PickMap, DataValue} from './data'
 import {OperationType, OperationInclusionDescriptor} from './operation'
 
 export const enum WidgetTypes {
+    Info = 'Info',
     Form = 'Form',
     List = 'List',
     DataGrid = 'DataGrid',
@@ -162,13 +163,29 @@ export type WidgetFormField = Extract<WidgetField, WidgetFormFieldBase>
 
 export type WidgetListField = Extract<WidgetField, WidgetListFieldBase>
 
+/**
+ *
+ */
+export type WidgetInfoField = WidgetFormField & {
+    drillDownTitle?: string,
+    drillDownTitleKey?: string,
+    hintKey?: string,
+}
+
+export interface WidgetInfoOptions {
+    fieldBorderBottom?: boolean,
+    footer?: string
+}
+
+/**
+ * @param readOnly All widget fields are not editable
+ * @param tableOperations Options for allowed on table widget actions
+ */
 export interface WidgetOptions {
     layout?: {
         header?: string[],
         aside?: string[],
-        rows: Array<{
-            cols: Array<{fieldKey: string, span?: number}>
-        }>
+        rows: LayoutRow[]
     },
     /**
      * Options for allowed on table widget actions
@@ -270,6 +287,12 @@ export interface WidgetTableMeta extends WidgetMeta {
     fields: WidgetListField[]
 }
 
+export interface WidgetInfoMeta extends WidgetMeta {
+    type: WidgetTypes.Info,
+    fields: WidgetFieldsOrBlocks<WidgetInfoField>,
+    options?: WidgetOptions & WidgetInfoOptions
+}
+
 /**
  * Description of possible positioning options
  */
@@ -334,6 +357,21 @@ export interface WidgetOperations {
      * default no crud save action
      */
     defaultSave?: string
+}
+
+/**
+ * Description of the interface for WidgetOptions's layout.rows
+ */
+export interface LayoutCol {
+    fieldKey: string,
+    span?: number
+}
+
+/**
+ * Description of the interface for LayoutRow
+ */
+export interface LayoutRow {
+    cols: LayoutCol[]
 }
 
 export type CustomWidget = ConnectedComponent<any, any> | FunctionComponent<any>

@@ -4,7 +4,7 @@ import {Store} from 'redux'
 import {Provider} from 'react-redux'
 import {Skeleton} from 'antd'
 import {mockStore} from '../../tests/mockStore'
-import {WidgetTypes, WidgetField} from '../../interfaces/widget'
+import {WidgetField, WidgetTypes} from '../../interfaces/widget'
 import {Store as CoreStore} from '../../interfaces/store'
 import {$do} from '../../actions/actions'
 import {BcMetaState} from '../../interfaces/bc'
@@ -58,6 +58,17 @@ describe('Field with default card', () => {
         expect(widget.find(`article.blueCard`).length).toBe(1)
         expect(widget.find(`.${styles.container}`).length).toBe(0)
         expect(widget.find(Form).length).toBe(1)
+    })
+
+    it('should render Info widget', () => {
+        const infoProps = {...widgetMeta}
+        infoProps.type = WidgetTypes.Info
+        const wrapper = mount(
+            <Provider store={store}>
+                <Widget meta={infoProps} />
+            </Provider>
+        )
+        expect(wrapper.find('Connect(InfoWidget)').length).toEqual(1)
     })
 
     it('shows skeleton loader when fetching data', () => {
