@@ -31,39 +31,61 @@ export function isOperationGroup(operation: Operation | OperationGroup): operati
 }
 
 /**
- * Строковой идентификатор операции, уникально определяющий ее на виджете
+ * String that uniquely identifies an operation on widget
  */
 export type OperationType = OperationTypeCrud | string
 
 /**
- * Операция пользователя - CRUD или любое бизнес-действие.
- * Приходит в мете записи.
+ * User operation: CRUD or any custom business action.
  *
- * @param text - отображаемое название действия
- * @param type - тип операции; строка, уникально идентифицирующая операцию на виджете
- * @param icon - иконка, которая будет показана на кнопке операции, по базе https://ant.design/components/icon/
- * @param bcKey - key another assoc BC
- * @param showOnlyIcon - кнопка операции будет показана в виде одной иконки, без подписи
- * @param action - ???
- * @param scope - ???
- * @param preInvoke - действие, которое надо произвести прежде чем начать выполнять операцию
- * @param autoSaveBefore Validate the record for empty "required" fields before API call
- * @param confirmOperation Data for postInvokeConfirm action
+ * Received from record's row meta.
  */
 export interface Operation {
+    /**
+     * Displayed name
+     */
     text: string,
+    /**
+     * String that uniquely identifies an operation on widget
+     */
     type: OperationType,
+    /**
+     * A hint to decide where to display an operation which is related to the record or the whole widget
+     */
     scope: OperationScope,
+    /**
+     * @deprecated TODO: Remove in 2.0.0, designation unknown
+     */
     action?: string,
+    /**
+     * An icon (https://ant.design/components/icon) to display on operation button,
+     */
     icon?: string,
     /**
-     * @deprecated TODO: Remove in 2.0.0
+     * @deprecated TODO: Remove in 2.0.0 in favor of client-side custom parameters
      */
     bcKey?: string,
-    showOnlyIcon: boolean,
+    /**
+     * Omit text value of operation in favor of icon
+     */
+    showOnlyIcon?: boolean,
+    /**
+     * An operation that should be fired before initiating this operation
+     */
     preInvoke?: OperationPreInvoke,
+    /**
+     * Validate the record for empty "required" fields before API call
+     */
     autoSaveBefore?: boolean,
-    confirmOperation?: OperationPreInvoke
+    /**
+     * ???
+     */
+    confirmOperation?: OperationPreInvoke,
+    /**
+     * If custom operation needs to be processed as if it was a default crud operation,
+     * this flag can be specified and will be used instead of real `type` 
+     */
+    actionRole?: OperationType
 }
 
 /**
