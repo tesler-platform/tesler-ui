@@ -1,3 +1,13 @@
+# Verson 1.18.0
+
+## Features
+
+* New `actionRole` property allowing custom operations to be be processed as a standard operation ([#356](https://github.com/tesler-platform/tesler-ui/issues/356))
+
+## Fixes
+
+* Filter by date does not keep its state and erroneously shows time ([#354](https://github.com/tesler-platform/tesler-ui/issues/354))
+
 # Version 1.17.4
 
 ## Fixes
@@ -58,13 +68,13 @@
 
 ## Features
 
-* The type `DataValue` extended by `DataItem[]` for cases if need to store nested structure in `pendingDataChanges` (#274).
-* :red_circle: [Deprecation warning]: Deprecate `bcName`, `route`, `pendingDataItem` and `onDrillDown` properties for `<TableWidget />`; deprecate a `route` from `showAllTableRecordsInit` action; export `<MultivalueField />` and `<MultivalueListRecord />` components; add `className` property to `<MultivalueList />` component (#285)
+* The type `DataValue` extended by `DataItem[]` for cases if need to store nested structure in `pendingDataChanges` ([#274](https://github.com/tesler-platform/tesler-ui/issues/274)).
+* :red_circle: [Deprecation warning]: Deprecate `bcName`, `route`, `pendingDataItem` and `onDrillDown` properties for `<TableWidget />`; deprecate a `route` from `showAllTableRecordsInit` action; export `<MultivalueField />` and `<MultivalueListRecord />` components; add `className` property to `<MultivalueList />` component ([#285](https://github.com/tesler-platform/tesler-ui/issues/285))
 
 ## Fixes
 
-* AssocListPopup Tag value not displayed due to incorrectly accessing value by `assocFieldKey` instead of `assocValueKey` (#279)
-* Replace data fetch request for save operiations with meta fetch and children bc data fetch, as the data of the source bc might be isolated during the draft stage and unavailable until the record is saved (#247)
+* AssocListPopup Tag value not displayed due to incorrectly accessing value by `assocFieldKey` instead of `assocValueKey` ([#279](https://github.com/tesler-platform/tesler-ui/issues/279))
+* Replace data fetch request for save operiations with meta fetch and children bc data fetch, as the data of the source bc might be isolated during the draft stage and unavailable until the record is saved ([#247](https://github.com/tesler-platform/tesler-ui/issues/247))
 
 # Version 1.14.1
 
@@ -139,23 +149,23 @@ return <ul>
     )}
 </ul>
 ```
-* `<AssocListPopup />` now have a header showing a list of currently selected tabs (#173).
+* `<AssocListPopup />` now have a header showing a list of currently selected tabs ([#173](https://github.com/tesler-platform/tesler-ui/issues/173)).
 
 ## Fixes
 
-* `<AssocTable />` should have a functional `selectAll` checkbox (#193).
-* Required fields should not restore their previous value when they've been cleared and (#150).
-* Missing translation for warning notification (#160).
-* `changeLocation` action should respect default screen when type is `RouteType.default` (#186).
-* `<TableWidget />` should use respect `readOnly` flag from widgets meta (#189).
-* `<TextArea />` should not be recreated on every value change (#191). 
+* `<AssocTable />` should have a functional `selectAll` checkbox ([#193](https://github.com/tesler-platform/tesler-ui/issues/193)).
+* Required fields should not restore their previous value when they've been cleared and ([#150](https://github.com/tesler-platform/tesler-ui/issues/150)).
+* Missing translation for warning notification ([#160](https://github.com/tesler-platform/tesler-ui/issues/160)).
+* `changeLocation` action should respect default screen when type is `RouteType.default` ([#186](https://github.com/tesler-platform/tesler-ui/issues/186)).
+* `<TableWidget />` should use respect `readOnly` flag from widgets meta ([#189](https://github.com/tesler-platform/tesler-ui/issues/189)).
+* `<TextArea />` should not be recreated on every value change ([#191](https://github.com/tesler-platform/tesler-ui/issues/191)). 
 
 
 # Version 1.10.0
 
 ## Features
 
-* New contract for confirmation postInvokes with two types of confirmation (#170):
+* New contract for confirmation postInvokes with two types of confirmation ([#170](https://github.com/tesler-platform/tesler-ui/issues/170)):
   * `confirm` - Simple yes/no confirmation
   * `confirmText` - Confirmation with input for user text that will be send to Tesler API
 ```ts
@@ -178,9 +188,9 @@ Previous implementation is now deprecated and will be removed in 2.0.0.
 
 ## Fixes
 
-* `AssocListPopup` widget opened for `multivalue` field may get out of sync after items removal so the popup and the field erroneously will show different sets of selected items (#171).
-* Router does not respect `primaryView` parameter of screen meta during `changeLocation` action (#178).
-* Missing `popup` existence check in ajax reposnse catch-handler causing application crash (#180).
+* `AssocListPopup` widget opened for `multivalue` field may get out of sync after items removal so the popup and the field erroneously will show different sets of selected items ([#171](https://github.com/tesler-platform/tesler-ui/issues/171)).
+* Router does not respect `primaryView` parameter of screen meta during `changeLocation` action ([#178](https://github.com/tesler-platform/tesler-ui/issues/178)).
+* Missing `popup` existence check in ajax reposnse catch-handler causing application crash ([#180](https://github.com/tesler-platform/tesler-ui/issues/180)).
 
 ## Misc
 
