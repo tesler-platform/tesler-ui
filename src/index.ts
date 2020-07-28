@@ -25,6 +25,7 @@ export {buildBcUrl} from './utils/strings'
 export {combineReducers} from './utils/redux'
 export {buildUrl, parseBcCursors} from './utils/history'
 export {getFilters} from './utils/filters'
+export {matchOperationRole, flattenOperations} from './utils/operations'
 export {fetchBcDataAll} from './api/api'
 const parseLocation = getParseLocationInstance
 const buildLocation = getBuildLocationInstance
