@@ -16,11 +16,11 @@ import {parsePath} from 'history'
 import {parseFilters, parseSorters} from '../utils/filters'
 
 /**
- * Эпик смены текущего маршрута
+ * Epic of changing the current route
  *
- * Проверяет параметры маршрута (скрин, вью, курсоры БК) относительно тех,
- * что сейчас хранятся в сторе, и в случае несовпадения инициирует перезагрузку
- * скрина, вьюхи или БК с новыми курсорами.
+ * Checks route parameters (screen, view, BC cursors) relative to those
+ * that are currently stored in the store, and in case of a mismatch
+ * initiates reloading the screen, view or BC with new cursors.
  */
 const changeLocation: Epic = (action$, store) => action$.ofType(types.changeLocation)
 .mergeMap(action => {
@@ -181,12 +181,16 @@ const drillDown: Epic = (action$, store) => action$.ofType(types.drillDown)
                     if (urlFilters) {
                         const filters = JSON.parse(urlFilters)
                         Object.keys(filters).map((bcName) => {
-                            const parsedFilters = parseFilters(filters[bcName])
-                            parsedFilters.forEach((item) => {
-                                store.dispatch($do.bcAddFilter({bcName, filter: item}))
-                            })
-                            if (!diff.length) {
-                                store.dispatch($do.bcForceUpdate({bcName}))
+                            if (filters[bcName].length) {
+                                const parsedFilters = parseFilters(filters[bcName])
+                                parsedFilters.forEach((item) => {
+                                    store.dispatch($do.bcAddFilter({bcName, filter: item}))
+                                })
+                                if (!diff.length) {
+                                    store.dispatch($do.bcForceUpdate({bcName}))
+                                }
+                            } else {
+                                store.dispatch($do.bcRemoveAllFilters({bcName}))
                             }
                         })
                     }

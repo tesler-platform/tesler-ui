@@ -385,7 +385,7 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
         case types.bcRemoveFilter: {
             const { bcName, filter } = action.payload
             const prevFilters = state.filters[bcName] || []
-            const newFilters = prevFilters.filter(item => item.fieldName !== filter.fieldName || item.type !== item.type)
+            const newFilters = prevFilters.filter(item => item.fieldName !== filter?.fieldName || item.type !== item.type)
             return {
                 ...state,
                 bo: {
