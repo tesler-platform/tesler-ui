@@ -1,7 +1,7 @@
 import React, {FunctionComponent} from 'react'
 import {connect} from 'react-redux'
 import {Dispatch} from 'redux'
-import {Input, Tooltip, Form, Icon} from 'antd'
+import {Form, Icon, Input, Tooltip} from 'antd'
 import {$do} from '../../actions/actions'
 import {Store} from '../../interfaces/store'
 import {DataItem, DataValue, MultivalueSingleValue, PendingDataItem} from '../../interfaces/data'
@@ -366,6 +366,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                         onChange={handleInputChange}
                         onBlur={handleInputBlur}
                         autoFocus={props.forceFocus}
+                        maxLength={props.widgetFieldMeta.maxInput}
                     />
                 </InteractiveInput>
     }
