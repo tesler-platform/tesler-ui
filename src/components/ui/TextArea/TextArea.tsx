@@ -25,7 +25,7 @@ export interface TextAreaProps extends AdditionalAntdTextAreaProps {
     onDrillDown?: () => void
 }
 
-const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
+export const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
     if (props.readOnly) {
         return <ReadOnlyField
             className={props.className}
@@ -80,8 +80,9 @@ const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
         () => {
             if (textAreaRef.current) {
                 textAreaRef.current.focus()
-                // Доступ к private-полю, чтобы исправить баг в IE11 когда фокус при первом открытии выставляется в начало, а не в конец
-                // TODO: разобраться откуда баг и как его убрать без отказа от анимации
+                // Access to private-field, for fixing IE11 bug:
+                // While first opening cursor should take place at the end of text, but it appears at the start
+                // TODO: find out bug solution without refusing of animation
                 if (props.defaultValue) {
                     const textArea = (textAreaRef.current as any).textAreaRef as HTMLTextAreaElement
                     textArea.setSelectionRange(props.defaultValue.length, props.defaultValue.length)
@@ -115,7 +116,7 @@ const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
                         rows={4}
                         onBlur={popoverTextAreaBlurHandler}
                         disabled={disabled}
-                        maxLength={props.maxInput}
+                        maxLength={maxInput}
                         {...rest}
                     />
                     <Button
@@ -146,7 +147,7 @@ const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
             onBlur={popoverTextAreaBlurHandler}
             style={props.style}
             className={props.className}
-            maxLength={props.maxInput}
+            maxLength={maxInput}
             {...rest}
         />
     }
