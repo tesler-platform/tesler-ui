@@ -8,11 +8,16 @@ import InputDefaultClass from 'antd/lib/input/TextArea'
 import styles from './TextArea.less'
 import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
 import {TextAreaProps as AntdTextAreaProps} from 'antd/lib/input/TextArea'
+import {WidgetField} from 'interfaces/widget'
 
 type AdditionalAntdTextAreaProps = Partial<Omit<AntdTextAreaProps, 'onChange'>>
 export interface TextAreaProps extends AdditionalAntdTextAreaProps {
+    cursor?:string,
+    widgetName?: string,
+    metaError?: string,
+    meta?: WidgetField, // TODO 2.0.0 must be required?
     defaultValue?: string | null,
-    maxInput?: number,
+    maxInput?: number, // TODO 2.0.0 remove in favour `maxInput` from @param `meta`
     onChange?: (value: string) => void,
     popover?: boolean,
     disabled?: boolean,
@@ -37,6 +42,10 @@ const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
     }
 
     const {
+        cursor,
+        widgetName,
+        metaError,
+        meta,
         defaultValue,
         maxInput,
         onChange,
@@ -100,6 +109,8 @@ const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
     const autosize = React.useMemo(() => { return {minRows: props.minRows || 5, maxRows: props.maxRows || 10 }},
         [props.minRows, props.maxRows])
 
+    const computedMaxLength = props.maxInput || props.meta?.maxInput // TODO 2.0.0 remove `props.maxInput` in favour `props.meta?.maxInput`
+
     if (popover) {
         const rcTooltipProps = { afterVisibleChange: onTextAreaShowed }
         return <Popover
@@ -115,7 +126,7 @@ const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
                         rows={4}
                         onBlur={popoverTextAreaBlurHandler}
                         disabled={disabled}
-                        maxLength={props.maxInput}
+                        maxLength={computedMaxLength}
                         {...rest}
                     />
                     <Button
@@ -146,7 +157,7 @@ const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
             onBlur={popoverTextAreaBlurHandler}
             style={props.style}
             className={props.className}
-            maxLength={props.maxInput}
+            maxLength={computedMaxLength}
             {...rest}
         />
     }
