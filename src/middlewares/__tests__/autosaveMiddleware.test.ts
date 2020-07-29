@@ -1,8 +1,9 @@
-import { createAutoSaveMiddleware } from '../autosaveMiddleware'
+import {createAutoSaveMiddleware} from '../autosaveMiddleware'
 import * as mockStore from './__mocks__/store.json'
 import * as mockStore1 from './__mocks__/store1.json'
-import { OperationTypeCrud } from 'interfaces/operation'
-import { AnyAction } from 'redux'
+import {OperationTypeCrud} from '../../interfaces/operation'
+import {AnyAction} from 'redux'
+import {Store} from '../../interfaces/store'
 
 describe('saveFormMiddleware', () => {
     const initAction1 = {
@@ -21,23 +22,16 @@ describe('saveFormMiddleware', () => {
             widgetName: 'RERRRCF',
         }
     }
-    const doGetState = () => mockStore
-    const doGetState1 = () => mockStore1
-    const doNext = (action: AnyAction) => action
+    const doGetState = () => mockStore as unknown as Store
+    const doGetState1 = () => mockStore1 as unknown as Store
+    const doNext = <A = AnyAction>(action: A) => action
     const autosaveMiddleware = createAutoSaveMiddleware()
-    test('should transform action', () => {
-        expect(autosaveMiddleware(
-            // @ts-ignore
-            {getState: doGetState}
-            )(doNext)(initAction1).payload.onSuccessAction
-        ).toBeTruthy()
+    it('should transform action', () => {
+        const middleware = autosaveMiddleware({ getState: doGetState, dispatch: null })
+        expect(middleware(doNext)(initAction1).payload.onSuccessAction).toBeTruthy()
     })
-    test('should not transform action', () => {
-        expect(autosaveMiddleware(
-            // @ts-ignore
-            {getState: doGetState1}
-            )(doNext)(initAction2)
-        ).toEqual(initAction2)
+    it('should not transform action', () => {
+        const middleware = autosaveMiddleware({ getState: doGetState1, dispatch: null })
+        expect(middleware(doNext)(initAction2)).toEqual(initAction2)
     })
-
 })

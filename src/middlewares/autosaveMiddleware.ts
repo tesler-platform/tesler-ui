@@ -1,4 +1,4 @@
-import {AnyAction, Dispatch, Middleware, MiddlewareAPI} from 'redux'
+import {AnyAction, Dispatch, MiddlewareAPI} from 'redux'
 import {$do, needSaveAction, types} from '../actions/actions'
 import {OperationTypeCrud} from '../interfaces/operation'
 import {WidgetMeta} from '../interfaces/widget'
@@ -50,7 +50,7 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
  * 
  */
 export function createAutoSaveMiddleware() {
-    return saveFormMiddleware as Middleware
+    return saveFormMiddleware
 }
 
 /**
