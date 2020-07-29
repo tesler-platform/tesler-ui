@@ -1,5 +1,5 @@
 import {FieldType} from '../interfaces/view'
-import {ConnectedComponentClass} from 'react-redux'
+import {ConnectedComponent} from 'react-redux'
 import {FunctionComponent} from 'react'
 import {PickMap, DataValue} from './data'
 import {OperationType, OperationInclusionDescriptor} from './operation'
@@ -278,7 +278,7 @@ export interface TableOperations {
  * "our ColumnTitle can get some external React component as long as it have the same props contract
  * and so can use it instead of our default implementation
  */
-export type ReactComponent<props> = ConnectedComponentClass<any, props> | FunctionComponent<props>
+export type ReactComponent<props> = ConnectedComponent<any, props> | FunctionComponent<props>
 
 export interface WidgetTableHierarchy {
     bcName: string,
@@ -310,7 +310,7 @@ export interface WidgetOperations {
     exclude?: OperationType[]
 }
 
-export type CustomWidget = ConnectedComponentClass<any, any> | FunctionComponent<any>
+export type CustomWidget = ConnectedComponent<any, any> | FunctionComponent<any>
 
 /**
  * TODO
