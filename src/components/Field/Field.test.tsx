@@ -3,7 +3,14 @@ import {mount} from 'enzyme'
 import {Store} from 'redux'
 import {Provider} from 'react-redux'
 import {mockStore} from '../../tests/mockStore'
-import {WidgetField} from '../../interfaces/widget'
+import {
+    DateFieldMeta,
+    DictionaryFieldMeta,
+    MultiFieldMeta, MultivalueFieldMeta,
+    NumberFieldMeta, PickListFieldMeta,
+    TextFieldMeta,
+    WidgetField
+} from '../../interfaces/widget'
 import {Store as CoreStore} from '../../interfaces/store'
 import {FieldType} from '../../interfaces/view'
 import Field from './Field'
@@ -84,5 +91,134 @@ describe('Readonly field drilldown', () => {
         expect(roField.length).toBe(1)
         roField.simulate('click')
         expect(store.getState().screen.bo.bc[testBcName].cursor).toBe(initialCursor)
+    })
+
+    it('should render Input with `maxLength` prop', () => {
+        const maxLengthFieldMeta = {...fieldMeta, maxInput: 5, drillDown: false}
+        const maxLengthFieldProperties = {...fieldProperties, readonly: false}
+        const wrapper = mount(
+            <Provider store={store}>
+                <Field
+                    {...maxLengthFieldProperties}
+                    widgetFieldMeta={maxLengthFieldMeta}
+                />
+            </Provider>
+        )
+        expect(wrapper.find('Input').findWhere(i => i.prop('maxLength') === 5).length).toBeGreaterThan(0)
+    })
+
+    it('should render TextArea', () => {
+        const textFieldMeta = {key: 'someInput', title: 'test', type: FieldType.text, maxInput: 5}
+        const textFieldProperties = {...fieldProperties, readonly: false}
+        const wrapper = mount(
+            <Provider store={store}>
+                <Field
+                    {...textFieldProperties}
+                    widgetFieldMeta={textFieldMeta as TextFieldMeta}
+                />
+            </Provider>
+        )
+        expect(wrapper.find('Input').findWhere(i => i.prop('maxLength') === 5).length).toEqual(0)
+        expect(wrapper.find('TextArea').findWhere(i => i.prop('maxLength') === 5).length).toBeGreaterThan(0)
+    })
+
+    it('should render DatePickerField', () => {
+        const dateFieldMeta = {key: 'someInput', type: FieldType.date, label: fieldName,}
+        const dateFieldProperties = {...fieldProperties, readonly: false}
+        const wrapper = mount(
+            <Provider store={store}>
+                <Field
+                    {...dateFieldProperties}
+                    widgetFieldMeta={dateFieldMeta as DateFieldMeta}
+                />
+            </Provider>
+        )
+        expect(wrapper.find('Memo(DatePickerField)').length).toEqual(1)
+    })
+
+    it('should render NumberInput', () => {
+        const numberFieldMeta = {key: 'someInput', type: FieldType.number, label: fieldName,}
+        const numberFieldProperties = {...fieldProperties, readonly: false}
+        const wrapper = mount(
+            <Provider store={store}>
+                <Field
+                    {...numberFieldProperties}
+                    widgetFieldMeta={numberFieldMeta as NumberFieldMeta}
+                />
+            </Provider>
+        )
+        expect(wrapper.find('Memo(NumberInput)').length).toEqual(1)
+    })
+
+    it('should render Dictionary', () => {
+        const dictionaryFieldMeta = {key: 'someInput', type: FieldType.dictionary, label: fieldName,}
+        const dictionaryFieldProperties = {...fieldProperties, readonly: false}
+        const wrapper = mount(
+            <Provider store={store}>
+                <Field
+                    {...dictionaryFieldProperties}
+                    widgetFieldMeta={dictionaryFieldMeta as DictionaryFieldMeta}
+                />
+            </Provider>
+        )
+        expect(wrapper.find('Memo(Dictionary)').length).toEqual(1)
+    })
+
+    it('should render MultiField', () => {
+        const multifieldFieldMeta: MultiFieldMeta = {
+            key: 'someInput',
+            type: FieldType.multifield,
+            label: fieldName,
+            style: 'inline',
+            fields: []
+        }
+        const multifieldFieldProperties = {...fieldProperties, readonly: false}
+        const wrapper = mount(
+            <Provider store={store}>
+                <Field
+                    {...multifieldFieldProperties}
+                    widgetFieldMeta={multifieldFieldMeta}
+                />
+            </Provider>
+        )
+        expect(wrapper.find('Memo(MultiField)').length).toEqual(1)
+    })
+
+    it('should render MultivalueField', () => {
+        const multivalueFieldMeta: MultivalueFieldMeta = {
+            key: 'someInput',
+            type: FieldType.multivalue,
+            label: fieldName,
+        }
+        const multivalueFieldProperties = {...fieldProperties, readonly: false}
+        const wrapper = mount(
+            <Provider store={store}>
+                <Field
+                    {...multivalueFieldProperties}
+                    widgetFieldMeta={multivalueFieldMeta}
+                />
+            </Provider>
+        )
+        expect(wrapper.find('MultivalueField').length).toEqual(1)
+    })
+
+    it('should render PickListField', () => {
+        const pickListFieldMeta: PickListFieldMeta = {
+            key: 'someInput',
+            type: FieldType.pickList,
+            label: fieldName,
+            popupBcName: 'popupBcName',
+            pickMap: {},
+        }
+        const pickListFieldProperties = {...fieldProperties, readonly: false}
+        const wrapper = mount(
+            <Provider store={store}>
+                <Field
+                    {...pickListFieldProperties}
+                    widgetFieldMeta={pickListFieldMeta}
+                />
+            </Provider>
+        )
+        expect(wrapper.find('PickListField').length).toEqual(1)
     })
 })
