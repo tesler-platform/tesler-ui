@@ -31,6 +31,10 @@ export const TableLikeWidgetTypes: Array<WidgetTypes | string> = [
     WidgetTypes.PickListPopup
 ]
 
+/**
+ * @param maxInput Maximum number of characters
+ * @param hidden Whether the field is hidden
+ */
 export interface WidgetFieldBase {
     type: FieldType,
     key: string,
@@ -39,6 +43,7 @@ export interface WidgetFieldBase {
     bgColorKey?: string,
     label?: string,
     snapshotKey?: string,
+    maxInput?: number,
     hidden?: boolean
 }
 
