@@ -39,6 +39,13 @@ export interface WidgetFieldBase {
     bgColorKey?: string,
     label?: string,
     snapshotKey?: string,
+    /**
+     * Maximum number of characters
+     */
+    maxInput?: number,
+    /**
+     * Whether the field is hidden
+     */
     hidden?: boolean
 }
 
@@ -155,10 +162,6 @@ export type WidgetFormField = Extract<WidgetField, WidgetFormFieldBase>
 
 export type WidgetListField = Extract<WidgetField, WidgetListFieldBase>
 
-/**
- * @param readOnly All widget fields are not editable
- * @param tableOperations Options for allowed on table widget actions
- */
 export interface WidgetOptions {
     layout?: {
         header?: string[],
@@ -167,6 +170,9 @@ export interface WidgetOptions {
             cols: Array<{fieldKey: string, span?: number}>
         }>
     },
+    /**
+     * Options for allowed on table widget actions
+     */
     tableOperations?: TableOperations,
     /**
      * TODO: Move all hierarchy-specific properties to a single property
@@ -183,6 +189,9 @@ export interface WidgetOptions {
     hierarchyDisableRoot?: boolean,
     hierarchyDisableParent?: boolean,
     actionGroups?: WidgetOperations,
+    /**
+     * All widget fields are not editable
+     */
     readOnly?: boolean,
     /**
      * @deprecated TODO: Remove in 2.0.0 in favor of actionGroups
@@ -268,9 +277,11 @@ export const enum PositionTypes {
 
 /**
  * Description of options of allowed on table widget actions
- * @param position Describes position of tableOperations relatively of table
  */
 export interface TableOperations {
+    /**
+     * Describes position of tableOperations relatively of table
+     */
     position?: PositionTypes
 }
 
@@ -290,26 +301,34 @@ export interface WidgetTableHierarchy {
 
 /**
  * Description of the interface for the widget displaying text with support for markdowns
- * @param description Text to display
- * @param descriptionTitle Title
  */
-
 export interface WidgetTextMeta extends WidgetMeta {
     type: WidgetTypes.Text,
+    /**
+     * Text to display
+     */
     description: string,
+    /**
+     * Title text
+     */
     descriptionTitle: string
 }
 
 /**
- * Description of operations in the widget meta options, through which you can configure their availability
- *
- * @param include List of included operations or groups operations
- * @param exclude List of excluded operations or groups operations
- * @param defaultSave default no crud save action
+ * Operations description in `options` of widget meta, which allows its availability.
  */
 export interface WidgetOperations {
+    /**
+     * List of included operations or groups of operations
+     */
     include?: OperationInclusionDescriptor[],
+    /**
+     * List of excluded operations or groups of operations
+     */
     exclude?: OperationType[],
+    /**
+     * default no crud save action
+     */
     defaultSave?: string
 }
 
