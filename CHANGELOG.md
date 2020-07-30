@@ -1,3 +1,10 @@
+# Verson 1.18.2
+
+## Fixes
+
+* Empty business component filter in the url should clear filters for this bc ([#360](https://github.com/tesler-platform/tesler-ui/issues/360))
+* Adding empty filter crashes the application if there was already present non-empty filter ([#360](https://github.com/tesler-platform/tesler-ui/issues/360))
+
 # Verson 1.18.1
 
 ## Fixes
