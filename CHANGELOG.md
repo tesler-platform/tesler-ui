@@ -4,6 +4,7 @@
 
 * Empty business component filter in the url should clear filters for this bc ([#360](https://github.com/tesler-platform/tesler-ui/issues/360))
 * Adding empty filter crashes the application if there was already present non-empty filter ([#360](https://github.com/tesler-platform/tesler-ui/issues/360))
+* Incorrect check for `autoSaveBefore` in 1.18.0 causes required fields validation when it shouldn't (e.g. cancel operations) ([#368](https://github.com/tesler-platform/tesler-ui/issues/368))
 
 # Verson 1.18.1
 
