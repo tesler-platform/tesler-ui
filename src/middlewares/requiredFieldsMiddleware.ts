@@ -91,7 +91,7 @@ function operationRequiresAutosave(operationType: string, actions: Array<Operati
         console.error('rowMeta is missing in the middle of "sendOperation" action')
         return result
     }
-    result = flattenOperations(actions).some(action => action.autoSaveBefore)
+    result = flattenOperations(actions).some(action => action.type === operationType && action.autoSaveBefore)
     return result
 }
 
