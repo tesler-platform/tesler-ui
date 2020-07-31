@@ -97,7 +97,7 @@ export const ColumnFilter: React.FC<ColumnFilterProps> = (props) => {
         onVisibleChange={handleVisibleChange}
     >
         <div
-            className={cn(styles.icon, { [styles.active]: !!props.filter })}
+            className={cn(styles.icon, { [styles.active]: props.filter?.value?.toString()?.length > 0 })}
             dangerouslySetInnerHTML={{ __html: filterIcon }}
         />
     </Popover>

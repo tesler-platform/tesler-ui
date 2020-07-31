@@ -101,7 +101,6 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
 
     const filterData = React.useCallback(() => {
         const filterValue = selectedRecords
-        .filter(item => item._associate)
         .map(item => item.id)
 
         onFilter(props.calleeBCName, {
@@ -211,13 +210,25 @@ function mapStateToProps(store: Store, ownProps: IAssocListOwnProps) {
     const bc = store.screen.bo.bc[bcName]
     const isFilter = store.view.popupData.isFilter
     const calleeBCName = store.view.popupData.calleeBCName
+    const associateFieldKey = store.view.popupData.associateFieldKey
+    const data = store.data[bcName] || emptyData
+    const bcFilters = store.screen.filters?.[calleeBCName]
+    const filterDataItems = bcFilters?.find(filterItem => filterItem.fieldName === associateFieldKey)?.value as DataItem[]
+    if (isFilter && filterDataItems?.length > 0) {
+        data?.forEach(dataItem => {
+            if (filterDataItems.includes(dataItem.id as unknown as DataItem)) {
+                dataItem._associate = true
+            }
+        })
+    }
+
     return {
         showed: store.view.popupData.bcName === bcName,
         assocValueKey: store.view.popupData.assocValueKey,
-        associateFieldKey: store.view.popupData.associateFieldKey,
+        associateFieldKey: associateFieldKey,
         bcLoading: bc?.loading,
         pendingDataChanges: store.view.pendingDataChanges[bcName],
-        data: store.data[bcName] || emptyData,
+        data: data,
         isFilter,
         calleeBCName
     }
