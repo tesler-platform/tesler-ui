@@ -1,25 +1,28 @@
 /**
- * Универсальный словарь для объектов заданного типа
- * @template T - тип значений, которые хранятся в словаре
+ * A dictionary for a values of specified type
+ * 
+ * @deprecated TODO: Remove in 2.0.0 in favor of native `Record` type
+ * 
+ * @template T Value type
  */
 export interface ObjectMap<T> {
     [key: string]: T | undefined
 }
 
 /**
- * Базовый тип ответов API
+ * Basic type for Tesler API responses
  *
- * @param redirectUrl - если на какой-либо запрос API ответил этим полем,
- * надо немедленно сделать редирект на этот адрес.
- *
- * TODO: Вынести в отдельный файл когда накопятся интерфейсы API
+ * TODO: Move this to a an appropriate module
  */
 export interface TeslerResponse {
+    /**
+     * If any response returs with this field, browser should redirect on this address
+     */
     redirectUrl?: string
 }
 
 /**
- * Виды всплывающих сообщений приложения
+ * Types of notification messages
  */
 export const enum AppNotificationType {
     success = 'success',

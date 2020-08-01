@@ -2,7 +2,7 @@ import {Observable} from 'rxjs/Observable'
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios'
 import qs from 'query-string'
 import {axiosInstance, getStoreInstance} from '../Provider'
-import {ObjectMap, TeslerResponse} from '../interfaces/objectMap'
+import {TeslerResponse} from '../interfaces/objectMap'
 import {$do} from '../actions/actions'
 import {OperationError} from '../interfaces/operation'
 import {BusinessError, ApplicationErrorType} from '../interfaces/view'
@@ -140,11 +140,13 @@ const axiosForApi = {
 }
 
 /**
- * http get-запрос средствами axios в RxJs стиле. Изоморфная замена AjaxObservable.
- * @param path - путь http запроса.
- * @param headers - заголовки http запроса.
- * @param callContext - данные для обработчиков взятые из контекста вызова запроса
- * @template ResponsePayload - тип возвращаемого ответа
+ * HTTP GET axios request wrapped into RxJS Observable.
+ * Can be interrupted by `redirectOccured` function.
+ *
+ * @param path Endpoint url
+ * @param headers Request headers
+ * @param callContext Call context
+ * @template ResponsePayload Response payload type
  */
 const axiosGet = <ResponsePayload>(path: string, config: AxiosRequestConfig = {}, callContext?: ApiCallContext) => {
     return Observable.fromPromise(axiosForApi.get<ResponsePayload>(path, config, callContext))
@@ -153,11 +155,13 @@ const axiosGet = <ResponsePayload>(path: string, config: AxiosRequestConfig = {}
 }
 
 /**
- * http get-запрос средствами axios в RxJs стиле. Изоморфная замена AjaxObservable.
- * @param path - путь http запроса.
- * @param headers - заголовки http запроса.
- * @param callContext - данные для обработчиков взятые из контекста вызова запроса
- * @template ResponsePayload - тип возвращаемого ответа
+ * HTTP POST axios request wrapped into RxJS Observable.
+ * Can be interrupted by `redirectOccured` function.
+ *
+ * @param path Endpoint url
+ * @param headers Request headers
+ * @param callContext Call context
+ * @template ResponsePayload Response payload type
  */
 const axiosPost = <ResponsePayload>(path: string, data: any, config: AxiosRequestConfig = {}, callContext?: ApiCallContext) => {
     return Observable.fromPromise(axiosForApi.post<ResponsePayload>(path, data, config, callContext))
@@ -166,11 +170,13 @@ const axiosPost = <ResponsePayload>(path: string, data: any, config: AxiosReques
 }
 
 /**
- * http get-запрос средствами axios в RxJs стиле. Изоморфная замена AjaxObservable.
- * @param path - путь http запроса.
- * @param headers - заголовки http запроса.
- * @param callContext - данные для обработчиков взятые из контекста вызова запроса
- * @template ResponsePayload - тип возвращаемого ответа
+ * HTTP PUT axios request wrapped into RxJS Observable.
+ * Can be interrupted by `redirectOccured` function.
+ *
+ * @param path Endpoint url
+ * @param headers Request headers
+ * @param callContext Call context
+ * @template ResponsePayload Response payload type
  */
 const axiosPut = <ResponsePayload>(path: string, data: any, callContext?: ApiCallContext) => {
     return Observable.fromPromise(axiosForApi.put<ResponsePayload>(path, data, callContext))
@@ -179,11 +185,13 @@ const axiosPut = <ResponsePayload>(path: string, data: any, callContext?: ApiCal
 }
 
 /**
- * http get-запрос средствами axios в RxJs стиле. Изоморфная замена AjaxObservable.
- * @param path - путь http запроса.
- * @param headers - заголовки http запроса.
- * @param callContext - данные для обработчиков взятые из контекста вызова запроса
- * @template ResponsePayload - тип возвращаемого ответа
+ * HTTP DELETE axios request wrapped into RxJS Observable.
+ * Can be interrupted by `redirectOccured` function.
+ *
+ * @param path Endpoint url
+ * @param headers Request headers
+ * @param callContext Call context
+ * @template ResponsePayload Response payload type
  */
 const axiosDelete = <ResponsePayload>(path: string, callContext?: ApiCallContext) => {
     return Observable.fromPromise(axiosForApi.delete<ResponsePayload>(path, callContext))
@@ -191,10 +199,12 @@ const axiosDelete = <ResponsePayload>(path: string, callContext?: ApiCallContext
     .map((response) => response.data)
 }
 
-type QueryParamsMap = ObjectMap<string | number>
+type QueryParamsMap = Record<string, string | number>
 
 /**
- * Удаляет из словаря GET-параметры, которым задано ложное значение кроме 0 (number) 
+ * Removes empty values from query parameters dictionary
+ *
+ * @param qso Query parameters dictionary
  */
 function dropEmptyOrWrongParams(qso: QueryParamsMap) {
     const result: QueryParamsMap = { ...qso }
@@ -208,7 +218,9 @@ function dropEmptyOrWrongParams(qso: QueryParamsMap) {
 }
 
 /**
- * Добавляет в адрес управляющий символ для нового GET-параметра, ? или & 
+ * Extends url with query parameters control symbol (`?` or `&`)
+ * 
+ * @param url Url with or without `?` symbol
  */
 export function addTailControlSequences(url: string) {
     return !url.includes('?')
@@ -216,9 +228,12 @@ export function addTailControlSequences(url: string) {
         : url + '&'
 }
 
-/**
- * Добавляет в адрес GET-параметры из словаря
- */
+ /**
+  * Extends url with query parameters
+  * 
+  * @param url Url to extend
+  * @param qso Query parameters dictionary
+  */
 export function applyParams(url: string, qso: QueryParamsMap) {
     if (!qso) {
         return url

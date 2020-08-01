@@ -1,29 +1,29 @@
 /**
- * Утилиты для работы с урлами и адресной строкой браузера
+ * Utilities for urls and browser history
  */
 import {getTemplate} from './strings'
-import {ObjectMap} from '../interfaces/objectMap'
 
 /**
- * Принимает на вход абсолютный урл вида "url" и возвращает его как относительный: "/url".
- * Если Урл уже начинается со слэша, то он возвращается без изменений.
+ * Appends '/' in front of `absoluteUrl` argument.
+ * If `absoluteUrl` alredy starts with `/` then argument returned without changes.
  * 
- * @param absoluteUrl Урл
+ * @param absoluteUrl Url
  */
 export function makeRelativeUrl(absoluteUrl: string) {
     return absoluteUrl.startsWith('/') ? absoluteUrl : `/${absoluteUrl}`
 }
 
 /**
- * Раскладывает строку с деревом БК и их курсоров в соответствующий словарь
+ * Parses a business component hierarchy url into a dictionary of business components
+ * and their cursors.
  *
- * @param bcPath Строка вида 'bcName1/cursor1/bcName2/cursor2'
+ * @param bcPath Business component hierarchy url, e.g. `bcName1/cursor1/bcName2/cursor2`
  */
 export function parseBcCursors(bcPath: string) {
     if (!bcPath) {
         return null
     }
-    const cursors: ObjectMap<string> = {}
+    const cursors: Record<string, string> = {}
     const tokens = bcPath.split('/')
     for (let i = 0; i < tokens.length; i = i + 2) {
         if (tokens[i + 1]) {

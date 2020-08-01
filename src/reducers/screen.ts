@@ -1,7 +1,6 @@
 import {AnyAction, types} from '../actions/actions'
 import {ScreenState} from '../interfaces/screen'
 import {BcMeta, BcMetaState} from '../interfaces/bc'
-import {ObjectMap} from '../interfaces/objectMap'
 import {OperationTypeCrud} from '../interfaces/operation'
 import {parseSorters} from '../utils/filters'
 import {BcSorter} from '../interfaces/filters'
@@ -31,7 +30,7 @@ const initialState: ScreenState = {
 export function screen(state = initialState, action: AnyAction): ScreenState {
     switch (action.type) {
         case types.selectScreen: {
-            const bcDictionary: ObjectMap<BcMeta> = {}
+            const bcDictionary: Record<string, BcMeta> = {}
             const bcSorters: Record<string, BcSorter[]> = {}
             action.payload.screen.meta.bo.bc.forEach(item => {
                 bcDictionary[item.name] = item
@@ -266,8 +265,8 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
             }
         }
         case types.bcChangeCursors: {
-            const newCursors: ObjectMap<BcMetaState> = {}
-            const newCache: ObjectMap<string> = {}
+            const newCursors: Record<string, BcMetaState> = {}
+            const newCache: Record<string, string> = {}
             Object.entries(action.payload.cursorsMap).forEach(entry => {
                 const [bcName, cursor] = entry
                 newCursors[bcName] = { ...state.bo.bc[bcName], cursor }
