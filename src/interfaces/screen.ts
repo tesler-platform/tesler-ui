@@ -1,4 +1,3 @@
-import {ObjectMap} from '../interfaces/objectMap'
 import {ViewMetaResponse} from '../interfaces/view'
 import {BcMeta, BcMetaState} from '../interfaces/bc'
 import {BcFilter, BcSorter} from '../interfaces/filters'
@@ -20,7 +19,7 @@ export interface ScreenState {
     screenName: string,
     bo: {
         activeBcName: string,
-        bc: ObjectMap<BcMetaState>
+        bc: Record<string, BcMetaState>
     },
     cachedBc: {
         [bcName: string]: string // url

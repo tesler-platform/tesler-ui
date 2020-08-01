@@ -1,18 +1,17 @@
 import {Dispatch, ReducersMapObject, Reducer} from 'redux'
 import {MapDispatchToPropsFactory} from 'react-redux'
-import {ObjectMap} from '../interfaces/objectMap'
 import {CombinedReducersMapObject} from '../interfaces/store'
 import {AnyAction} from '../actions/actions'
 
 /**
- * Схлапывает словарь редьюсеров в один общий редьюсер, который последовательно
- * прогоняет экшн через все редьюсеры словаря чтобы получить итоговое состояние.
- *
- * Работает аналогично оригинальному combineReducers, но добавляет редьюсерам
- * третий аргумент, через который можно получить текущее состояние store, чтобы иметь
- * возможность обращаться к веткам других редьюсеров.
+ * Combines a dictionary of reducers for different slices of the store into one
+ * root reducer.
  * 
- * @param reducers Словарь редьюсеров
+ * Effectively works like default redux `combineReducers` but provides access to the store
+ * via the third argument to allow reducers read only access to other slices
+ * (simplifies callbacks, epics and actions' payloads).
+ * 
+ * @param reducers A dictionary of reducers for different slices of the redux store
  */
 export function combineReducers<State>(
     reducers: ReducersMapObject<State, AnyAction> | CombinedReducersMapObject<State, AnyAction> ,
@@ -36,14 +35,17 @@ export function combineReducers<State>(
 }
 
 /**
- * Сравнивает свойства двух объектов и возвращает список строго несовпадающих
- * TODO: JSDoc
+ * Shallow compare of two dictionaries by strict comparison.
+ * `ignore` argument can be used to forcefully exclude some properties from result set even if their
+ * are different.
+ *
+ * TODO: Check if possible to replace with `shallowEqual` from `react-redux`
  *
  * @param prevProps 
  * @param nextProps 
  * @param ignore 
  */
-export function shallowCompare(prevProps: ObjectMap<any>, nextProps: ObjectMap<any>, ignore: string[] = []) {
+export function shallowCompare(prevProps: Record<string, any>, nextProps: Record<string, any>, ignore: string[] = []) {
     const diffProps: string[] = []
     if (!prevProps && !nextProps) {
         return null
