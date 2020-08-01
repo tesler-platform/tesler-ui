@@ -8,7 +8,6 @@ import {buildLocation} from '../Provider'
 import {changeLocation} from '../reducers/router'
 import {AxiosError} from 'axios'
 import {parseBcCursors} from '../utils/history'
-import {ObjectMap} from '../interfaces/objectMap'
 import {WidgetTypes} from '../interfaces/widget'
 import {MultivalueSingleValue, PendingDataItem} from '../interfaces/data'
 import {matchOperationRole} from '../utils/operations'
@@ -187,7 +186,7 @@ const clearPendingDataChangesAfterCursorChange: Epic = (action$, store) => actio
     * то дописать недостающие курсоры
     */
     const nextCursors = parseBcCursors(state.router.bcPath) || {}
-    const cursorsDiffMap: ObjectMap<string> = {}
+    const cursorsDiffMap: Record<string, string> = {}
     Object.entries(nextCursors).forEach(entry => {
         const [ bcName, cursor ] = entry
         const bc = state.screen.bo.bc[bcName]

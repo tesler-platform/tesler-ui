@@ -1,13 +1,12 @@
-import {ObjectMap} from '../interfaces/objectMap'
 import {BcMetaState} from '../interfaces/bc'
 
 /**
- * Найти всех потомков указанной БК
+ * Find all descendants of specified business component
  *
- * @param bcName От какой БК искать потомков
- * @param bc Словарь БК для поиска
+ * @param bcName Business component
+ * @param bc Lookup dictionary of business components
  */
-export const findBcDescendants = (bcName: string, bc: ObjectMap<BcMetaState>) => {
+export const findBcDescendants = (bcName: string, bc: Record<string, BcMetaState>) => {
     const bcMeta = Object.values(bc).filter((bcLambda) => bcLambda.name === bcName).shift()
     const bcUrl = `${bcMeta.url}/:id`
     return Object.values(bc)
