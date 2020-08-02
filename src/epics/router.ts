@@ -26,7 +26,7 @@ const changeLocation: Epic = (action$, store) => action$.ofType(types.changeLoca
 .mergeMap(action => {
     const state = store.getState()
 
-    // пользователь еще не авторизовался
+    // User not logged
     if (!state.session.active) {
         return Observable.empty()
     }
@@ -49,7 +49,7 @@ const changeLocation: Epic = (action$, store) => action$.ofType(types.changeLoca
             ? Observable.of($do.selectScreen({ screen: nextScreen }))
             : Observable.of($do.selectScreenFail({ screenName: nextScreenName }))
     }
-    // Проверить, есть ли расхождение по курсорам БК в урле и в сторе
+    // Check cursor different between store and url
     const currentViewName = state.view.name
     const nextViewName = state.router.viewName
     const nextCursors = parseBcCursors(state.router.bcPath) || {}
@@ -64,13 +64,13 @@ const changeLocation: Epic = (action$, store) => action$.ofType(types.changeLoca
     const needUpdateCursors = Object.keys(cursorsDiffMap).length
     const needUpdateViews = nextViewName !== currentViewName
     const resultObservables: Array<Observable<AnyAction>> = []
-    // Если расхождение есть, то проставить новые и пометить такие БК "грязными"
+    // if cursors have difference, then put new cursors and mark BC as "dirty"
     if (needUpdateCursors) {
         resultObservables.push(
             Observable.of($do.bcChangeCursors({ cursorsMap: cursorsDiffMap }))
         )
     }
-    // Если не совпала вьюха, то ее тоже надо перезагрузить
+    // reload view if not equ
     if (needUpdateViews) {
         const nextView = nextViewName
             ? state.screen.views.find(item => item.name === nextViewName)
@@ -94,7 +94,7 @@ const changeLocation: Epic = (action$, store) => action$.ofType(types.changeLoca
             }
         })
     }
-    // Порядок важен (сначала проставляются курсоры, потом перезагружается вьюха)
+    // The order is important (cursors are placed first, then the view is reloaded)
     return Observable.concat(...resultObservables)
 })
 
@@ -178,6 +178,7 @@ const drillDown: Epic = (action$, store) => action$.ofType(types.drillDown)
                 const nextState = defaultParseLocation(parsePath(urlBase))
                 const diff = shallowCompare(prevState, nextState, ['params'])
                 try {
+                    const updateBcNames: string[] = []
                     if (urlFilters) {
                         const filters = JSON.parse(urlFilters)
                         Object.keys(filters).map((bcName) => {
@@ -192,6 +193,9 @@ const drillDown: Epic = (action$, store) => action$.ofType(types.drillDown)
                             } else {
                                 store.dispatch($do.bcRemoveAllFilters({bcName}))
                             }
+                            if (!updateBcNames.includes(bcName)) {
+                                updateBcNames.push(bcName)
+                            }
                         })
                     }
                     if (urlSorters) {
@@ -202,8 +206,12 @@ const drillDown: Epic = (action$, store) => action$.ofType(types.drillDown)
                             if (!diff.length) {
                                 store.dispatch($do.bcForceUpdate({bcName}))
                             }
+                            if (!updateBcNames.includes(bcName)) {
+                                updateBcNames.push(bcName)
+                            }
                         })
                     }
+                    updateBcNames.forEach(bcName => store.dispatch($do.bcForceUpdate({bcName})))
                 } catch (e) {
                     console.warn(e)
                 }
