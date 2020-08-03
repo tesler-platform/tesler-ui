@@ -1,15 +1,14 @@
 import React, {FunctionComponent} from 'react'
 import {connect} from 'react-redux'
 import {Store} from '../../interfaces/store'
-import {CustomWidget, WidgetMeta} from '../../interfaces/widget'
+import {CustomWidget, CustomWidgetDescriptor, WidgetMeta} from '../../interfaces/widget'
 import DashboardLayout from '../ui/DashboardLayout/DashboardLayout'
-import {ObjectMap} from '../../interfaces/objectMap'
 
 export interface ViewProps {
     widgets: WidgetMeta[],
     skipWidgetTypes?: string[],
     card?: (props: any) => React.ReactElement<any>,
-    customWidgets?: ObjectMap<CustomWidget>,
+    customWidgets?: Record<string, CustomWidgetDescriptor>,
     customLayout?: (props: any) => React.ReactElement<any>
     customFields?: Record<string, CustomWidget>
 }

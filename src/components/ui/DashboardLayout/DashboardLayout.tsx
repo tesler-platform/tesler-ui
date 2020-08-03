@@ -1,12 +1,12 @@
 import React from 'react'
 import {Row, Col} from 'antd'
-import {CustomWidget, WidgetMeta} from '../../../interfaces/widget'
+import {CustomWidgetDescriptor, WidgetMeta} from '../../../interfaces/widget'
 import {ObjectMap} from '../../../interfaces/objectMap'
 import Widget from '../../Widget/Widget'
 
 export interface DashboardLayoutProps {
     widgets: WidgetMeta[],
-    customWidgets?: ObjectMap<CustomWidget>,
+    customWidgets?: Record<string, CustomWidgetDescriptor>,
     skipWidgetTypes?: string[]
     card?: (props: any) => React.ReactElement<any>
 }
@@ -23,7 +23,10 @@ export function DashboardLayout(props: DashboardLayoutProps) {
     return <React.Fragment>
         {Object.values(widgetsByRow).map((row, rowIndex) => <Row key={rowIndex}>
             {row.map((widget, colIndex) => <Col key={colIndex} span={24}>
-                    <Widget meta={widget} card={props.card} customWidgets={props.customWidgets} />
+                    <Widget
+                        meta={widget}
+                        card={props.card}
+                        customWidgets={props.customWidgets} />
                 </Col>
             )}
          </Row>

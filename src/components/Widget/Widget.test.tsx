@@ -94,3 +94,56 @@ describe('Determine widget component', () => {
         expect(wrapper.find(Table).length).toBe(1)
     })
 })
+
+describe('Uses info from widget descriptor', () => {
+    let store: Store<CoreStore> = null
+
+    beforeAll(() => {
+        store = mockStore()
+        store.getState().screen.bo.bc[exampleBcName] = {} as BcMetaState
+    })
+
+    it('renders a custom component without card', () => {
+        const component: FunctionComponent = () => <div className="customComponent" />
+
+        const wrapper = mount(
+            <Provider store={store}>
+                <Widget meta={widgetMeta} customWidgets={{[WidgetTypes.Form]: {component, card: null}}} />
+            </Provider>
+        )
+        const widget = wrapper.find(Widget)
+        expect(widget.find('div.customComponent').length).toBe(1)
+        expect(widget.find(`.${styles.container}`).length).toBe(0)
+    })
+
+    it('renders a custom component with default card', () => {
+        const component: FunctionComponent = () => <div className="customComponent" />
+
+        const wrapper = mount(
+            <Provider store={store}>
+                <Widget meta={widgetMeta} customWidgets={{[WidgetTypes.Form]: {component}}} />
+            </Provider>
+        )
+        const widget = wrapper.find(Widget)
+        expect(widget.find('div.customComponent').length).toBe(1)
+        expect(widget.find(`.${styles.container}`).length).toBe(1)
+    })
+
+    it('renders custom card and custom component', () => {
+        const card: FunctionComponent = props =>
+            <article className="blueCard">
+                {props.children}
+            </article>
+        const component: FunctionComponent = () => <div className="customComponent" />
+
+        const wrapper = mount(
+            <Provider store={store}>
+                <Widget meta={widgetMeta} customWidgets={{[WidgetTypes.Form]: {component, card}}} />
+            </Provider>
+        )
+        const widget = wrapper.find(Widget)
+        expect(widget.find('article.blueCard').length).toBe(1)
+        expect(widget.find('div.customComponent').length).toBe(1)
+        expect(widget.find(`.${styles.container}`).length).toBe(0)
+    })
+})
