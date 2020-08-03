@@ -7,37 +7,65 @@ import {Store as CoreStore} from '../interfaces/store'
 const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) =>
     (next: Dispatch) =>
         (action: AnyAction) => {
-            if (!needSaveAction(action.type)) {
-                return next(action)
-            }
             const state = getState()
 
             // TODO: Should offer to save pending changes or drop them
 
-            const actionBcName = action.payload.bcName
-            const isAnotherBc = Object.keys(state.view.pendingDataChanges)
-                .filter(key => key !== actionBcName).length > 0
             const isSendOperation = action.type === types.sendOperation
-            const needToSaveTableChanges = isSendOperation && isAnotherBc
-            const selectedCell = state.view.selectedCell
             const isSelectTableCellInit = action.type === types.selectTableCellInit
-            if (selectedCell
-                && (
-                    needToSaveTableChanges
-                    || (!isSelectTableCellInit && !isSendOperation)
-                    || (isSelectTableCellInit &&
-                        (selectedCell.widgetName !== action.payload.widgetName || selectedCell.rowId !== action.payload.rowId)
-                    )
-                )
-            ) {
-                const widget = state.view.widgets.find((v: WidgetMeta) => v.name === selectedCell.widgetName)
-                const bcName = widget.bcName
-                const cursor = state.screen.bo.bc[bcName]?.cursor
-                if (cursor === selectedCell.rowId && bcHasPendingAutosaveChanges(state, bcName, cursor)) {
+
+            // Checking if the action is `needSaveAction` but not `sendOperation` or `selectTableCellInit` action
+            // because those actions will be checked lower
+            const isNeedSaveActionNotSendOperation = !isSendOperation && !isSelectTableCellInit && needSaveAction(action.type)
+
+            // Checking if the action is `sendOperation` which called for another BC
+            const actionBcName = isSendOperation && action.payload.bcName
+            const isAnotherBc = Object.keys(state.view.pendingDataChanges)
+            .filter(key => key !== actionBcName).length > 0
+            const isSendOperationForAnotherBc = isSendOperation && isAnotherBc
+
+            // Checking if the action is `selectTableCellInit` called for another row or another widget
+            const selectedCell = state.view.selectedCell
+            const isSelectTableCellInitOnAnotherRowOrWidget = selectedCell && isSelectTableCellInit &&
+                (selectedCell.widgetName !== action.payload.widgetName || selectedCell.rowId !== action.payload.rowId)
+
+            // Checking if `sendOperation` has type `create` and widget has pending changes
+            const isSendOperationCreate = isSendOperation
+                && action.payload.operationType === OperationTypeCrud.create
+
+            // final condition
+            const isNeedSaveCondition = isNeedSaveActionNotSendOperation
+                || isSendOperationForAnotherBc
+                || isSelectTableCellInitOnAnotherRowOrWidget
+                || isSendOperationCreate
+
+            if (isNeedSaveCondition) {
+                const pendingDataChanges = state.view.pendingDataChanges
+                const bcList = Object.keys(pendingDataChanges)
+                // find BC with changes
+                const baseBcNameIndex = bcList
+                .findIndex(bcName => bcHasPendingAutosaveChanges(state, bcName, state.screen.bo.bc[bcName]?.cursor))
+                const baseBcName = bcList[baseBcNameIndex]
+                bcList.splice(baseBcNameIndex, 1)
+                const baseWidget = baseBcName && state.view.widgets.find((v: WidgetMeta) => v.bcName === baseBcName)
+                if (baseBcName) {
+                    // save all BCs except `baseBcName`
+                    bcList.forEach(bcName => {
+                        const widget = state.view.widgets.find((v: WidgetMeta) => v.bcName === bcName)
+                        const cursor = state.screen.bo.bc[bcName]?.cursor
+                        if (bcHasPendingAutosaveChanges(state, bcName, cursor)) {
+                            dispatch($do.sendOperation({
+                                bcName: bcName,
+                                operationType: OperationTypeCrud.save,
+                                widgetName: widget.name,
+                            }))
+                        }
+                    })
+                    // save `baseBcName`'s BC
                     return next($do.sendOperation({
-                        bcName: bcName,
+                        bcName: baseBcName,
                         operationType: OperationTypeCrud.save,
-                        widgetName: widget.name,
+                        widgetName: baseWidget.name,
                         onSuccessAction: action
                     }))
                 }
