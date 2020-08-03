@@ -6,10 +6,13 @@ import {mockStore} from '../../tests/mockStore'
 import {
     DateFieldMeta,
     DictionaryFieldMeta,
-    MultiFieldMeta, MultivalueFieldMeta,
-    NumberFieldMeta, PickListFieldMeta,
+    MultiFieldMeta,
+    MultivalueFieldMeta,
+    NumberFieldMeta,
+    PickListFieldMeta,
     TextFieldMeta,
-    WidgetField
+    WidgetField,
+    WidgetTypes
 } from '../../interfaces/widget'
 import {Store as CoreStore} from '../../interfaces/store'
 import {FieldType} from '../../interfaces/view'
@@ -220,5 +223,28 @@ describe('Readonly field drilldown', () => {
             </Provider>
         )
         expect(wrapper.find('PickListField').length).toEqual(1)
+    })
+    it('should render render tooltip in custom position', () => {
+        store.getState().view.pendingValidationFails = {
+            [fieldMeta.key]: 'error'
+        }
+        store.getState().view.widgets = [{
+            name: 'test',
+            type: WidgetTypes.List,
+            title: '',
+            bcName: testBcName,
+            position: 1,
+            gridWidth: 2,
+            fields: [fieldMeta],
+        }]
+        const wrapper = mount(<Provider store={store}>
+            <Field
+                {...fieldProperties}
+                tooltipPlacement="right"
+                readonly={false}
+            />
+        </Provider>)
+        expect(wrapper.find('Tooltip').findWhere(i => i.prop('prefixCls') === 'ant-tooltip').get(0).props.placement
+        ).toEqual('right')
     })
 })
