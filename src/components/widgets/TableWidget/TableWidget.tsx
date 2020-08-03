@@ -597,5 +597,5 @@ function mapDispatchToProps(dispatch: Dispatch) {
         },
     }
 }
-
+TableWidget.displayName = 'TableWidget'
 export default connect(mapStateToProps, mapDispatchToProps)(TableWidget)
