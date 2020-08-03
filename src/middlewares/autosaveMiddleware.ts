@@ -11,6 +11,11 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
 
             // TODO: Should offer to save pending changes or drop them
 
+            // Don't save by `bcChangePage` if a popup is open
+            const isPopupOpen = state.view.popupData?.bcName === action.payload?.bcName
+            const isChangePageInPopup = isPopupOpen && action.type === types.bcChangePage
+            if (isChangePageInPopup) {return next(action)}
+
             const isSendOperation = action.type === types.sendOperation
             const isSelectTableCellInit = action.type === types.selectTableCellInit
 
