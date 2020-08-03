@@ -83,13 +83,15 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
                             }))
                         }
                     })
-                    // save `baseBcName`'s BC
-                    return next($do.sendOperation({
-                        bcName: baseBcName,
-                        operationType: OperationTypeCrud.save,
-                        widgetName: baseWidget.name,
-                        onSuccessAction: action
-                    }))
+                    if (action.payload.operationType !== OperationTypeCrud.save) {
+                        // save `baseBcName`'s BC
+                        return next($do.sendOperation({
+                            bcName: baseBcName,
+                            operationType: OperationTypeCrud.save,
+                            widgetName: baseWidget.name,
+                            onSuccessAction: action
+                        }))
+                    }
                 }
             }
 
