@@ -30,6 +30,7 @@ import {CustomizationContext} from '../../components/View/View'
 import {InteractiveInput} from '../../components/ui/InteractiveInput/InteractiveInput'
 import HistoryField from '../../components/ui/HistoryField/HistoryField'
 import SearchHighlight from '../ui/SearchHightlight/SearchHightlight'
+import {TooltipPlacement} from 'antd/es/tooltip'
 
 interface FieldOwnProps {
     widgetFieldMeta: WidgetField,
@@ -44,6 +45,7 @@ interface FieldOwnProps {
     forceFocus?: boolean,
     forcedValue?: DataValue,
     historyMode?: boolean,
+    tooltipPlacement?: TooltipPlacement,
     customProps?: Record<string, any>,
     disableHoverError?: boolean
 }
@@ -376,6 +378,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
     }
     if (props.metaError && props.showErrorPopup) {
         return <Tooltip
+                placement={props.tooltipPlacement}
                 overlayClassName={styles.error}
                 title={props.metaError}
                 getPopupContainer={(trigger) => trigger.parentElement}
