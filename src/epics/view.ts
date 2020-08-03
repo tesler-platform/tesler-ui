@@ -132,14 +132,14 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
     const bcUrl = buildBcUrl(bcName, true)
     const pendingChanges = state.view.pendingDataChanges[bcName][cursor]
     const handledForceActive = state.view.handledForceActive[bcName]?.[cursor] || {}
-    const currentRecordData = state.data[bcName].find((record) => record.id === cursor)
-    const fieldsRowMeta = state.view.rowMeta[bcName][bcUrl]?.fields
+    const currentRecordData = state.data[bcName]?.find((record) => record.id === cursor)
+    const fieldsRowMeta = state.view.rowMeta[bcName]?.[bcUrl]?.fields
     let changedFiledKey: string = null
 
     // среди forceActive-полей в дельте ищем то которое изменилось по отношению к обработанным forceActive
     // или не содержится в нем, устанавливаем флаг необходимости отправки запроса если такое поле найдено
     const someForceActiveChanged = fieldsRowMeta
-        .filter((field) => field.forceActive && pendingChanges[field.key] !== undefined)
+        ?.filter((field) => field.forceActive && pendingChanges[field.key] !== undefined)
         .some((field) => {
             const result = pendingChanges[field.key] !== handledForceActive[field.key]
             if (result) {
@@ -192,17 +192,11 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
 /*
 *   Эпик, который очищает дельту по дочерним бк при смене курсора
 * TODO При реализации автосохранения потеряет смысл, можно будет удалить
+* Initial code of `clearPendingDataChangesAfterCursorChange` is deleted. TODO: refactor a rest part of epic
 */
 const clearPendingDataChangesAfterCursorChange: Epic = (action$, store) => action$.ofType(types.bcChangeCursors)
 .mergeMap((action) => {
     const state = store.getState()
-    const childBcList = Object.keys(action.payload.cursorsMap)
-    .map(bcName => {
-        return Object.values(state.screen.bo.bc)
-        .filter(item => item.parentName === bcName)
-        .map(item => item.name)
-    })
-    .reduce((a, b) => a.concat(b), [])
 
     /*
     *  Если при загрузке view курсор проставился не во всех бк
@@ -221,9 +215,7 @@ const clearPendingDataChangesAfterCursorChange: Epic = (action$, store) => actio
         return Observable.of($do.bcChangeCursors({ cursorsMap: cursorsDiffMap }))
     }
 
-    return (action.payload.keepDelta)
-        ? Observable.empty<never>()
-        : Observable.of<AnyAction>($do.bcCancelPendingChanges({bcNames: childBcList}))
+    return Observable.empty<never>()
 })
 
 const selectTableCellInit: Epic = (action$, store) => action$.ofType(types.selectTableCellInit)
