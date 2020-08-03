@@ -317,7 +317,15 @@ const bcNewDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperati
             Observable.of($do.bcFetchRowMetaSuccess({ bcName, bcUrl: `${bcUrl}/${cursor}`, rowMeta, cursor})),
             postInvoke
                 ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName: action.payload.widgetName }))
-                : Observable.empty<never>()
+                : Observable.empty<never>(),
+            Observable.of($do.changeDataItem({
+                bcName: action.payload.bcName,
+                cursor: cursor,
+                dataItem: {
+                    id: cursor
+                }
+            }))
+
         )
     })
     .catch((error: any) => {
