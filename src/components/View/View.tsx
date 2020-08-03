@@ -7,6 +7,7 @@ import {ObjectMap} from '../../interfaces/objectMap'
 
 export interface ViewProps {
     widgets: WidgetMeta[],
+    skipWrappingWidgets?: string[],
     skipWidgetTypes?: string[],
     card?: (props: any) => React.ReactElement<any>,
     customWidgets?: ObjectMap<CustomWidget>,
@@ -27,6 +28,7 @@ export const View: FunctionComponent<ViewProps> = (props) => {
             widgets={props.widgets}
             customWidgets={props.customWidgets}
             card={props.card}
+            skipWrappingWidgets={props.skipWrappingWidgets}
             skipWidgetTypes={props.skipWidgetTypes}
         />
     } else {
@@ -34,6 +36,7 @@ export const View: FunctionComponent<ViewProps> = (props) => {
             widgets={props.widgets}
             customWidgets={props.customWidgets}
             card={props.card}
+            skipWrappingWidgets={props.skipWrappingWidgets}
             skipWidgetTypes={props.skipWidgetTypes}
         />
     }

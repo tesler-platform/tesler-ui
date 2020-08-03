@@ -8,6 +8,7 @@ export interface DashboardLayoutProps {
     widgets: WidgetMeta[],
     customWidgets?: ObjectMap<CustomWidget>,
     skipWidgetTypes?: string[]
+    skipWrappingWidgets?: string[]
     card?: (props: any) => React.ReactElement<any>
 }
 
@@ -23,7 +24,11 @@ export function DashboardLayout(props: DashboardLayoutProps) {
     return <React.Fragment>
         {Object.values(widgetsByRow).map((row, rowIndex) => <Row key={rowIndex}>
             {row.map((widget, colIndex) => <Col key={colIndex} span={24}>
-                    <Widget meta={widget} card={props.card} customWidgets={props.customWidgets} />
+                    <Widget
+                        meta={widget}
+                        card={props.card}
+                        skipWrappingWidgets={props.skipWrappingWidgets}
+                        customWidgets={props.customWidgets} />
                 </Col>
             )}
          </Row>

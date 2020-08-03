@@ -33,6 +33,7 @@ interface WidgetProps extends WidgetOwnProps {
     loading?: boolean,
     parentCursor?: string,
     customWidgets?: ObjectMap<CustomWidget>,
+    skipWrappingWidgets?: string[],
     showWidget: boolean,
     rowMetaExists: boolean,
     dataExists: boolean
@@ -40,11 +41,16 @@ interface WidgetProps extends WidgetOwnProps {
 
 const skeletonParams = { rows: 5 }
 
+const SKIP_WRAPPING_WIDGETS: string[] = [WidgetTypes.AssocListPopup, WidgetTypes.PickListPopup]
+
 export const Widget: FunctionComponent<WidgetProps> = (props) => {
     if (!props.showWidget) {
         return null
     }
-    if (props.meta.type === WidgetTypes.AssocListPopup || props.meta.type === WidgetTypes.PickListPopup) {
+
+    const skipCardWrapping = SKIP_WRAPPING_WIDGETS.includes(props.meta.type) || props.skipWrappingWidgets?.includes(props.meta.type)
+
+    if (skipCardWrapping) {
         return <> {chooseWidgetType(props.meta, props.customWidgets, props.children)} </>
     }
 
