@@ -91,8 +91,8 @@ function mapStateToProps(store: Store, ownProps: FormWidgetOwnProps) {
     const rowMeta = bcUrl && store.view.rowMeta[bcName]?.[bcUrl]
     const fields = rowMeta?.fields
     const metaErrors = rowMeta?.errors
-    const missingFields = store.view.pendingValidationFails
     const cursor = bc?.cursor
+    const missingFields = store.view.pendingValidationFails?.[bcName]?.[cursor]
     return {
         cursor,
         fields,

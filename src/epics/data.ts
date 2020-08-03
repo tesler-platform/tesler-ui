@@ -1,5 +1,5 @@
 /**
- * Для эпиков работы с записями
+ * For epics which work with records
  */
 import {$do, AnyAction, Epic, types} from '../actions/actions'
 import {Observable} from 'rxjs/Observable'
@@ -68,13 +68,13 @@ const bcFetchRowMetaRequest: Epic = (action$, store) => action$.ofType(types.bcF
 })
 
 /**
- * Загружает данные для бизнес компоненты.
- * В случае успешной загрузки:
- * - отправляет экшн в стор
- * - инициирует загрузку роуметы
- * - инициирует загрузку данных для дочерних бизнес-компонент.
+ * Loads BC's data.
+ * In case successful download:
+ * - dispatches action to store
+ * - initializes rowMeta load
+ * - initializes child BCs data load
  *
- * @param action.payload.bcName Имя бизнес-компоненты, для которой надо загрузить данные
+ * @param action.payload.bcName BC's name for data load
  */
 const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
     types.bcFetchDataRequest,
@@ -323,7 +323,15 @@ const bcNewDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperati
             Observable.of($do.bcFetchRowMetaSuccess({ bcName, bcUrl: `${bcUrl}/${cursor}`, rowMeta, cursor})),
             postInvoke
                 ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName: action.payload.widgetName }))
-                : Observable.empty<never>()
+                : Observable.empty<never>(),
+            Observable.of($do.changeDataItem({
+                bcName: action.payload.bcName,
+                cursor: cursor,
+                dataItem: {
+                    id: cursor
+                }
+            }))
+
         )
     })
     .catch((error: any) => {
@@ -409,7 +417,7 @@ const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperat
     })
     .catch((e: AxiosError) => {
         console.log(e)
-        // Защита от блокировки виджета при автосохранении
+        // Protection against widget blocking while autosaving
         if (action.payload.onSuccessAction) {
             openButtonWarningNotification(
                 i18n.t('There are pending changes. Please save them or cancel.'),
@@ -464,7 +472,7 @@ const bcCancelCreateDataEpic: Epic = (action$, store) => action$.ofType(types.se
 })
 
 /**
- * Обрабатывает такие ассок-листы, которые не обращаются к методам assoc бэка
+ * Works with assoc-lists, which doesn't call back-end's assoc methods
  */
 const saveAssociationsPassive: Epic = (action$, store) => action$.ofType(types.saveAssociations)
 .filter(action => {
@@ -518,7 +526,7 @@ const saveAssociationsPassive: Epic = (action$, store) => action$.ofType(types.s
 })
 
 /**
- * Обрабатывает такие ассок-листы, которые обращаются к методам assoc бэка по кнопке подтверждения в модальном окне
+ * Works with assoc-lists, which does call back-end's assoc methods by click on confirm button in modal window
  */
 const saveAssociationsActive: Epic = (action$, store) => action$.ofType(types.saveAssociations)
 .filter(action => {

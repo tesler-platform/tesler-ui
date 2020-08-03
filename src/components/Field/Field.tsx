@@ -30,6 +30,7 @@ import {CustomizationContext} from '../../components/View/View'
 import {InteractiveInput} from '../../components/ui/InteractiveInput/InteractiveInput'
 import HistoryField from '../../components/ui/HistoryField/HistoryField'
 import SearchHighlight from '../ui/SearchHightlight/SearchHightlight'
+import {TooltipPlacement} from 'antd/es/tooltip'
 
 interface FieldOwnProps {
     widgetFieldMeta: WidgetField,
@@ -44,7 +45,8 @@ interface FieldOwnProps {
     forceFocus?: boolean,
     forcedValue?: DataValue,
     historyMode?: boolean,
-    customProps?: Record<string, any>
+    customProps?: Record<string, any>,
+    tooltipPlacement?: TooltipPlacement
 }
 
 interface FieldProps extends FieldOwnProps {
@@ -375,6 +377,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
     }
     if (props.metaError && props.showErrorPopup) {
         return <Tooltip
+                placement={props.tooltipPlacement}
                 overlayClassName={styles.error}
                 title={props.metaError}
                 getPopupContainer={(trigger) => trigger.parentElement}
@@ -408,7 +411,7 @@ function mapStateToProps(store: Store, ownProps: FieldOwnProps) {
     const bcUrl = buildBcUrl(ownProps.bcName, true)
     const rowMeta = bcUrl && store.view.rowMeta[ownProps.bcName]?.[bcUrl]
     const rowFieldMeta = rowMeta?.fields.find(field => field.key === ownProps.widgetFieldMeta.key)
-    const missing = store.view.pendingValidationFails?.[ownProps.widgetFieldMeta.key]
+    const missing = store.view.pendingValidationFails?.[ownProps.bcName]?.[ownProps.cursor]?.[ownProps.widgetFieldMeta.key]
     const metaError = missing || rowMeta?.errors?.[ownProps.widgetFieldMeta.key]
     const pendingValue = store.view.pendingDataChanges[ownProps.bcName]
     ?.[ownProps.cursor]

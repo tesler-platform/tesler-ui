@@ -61,7 +61,7 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
         }
 
         // If operation is not validation-sensetive and validation failed, offer to drop pending changes
-        if (state.view.pendingValidationFails && Object.keys(state.view.pendingValidationFails).length) {
+        if (hasPendingValidationFails(state, bcName)) {
             openButtonWarningNotification(
                 i18n.t('Required fields are missing'),
                 i18n.t('Cancel changes'),
@@ -129,4 +129,27 @@ function getRequiredFieldsMissing(record: DataItem, pendingChanges: PendingDataI
  */
 export function createRequiredFieldsMiddleware() {
     return requiredFields as Middleware
+}
+
+/**
+ * Checks if `pendingValidationFails` is not empty
+ *
+ * @param store
+ * @param bcName
+ */
+export function hasPendingValidationFails(store: CoreStore, bcName: string) {
+    let checkResult = false
+    const bcPendingValidations = store.view.pendingValidationFails?.[bcName]
+    const cursorsList =  bcPendingValidations && Object.keys(bcPendingValidations)
+    if (!cursorsList) {
+        return false
+    }
+    let i = 0
+    for (; i < cursorsList.length; i++) {
+        if (Object.keys(bcPendingValidations[cursorsList[i]]).length) {
+            checkResult = true
+            break
+        }
+    }
+    return checkResult
 }
