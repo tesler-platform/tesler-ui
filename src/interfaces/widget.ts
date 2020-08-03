@@ -334,6 +334,18 @@ export interface WidgetOperations {
 
 export type CustomWidget = ConnectedComponent<any, any> | FunctionComponent<any>
 
+export type CustomWidgetDescriptor = CustomWidget | {
+    component: CustomWidget,
+    card?: CustomWidget,
+}
+
+/**
+ * Check if descriptor is just a widget, or it has additional data
+ */
+export function isCustomWidget(descriptor: CustomWidgetDescriptor): descriptor is CustomWidget {
+    return !!descriptor && !('component' in descriptor)
+}
+
 /**
  * TODO
  * 
