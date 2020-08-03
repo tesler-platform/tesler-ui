@@ -27,7 +27,7 @@ import Provider, {
     getBuildLocationInstance,
     getLocaleProviderInstance
 } from './Provider'
-import {$do, types, ActionPayloadTypes, AnyAction} from './actions/actions'
+import {$do, types, ActionPayloadTypes, AnyAction, needSaveAction} from './actions/actions'
 import {Action, uActionTypesMap, uActionsMap, AnyOfMap, createActionCreators, createActionTypes} from './actions/actions-utils'
 import {historyObj, changeLocation} from './reducers/router'
 import {
@@ -41,6 +41,7 @@ import {getFilters} from './utils/filters'
 import {matchOperationRole, flattenOperations} from './utils/operations'
 import {isViewNavigationItem, isViewNavigationCategory, isViewNavigationGroup} from './interfaces/navigation'
 import {isWidgetFieldBlock, TableLikeWidgetTypes} from './interfaces/widget'
+import {autosaveRoutine} from './utils/autosave'
 const parseLocation = getParseLocationInstance
 const buildLocation = getBuildLocationInstance
 
@@ -143,6 +144,7 @@ export {
     // Stable
     types as coreActions,
     $do,
+    needSaveAction,
     // Unstable
     ActionPayloadTypes,
     AnyAction,
@@ -183,3 +185,10 @@ export {
  */
 export {sendOperationEpicImpl} from './epics/view'
 export {removeMultivalueTagImpl} from './epics/data/removeMultivalueTag'
+
+/**
+ * Autosave middleware utils
+ */
+export {
+    autosaveRoutine
+}

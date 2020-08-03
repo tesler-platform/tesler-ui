@@ -1,26 +1,42 @@
 import {AnyAction, Dispatch, MiddlewareAPI} from 'redux'
-import {$do, needSaveAction, types} from '../actions/actions'
-import {OperationTypeCrud} from '../interfaces/operation'
-import {WidgetMeta} from '../interfaces/widget'
+import {$do, types} from '../actions/actions'
+import {coreOperations, OperationTypeCrud} from '../interfaces/operation'
 import {Store as CoreStore} from '../interfaces/store'
+import {autosaveRoutine, checkUnsavedChangesOfBc} from '../utils/autosave'
 
 const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) =>
     (next: Dispatch) =>
         (action: AnyAction) => {
-            if (!needSaveAction(action.type)) {
-                return next(action)
-            }
             const state = getState()
 
             // TODO: Should offer to save pending changes or drop them
 
-            const actionBcName = action.payload.bcName
-            const isAnotherBc = Object.keys(state.view.pendingDataChanges)
-                .filter(key => key !== actionBcName).length > 0
             const isSendOperation = action.type === types.sendOperation
-            const needToSaveTableChanges = isSendOperation && isAnotherBc
-            const selectedCell = state.view.selectedCell
+            const isCoreSendOperation = isSendOperation && coreOperations.includes(action.payload.operationType)
             const isSelectTableCellInit = action.type === types.selectTableCellInit
+
+            /**
+             * Saving actions should be ignored
+             */
+            const isSaveAction = isSendOperation && action.payload.operationType === OperationTypeCrud.save
+            const isNotSaveAction = !isSaveAction
+
+            /**
+             * Checking if the action is `sendOperation` of core type which called for another BC
+             * Also BCs having pending `_associate` should be ignored
+             */
+            const actionBcName = isSendOperation && action.payload.bcName
+            const hasAnotherUnsavedBc = Object.keys(state.view.pendingDataChanges)
+            .filter(key => key !== actionBcName)
+            .filter(key => checkUnsavedChangesOfBc(state, key)).length > 0
+            const isSendOperationForAnotherBc = isCoreSendOperation && hasAnotherUnsavedBc
+
+            /**
+             * Checking if the action is `selectTableCellInit` called for another row or another widget
+             */
+            const selectedCell = state.view.selectedCell
+            const isSelectTableCellInitOnAnotherRowOrWidget = selectedCell && isSelectTableCellInit &&
+                (selectedCell.widgetName !== action.payload.widgetName || selectedCell.rowId !== action.payload.rowId)
 
 
             /**
@@ -46,30 +62,18 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
             }
 
             /**
-             * Default save operation CRUD
-             *
+             * final condition
              */
-
-            if (selectedCell
-                && (
-                    needToSaveTableChanges
-                    || (!isSelectTableCellInit && !isSendOperation)
-                    || (isSelectTableCellInit &&
-                        (selectedCell.widgetName !== action.payload.widgetName || selectedCell.rowId !== action.payload.rowId)
-                    )
+            const isNeedSaveCondition = isNotSaveAction &&
+                (
+                    isSendOperationForAnotherBc
+                    || isSelectTableCellInitOnAnotherRowOrWidget
                 )
-            ) {
-                const widget = state.view.widgets.find((v: WidgetMeta) => v.name === selectedCell.widgetName)
-                const bcName = widget.bcName
-                const cursor = state.screen.bo.bc[bcName]?.cursor
-                if (cursor === selectedCell.rowId && bcHasPendingAutosaveChanges(state, bcName, cursor)) {
-                    return next($do.sendOperation({
-                        bcName: bcName,
-                        operationType: OperationTypeCrud.save,
-                        widgetName: widget.name,
-                        onSuccessAction: action
-                    }))
-                }
+            /**
+             * Default save operation CRUD
+             */
+            if (isNeedSaveCondition) {
+                return autosaveRoutine(action, { getState, dispatch }, next)
             }
 
             return next(action)
@@ -80,17 +84,4 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
  */
 export function createAutoSaveMiddleware() {
     return saveFormMiddleware
-}
-
-/**
- *
- * @param store
- * @param bcName
- * @param cursor
- */
-function bcHasPendingAutosaveChanges(store: CoreStore, bcName: string, cursor: string) {
-    const pendingChanges = store.view.pendingDataChanges
-    const cursorChanges = pendingChanges[bcName]?.[cursor]
-    const result = cursorChanges && !Object.keys(cursorChanges).includes('_associate') && Object.values(cursorChanges).length
-    return result
 }
