@@ -7,16 +7,16 @@ import {
     WidgetTypes,
     WidgetFormMeta,
     WidgetTableMeta,
-    CustomWidget,
     WidgetShowCondition,
-    WidgetTextMeta
+    WidgetTextMeta,
+    CustomWidgetDescriptor,
+    isCustomWidget,
 } from '../../interfaces/widget'
 import TableWidget from '../widgets/TableWidget/TableWidget'
 import TextWidget from '../widgets/TextWidget/TextWidget'
 import FormWidget from '../widgets/FormWidget/FormWidget'
 import styles from './Widget.less'
 import AssocListPopup from '../widgets/AssocListPopup/AssocListPopup'
-import {ObjectMap} from '../../interfaces/objectMap'
 import PickListPopup from '../widgets/PickListPopup/PickListPopup'
 import {BcMetaState} from '../../interfaces/bc'
 import {ViewState} from '../../interfaces/view'
@@ -32,7 +32,7 @@ interface WidgetOwnProps {
 interface WidgetProps extends WidgetOwnProps {
     loading?: boolean,
     parentCursor?: string,
-    customWidgets?: ObjectMap<CustomWidget>,
+    customWidgets?: Record<string, CustomWidgetDescriptor>,
     showWidget: boolean,
     rowMetaExists: boolean,
     dataExists: boolean
@@ -40,12 +40,33 @@ interface WidgetProps extends WidgetOwnProps {
 
 const skeletonParams = { rows: 5 }
 
+const SKIP_WRAPPING_WIDGETS: string[] = [WidgetTypes.AssocListPopup, WidgetTypes.PickListPopup]
+
 export const Widget: FunctionComponent<WidgetProps> = (props) => {
     if (!props.showWidget) {
         return null
     }
-    if (props.meta.type === WidgetTypes.AssocListPopup || props.meta.type === WidgetTypes.PickListPopup) {
+
+    const customWidget = props.customWidgets?.[props.meta.type]
+
+    const skipCardWrapping = SKIP_WRAPPING_WIDGETS.includes(props.meta.type)
+
+    if (skipCardWrapping) {
         return <> {chooseWidgetType(props.meta, props.customWidgets, props.children)} </>
+    }
+
+    if (customWidget && !isCustomWidget(customWidget)) {
+        if (customWidget.card === null) {
+            return <> {chooseWidgetType(props.meta, props.customWidgets, props.children)} </>
+        }
+
+        if (customWidget.card) {
+            const CustomCard = customWidget.card
+
+            return <CustomCard meta={props.meta}>
+                {chooseWidgetType(props.meta, props.customWidgets, props.children)}
+            </CustomCard>
+        }
     }
 
     const showSpinner = !!(props.loading && (props.rowMetaExists || props.dataExists))
@@ -84,10 +105,17 @@ export const Widget: FunctionComponent<WidgetProps> = (props) => {
  * @param customWidgets Dictionary where key is a widget type and value is a component that should be rendered
  * @param children Widgets children component, returned in case type is unknown
  */
-function chooseWidgetType(widgetMeta: WidgetMeta, customWidgets?: ObjectMap<CustomWidget>, children?: React.ReactNode) {
-    if (customWidgets?.[widgetMeta.type]) {
-        const CustomWidgetComponent = customWidgets[widgetMeta.type]
-        return <CustomWidgetComponent meta={widgetMeta} />
+function chooseWidgetType(widgetMeta: WidgetMeta, customWidgets?: Record<string, CustomWidgetDescriptor>, children?: React.ReactNode) {
+    const customWidget = customWidgets?.[widgetMeta.type]
+
+    if (customWidget) {
+        if (isCustomWidget(customWidget)) {
+            const CustomWidgetComponent = customWidget
+            return <CustomWidgetComponent meta={widgetMeta} />
+        }
+
+        const DescriptorComponent = customWidget.component
+        return <DescriptorComponent meta={widgetMeta} />
     }
     switch (widgetMeta.type) {
         case WidgetTypes.List:
