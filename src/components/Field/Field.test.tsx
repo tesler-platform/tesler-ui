@@ -3,7 +3,7 @@ import {mount} from 'enzyme'
 import {Store} from 'redux'
 import {Provider} from 'react-redux'
 import {mockStore} from '../../tests/mockStore'
-import {WidgetField} from '../../interfaces/widget'
+import {WidgetField, WidgetTypes} from '../../interfaces/widget'
 import {Store as CoreStore} from '../../interfaces/store'
 import {FieldType} from '../../interfaces/view'
 import Field from './Field'
@@ -84,5 +84,29 @@ describe('Readonly field drilldown', () => {
         expect(roField.length).toBe(1)
         roField.simulate('click')
         expect(store.getState().screen.bo.bc[testBcName].cursor).toBe(initialCursor)
+    })
+
+    it('should render render tooltip in custom position', () => {
+        store.getState().view.pendingValidationFails = {
+            [fieldMeta.key]: 'error'
+        }
+        store.getState().view.widgets = [{
+            name: 'test',
+            type: WidgetTypes.List,
+            title: '',
+            bcName: testBcName,
+            position: 1,
+            gridWidth: 2,
+            fields: [fieldMeta],
+        }]
+        const wrapper = mount(<Provider store={store}>
+            <Field
+                {...fieldProperties}
+                tooltipPlacement="right"
+                readonly={false}
+            />
+        </Provider>)
+        expect(wrapper.find('Tooltip').findWhere(i => i.prop('prefixCls') === 'ant-tooltip').get(0).props.placement
+        ).toEqual('right')
     })
 })
