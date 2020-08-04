@@ -21,6 +21,32 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
             const needToSaveTableChanges = isSendOperation && isAnotherBc
             const selectedCell = state.view.selectedCell
             const isSelectTableCellInit = action.type === types.selectTableCellInit
+
+
+            /**
+             * Default save operation as custom action
+             *
+             * If widget have only custom actions, `defaultSave` option mean witch action
+             * must be executed as save record.
+             * Current changeLocation action as onSuccessAction
+             */
+            const defaultSaveWidget = state.view.widgets?.find(item => item?.options?.actionGroups?.defaultSave)
+            const defaultCursor = state.screen.bo.bc?.[defaultSaveWidget?.bcName]?.cursor
+            const pendingData = state.view?.pendingDataChanges?.[defaultSaveWidget?.bcName]?.[defaultCursor]
+            if (defaultSaveWidget && action.type === types.changeLocation && pendingData) {
+                return next($do.sendOperation({
+                    bcName: defaultSaveWidget.bcName,
+                    operationType: defaultSaveWidget.options.actionGroups.defaultSave,
+                    widgetName: defaultSaveWidget.name,
+                    onSuccessAction: action
+                }))
+            }
+
+            /**
+             * Default save operation CRUD
+             *
+             */
+
             if (selectedCell
                 && (
                     needToSaveTableChanges

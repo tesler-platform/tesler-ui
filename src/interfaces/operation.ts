@@ -309,13 +309,14 @@ export interface AssociatedItem extends DataItem {
 }
 
 /**
- * Дескриптор включения операции на виджете:
- * - либо строка (если надо просто включить/исключить операцию или группы)
- * - либо объект, если это группа в которой нужно выборочно включить или исключить операцию
+ * Descriptor enabling operation on widget:
+ * - string (if you just need to include / exclude operation or groups)
+ * - object, if this is group in which you want to selectively include or exclude the operation
  * 
- * @param type Тип операции; строка, уникально идентифицирующая операцию на виджете
- * @param include Список включаемых операций
- * @param exclude Список исключаемых операций
+ * @param type Type of transaction; a string that uniquely identifies the operation on the widget
+ * @param include List of included operations or groups operations
+ * @param exclude List of excluded operations or groups operations
+ * @param defaultSave default no crud save action
  */
 export type OperationInclusionDescriptor = string | {
     type: OperationType,
