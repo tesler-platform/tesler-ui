@@ -300,14 +300,16 @@ export interface WidgetTextMeta extends WidgetMeta {
 }
 
 /**
- * Описание операций в опциях меты виджета, через который можно настраивать их доступность
+ * Description of operations in the widget meta options, through which you can configure their availability
  *
- * @param include Список включаемых операций или групп операций
- * @param exclude Список исключаемых операций или групп операций
+ * @param include List of included operations or groups operations
+ * @param exclude List of excluded operations or groups operations
+ * @param defaultSave default no crud save action
  */
 export interface WidgetOperations {
     include?: OperationInclusionDescriptor[],
-    exclude?: OperationType[]
+    exclude?: OperationType[],
+    defaultSave?: string
 }
 
 export type CustomWidget = ConnectedComponent<any, any> | FunctionComponent<any>
