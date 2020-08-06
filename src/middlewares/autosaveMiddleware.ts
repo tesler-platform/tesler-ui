@@ -21,6 +21,34 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
             const needToSaveTableChanges = isSendOperation && isAnotherBc
             const selectedCell = state.view.selectedCell
             const isSelectTableCellInit = action.type === types.selectTableCellInit
+
+            /**
+             * Default save operation as custom action
+             *
+             * If widget have only custom actions, `defaultSave` option mean witch action
+             * must be executed as save record.
+             * Work only user initial `changeLocation` and don't work at postAction `drillDown`
+             * @param ignorePostAction Indicate that postAction not needed (postAction.drillDown as example)
+             */
+            const defaultSaveWidget = state.view.widgets.find(item => item?.options?.actionGroups?.defaultSave)
+            const defaultCursor = state.screen.bo.bc?.[defaultSaveWidget?.bcName]?.cursor
+            const pendingData = state.view?.pendingDataChanges?.[defaultSaveWidget?.bcName]?.[defaultCursor]
+            if (defaultSaveWidget && action.type === types.changeLocation && !action.ignoreAutosave && pendingData) {
+                action.ignoreAutosave = true
+                return next($do.sendOperation({
+                    bcName: defaultSaveWidget.bcName,
+                    operationType: defaultSaveWidget.options.actionGroups.defaultSave,
+                    widgetName: defaultSaveWidget.name,
+                    onSuccessAction: action,
+                    ignorePostAction: true
+                }))
+            }
+
+            /**
+             * Default save operation
+             *
+             */
+
             if (selectedCell
                 && (
                     needToSaveTableChanges

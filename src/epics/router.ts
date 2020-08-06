@@ -185,12 +185,14 @@ const drillDown: Epic = (action$, store) => action$.ofType(types.drillDown)
                                 const parsedFilters = parseFilters(filters[bcName])
                                 parsedFilters.forEach((item) => {
                                     store.dispatch($do.bcAddFilter({bcName, filter: item}))
+                                    store.dispatch($do.bcForceUpdate({bcName}))
                                 })
                                 if (!diff.length) {
                                     store.dispatch($do.bcForceUpdate({bcName}))
                                 }
                             } else {
                                 store.dispatch($do.bcRemoveAllFilters({bcName}))
+                                store.dispatch($do.bcForceUpdate({bcName}))
                             }
                         })
                     }

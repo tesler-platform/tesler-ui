@@ -53,11 +53,13 @@ export class ActionPayloadTypes {
      * @param rawLocation Change was requested to browser url
      * @param location Change was requested to precalculated application route
      * @param action History API type, usually 'PUSH'
+     * @param ignoreAutosave
      */
     changeLocation: {
         rawLocation?: string,
         location?: Route,
-        action: HistoryAction
+        action: HistoryAction,
+        ignoreAutosave?: boolean
     } = z
 
     /**
@@ -344,6 +346,7 @@ export class ActionPayloadTypes {
      * @param onSuccessAction Any other action
      * @param confirm params for confirm modal
      * @param bcKey key called bk
+     * @param ignorePostAction postAction will be ignored
      */
     sendOperation: {
         bcName: string,
@@ -358,7 +361,8 @@ export class ActionPayloadTypes {
         /**
          * @deprecated TODO: Remove in 2.0.0 in favor of sendOperationWithConfirm
          */
-        confirmOperation?: OperationPreInvoke
+        confirmOperation?: OperationPreInvoke,
+        ignorePostAction?: boolean
     } = z
 
     /**

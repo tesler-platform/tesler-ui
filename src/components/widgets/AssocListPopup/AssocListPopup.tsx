@@ -101,7 +101,6 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
 
     const filterData = React.useCallback(() => {
         const filterValue = selectedRecords
-        .filter(item => item._associate)
         .map(item => item.id)
 
         onFilter(props.calleeBCName, {

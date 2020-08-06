@@ -33,6 +33,7 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
         }
     }
     const data = record && { ...pendingRecordChange, vstamp: record.vstamp }
+    const ignorePostAction = !!action.payload?.ignorePostAction
     const params = confirm
         ? { _action: operationType, _confirm: confirm }
         : { _action: operationType }
@@ -43,29 +44,35 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
         // TODO: Remove in 2.0.0 in favor of postInvokeConfirm (is this todo needed?)
         const preInvoke = response.preInvoke
         const postInvokeConfirm = Object.values(OperationPostInvokeConfirmType).includes(postInvoke?.type as OperationPostInvokeConfirmType)
-        return Observable.concat(
-            Observable.of($do.sendOperationSuccess({ bcName, cursor })),
-            Observable.of($do.bcForceUpdate({ bcName })),
-            postInvoke
-                ? Observable.of($do.processPostInvoke({ bcName, postInvoke, widgetName: context.widgetName }))
-                : Observable.empty<never>(),
-            postInvokeConfirm
-                ? Observable.of($do.processPostInvokeConfirm({
-                    bcName,
-                    operationType,
-                    widgetName,
-                    postInvokeConfirm: postInvoke as OperationModalInvokeConfirm
-                }))
-                : Observable.empty<never>(),
-            preInvoke
-                ? Observable.of($do.processPreInvoke({
-                    bcName,
-                    operationType,
-                    widgetName,
-                    preInvoke,
-                }))
-                : Observable.empty<never>(),
-        )
+        // ignorePostAction mean that postAction will be ignored
+        // onSuccessAction execute instead
+        return ignorePostAction
+            ? action?.payload?.onSuccessAction
+                ? Observable.of(action.payload.onSuccessAction)
+                : Observable.empty<never>()
+            : Observable.concat(
+                Observable.of($do.sendOperationSuccess({bcName, cursor})),
+                Observable.of($do.bcForceUpdate({bcName})),
+                postInvoke
+                    ? Observable.of($do.processPostInvoke({bcName, postInvoke, widgetName: context.widgetName}))
+                    : Observable.empty<never>(),
+                postInvokeConfirm
+                    ? Observable.of($do.processPostInvokeConfirm({
+                        bcName,
+                        operationType,
+                        widgetName,
+                        postInvokeConfirm: postInvoke as OperationModalInvokeConfirm
+                    }))
+                    : Observable.empty<never>(),
+                preInvoke
+                    ? Observable.of($do.processPreInvoke({
+                        bcName,
+                        operationType,
+                        widgetName,
+                        preInvoke,
+                    }))
+                    : Observable.empty<never>(),
+            )
     })
     .catch((e: AxiosError) => {
         console.error(e)
