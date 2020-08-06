@@ -7,7 +7,8 @@ export interface ReadOnlyFieldProps {
     backgroundColor?: string,
     className?: string,
     onDrillDown?: () => void,
-    children: React.ReactNode
+    children: React.ReactNode,
+    metaError?: string
 }
 
 const ReadOnlyField: React.FunctionComponent<ReadOnlyFieldProps> = (props) => {
@@ -15,6 +16,7 @@ const ReadOnlyField: React.FunctionComponent<ReadOnlyFieldProps> = (props) => {
         className={cn(
             styles.readOnlyField,
             {[styles.coloredField]: props.backgroundColor},
+            {[styles.error]: props.metaError},
             props.className
         )}
         style={props.backgroundColor ? {backgroundColor: props.backgroundColor} : null}

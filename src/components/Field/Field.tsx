@@ -7,7 +7,7 @@ import {Store} from '../../interfaces/store'
 import {DataItem, DataValue, MultivalueSingleValue, PendingDataItem} from '../../interfaces/data'
 import {FieldType} from '../../interfaces/view'
 import {RowMetaField} from '../../interfaces/rowMeta'
-import {WidgetField, WidgetTypes} from '../../interfaces/widget'
+import {WidgetField, WidgetTypes, WidgetMeta} from '../../interfaces/widget'
 import DatePickerField from '../ui/DatePickerField/DatePickerField'
 import NumberInput from '../../components/ui/NumberInput/NumberInput'
 import {NumberTypes} from '../../components/ui/NumberInput/formaters'
@@ -54,6 +54,7 @@ interface FieldProps extends FieldOwnProps {
     metaError: string,
     showErrorPopup: boolean,
     filterValue: string,
+    widget: WidgetMeta,
     onChange: (payload: ChangeDataItemPayload) => void,
     onDrillDown: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void,
 }
@@ -369,7 +370,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                     />
                 </InteractiveInput>
     }
-    if (props.metaError && !props.readonly && props.showErrorPopup) {
+    if (props.metaError && (!props.readonly || props.widget.type === WidgetTypes.List) && props.showErrorPopup) {
         return <Tooltip
                 overlayClassName={styles.error}
                 title={props.metaError}
@@ -420,7 +421,8 @@ function mapStateToProps(store: Store, ownProps: FieldOwnProps) {
         rowFieldMeta,
         metaError,
         showErrorPopup,
-        filterValue
+        filterValue,
+        widget
     }
 }
 
