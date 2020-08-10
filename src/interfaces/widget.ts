@@ -77,6 +77,7 @@ export type DateTimeWithSecondsFieldMeta = AllWidgetTypeFieldBase & {
 
 export type DictionaryFieldMeta = AllWidgetTypeFieldBase & {
     type: FieldType.dictionary
+    multiple?: boolean
     dictionaryName?: string
 }
 

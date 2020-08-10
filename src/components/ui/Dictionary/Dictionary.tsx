@@ -2,11 +2,12 @@ import React from 'react'
 import {Icon, Select as AntdSelect} from 'antd'
 import Select, {SelectProps} from '../Select/Select'
 import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
+import {MultivalueSingleValue} from '../../../interfaces/data'
 
 export interface DictionaryProps {
-    value?: string | null,
-    onChange?: (value: string) => void
-    values: Array<{value: string, icon: string}>,
+    value?: MultivalueSingleValue[] | string | null,
+    onChange?: (value: MultivalueSingleValue[] | string) => void
+    values: Array<{value: string, icon?: string}>,
     readOnly?: boolean,
     disabled?: boolean,
     fieldName: string,
@@ -17,12 +18,15 @@ export interface DictionaryProps {
     className?: string,
     backgroundColor?: string,
     onDrillDown?: () => void,
+    multiple?: boolean
 }
 
 const Dictionary: React.FunctionComponent<DictionaryProps> = (props) => {
     if (props.readOnly) {
-        const readOnlyValue = (props.value !== null && props.value !== undefined) ? props.value : ''
-
+        let readOnlyValue = props.value ?? ''
+        if (props.multiple) {
+            readOnlyValue = (readOnlyValue as MultivalueSingleValue[]).map(i => i.value).join((', '))
+        }
         return <ReadOnlyField
             className={props.className}
             backgroundColor={props.backgroundColor}
@@ -34,86 +38,76 @@ const Dictionary: React.FunctionComponent<DictionaryProps> = (props) => {
 
     const selectRef = React.useRef<AntdSelect<string>>(null)
 
-    const handleFilter = React.useCallback(
-        (input: string, option: JSX.Element) => {
-            return String(option.props.title).toLowerCase().includes(input.toLowerCase())
-        },
-        []
-    )
-
     const handleOnChange = React.useCallback(
-        (valueKey: string) => {
-            let value: string
-            const values = props.values
-
-            if (values) {
-                const valueId = Number(valueKey)
-                value = values[valueId]?.value
+        (v: string | string[]) => {
+            if (props.multiple) {
+                props.onChange((v as string[]).map(item => ({ id: item, value: item })))
+            } else {
+                props.onChange(v as string || '')
             }
-
-            props.onChange(value || '')
         },
-        [props.values, props.onChange]
+        [props.multiple, props.values, props.onChange]
     )
 
-    let valueIndex: number
-
-    if (props.value && props.values) {
-        valueIndex = props.values.findIndex((v) => v.value === props.value)
-    }
-    const currentValue = props.value ?? undefined
+    const resultValue = React.useMemo(() => {
+        if (props.multiple) {
+            return (props.value as MultivalueSingleValue[])?.map(i => i.value)
+        } else {
+            return props.value
+        }
+    }, [props.value, props.multiple, props.values])
 
     const extendedProps: SelectProps = {
         ...props,
-        value: valueIndex >= 0 ? valueIndex.toString() : currentValue,
+        mode: props.multiple ? 'multiple' : 'default',
+        value: resultValue as string | string[],
         allowClear: !!props.value,
         showSearch: true,
         onChange: handleOnChange,
         dropdownMatchSelectWidth: false,
-        filterOption: handleFilter,
         getPopupContainer: trigger => trigger.parentElement,
         forwardedRef: selectRef
     }
 
-    return (
-        <Select {...extendedProps} >
-            {props.values?.length
-                ? props.values.map((el, index) => {
-                    // @see https://github.com/ant-design/ant-design/issues/7138#issuecomment-324116471
-                    const titleFix = { title: el.value }
-                    return (
-                        <Select.Option
-                            {...titleFix}
-                            key={index.toString()}
-                            value={index.toString()}
-                        >
-                            <span>
-                                {props.metaIcon}
-                                {el.icon && getIconByParams(el.icon)}
-                                <span>{el.value}</span>
-                            </span>
-                        </Select.Option>
-                    )
+    const options = React.useMemo(
+        () => {
+            const noValues = !props.values?.length
+            const hasMultipleValue = noValues && props.multiple && props.value?.length
+            const hasSingleValue = noValues && !props.multiple && props.value
+            if (hasMultipleValue) {
+                return (props.value as MultivalueSingleValue[])?.map((item) => {
+                    return <Select.Option key={item.value} title={item.value}>
+                        {item.options?.icon && getIconByParams(item.options.icon)}
+                        <span>{item.value}</span>
+                    </Select.Option>
                 })
-                : <Select.Option
-                    {...{ title: props.value }}
-                    key={props.value || ''}
-                    value={props.value}
-                >
+            }
+            if (hasSingleValue) {
+                return <Select.Option key={props.value as string} title={props.value as string}>
                     {props.metaIcon}
                     {props.valueIcon && getIconByParams(props.valueIcon)}
                     <span>{props.value}</span>
                 </Select.Option>
             }
-        </Select>
+            return props.values?.map((item) => {
+                return <Select.Option key={item.value} title={item.value}>
+                    {item.icon && getIconByParams(item.icon)}
+                    <span>{item.value}</span>
+                </Select.Option>
+            })
+
+        },
+        [props.value, props.values, props.multiple, props.metaIcon, props.valueIcon]
     )
+
+    return <Select {...extendedProps}>{options}</Select>
 }
 
 /**
- * TODO
+ * Returns Icon component
  *
- * @param params
- * @param extraStyleClasses
+ * @param params Contains `type` and `color`
+ * @param extraStyleClasses extra css classes
  */
 export function getIconByParams(params: string, extraStyleClasses?: string) {
     if (params) {
