@@ -12,14 +12,19 @@ export interface BcDataResponse {
 /**
  * Instance of `Business component` data
  * Has unlimited number of fields, which available to widget
- *
- * @param id Record's identificator
- * @param vstamp Version of last record's edit
- * @param [fieldName] User fields
  */
 export interface DataItem {
+    /**
+     * Record's identificator
+     */
     id: string,
+    /**
+     * Version of last record's edit
+     */
     vstamp: number,
+    /**
+     * User fields
+     */
     [fieldName: string]: DataValue
 }
 
@@ -50,13 +55,16 @@ export interface DepthDataState {
 
 /**
  * Result of saving record, which back-end returns
- *
- * @param record Saved record
- * @param postActions Actions which have to do after saving
  */
 export interface DataItemResponse {
     data: {
+        /**
+         * Saved record
+         */
         record: DataItem,
+        /**
+         * Actions which have to do after saving
+         */
         postActions?: OperationPostInvokeAny[],
         /*
         * @deprecated TODO: Remove in 2.0.0 in favor of postInvokeConfirm (is this todo needed?)
@@ -73,23 +81,31 @@ export const enum RecordSnapshotState {
 
 /**
  * Structure which contain `Multivalue` field's values
- *
- * @param id Record's identificator
- * @param value Showed value
  */
 export interface MultivalueSingleValue {
+    /**
+     * Record's identificator
+     */
     id: string
+    /**
+     * Showed value
+     */
     value: string
     options?: MultivalueSingleValueOptions
 }
 
 /**
  * `Multivalue` field's options
- *
- * @param hint Hint for value
  */
 export interface MultivalueSingleValueOptions {
+    /**
+     * Hint for value
+     */
     hint?: string,
+    /**
+     * Type of Icon
+     */
+    icon?: string,
     drillDown?: string,
     drillDownType?: DrillDownType,
     snapshotState?: RecordSnapshotState

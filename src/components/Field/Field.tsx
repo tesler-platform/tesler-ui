@@ -226,6 +226,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 values={props.rowFieldMeta ? props.rowFieldMeta.values : []}
                 fieldName={props.widgetFieldMeta.key}
                 onChange={handleChange}
+                multiple={props.widgetFieldMeta.multiple}
             />
             break
         case FieldType.text:
