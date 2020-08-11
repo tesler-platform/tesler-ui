@@ -2,8 +2,8 @@ import {AnyAction, types} from '../actions/actions'
 import {ScreenState} from '../interfaces/screen'
 import {BcMeta, BcMetaState} from '../interfaces/bc'
 import {OperationTypeCrud} from '../interfaces/operation'
-import {parseSorters} from '../utils/filters'
-import {BcSorter} from '../interfaces/filters'
+import {parseFilters, parseSorters} from '../utils/filters'
+import {BcFilter, BcSorter} from '../interfaces/filters'
 
 const initialState: ScreenState = {
     screenName: null,
@@ -32,11 +32,16 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
         case types.selectScreen: {
             const bcDictionary: Record<string, BcMeta> = {}
             const bcSorters: Record<string, BcSorter[]> = {}
+            const bcFilters: Record<string, BcFilter[]> = {}
             action.payload.screen.meta.bo.bc.forEach(item => {
                 bcDictionary[item.name] = item
                 const sorter = parseSorters(item.defaultSort)
+                const filter = parseFilters(item.defaultFilter)
                 if (sorter) {
                     bcSorters[item.name] = sorter
+                }
+                if (filter) {
+                    bcFilters[item.name] = filter
                 }
             })
             return {
@@ -45,7 +50,8 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                 primaryView: action.payload.screen.meta.primary,
                 views: action.payload.screen.meta.views,
                 bo: { activeBcName: null, bc: bcDictionary },
-                sorters: { ...state.sorters, ...bcSorters }
+                sorters: { ...state.sorters, ...bcSorters },
+                filters: { ...state.filters, ...bcFilters}
             }
         }
         case types.selectScreenFail: {
