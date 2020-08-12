@@ -25,12 +25,12 @@ export interface FileUploadOwnProps {
     disabled?: boolean,
     metaError: string,
     snapshotKey?: string,
-    snapshotFileIdKey?: string,
+    snapshotFileIdKey?: string
 }
 
 export interface FileUploadProps {
     fileIdDelta: string,
-    fileNameDelta: string,
+    fileNameDelta: string
 }
 
 export interface FileUploadActions {

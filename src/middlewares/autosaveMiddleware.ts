@@ -73,17 +73,17 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
         }
 
 /**
- * 
+ *
  */
 export function createAutoSaveMiddleware() {
     return saveFormMiddleware
 }
 
 /**
- * 
- * @param store 
- * @param bcName 
- * @param cursor 
+ *
+ * @param store
+ * @param bcName
+ * @param cursor
  */
 function bcHasPendingAutosaveChanges(store: CoreStore, bcName: string, cursor: string) {
     const pendingChanges = store.view.pendingDataChanges

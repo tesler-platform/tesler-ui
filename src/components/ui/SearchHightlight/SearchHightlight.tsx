@@ -4,7 +4,7 @@ import {splitIntoTokens} from '../../../utils/strings'
 interface SearchHighlightProps {
     source: string,
     search: string | RegExp,
-    match: (substring: string) => React.ReactNode
+    match: (substring: string) => React.ReactNode,
     notMatch?: (substring: string) => React.ReactNode
 }
 

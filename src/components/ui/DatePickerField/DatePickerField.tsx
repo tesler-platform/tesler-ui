@@ -11,17 +11,17 @@ export interface IDatePickerFieldProps {
     readOnly?: boolean,
     disabled?: boolean,
     value?: string | null,
-    onChange?: (date: string | null) => void
-    showToday?: boolean
-    allowClear?: boolean
-    onOpenChange?: (status: boolean) => void
-    disabledDate?: (current: moment.Moment) => boolean
-    showTime?: boolean
-    monthYear?: boolean
-    showSeconds?: boolean
-    backgroundColor?: string | null
-    className?: string
-    resetForceFocus?: () => void
+    onChange?: (date: string | null) => void,
+    showToday?: boolean,
+    allowClear?: boolean,
+    onOpenChange?: (status: boolean) => void,
+    disabledDate?: (current: moment.Moment) => boolean,
+    showTime?: boolean,
+    monthYear?: boolean,
+    showSeconds?: boolean,
+    backgroundColor?: string | null,
+    className?: string,
+    resetForceFocus?: () => void,
     dateFormatter?: (date: moment.Moment) => string,
     calendarContainer?: HTMLElement,
     onDrillDown?: () => void

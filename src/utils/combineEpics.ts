@@ -26,7 +26,7 @@ import CustomEpics, {RootEpicSlices, CustomEpicDescriptor, AnyEpic} from '../int
  * - if epic is set to some implementation, this implementation will be used instead of core one
  * Epics in slice without matching core epics (and slices without matching core slices) will be handled
  * as new one and behave like in regular combineEpics
- * 
+ *
  * @param customEpics
  */
 export const combineEpics = (customEpics: CustomEpics) => {

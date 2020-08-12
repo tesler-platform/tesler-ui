@@ -6,10 +6,10 @@ const emptyData: DataItem[] = []
 
 /**
  * Data reducer
- * 
+ *
  * Stores data (i.e. records, rows) for Business Components
  *
- * @param state Data branch of Redux store 
+ * @param state Data branch of Redux store
  * @param action Redux action
  * @param store Store instance for read-only access of different branches of Redux store
  */

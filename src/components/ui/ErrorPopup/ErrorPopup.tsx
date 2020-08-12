@@ -43,16 +43,14 @@ export const ErrorPopup: FunctionComponent<ErrorPopupOwnProps> = (props) => {
                 }
             </Form.Item>
             { props.error.type === ApplicationErrorType.SystemError &&
-                <React.Fragment>
-                    <Form.Item label="Код ошибки">
-                        {systemError.code}
-                        <Collapse bordered={false}>
-                            <Collapse.Panel header="Подробности" key="1">
-                                {systemError.details}
-                            </Collapse.Panel>
-                        </Collapse>
-                    </Form.Item>
-                </React.Fragment>
+            <Form.Item label="Код ошибки">
+                {systemError.code}
+                <Collapse bordered={false}>
+                    <Collapse.Panel header="Подробности" key="1">
+                        {systemError.details}
+                    </Collapse.Panel>
+                </Collapse>
+            </Form.Item>
             }
         </Form>
         {props.children}

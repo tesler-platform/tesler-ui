@@ -14,7 +14,7 @@ import {DataValue} from './data'
 export interface RowMeta {
     actions: Array<Operation | OperationGroup>,
     fields: RowMetaField[],
-    errors?: Record<string, string>,
+    errors?: Record<string, string>
     // TODO: В Досье это по ошибке в интерфейсе ответа бэка, хотя заполняется локально
     // conflicts?: ObjectMap<TDataValue> Переделать в Досье и убрать отсюда
 }
@@ -27,7 +27,7 @@ export interface RowMetaResponse extends TeslerResponse {
 }
 
 /**
- * Мета поля, которую предоставляет мета записи.  
+ * Мета поля, которую предоставляет мета записи.
  * Описывает разную дополнительную информацию о поле, которая не связана
  * с конкретной записью или с конкретным виджетом.
  *
@@ -75,7 +75,7 @@ export interface RowMetaField {
         value: string,
         // настройки (иконка-направление(ANT) цвет) для иконки соответствующей значению
         icon: string
-    }>
+    }>,
     filterValues?: Array<{ // словари для LOV'ов
         value: string
     }>,

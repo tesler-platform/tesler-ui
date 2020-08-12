@@ -25,6 +25,6 @@ export interface BcSorter {
 }
 
 export interface FilterGroup {
-    name: string
+    name: string,
     filters: string
 }

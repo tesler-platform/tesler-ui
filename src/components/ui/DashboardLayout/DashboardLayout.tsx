@@ -7,14 +7,14 @@ import Widget from '../../Widget/Widget'
 export interface DashboardLayoutProps {
     widgets: WidgetMeta[],
     customWidgets?: Record<string, CustomWidgetDescriptor>,
-    skipWidgetTypes?: string[]
+    skipWidgetTypes?: string[],
     card?: (props: any) => React.ReactElement<any>
 }
 
 /**
  * TODO
  *
- * @param props 
+ * @param props
  */
 export function DashboardLayout(props: DashboardLayoutProps) {
     const widgetsByRow = React.useMemo(() => {
@@ -37,8 +37,8 @@ export function DashboardLayout(props: DashboardLayoutProps) {
 /**
  * TODO
  *
- * @param widgets 
- * @param skipWidgetTypes 
+ * @param widgets
+ * @param skipWidgetTypes
  */
 function groupByRow(widgets: WidgetMeta[], skipWidgetTypes: string[]) {
     const byRow: ObjectMap<WidgetMeta[]> = {}

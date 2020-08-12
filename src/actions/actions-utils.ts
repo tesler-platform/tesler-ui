@@ -16,7 +16,7 @@
  */
 
 export interface Action<K, P> {
-    type: K
+    type: K,
     payload: P
 }
 
@@ -37,7 +37,7 @@ export type uActionCreators<A> = {
 /**
  * TODO
  *
- * @param actionObj 
+ * @param actionObj
  */
 export function createActionCreators<A>(actionObj: A): uActionCreators<A> {
     const keys = Object.keys(actionObj)
@@ -54,7 +54,7 @@ export function createActionCreators<A>(actionObj: A): uActionCreators<A> {
 /**
  * TODO
  *
- * @param actionObj 
+ * @param actionObj
  */
 export function createActionTypes<A>(actionObj: A): uActionTypesMap<A> {
     const keys = Object.keys(actionObj)

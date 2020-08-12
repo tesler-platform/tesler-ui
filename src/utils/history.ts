@@ -6,7 +6,7 @@ import {getTemplate} from './strings'
 /**
  * Appends '/' in front of `absoluteUrl` argument.
  * If `absoluteUrl` alredy starts with `/` then argument returned without changes.
- * 
+ *
  * @param absoluteUrl Url
  */
 export function makeRelativeUrl(absoluteUrl: string) {
@@ -35,9 +35,9 @@ export function parseBcCursors(bcPath: string) {
 
 /**
  * TODO
- * 
+ *
  * @param literals
- * @param placeholders 
+ * @param placeholders
  */
 export function buildUrl(literals: TemplateStringsArray, ...placeholders: Array<string|number>) {
     let result = ''

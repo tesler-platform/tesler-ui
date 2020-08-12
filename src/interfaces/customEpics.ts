@@ -45,7 +45,7 @@ export type SliceEpics<Slice> = Slice extends RootEpicSlices ? typeof coreEpics[
 export type SliceEpicsNames<Slice> = keyof SliceEpics<Slice>
 
 /**
- * Client configuration to override or disable specific core epic 
+ * Client configuration to override or disable specific core epic
  */
 export type CustomEpicDescriptor = AnyEpic | null
 
@@ -68,12 +68,12 @@ export type CustomEpics = {
 } & { [newSlice: string]: CustomEpicSlice }
 
 /**
- * @deprecated TODO: For backward compatibility; remove in 2.0.0 
+ * @deprecated TODO: For backward compatibility; remove in 2.0.0
  */
 export type LegacyCustomEpics = Epic<any, any>
 
 /**
- * @deprecated TODO: For backward compatibility; remove in 2.0.0 
+ * @deprecated TODO: For backward compatibility; remove in 2.0.0
  */
 export function isLegacyCustomEpics(customEpics: CustomEpics | LegacyCustomEpics): customEpics is LegacyCustomEpics {
     return typeof customEpics === 'function'

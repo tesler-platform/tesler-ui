@@ -6,7 +6,7 @@ import {MultivalueSingleValue} from '../../../interfaces/data'
 
 export interface DictionaryProps {
     value?: MultivalueSingleValue[] | string | null,
-    onChange?: (value: MultivalueSingleValue[] | string) => void
+    onChange?: (value: MultivalueSingleValue[] | string) => void,
     values: Array<{value: string, icon?: string}>,
     readOnly?: boolean,
     disabled?: boolean,

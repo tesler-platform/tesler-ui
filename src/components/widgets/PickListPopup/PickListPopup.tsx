@@ -22,7 +22,7 @@ import {PaginationMode} from '../../../interfaces/widget'
 
 export interface PickListPopupActions {
     onChange: (payload: ChangeDataItemPayload) => void,
-    onClose: () => void,
+    onClose: () => void
 }
 
 export interface PickListPopupOwnProps extends Omit<PopupProps, 'bcName' | 'children' | 'showed'> {
@@ -30,7 +30,7 @@ export interface PickListPopupOwnProps extends Omit<PopupProps, 'bcName' | 'chil
     components?: {
         title?: React.ReactNode,
         table?: React.ReactNode,
-        footer?: React.ReactNode,
+        footer?: React.ReactNode
     }
 }
 

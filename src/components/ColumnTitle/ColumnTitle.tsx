@@ -15,7 +15,7 @@ export interface ColumnTitle {
     components?: {
         filter?: ReactComponent<ColumnFilterOwnProps>
     },
-    className?: string,
+    className?: string
 }
 
 export const notSortableFields: readonly FieldType[] = [

@@ -6,14 +6,14 @@ import {getIconByParams} from '../Dictionary/Dictionary'
 
 export interface RadioButtonProps {
     value?: string | null,
-    onChange?: (value: string) => void
+    onChange?: (value: string) => void,
     values: Array<{ value: string, icon?: string }>,
     readOnly?: boolean,
     disabled?: boolean,
     style?: React.CSSProperties,
     className?: string,
     backgroundColor?: string,
-    onDrillDown?: () => void,
+    onDrillDown?: () => void
 }
 
 const RadioButton: React.FunctionComponent<RadioButtonProps> = (props) => {

@@ -31,7 +31,7 @@ const emptyArray: NavigationTab[] = []
 /**
  * Return navigation tabs array appropriate for specified level of navigation and currently active view
  *
- * @param navigation Navigation `menu` description from screen meta model 
+ * @param navigation Navigation `menu` description from screen meta model
  * @param level Target level of navigation
  * @param activeView Currently active view
  */
@@ -86,7 +86,7 @@ export function getViewTabs(
  *
  * TODO: Change Exclude<MenuItem, ViewNavigationCategory> to MenuItem in 2.0.0
  *
- * @param navigationItem 
+ * @param navigationItem
  */
 export function getReferencedView(navigationItem: Readonly<Exclude<MenuItem, ViewNavigationCategory>>) {
     if (isViewNavigationItem(navigationItem)) {

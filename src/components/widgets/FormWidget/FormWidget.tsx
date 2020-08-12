@@ -13,7 +13,7 @@ import {FieldType} from '../../../interfaces/view'
 import TemplatedTitle from '../../TemplatedTitle/TemplatedTitle'
 
 interface FormWidgetOwnProps {
-    meta: WidgetFormMeta,
+    meta: WidgetFormMeta
 }
 
 interface FormWidgetProps extends FormWidgetOwnProps {
