@@ -12,7 +12,7 @@ import {$do} from '../../../actions/actions'
 import {PaginationMode} from '../../../interfaces/widget'
 
 export interface AssocTableOwnProps {
-    meta: WidgetTableMeta
+    meta: WidgetTableMeta,
     disablePagination?: boolean
 }
 

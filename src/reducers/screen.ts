@@ -19,11 +19,11 @@ const initialState: ScreenState = {
 
 /**
  * Screen reducer
- * 
+ *
  * Stores information about currently active screen and various more persistent values which should be stored
  * until we navitage to a different screen.
  *
- * @param state Screen branch of Redux store 
+ * @param state Screen branch of Redux store
  * @param action Redux action
  * @param store Store instance for read-only access of different branches of Redux store
  */

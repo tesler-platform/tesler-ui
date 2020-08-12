@@ -15,16 +15,16 @@ export const crudOperations = [
 ]
 
 /**
- * 
- * @param operationType 
+ *
+ * @param operationType
  */
 export function isCrud(operationType: string): operationType is OperationTypeCrud {
     return crudOperations.includes(operationType as OperationTypeCrud)
 }
 
 /**
- * 
- * @param operation 
+ *
+ * @param operation
  */
 export function isOperationGroup(operation: Operation | OperationGroup): operation is OperationGroup {
     return Array.isArray((operation as OperationGroup).actions)
@@ -83,7 +83,7 @@ export interface Operation {
     confirmOperation?: OperationPreInvoke,
     /**
      * If custom operation needs to be processed as if it was a default crud operation,
-     * this flag can be specified and will be used instead of real `type` 
+     * this flag can be specified and will be used instead of real `type`
      */
     actionRole?: OperationType
 }
@@ -269,7 +269,7 @@ export interface OperationPostInvokeDownloadFileByUrl extends OperationPostInvok
 export interface OperationPostInvokeDrillDown extends OperationPostInvoke {
     url: string,
     drillDownType?: DrillDownType,
-    urlName?: string,
+    urlName?: string
 }
 
 /**
@@ -331,7 +331,7 @@ export type OperationInclusionDescriptor = string | {
 export interface OperationError {
     success: false,
     error: {
-        entity?: OperationErrorEntity
+        entity?: OperationErrorEntity,
         popup?: string[],
         postActions?: OperationPostInvokeAny[]
     }

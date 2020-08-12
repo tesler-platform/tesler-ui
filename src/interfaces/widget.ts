@@ -51,7 +51,7 @@ export interface WidgetFieldBase {
 }
 
 export interface WidgetListFieldBase extends WidgetFieldBase {
-    title: string
+    title: string,
     width?: number
 }
 
@@ -62,8 +62,8 @@ export interface WidgetFormFieldBase extends WidgetFieldBase {
 export type AllWidgetTypeFieldBase = WidgetFormFieldBase | WidgetListFieldBase
 
 export type NumberFieldMeta = AllWidgetTypeFieldBase & {
-    type: FieldType.number | FieldType.money | FieldType.percent
-    digits?: number
+    type: FieldType.number | FieldType.money | FieldType.percent,
+    digits?: number,
     nullable?: boolean
 }
 
@@ -84,13 +84,13 @@ export type DateTimeWithSecondsFieldMeta = AllWidgetTypeFieldBase & {
 }
 
 export type DictionaryFieldMeta = AllWidgetTypeFieldBase & {
-    type: FieldType.dictionary
-    multiple?: boolean
+    type: FieldType.dictionary,
+    multiple?: boolean,
     dictionaryName?: string
 }
 
 export type TextFieldMeta = AllWidgetTypeFieldBase & {
-    type: FieldType.text
+    type: FieldType.text,
     popover?: boolean
 }
 
@@ -99,8 +99,8 @@ export type InputFieldMeta = AllWidgetTypeFieldBase & {
 }
 
 export type MultiFieldMeta = AllWidgetTypeFieldBase & {
-    type: FieldType.multifield
-    fields: WidgetField[]
+    type: FieldType.multifield,
+    fields: WidgetField[],
     style: 'inline' | 'list'
 }
 
@@ -109,7 +109,7 @@ export type MultivalueFieldMeta = AllWidgetTypeFieldBase & {
     popupBcName?: string,
     assocValueKey?: string,
     associateFieldKey?: string,
-    displayedKey?: string,
+    displayedKey?: string
 }
 
 export type PickListFieldMeta = AllWidgetTypeFieldBase & {
@@ -129,7 +129,7 @@ export type FileUploadFieldMeta = AllWidgetTypeFieldBase & {
     type: FieldType.fileUpload,
     fileIdKey: string,
     fileSource: string,
-    snapshotFileIdKey?: string,
+    snapshotFileIdKey?: string
 }
 
 /**
@@ -169,7 +169,7 @@ export type WidgetListField = Extract<WidgetField, WidgetListFieldBase>
 export type WidgetInfoField = WidgetFormField & {
     drillDownTitle?: string,
     drillDownTitleKey?: string,
-    hintKey?: string,
+    hintKey?: string
 }
 
 export interface WidgetInfoOptions {
@@ -260,25 +260,27 @@ export interface WidgetShowCondition {
 
 /**
  * Description of the list of fields of block type.
- * @deprecated
- * Used to create a block grouping of fields
- *
- * @param blockId Block ID.
- * @param name The name of the block.
- * @param Fields an array of fields of type T.
+ *
+ * @deprecated
+ * Used to create a block grouping of fields
+ *
+ * @param blockId Block ID.
+ * @param name The name of the block.
+ * @param Fields an array of fields of type T.
+ *
  */
 export interface WidgetFieldBlock<T> {
     blockId: number,
     name: string,
     fields: T[],
     newRow?: boolean,
-    break?: boolean,
+    break?: boolean
 }
 
 export type WidgetFieldsOrBlocks<T> = Array<T | WidgetFieldBlock<T>>
 
 export interface WidgetFormMeta extends WidgetMeta {
-    type: WidgetTypes.Form
+    type: WidgetTypes.Form,
     fields: WidgetFieldsOrBlocks<WidgetFormField>
 }
 
@@ -378,7 +380,7 @@ export type CustomWidget = ConnectedComponent<any, any> | FunctionComponent<any>
 
 export type CustomWidgetDescriptor = CustomWidget | {
     component: CustomWidget,
-    card?: CustomWidget,
+    card?: CustomWidget
 }
 
 /**
@@ -390,7 +392,7 @@ export function isCustomWidget(descriptor: CustomWidgetDescriptor): descriptor i
 
 /**
  * TODO
- * 
+ *
  * @param item
  */
 export function isWidgetFieldBlock(item: any): item is WidgetFieldBlock<any> {

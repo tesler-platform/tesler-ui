@@ -4,22 +4,21 @@ export enum NumberTypes {
     money = 'money'
 }
 
-/* Форматеры вывода по типу поля*/
+/* Output formatters by field type */
 export const NumberInputFormat = {
-    [NumberTypes.number]: function number(value: number, digits: number = 0, nullable = true) {
+    [NumberTypes.number]: function number(value: number, digits = 0, nullable = true) {
         if (value === null && nullable) {
             return ''
         }
         return getFormattedNumber(value || 0, digits, true)
     },
-    // ToDo: по факту формирования требований, отдельный тип поля "деньги" не отличается от числа, возможно его стоит убрать?
-    [NumberTypes.money]: function money(value: number, digits: number = 2, nullable = true) {
+    [NumberTypes.money]: function money(value: number, digits = 2, nullable = true) {
         if (value === null && nullable) {
             return ''
         }
         return getFormattedNumber(value || 0, digits, true)
     },
-    [NumberTypes.percent]: function percent(value: number, digits: number = 0, nullable = true) {
+    [NumberTypes.percent]: function percent(value: number, digits = 0, nullable = true) {
         if (value === null && nullable) {
             return ''
         }
@@ -30,9 +29,9 @@ export const NumberInputFormat = {
 /**
  * TODO
  *
- * @param value 
- * @param digits 
- * @param useGrouping 
+ * @param value
+ * @param digits
+ * @param useGrouping
  */
 export function getFormattedNumber(value: number, digits: number, useGrouping = false): string {
     const precision = getPrecision(digits)
@@ -43,8 +42,7 @@ export function getFormattedNumber(value: number, digits: number, useGrouping = 
     }).format(
         fractionsRound(value, precision)
     )
-
-    // При возвращении числа из fractionsRound сразу без обработки, NumberFormat может вернуть отрицательный ноль
+    // NumberFormat might return negative zero
     if (!precision && value < 0 && !result.match(/[1-9]/)) {
         result = result.replace('-', '')
     }
@@ -53,19 +51,19 @@ export function getFormattedNumber(value: number, digits: number, useGrouping = 
 }
 
 /**
- * Округление дробей до ближайшего числа указанной точности
+ * Rounding to the nearest value of specified precision
  *
- * @param value 
- * @param precision 
+ * @param value
+ * @param precision
  */
 export function fractionsRound(value: number, precision: number): number {
     if (value == null || isNaN(value) || !precision) {
         return value
     }
-    // Сдвиг разрядов
+    // Fraction offsetting
     const [mant, exp] = value.toString(10).split('e')
     const val: number = Math.round(Number(mant + 'e' + ((exp) ? (Number(exp) + precision) : precision)))
-    // Обратный сдвиг
+    // Reverse offsetting
     const [rmant, rexp] = val.toString(10).split('e')
     return Number(rmant + 'e' + ((rexp) ? (Number(rexp) - precision) : -precision))
 }
@@ -73,11 +71,11 @@ export function fractionsRound(value: number, precision: number): number {
 /**
  * TODO
  *
- * @param digits 
+ * @param digits
  */
 export function getPrecision(digits: number): number {
     let precision = 0
-    // определение целевой точности относительно максимально допустимого для Intl форматирования
+    // calculate target precision based on maximally allowed by Intl formatting
     if (digits) {
         precision = digits < 0 ? 0
             : digits > 20 ? 20

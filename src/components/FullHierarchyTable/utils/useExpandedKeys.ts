@@ -23,12 +23,12 @@ const emptyArray: string[] = []
 
 /**
  * State hook to calculate currently expanded rows
- * 
+ *
  * Auto expanded records:
  * - all of `defaultExpandedKeys`
  * - all ancestors of each `selectedRecords`
- * - all ancestors of `data` records matching `filters` 
- * 
+ * - all ancestors of `data` records matching `filters`
+ *
  * @param defaultExpandedKeys TODO
  * @param selectedRecords TODO
  * @param data TODO

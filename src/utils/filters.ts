@@ -5,11 +5,11 @@ import {FieldType} from '../interfaces/view'
 
 /**
  * Map an input array of BcFilter objects into a dictionary of GET-request params
- * 
+ *
  * Name of the param formed as `${filter.fieldName}.${filter.type}`
  * Value of the param is a stringified JSON array with each `filter.value` item turned
  * to string if `filter.value` is an array or just `filter.value` otherwise.
- * 
+ *
  * @param filters Filters for business components
  * @returns Dictionary of query-params for GET-request
  */
@@ -31,8 +31,8 @@ export function getFilters(filters: BcFilter[]) {
 
 /**
  * TODO
- * 
- * @param sorters 
+ *
+ * @param sorters
  */
 export function getSorters(sorters: BcSorter[]) {
     if (!sorters || !sorters.length) {
@@ -79,12 +79,13 @@ export function parseFilters(defaultFilters: string) {
  * Parse sorter string into separate sorter objects.
  * String representation of sorters is url based:
  * "_sort.{order}.{direction}={fieldKey}&_sort.{order}.{direction}"
- *      @param fieldKey Sort by field
- *      @param order Priority of this specfic sorter
- *      @param direction "asc" or "desc"
- * 
+ *
+ * @param fieldKey Sort by field
+ * @param order Priority of this specfic sorter
+ * @param direction "asc" or "desc"
+ *
  * i.e. "_sort.0.asc=firstName"
- * 
+ *
  * @param sorters string representation of sorters
  */
 export function parseSorters(sorters: string) {
@@ -107,13 +108,13 @@ export function parseSorters(sorters: string) {
 
 /**
  * Returns appropriate filtration type for specified field type.
- * 
+ *
  * - Text-based fields use `contains`
  * - Checkbox fields use `specified` (boolean)
  * - Dictionary fiels use `equalsOneOf`
- * 
+ *
  * All other field types use strict `equals`
- * 
+ *
  * @param fieldType Field type
  */
 export function getFilterType(fieldType: FieldType) {

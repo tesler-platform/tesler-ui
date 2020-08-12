@@ -13,7 +13,7 @@ export interface ViewNavigationItem {
 
 /**
  * Returns MenuItem if it is ViewNavigationItem
- * 
+ *
  * @param item to be identified as view
  */
 export function isViewNavigationItem(item: MenuItem): item is ViewNavigationItem {
@@ -23,6 +23,7 @@ export function isViewNavigationItem(item: MenuItem): item is ViewNavigationItem
 /**
  * Description of the category in the navigation menu.
  * Used to create nesting levels of menu items.
+ *
  * @param categoryName The name of the category.
  * @param child list of categories or menu items included in a category.
  * TODO Deprecated. ViewNavigationCategory will be deleted in 2.0.0
@@ -52,8 +53,8 @@ export interface ViewNavigationGroup {
     /** TODO identifier will be nullable and string-only in 2.0.0 */
     id?: string | number,
     title: string,
-    child: Array<ViewNavigationGroup | ViewNavigationItem>
-    hidden?: boolean
+    child: Array<ViewNavigationGroup | ViewNavigationItem>,
+    hidden?: boolean,
     defaultView?: string
 }
 

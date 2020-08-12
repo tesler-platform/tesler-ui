@@ -12,7 +12,7 @@ export interface HistoryFieldProps {
     data: DataItem,
     bcName: string,
     cursor: string,
-    widgetName: string,
+    widgetName: string
 }
 
 const HistoryField: React.FunctionComponent<HistoryFieldProps> = (props) => {

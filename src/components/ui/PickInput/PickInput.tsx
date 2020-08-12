@@ -9,8 +9,8 @@ export interface PickInputProps {
     onClick?: () => void,
     onClear?: () => void,
     className?: string,
-    placeholder?:  string
-    loading?: boolean,
+    placeholder?:  string,
+    loading?: boolean
 }
 
 const PickInput: React.FunctionComponent<PickInputProps> = (props) => {

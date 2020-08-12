@@ -40,8 +40,9 @@ describe('`<ColumnTitle />`', () => {
     })
 
     it('renders `<ColumnSort />` only for supported field types', () => {
-        notSortableFields.map(type =>
+        notSortableFields.map((type, index) =>
             <ColumnTitle
+                key={index}
                 widgetName={null}
                 widgetMeta={{ ...widgetFieldMeta, type: type as any }}
                 rowMeta={fieldRowMeta}

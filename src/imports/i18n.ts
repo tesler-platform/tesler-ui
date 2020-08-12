@@ -5,9 +5,9 @@ import getResources from '../assets/i18n'
 
 /**
  * TODO
- * 
- * @param lang 
- * @param customDictionary 
+ *
+ * @param lang
+ * @param customDictionary
  */
 export function initLocale(lang: string, customDictionary: Resource) {
     i18n

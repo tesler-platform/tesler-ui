@@ -40,7 +40,7 @@ export interface ColumnFilterProps extends ColumnFilterOwnProps {
     /**
      * @deprecated TODO: Remove in 2.0.0, handled internally
      */
-    onMultivalueAssocOpen?: (bcName: string, calleeBCName: string, assocValueKey: string, associateFieldKey: string) => void,
+    onMultivalueAssocOpen?: (bcName: string, calleeBCName: string, assocValueKey: string, associateFieldKey: string) => void
 }
 
 export const ColumnFilter: React.FC<ColumnFilterProps> = (props) => {

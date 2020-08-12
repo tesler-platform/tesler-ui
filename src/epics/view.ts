@@ -2,7 +2,11 @@ import {types, Epic, $do, AnyAction} from '../actions/actions'
 import {Observable} from 'rxjs/Observable'
 import * as api from '../api/api'
 import {buildBcUrl} from '../utils/strings'
-import {OperationTypeCrud, OperationError, OperationErrorEntity, OperationModalInvokeConfirm, OperationPostInvokeConfirmType} from '../interfaces/operation'
+import {OperationTypeCrud,
+    OperationError,
+    OperationErrorEntity,
+    OperationModalInvokeConfirm,
+    OperationPostInvokeConfirmType} from '../interfaces/operation'
 import {findBcDescendants} from '../utils/bo'
 import {buildLocation} from '../Provider'
 import {changeLocation} from '../reducers/router'

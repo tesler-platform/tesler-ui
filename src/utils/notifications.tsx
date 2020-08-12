@@ -5,7 +5,7 @@ import i18n from 'i18next'
 export const openButtonWarningNotification = (
     description: string,
     buttonText: string,
-    duration: number = 0,
+    duration = 0,
     onButtonClick?: () => void,
     key?: string
 ): string => {

@@ -12,9 +12,9 @@ interface ModalInvokeProps {
     bcName: string,
     operationType: string,
     widgetName: string,
-    confirmOperation: OperationModalInvokeConfirm
+    confirmOperation: OperationModalInvokeConfirm,
     onOk: (bcName: string, operationType: string, widgetName: string, confirm: string) => void,
-    onCancel: () => void,
+    onCancel: () => void
 }
 
 const ModalInvoke: React.FunctionComponent<ModalInvokeProps> = (props) => {

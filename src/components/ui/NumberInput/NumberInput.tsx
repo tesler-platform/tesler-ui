@@ -18,7 +18,7 @@ export interface NumberInputProps {
     maxInput?: number,
     className?: string,
     onDrillDown?: () => void,
-    forceFocus?: boolean,
+    forceFocus?: boolean
 }
 
 const NumberInput: React.FunctionComponent<NumberInputProps> = (props) => {
@@ -57,7 +57,7 @@ const NumberInput: React.FunctionComponent<NumberInputProps> = (props) => {
     /**
      * TODO
      *
-     * @param text 
+     * @param text
      */
     function parseEditedValueText(text: string): number | null {
         if (props.nullable && text === '') {
@@ -158,7 +158,7 @@ const NumberInput: React.FunctionComponent<NumberInputProps> = (props) => {
 /**
  * TODO
  *
- * @param text 
+ * @param text
  */
 function normalizeValueFormat(text: string) {
     return text
@@ -178,9 +178,9 @@ function unformatValue(text: string) {
 /**
  * TODO
  *
- * @param formatedValue 
- * @param start 
- * @param end 
+ * @param formatedValue
+ * @param start
+ * @param end
  */
 function getUnformatedValueSelection(formatedValue: string, start: number, end: number): [number, number] {
     const selectionStartStart = formatedValue.substr(0, start)

@@ -9,7 +9,7 @@ export const historyObj = createHashHistory()
 
 /**
  * TODO
- * 
+ *
  * @param href
  */
 export function changeLocation(href: string) {
@@ -34,10 +34,10 @@ const initialState: Route = {type: RouteType.default, path: '/', params: null, s
 
 /**
  * Router reducer
- * 
+ *
  * Stores information about currently active route
  *
- * @param state Router branch of Redux store 
+ * @param state Router branch of Redux store
  * @param action Redux action
  * @param store Store instance for read-only access of different branches of Redux store
  */

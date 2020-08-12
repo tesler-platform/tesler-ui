@@ -12,7 +12,7 @@ import {connect} from 'react-redux'
 import InfoRow from './components/InfoRow'
 
 interface InfoWidgetOwnProps {
-    meta: WidgetInfoMeta
+    meta: WidgetInfoMeta,
     containerStyle?: string
 }
 
@@ -20,7 +20,7 @@ interface InfoWidgetProps extends InfoWidgetOwnProps {
     cursor: string,
     data: DataItem,
     fields: RowMetaField[],
-    onDrillDown: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void,
+    onDrillDown: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void
 }
 
 const InfoWidget: React.FunctionComponent<InfoWidgetProps> = (props) => {

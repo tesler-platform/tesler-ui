@@ -44,7 +44,7 @@ interface FieldOwnProps {
     forceFocus?: boolean,
     forcedValue?: DataValue,
     historyMode?: boolean,
-    customProps?: Record<string, any>,
+    customProps?: Record<string, any>
 }
 
 interface FieldProps extends FieldOwnProps {
@@ -55,7 +55,7 @@ interface FieldProps extends FieldOwnProps {
     showErrorPopup: boolean,
     filterValue: string,
     onChange: (payload: ChangeDataItemPayload) => void,
-    onDrillDown: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void,
+    onDrillDown: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void
 }
 
 export interface ChangeDataItemPayload {

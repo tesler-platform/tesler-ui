@@ -12,8 +12,8 @@ import {buildBcUrl} from '../../../utils/strings'
 import {ChangeDataItemPayload} from '../../Field/Field'
 
 export interface CheckboxPickerOwnProps {
-    fieldName: string
-    fieldLabel: string
+    fieldName: string,
+    fieldLabel: string,
     bcName: string,
     cursor: string,
     readonly?: boolean,
@@ -21,8 +21,8 @@ export interface CheckboxPickerOwnProps {
 }
 
 interface CheckboxPickerProps extends CheckboxPickerOwnProps {
-    metaField: RowMetaField
-    onChange: (payload: ChangeDataItemPayload) => void,
+    metaField: RowMetaField,
+    onChange: (payload: ChangeDataItemPayload) => void
 }
 
 const CheckboxPicker = (props: CheckboxPickerProps) => {

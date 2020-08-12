@@ -42,9 +42,9 @@ export function flattenOperations(operations: Array<Operation | OperationGroup>)
 
 /**
  * Check if an operation matches a specified `role` directly by type or by `actionRole` field.
- * 
+ *
  * If operation role is unavailable due to the store lacking an appropriate row meta, only `role` is checked.
- *  
+ *
  * @param role Expected operation role or 'none' if operation shouldn't match any crud role
  * @param payload sendOperation action payload
  * @param store Store instance

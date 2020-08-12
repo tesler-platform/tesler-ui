@@ -10,11 +10,11 @@ const initialState: Session  = {
 
 /**
  * Session reducer
- * 
+ *
  * Stores information about currently active session and data that should be persistent during all period of
  * user interaction with application.
  *
- * @param state Session branch of Redux store 
+ * @param state Session branch of Redux store
  * @param action Redux action
  * @param store Store instance for read-only access of different branches of Redux store
  */

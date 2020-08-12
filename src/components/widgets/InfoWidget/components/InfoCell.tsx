@@ -16,8 +16,8 @@ export interface ValueCellProps {
     cursor: string,
     meta: WidgetInfoMeta,
     data: DataItem,
-    flattenWidgetFields: WidgetInfoField[]
-    onDrillDown: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void,
+    flattenWidgetFields: WidgetInfoField[],
+    onDrillDown: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void
 }
 const emptyMultivalueField = [] as MultivalueSingleValue[]
 export const InfoCell: React.FunctionComponent<ValueCellProps> = props => {

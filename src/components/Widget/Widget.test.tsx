@@ -55,7 +55,7 @@ describe('Field with default card', () => {
             </Provider>
         )
         const widget = wrapper.find(Widget)
-        expect(widget.find(`article.blueCard`).length).toBe(1)
+        expect(widget.find('article.blueCard').length).toBe(1)
         expect(widget.find(`.${styles.container}`).length).toBe(0)
         expect(widget.find(Form).length).toBe(1)
     })
