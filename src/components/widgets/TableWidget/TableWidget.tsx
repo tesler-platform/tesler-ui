@@ -41,7 +41,7 @@ export interface TableWidgetOwnProps extends AdditionalAntdTableProps {
     paginationMode?: PaginationMode,
     disablePagination?: boolean,
     disableDots?: boolean,
-    controlColumns?: Array<{column: ColumnProps<DataItem>, position: 'left' | 'right'}>
+    controlColumns?: Array<{column: ColumnProps<DataItem>, position: 'left' | 'right'}>,
     header?: React.ReactNode
 }
 

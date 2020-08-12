@@ -86,11 +86,11 @@ export interface MultivalueSingleValue {
     /**
      * Record's identificator
      */
-    id: string
+    id: string,
     /**
      * Showed value
      */
-    value: string
+    value: string,
     options?: MultivalueSingleValueOptions
 }
 
@@ -113,8 +113,8 @@ export interface MultivalueSingleValueOptions {
 
 /**
  * `key` is name of field, for which the value will be setted up.
- *  A value of `key` is name of field, from which the value will be gotten.
- *  Пикмап.
+ * A value of `key` is name of field, from which the value will be gotten.
+ * Пикмап.
  * Ключ указывает название поля, куда будет подставлено значение. Значение этого ключа указывает название поля, из которого будет взято
  * значение.
  */

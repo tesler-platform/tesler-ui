@@ -25,7 +25,7 @@ export interface ProviderProps<ClientState, ClientActions> {
     customReducers?: ClientReducersMapObject<ClientState, ClientActions>,
     customActions?: any,
     customEpics?: CustomEpics | AnyEpic,
-    axiosInstance?: AxiosInstance
+    axiosInstance?: AxiosInstance,
     parseLocation?: (loc: Location<any>) => Route, // TODO: Combine into configuration object
     buildLocation?: (route: Route) => string, // TODO: Combine into configuration object
     useEpics?: boolean,
@@ -41,8 +41,8 @@ export let localeProviderInstance: i18n = null
 
 /**
  * TODO
- * 
- * @param storeCreator 
+ *
+ * @param storeCreator
  */
 function withLogger(storeCreator: StoreCreator): StoreCreator {
     return (window as any).devToolsExtension
@@ -60,7 +60,7 @@ export function getStoreInstance() {
 /**
  * TODO
  *
- * @param storeInstance 
+ * @param storeInstance
  */
 export function setStoreInstance(storeInstance: Store<CoreStore>) {
     store = storeInstance
@@ -90,14 +90,14 @@ export function getLocaleProviderInstance() {
 /**
  * TODO
  *
- * @param customReducers 
- * @param customEpics 
- * @param useEpics 
+ * @param customReducers
+ * @param customEpics
+ * @param useEpics
  */
 export function configureStore<ClientState, ClientActions extends Action<any>>(
     customReducers = {} as ClientReducersMapObject<ClientState, ClientActions>,
     customEpics: CustomEpics | Epic<any, ClientState>= null,
-    useEpics: boolean = true
+    useEpics = true
 ): Store<ClientState & CoreStore> {
     type CombinedActions = AnyAction & ClientActions
     // If core reducer slices have a matching client app reducer slice
@@ -158,7 +158,8 @@ const Provider = <ClientState extends Partial<CoreStore>, ClientActions extends 
 
 /**
  * TODO: Extract into separate module
- * @param loc 
+ *
+ * @param loc
  */
 export function defaultParseLocation(loc: Location<any>): Route {
     let path: string = loc.pathname
@@ -212,7 +213,7 @@ export function defaultParseLocation(loc: Location<any>): Route {
 /**
  * TODO
  *
- * @param route 
+ * @param route
  */
 function defaultBuildLocation(route: Route) {
     return `/screen/${route.screenName}/view/${route.viewName}/${route.bcPath}`

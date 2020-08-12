@@ -28,7 +28,7 @@ import {buildBcUrl} from '../../utils/strings'
 interface WidgetOwnProps {
     meta: WidgetMeta,
     card?: (props: any) => React.ReactElement<any>,
-    children?: React.ReactNode,
+    children?: React.ReactNode
 }
 
 interface WidgetProps extends WidgetOwnProps {
@@ -100,7 +100,7 @@ export const Widget: FunctionComponent<WidgetProps> = (props) => {
  * Return component instance based on type specified in widget meta
  *
  * `customWidgets` dictionary can be used to extend this function with new widget types,
- *  with custom declaration having a priority when it is specified for core widget type
+ * with custom declaration having a priority when it is specified for core widget type
  * `children` is returned in case of unknown widget type
  *
  * @param widgetMeta Meta configuration for widget

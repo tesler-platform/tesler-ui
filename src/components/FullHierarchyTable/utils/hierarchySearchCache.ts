@@ -30,7 +30,7 @@ type SearchFunction = (...args: any[]) => Set<string>
 export class HierarchySearchCache {
 
     /**
-     * Stores memoized Set<string> results based on widget name, data and filters 
+     * Stores memoized Set<string> results based on widget name, data and filters
      */
     private cache: {
         [widgetName: string]: Map<AssociatedItem[], Map<BcFilter[], Set<string>>>

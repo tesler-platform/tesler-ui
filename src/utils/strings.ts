@@ -5,9 +5,9 @@ import {DataItem} from '../interfaces/data'
 
 /**
  * TODO
- * 
+ *
  * @param literals
- * @param placeholders 
+ * @param placeholders
  */
 export function getTemplate(literals: TemplateStringsArray, ...placeholders: any[]) {
     let result = ''
@@ -27,7 +27,7 @@ export function getTemplate(literals: TemplateStringsArray, ...placeholders: any
  * @param includeSelf If result hierarchy should include target bc or only ancestors
  * @param store
  */
-export function buildBcUrl(bcName: string, includeSelf: boolean = false, store?: Store) {
+export function buildBcUrl(bcName: string, includeSelf = false, store?: Store) {
     const storeInstance = store || globalStore.getState()
     const bcMap = storeInstance.screen.bo.bc
     const bc = storeInstance.screen.bo.bc[bcName]

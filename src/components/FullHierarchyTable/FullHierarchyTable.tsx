@@ -39,7 +39,7 @@ interface FullHierarchyTableProps {
     loading: boolean,
     pendingChanges: Record<string, PendingDataItem>,
     bcFilters: BcFilter[],
-    rowMetaFields: RowMetaField[],
+    rowMetaFields: RowMetaField[]
 }
 
 interface FullHierarchyTableDispatchProps {
@@ -48,7 +48,7 @@ interface FullHierarchyTableDispatchProps {
     onSelectAll: (bcName: string, parentId: string, depth: number, assocValueKey: string, selected: boolean) => void,
     onSelectFullTable?: (bcName: string, dataItems: AssociatedItem[], assocValueKey: string, selected: boolean) => void,
     addFilter?: (bcName: string, filter: BcFilter) => void,
-    removeFilter?: (bcName: string, filter: BcFilter) => void,
+    removeFilter?: (bcName: string, filter: BcFilter) => void
 }
 
 export interface FullHierarchyDataItem extends AssociatedItem {

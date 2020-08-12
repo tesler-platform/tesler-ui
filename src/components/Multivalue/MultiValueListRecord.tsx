@@ -15,7 +15,7 @@ export interface MultiValueListRecordOwnProps {
 }
 
 export interface MultiValueListRecordProps extends MultiValueListRecordOwnProps {
-    onDrillDown: (drillDownUrl: string, drillDownType: DrillDownType) => void,
+    onDrillDown: (drillDownUrl: string, drillDownType: DrillDownType) => void
 }
 
 const MultiValueListRecord: FunctionComponent<MultiValueListRecordProps> = (props) => {

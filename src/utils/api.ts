@@ -30,8 +30,8 @@ const onResponseHook = <ResponsePayload>(response: AxiosResponse<ResponsePayload
 
 /**
  * TODO
- * 
- * @param value 
+ *
+ * @param value
  */
 function redirectOccurred(value: AxiosResponse<TeslerResponse>) {
     if (value.data?.redirectUrl) {
@@ -50,9 +50,9 @@ function redirectOccurred(value: AxiosResponse<TeslerResponse>) {
 
 /**
  * TODO
- * 
- * @param error 
- * @param callContext 
+ *
+ * @param error
+ * @param callContext
  */
 function onErrorHook(error: AxiosError, callContext?: ApiCallContext) {
     if (error.response) {
@@ -219,7 +219,7 @@ function dropEmptyOrWrongParams(qso: QueryParamsMap) {
 
 /**
  * Extends url with query parameters control symbol (`?` or `&`)
- * 
+ *
  * @param url Url with or without `?` symbol
  */
 export function addTailControlSequences(url: string) {
@@ -230,7 +230,7 @@ export function addTailControlSequences(url: string) {
 
  /**
   * Extends url with query parameters
-  * 
+  *
   * @param url Url to extend
   * @param qso Query parameters dictionary
   */
@@ -243,9 +243,9 @@ export function applyParams(url: string, qso: QueryParamsMap) {
 
 /**
  * TODO
- * 
- * @param url 
- * @param qso 
+ *
+ * @param url
+ * @param qso
  */
 export function applyRawParams(url: string, qso: object) {
     if (!qso) {

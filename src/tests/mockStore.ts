@@ -5,7 +5,7 @@ import {combineReducers} from '../utils/redux'
 
 /**
  * redux-стор для использования в тестах
- * 
+ *
  * Поддерживает редьюсеры, не поддерживает эпики (тестируются отдельно).
  */
 export const mockStore = () => {

@@ -1,8 +1,8 @@
 /**
  * A dictionary for a values of specified type
- * 
+ *
  * @deprecated TODO: Remove in 2.0.0 in favor of native `Record` type
- * 
+ *
  * @template T Value type
  */
 export interface ObjectMap<T> {

@@ -41,6 +41,7 @@ const z = null as any
 
 /**
  * ActionName: PayloadType = z
+ *
  * @param ActionName Name for an action (redux action "type") and corresponding action creater action
  * @param PayloadType Typescript description for payload
  * @property z Mandatory to prevent typescript from erasing unused class fields (@see https://github.com/microsoft/TypeScript/issues/12437)
@@ -62,7 +63,7 @@ export class ActionPayloadTypes {
 
     /**
      * Authentication request
-     * 
+     *
      * @param login User-provided login
      * @param password User-provided password
      * @param role Optionally user can choose a role to authentificate with
@@ -80,7 +81,7 @@ export class ActionPayloadTypes {
 
     /**
      * Login was unsuccesful
-     * 
+     *
      * @param errorMsg Reason could be provided
      */
     loginFail: { errorMsg: string } = z
@@ -97,10 +98,12 @@ export class ActionPayloadTypes {
 
     /**
      * Request to change active screen was initiated
-     * 
+     *
      * TODO: 2.0.0 Should be string (just the screen name) instead;
+     *
      * Initially this was due to `screen` reducer did not having access to `session` part of redux store
-     * @param screen Request initiated with all the meta from login response  
+     *
+     * @param screen Request initiated with all the meta from login response
      */
     selectScreen: {
         screen: SessionScreen
@@ -108,7 +111,7 @@ export class ActionPayloadTypes {
 
     /**
      * Request to change active screen was unsuccesful (incorrect path, unknown screen, etc.)
-     * 
+     *
      * @param screenName Which screen was requested originally
      */
     selectScreenFail: {
@@ -117,7 +120,7 @@ export class ActionPayloadTypes {
 
     /**
      * Request to change active view was initiated
-     * 
+     *
      * TODO: 2.0.0 Should be string (just the view name) instead;
      * Initially this was due to `screen` and `view` reducers did not having access to `session` part of redux store
      */
@@ -125,7 +128,7 @@ export class ActionPayloadTypes {
 
     /**
      * Request to change active view was unsuccesful (incorrect path, unknown screen, etc.)
-     * 
+     *
      * @param selectViewFail Which view was requested originally
      */
     selectViewFail: {
@@ -134,12 +137,12 @@ export class ActionPayloadTypes {
 
     /**
      * Fetch data request for business component was initiated
-     * 
+     *
      * @param widgetName What widget requires data (widget can only request its own data here)
-     * 
+     *
      * @deprecated TODO: 2.0.0 Should be removed in favor of widgetName
      * @param bcName The business component to fetch data for
-     * 
+     *
      * @deprecated TODO: 2.0.0 Should be all moved to separate hierarchy-specific action
      * @param depth The level of hierarchy to fetch data for
      * @param ignorePageLimit Page size should be ignored
@@ -160,6 +163,7 @@ export class ActionPayloadTypes {
     bcFetchDataPages: {
         /**
          * The business component to fetch data for
+         *
          * @deprecated TODO: 2.0.0 Should be removed in favor of widgetName
          */
         bcName: string,
@@ -179,7 +183,7 @@ export class ActionPayloadTypes {
 
     /**
      * Fetch data request for searchable fields
-     * 
+     *
      * @param bcName The business component to fetch data for
      * @param searchSpec Search expression // TODO: Check format
      * @param searchString Value to search for
@@ -192,14 +196,14 @@ export class ActionPayloadTypes {
 
     /**
      * Fetch data request was succesful
-     * 
+     *
      * @param data Data records from response for this business component
      * @param bcUrl BC url with respect of parents cursors
      * @param hasNext If there are more data to fetch (other pages etc.)
-     * 
+     *
      * @deprecated TODO: 2.0.0 Remove in favor of widgetName
      * @param bcName Business component that requested data
-     * 
+     *
      * @deprecated TODO: 2.0.0 Should be all moved to separate hierarchy-specific action
      * @param depth For same BC hierarchies, the level which was requested
      */
@@ -213,7 +217,7 @@ export class ActionPayloadTypes {
 
     /**
      * Fetch data request wac unsuccesful
-     * 
+     *
      * @param bcName Business component that initiated data fetch
      * @param bcUrl BC url with respect of parents cursors
      *
@@ -223,12 +227,12 @@ export class ActionPayloadTypes {
     bcFetchDataFail: {
         bcName: string,
         bcUrl: string,
-        depth?: number,
+        depth?: number
     } = z
 
     /**
      * Fetch next chunk of data for table widgets with infinite scroll
-     * 
+     *
      * @param bcName Business component that initiated data fetch
      * @param widgetName Widget that initiated row meta fetch
      */
@@ -239,9 +243,9 @@ export class ActionPayloadTypes {
 
     /**
      * Fetch meta information for active record of business component
-     * 
+     *
      * @param widgetName Widget that initiated row meta fetch
-     * 
+     *
      * @deprecated TODO: 2.0.0 Remove in favor of widgetName
      * @param bcName Business component that initiated row meta fetch
      */
@@ -252,7 +256,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param bcUrl
      * @param rowMeta
@@ -267,7 +271,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      */
     bcFetchRowMetaFail: {
@@ -276,7 +280,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      */
     bcNewData: {
@@ -285,7 +289,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param dataItem
      * @param bcUrl
@@ -298,13 +302,13 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bName
      */
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      */
     bcNewDataFail: {
@@ -313,7 +317,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      */
     bcDeleteDataFail: {
@@ -337,7 +341,7 @@ export class ActionPayloadTypes {
 
     /**
      * Perform CustomAction
-     * 
+     *
      * @param bcName The business component to fetch data for
      * @param operationType Type of operation to be performed
      * @param widgetName What widget requires data
@@ -363,7 +367,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param bcUrl
      * @param viewError
@@ -378,7 +382,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param cursor
      */
@@ -389,24 +393,24 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param postInvoke
      * @param cursor
      * @param widgetName What widget initiated original operation, TODO: mandatory in 2.0.0
-     * 
+     *
      * @deprecated TODO: Prefer widgetName instead (2.0.0)
      * @param bcName
      */
     processPostInvoke: {
         bcName: string,
         postInvoke: OperationPostInvokeAny,
-        cursor?: string
+        cursor?: string,
         widgetName?: string
     } = z
 
     /**
      * Operation to perform preInvoke actions
-     * 
+     *
      * @param bcName The business component to fetch data for
      * @param operationType Type of operation to be performed
      * @param widgetName What widget requires data
@@ -414,14 +418,14 @@ export class ActionPayloadTypes {
      */
     processPreInvoke: {
         bcName: string,
-        operationType: string
-        widgetName: string
+        operationType: string,
+        widgetName: string,
         preInvoke: OperationPreInvoke
     } = z
 
     /**
      * Operation to perform postInvokeConfirm actions
-     * 
+     *
      * @param bcName The business component to fetch data for
      * @param operationType Type of operation to be performed
      * @param widgetName What widget requires data
@@ -429,14 +433,14 @@ export class ActionPayloadTypes {
      */
     processPostInvokeConfirm: {
         bcName: string,
-        operationType: string
-        widgetName: string
+        operationType: string,
+        widgetName: string,
         postInvokeConfirm: OperationPostInvokeConfirm
     } = z
 
     /**
      * TODO
-     * 
+     *
      * @param widgetName
      * @param bcName
      * @param cursor
@@ -451,7 +455,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcUrl
      * @param bcName
      * @param cursor
@@ -464,7 +468,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param url
      * @param drillDownType
      * @param urlName
@@ -475,12 +479,12 @@ export class ActionPayloadTypes {
         drillDownType?: DrillDownType,
         urlName?: string,
         route: Route,
-        widgetName?: string,
+        widgetName?: string
     } = z
 
     /**
      * TODO
-     * 
+     *
      * @param cursorsMap
      * @param keepDelta
      */
@@ -491,7 +495,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param depth
      * @param cursor
@@ -504,7 +508,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param cursors
      * @param dataItems
@@ -519,7 +523,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param cursors
      * @param dataItems
@@ -532,7 +536,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param currentRecordData
      * @param rowMeta
      * @param bcName
@@ -552,7 +556,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param calleeBCName
      * @param associateFieldKey
@@ -577,7 +581,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      */
     closeViewPopup: {
@@ -586,13 +590,13 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param map
      * @param bcName
      */
     viewPutPickMap: {
         map: PickMap,
-        bcName: string,
+        bcName: string
     } = z
 
     /**
@@ -602,7 +606,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcNames
      * @param calleeBCName
      * @param associateFieldKey
@@ -618,7 +622,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param records
      */
@@ -629,7 +633,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param popupBcName
      * @param cursor
@@ -648,7 +652,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param cursor
      * @param dataItem
@@ -661,7 +665,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param bcUrl
      * @param entityError
@@ -676,7 +680,7 @@ export class ActionPayloadTypes {
 
     /**
      * Save info about current operation for confirm modal
-     * 
+     *
      * @param operation Current operation
      * @param confirmOperation Text for confirm modal
      */
@@ -684,14 +688,14 @@ export class ActionPayloadTypes {
         operation: {
             bcName: string,
             operationType: OperationTypeCrud | string,
-            widgetName: string,
+            widgetName: string
         },
         confirmOperation: OperationPostInvokeConfirm
     } = z
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param widgetName What widget requires data (widget can only request its own data here)
      */
@@ -717,7 +721,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcNames
      */
     bcCancelPendingChanges: {
@@ -726,7 +730,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param cursor
      * @param ignoreChildrenPageLimit
@@ -741,7 +745,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param depth
      * @param cursor
@@ -749,12 +753,12 @@ export class ActionPayloadTypes {
     bcSelectDepthRecord: {
         bcName: string,
         depth: number,
-        cursor: string,
+        cursor: string
     } = z
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param widgetName
      * @param dataItem
@@ -769,7 +773,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param depth
      * @param widgetName
@@ -786,7 +790,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param depth
      * @param widgetName
@@ -803,7 +807,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param assocValueKey
      * @param selected
@@ -816,7 +820,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param depth
      * @param assocValueKey
@@ -831,7 +835,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param parentId
      * @param depth
@@ -848,7 +852,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcNames
      */
     dropAllAssociations: {
@@ -857,7 +861,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param depthFrom
      */
@@ -868,7 +872,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param depth
      * @param dropDescendants
@@ -881,7 +885,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param path
      * @param params
      */
@@ -892,7 +896,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param widgetName
      * @param rowId
      * @param fieldKey
@@ -900,12 +904,12 @@ export class ActionPayloadTypes {
     selectTableCellInit: {
         widgetName: string,
         rowId: string,
-        fieldKey: string,
+        fieldKey: string
     } = z
 
     /**
      * TODO
-     * 
+     *
      * @param widgetName
      * @param rowId
      * @param fieldKey
@@ -913,12 +917,12 @@ export class ActionPayloadTypes {
     selectTableCell: {
         widgetName: string,
         rowId: string,
-        fieldKey: string,
+        fieldKey: string
     } = z
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param cursor
      * @param router
@@ -934,7 +938,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param type
      * @param message
      */
@@ -945,7 +949,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param id
      */
     closeNotification: {
@@ -954,7 +958,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param filter
      */
@@ -965,7 +969,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param filter
      */
@@ -985,7 +989,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param sorter
      */
@@ -996,7 +1000,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param sorter
      */
@@ -1007,7 +1011,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param bcName
      * @param page
      */
@@ -1018,7 +1022,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param error
      */
     showViewError: {
@@ -1042,7 +1046,7 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     * 
+     *
      * @param fileId
      */
     downloadFile: {
@@ -1093,7 +1097,7 @@ export interface ActionsObservable<T extends AnyAction> extends rActionsObservab
     /**
      * TODO
      *
-     * @param key 
+     * @param key
      */
     ofType<K extends keyof ActionPayloadTypes>(...key: K[]): ActionsObservable<ActionsMap[K]>
 }

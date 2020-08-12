@@ -10,7 +10,7 @@ const defaultResources: Resource = {
 /**
  * TODO
  *
- * @param customDictionary 
+ * @param customDictionary
  */
 function getResources(customDictionary: Resource) {
     const result = { ...defaultResources }

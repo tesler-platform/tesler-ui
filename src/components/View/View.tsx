@@ -9,7 +9,7 @@ export interface ViewProps {
     skipWidgetTypes?: string[],
     card?: (props: any) => React.ReactElement<any>,
     customWidgets?: Record<string, CustomWidgetDescriptor>,
-    customLayout?: (props: any) => React.ReactElement<any>
+    customLayout?: (props: any) => React.ReactElement<any>,
     customFields?: Record<string, CustomWidget>
 }
 

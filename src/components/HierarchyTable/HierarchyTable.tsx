@@ -24,7 +24,7 @@ interface HierarchyTableOwnProps {
     meta: WidgetTableMeta,
     assocValueKey?: string,
     nestedByBc?: string,
-    parentBcName?: string
+    parentBcName?: string,
     showPagination?: boolean,
     onRow?: (record: DataItem, index: number) => TableEventListeners
 }

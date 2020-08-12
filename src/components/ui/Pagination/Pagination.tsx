@@ -12,7 +12,7 @@ export interface PaginationOwnProps {
     bcName: string,
     widgetName?: string,
     mode: PaginationMode,
-    onChangePage?: () => void,
+    onChangePage?: () => void
 }
 
 interface PaginationStateProps {
@@ -24,7 +24,7 @@ interface PaginationStateProps {
 
 interface PaginationDispatchProps {
     changePage: (bcName: string, page: number) => void,
-    loadMore: (bcName: string, widgetName: string) => void,
+    loadMore: (bcName: string, widgetName: string) => void
 }
 
 type PaginationAllProps = PaginationOwnProps & PaginationStateProps & PaginationDispatchProps

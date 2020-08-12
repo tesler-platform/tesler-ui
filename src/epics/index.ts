@@ -14,7 +14,7 @@ export const coreEpics = {
 }
 
 /**
- * @deprecated TODO: For backward compatibility; remove in 2.0.0 
+ * @deprecated TODO: For backward compatibility; remove in 2.0.0
  */
 export const legacyCoreEpics: Epic<any, any> = combineEpics(
     ...Object.values(coreEpics).map(epics => {

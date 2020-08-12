@@ -6,11 +6,11 @@ import {AnyAction} from '../actions/actions'
 /**
  * Combines a dictionary of reducers for different slices of the store into one
  * root reducer.
- * 
+ *
  * Effectively works like default redux `combineReducers` but provides access to the store
  * via the third argument to allow reducers read only access to other slices
  * (simplifies callbacks, epics and actions' payloads).
- * 
+ *
  * @param reducers A dictionary of reducers for different slices of the redux store
  */
 export function combineReducers<State>(
@@ -41,9 +41,9 @@ export function combineReducers<State>(
  *
  * TODO: Check if possible to replace with `shallowEqual` from `react-redux`
  *
- * @param prevProps 
- * @param nextProps 
- * @param ignore 
+ * @param prevProps
+ * @param nextProps
+ * @param ignore
  */
 export function shallowCompare(prevProps: Record<string, any>, nextProps: Record<string, any>, ignore: string[] = []) {
     const diffProps: string[] = []
@@ -88,8 +88,9 @@ class ActionsContext<T> {
 
 /**
  * TODO: JSDoc
- * @param contextCreator 
- * @param actionsCreator 
+ *
+ * @param contextCreator
+ * @param actionsCreator
  */
 export function createMapDispatchToProps<ContextProps, Actions, OwnProps>(
     contextCreator: (props: OwnProps) => ContextProps,

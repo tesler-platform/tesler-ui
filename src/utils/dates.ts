@@ -2,8 +2,8 @@ import * as moment from 'moment'
 
 /**
  * TODO
- * 
- * @param date 
+ *
+ * @param date
  */
 export function toISOLocal(date: moment.Moment) {
     if (date.year() < 0 || date.year() > 9999) {

@@ -26,7 +26,7 @@ const descendantsKeysCache = new HierarchySearchCache()
 /**
  * Returns cached search results for full hierarchy widget
  *
- * @param widgetName Full hierarchy widget name 
+ * @param widgetName Full hierarchy widget name
  * @param filters Filters (only text fields supported)
  * @param data Records
  * @param depthLevel Level of the hierarchy for which hook is called

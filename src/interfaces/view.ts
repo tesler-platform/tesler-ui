@@ -7,7 +7,7 @@ import {OperationTypeCrud, OperationPostInvokeConfirm} from './operation'
 export interface ViewSelectedCell {
     widgetName: string,
     rowId: string,
-    fieldKey: string,
+    fieldKey: string
 }
 
 export interface ViewState extends ViewMetaResponse {
@@ -40,10 +40,10 @@ export interface ViewState extends ViewMetaResponse {
         operation: {
             bcName: string,
             operationType: OperationTypeCrud | string,
-            widgetName: string,
-        }
-        confirmOperation: OperationPostInvokeConfirm,
-    },
+            widgetName: string
+        },
+        confirmOperation: OperationPostInvokeConfirm
+    }
 }
 
 export interface ViewMetaResponse {
@@ -142,5 +142,5 @@ export interface SystemError extends ApplicationErrorBase {
 }
 
 export interface NetworkError extends ApplicationErrorBase {
-    type: ApplicationErrorType.NetworkError,
+    type: ApplicationErrorType.NetworkError
 }
