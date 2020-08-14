@@ -22,6 +22,7 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
             const selectedCell = state.view.selectedCell
             const isSelectTableCellInit = action.type === types.selectTableCellInit
 
+
             /**
              * Default save operation as custom action
              *
