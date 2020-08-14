@@ -22,12 +22,14 @@ export interface TextAreaProps extends AdditionalAntdTextAreaProps {
     maxRows?: number,
     className?: string,
     backgroundColor?: string,
-    onDrillDown?: () => void
+    onDrillDown?: () => void,
+    metaError?: string
 }
 
 const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
     if (props.readOnly) {
         return <ReadOnlyField
+            metaError={props.metaError}
             className={props.className}
             backgroundColor={props.backgroundColor}
             onDrillDown={props.onDrillDown}
