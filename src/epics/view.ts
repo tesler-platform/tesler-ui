@@ -33,6 +33,9 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
         }
     }
     const data = record && { ...pendingRecordChange, vstamp: record.vstamp }
+    const defaultSaveOperation = state.view.widgets
+        ?.find(item => item.name === widgetName)?.options?.actionGroups
+        ?.defaultSave === action.payload.operationType && action.payload?.onSuccessAction?.type === types.changeLocation
     const params = confirm
         ? { _action: operationType, _confirm: confirm }
         : { _action: operationType }
@@ -43,7 +46,15 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
         // TODO: Remove in 2.0.0 in favor of postInvokeConfirm (is this todo needed?)
         const preInvoke = response.preInvoke
         const postInvokeConfirm = Object.values(OperationPostInvokeConfirmType).includes(postInvoke?.type as OperationPostInvokeConfirmType)
-        return Observable.concat(
+        // defaultSaveOperation mean that executed custom autosave and postAction will be ignored
+        // drop pendingChanges and onSuccessAction execute instead
+        return defaultSaveOperation
+        ? action?.payload?.onSuccessAction
+            ? Observable.concat(
+                Observable.of($do.bcCancelPendingChanges({bcNames: [bcName]})),
+                Observable.of(action.payload.onSuccessAction))
+            : Observable.empty<never>()
+        : Observable.concat(
             Observable.of($do.sendOperationSuccess({ bcName, cursor })),
             Observable.of($do.bcForceUpdate({ bcName })),
             postInvoke
