@@ -42,6 +42,7 @@ export interface TableWidgetOwnProps extends AdditionalAntdTableProps {
     disablePagination?: boolean,
     disableDots?: boolean,
     controlColumns?: Array<{column: ColumnProps<DataItem>, position: 'left' | 'right'}>
+    header?: React.ReactNode
 }
 
 export interface TableWidgetProps extends TableWidgetOwnProps {
@@ -464,36 +465,41 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
         [filtersExist]
     )
 
+    const defaultHeader = React.useMemo(
+        () => {
+            return <div className={styles.filtersContainer}>
+                {!!props.filterGroups?.length &&
+                    <Select
+                        value={filterGroupName ?? t('Show all').toString()}
+                        onChange={handleAddFilters}
+                        dropdownMatchSelectWidth={false}
+                    >
+                        {props.filterGroups.map((group) =>
+                            <Select.Option
+                                key={group.name}
+                                value={group.name}
+                            >
+                                <span>{group.name}</span>
+                            </Select.Option>
+                        )}
+                    </Select>
+                }
+                {filtersExist &&
+                    <ActionLink onClick={handleRemoveFilters}> {t('Clear all filters')} </ActionLink>
+                }
+                {props.limitBySelf &&
+                    <ActionLink onClick={handleShowAll}> {t('Show all records')} </ActionLink>
+                }
+            </div>
+        },
+        [props.filterGroups, filterGroupName, filtersExist, props.limitBySelf]
+    )
+
     return <div
         className={styles.tableContainer}
         ref={tableContainerRef}
     >
-        <div
-            className={styles.filtersContainer}
-        >
-            {!!props.filterGroups?.length &&
-                <Select
-                    value={filterGroupName ? filterGroupName : t('Show all').toString()}
-                    onChange={handleAddFilters}
-                    dropdownMatchSelectWidth={false}
-                >
-                    {props.filterGroups.map((group) =>
-                        <Select.Option
-                            key={group.name}
-                            value={group.name}
-                        >
-                            <span>{group.name}</span>
-                        </Select.Option>
-                    )}
-                </Select>
-            }
-            {filtersExist &&
-                <ActionLink onClick={handleRemoveFilters}> {t('Clear all filters')} </ActionLink>
-            }
-            {props.limitBySelf &&
-                <ActionLink onClick={handleShowAll}> {t('Show all records')} </ActionLink>
-            }
-        </div>
+        {props.header ?? defaultHeader}
         <Table
             className={cn(
                 styles.table,
