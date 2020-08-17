@@ -34,13 +34,15 @@ const emptyArray: string[] = []
  * @param data TODO
  * @param filters TODO
  * @param searchAncestorsKeys TODO
+ * @param hierarchyDisableDescendants Disable searched item descendants in fullHierarchy search
  */
 export function useExpandedKeys(
     defaultExpandedKeys: string[],
     selectedRecords: FullHierarchyDataItem[],
     data: FullHierarchyDataItem[],
     filters: BcFilter[],
-    searchAncestorsKeys: Set<string>
+    searchAncestorsKeys: Set<string>,
+    hierarchyDisableDescendants?: boolean
 ) {
     const [expandedKeys, setExpandedKeys] = React.useState<string[]>([])
     React.useEffect(() => {
@@ -80,7 +82,9 @@ export function useExpandedKeys(
             ...expandedKeys,
             ...searchResultBranches
         ])
-        setExpandedKeys(prev => [ ...prev, ...Array.from(distinctExpandedKeys) ])
+        hierarchyDisableDescendants
+            ? setExpandedKeys(Array.from(searchResultBranches))
+            : setExpandedKeys(prev => [ ...prev, ...Array.from(distinctExpandedKeys) ])
     }, [filters, data, searchAncestorsKeys])
     return [expandedKeys, setExpandedKeys] as const
 }

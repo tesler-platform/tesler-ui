@@ -105,6 +105,10 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
         return widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup
             && (widget.options?.hierarchy || widget.options?.hierarchySameBc || widget.options?.hierarchyFull)
     })
+    const fullHierarchyWidget = state.view.widgets.find((widget) => {
+        return widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup && widget.options?.hierarchyFull
+    })
+
     const sameBcHierarchyOptions = anyHierarchyWidget?.options?.hierarchySameBc && anyHierarchyWidget?.options
     const depthLevel = sameBcHierarchyOptions && (action.type === types.bcFetchDataRequest && action.payload.depth || 1)
 
@@ -122,10 +126,11 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
         })
     }
 
+    // Hierarchy widgets has own filter implementation
     const fetchParams: Record<string, any> = {
         _page: page,
         _limit: limit,
-        ...getFilters(filters),
+        ...getFilters(fullHierarchyWidget ? [] : filters),
         ...getSorters(sorters)
     }
 
