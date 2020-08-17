@@ -30,8 +30,15 @@ const descendantsKeysCache = new HierarchySearchCache()
  * @param filters Filters (only text fields supported)
  * @param data Records
  * @param depthLevel Level of the hierarchy for which hook is called
+ * @param hierarchyDisableDescendants Disable searched item descendants in fullHierarchy search
  */
-export function useHierarchyCache(widgetName: string, filters: BcFilter[], data: FullHierarchyDataItem[], depthLevel: number) {
+export function useHierarchyCache(
+    widgetName: string,
+    filters: BcFilter[],
+    data: FullHierarchyDataItem[],
+    depthLevel: number,
+    hierarchyDisableDescendants?: boolean) {
+
     React.useEffect(() => {
         const clearSearchCache = () => {
             if (depthLevel === 1) {
@@ -61,7 +68,8 @@ export function useHierarchyCache(widgetName: string, filters: BcFilter[], data:
 
     const filteredData = React.useMemo(() => {
         return filters?.length
-            ? data.filter(item => searchedAncestorsKeys.has(item.id) || searchedDescendantsKeys.has(item.id))
+            ? data.filter(item => searchedAncestorsKeys.has(item.id)
+                || !hierarchyDisableDescendants && searchedDescendantsKeys.has(item.id))
             : data
     }, [searchedAncestorsKeys, searchedDescendantsKeys, data, filters])
     return [filteredData, searchedAncestorsKeys, searchedDescendantsKeys] as const

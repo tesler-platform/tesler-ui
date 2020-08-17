@@ -84,7 +84,12 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
             [FilterType.contains, FilterType.equals].includes(filter.type)),
         [props.bcFilters]
     )
-    const [filteredData, searchedAncestorsKeys] = useHierarchyCache(props.meta.name, textFilters, props.data, props.depth)
+    const [filteredData, searchedAncestorsKeys] = useHierarchyCache(
+        props.meta.name,
+        textFilters,
+        props.data,
+        props.depth,
+        props.meta.options?.hierarchyDisableDescendants)
 
     const data = (props?.nestedData?.length > 0 && depthLevel > 1)
         ? props.nestedData
@@ -96,7 +101,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
 
     const [expandedKeys, setExpandedKeys] = useExpandedKeys(
         props.expandedRowKeys, selectedRecords, filteredData,
-        textFilters, searchedAncestorsKeys
+        textFilters, searchedAncestorsKeys, props.meta.options?.hierarchyDisableDescendants
     )
 
     const handleExpand = (expanded: boolean, dataItem: DataItem) => {

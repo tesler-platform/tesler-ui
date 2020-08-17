@@ -187,6 +187,10 @@ export interface WidgetOptions {
     hierarchyRadio?: boolean,
     hierarchyRadioAll?: boolean,
     hierarchyDisableRoot?: boolean,
+    /**
+     * Disable searched item descendants in fullHierarchy search
+     */
+    hierarchyDisableDescendants?: boolean,
     hierarchyDisableParent?: boolean,
     actionGroups?: WidgetOperations,
     /**
