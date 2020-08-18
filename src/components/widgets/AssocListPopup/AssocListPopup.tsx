@@ -27,7 +27,8 @@ export interface IAssocListRecord {
 export interface IAssocListActions {
     onSave: (bcNames: string[]) => void,
     onFilter: (bcName: string, filter: BcFilter) => void,
-    onDeleteTag: (bcName: string, dataItem: DataItem) => void
+    onDeleteTag: (bcName: string, dataItem: DataItem) => void,
+    onDeleteAssociations: (bcName: string, parentId: string, depth: number, assocValueKey: string, selected: boolean) => void,
     onCancel: () => void,
     onClose: () => void
 }
@@ -117,9 +118,12 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
     }, [onCancel, onClose])
 
     const handleDeleteTag = React.useCallback((val: DataItem) => {
+        if (!val._associate && props.widget.options.hierarchyGroupDeselection) {
+            props.onDeleteAssociations(props.widget.bcName, val.id, (val.level as number + 1), props.assocValueKey, false)
+        }
         onDeleteTag(props.widget.bcName, val)
     },
-        [props.onDeleteTag,props.widget.bcName]
+        [props.onDeleteTag,props.widget.bcName,props.onDeleteAssociations]
     )
 
     // Tag values limit
@@ -264,6 +268,9 @@ const mapDispatchToProps = createMapDispatchToProps(
                 if (ctx.props.isFullHierarchy) {
                     ctx.dispatch($do.bcCancelPendingChanges({bcNames: [ctx.props.bcName]}))
                 }
+            },
+            onDeleteAssociations: (bcName: string, parentId: string, depth: number, assocValueKey: string, selected: boolean) => {
+                ctx.dispatch($do.changeDescendantsAssociationsFull({ bcName, parentId, depth, assocValueKey, selected }))
             },
             onFilter: (bcName: string, filter: BcFilter) => {
                 ctx.dispatch($do.bcAddFilter({ bcName, filter }))
