@@ -540,7 +540,12 @@ const saveAssociationsActive: Epic = (action$, store) => action$.ofType(types.sa
         : {}
     return api.associate(state.screen.screenName, bcUrl, Object.values(pendingChanges) as AssociatedItem[], params)
     .mergeMap(response => {
+        const postInvoke = response.postActions[0]
+        const calleeWidget = state.view.widgets.find(widgetItem => widgetItem.bcName === calleeBCName)
         return Observable.concat(
+            postInvoke
+                ? Observable.of($do.processPostInvoke({ bcName: calleeBCName, postInvoke, widgetName: calleeWidget.name }))
+                : Observable.empty<never>(),
             Observable.of($do.bcCancelPendingChanges({ bcNames: bcNames })),
             Observable.of($do.bcForceUpdate({ bcName: calleeBCName }))
         )
