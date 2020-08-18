@@ -303,7 +303,8 @@ const bcNewDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperati
     const bcName = action.payload.bcName
     const bcUrl = buildBcUrl(bcName)
     const context = { widgetName: action.payload.widgetName }
-    return api.newBcData(state.screen.screenName, bcUrl, context)
+    const params = { _action: action.payload.operationType}
+    return api.newBcData(state.screen.screenName, bcUrl, context, params)
     .mergeMap(data => {
         const rowMeta = data.row
         const dataItem: DataItem = { id: null, vstamp: -1 }
