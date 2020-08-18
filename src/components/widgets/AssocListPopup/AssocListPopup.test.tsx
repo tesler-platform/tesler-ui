@@ -41,6 +41,7 @@ describe('AssocListPopup test', () => {
         onDeleteTag: jest.fn(),
         onCancel: jest.fn(),
         onClose: jest.fn(),
+        onDeleteAssociations: jest.fn()
     }
 
     it('should render default title, table and footer', () => {
