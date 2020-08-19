@@ -1,4 +1,43 @@
-# Verson 1.18.2
+# Version 1.19.0
+
+## Feautres
+
+* Autosave middleware naw can use custom operation instead of default one for saving by specifing custom operation name in `defaultSave` property of widget meta ([#387](https://github.com/tesler-platform/tesler-ui/issues/387)):
+```ts
+"options": {
+"actionGroups": {
+    // ...
+    "defaultSave": "custom-save"
+}
+```
+* `<Dictionary />`: added `multiple` mode for several items selecting ([#396](https://github.com/tesler-platform/tesler-ui/issues/396))
+* Support `defaultFilter` parameter for preset filters in business component meta data ([#399](https://github.com/tesler-platform/tesler-ui/issues/399)), format is the same as input for Tesler API:
+```ts
+{
+  defaultFilter: 'someField1.contains=someValue&someField2.equalsOneOf=%5B%22someValue1%22%2C%22someValue2%22%5D'
+}
+// corresponds to preset filters of `someField1` includes `someValue` and `someField2` to be one of [someValue1, someValue2] 
+```
+* CRUD operations initiated by `actionRole` should send original custom operation name through an `_action` query parameter ([#356](https://github.com/tesler-platform/tesler-ui/issues/356))
+* Added 'maxInput' param to WidgetFieldBase, upgrade antd peer dependency 3.26.13 -> 3.26.18 ([#363](https://github.com/tesler-platform/tesler-ui/issues/363))
+
+## Fixes
+
+* Show error on `<ReadOnly />` field in `<TableWidget />` ([#389](https://github.com/tesler-platform/tesler-ui/issues/389))
+* Errors with MVG filter ([371](https://github.com/tesler-platform/tesler-ui/issues/371)):
+  * MVG filter don't pass selected item to query parameters
+  * Filter popup doesn't show previosly selected dataitems when open popup again
+  * Filter icon shows that filters applied even when filters array is empty
+* `<AssocListPopup />` show selected items tags only for the current page ([#393](https://github.com/tesler-platform/tesler-ui/issues/393))
+
+
+## Misc
+
+* Fix alpha builds sorting ([#412](https://github.com/tesler-platform/tesler-ui/pull/412))
+* `<ColumnTitle />` refactoring and test coverage ([#352](https://github.com/tesler-platform/tesler-ui/pull/352))
+
+
+# Version 1.18.2
 
 ## Fixes
 
