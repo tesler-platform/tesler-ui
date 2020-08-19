@@ -312,15 +312,19 @@ export interface AssociatedItem extends DataItem {
  * Descriptor enabling operation on widget:
  * - string (if you just need to include / exclude operation or groups)
  * - object, if this is group in which you want to selectively include or exclude the operation
- * 
- * @param type Type of transaction; a string that uniquely identifies the operation on the widget
- * @param include List of included operations or groups operations
- * @param exclude List of excluded operations or groups operations
- * @param defaultSave default no crud save action
  */
 export type OperationInclusionDescriptor = string | {
+    /**
+     * Type of transaction; a string that uniquely identifies the operation on the widget
+     */
     type: OperationType,
+    /**
+     * List of included operations or groups operations
+     */
     include?: OperationInclusionDescriptor[],
+    /**
+     * List of excluded operations or groups operations
+     */
     exclude?: OperationType[]
 }
 
