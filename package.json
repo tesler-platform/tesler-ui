@@ -1,6 +1,6 @@
 {
   "name": "@tesler-ui/core",
-  "version": "1.18.2",
+  "version": "1.19.0",
   "main": "tesler-ui-core.js",
   "homepage": "https://tesler.io/",
   "types": "index.d.ts",
@@ -74,12 +74,12 @@
   "peerDependencies": {
     "antd": "^3.26.18",
     "axios": "^0.19.0",
+    "moment": "^2.24.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.1",
-    "redux-observable": "^0.14.1",
     "redux": "^4.0.5",
-    "moment": "^2.24.0",
+    "redux-observable": "^0.14.1",
     "rxjs": "^5.5.12"
   }
 }
