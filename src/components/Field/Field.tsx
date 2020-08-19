@@ -234,6 +234,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 {...commonProps}
                 defaultValue={value as any}
                 onChange={handleChange}
+                className={cn({[readOnlyFieldStyles.error]: props.metaError})}
             />
             break
         case FieldType.multifield:
@@ -370,7 +371,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                     />
                 </InteractiveInput>
     }
-    if (props.metaError && !props.readonly && props.showErrorPopup) {
+    if (props.metaError && props.showErrorPopup) {
         return <Tooltip
                 overlayClassName={styles.error}
                 title={props.metaError}
