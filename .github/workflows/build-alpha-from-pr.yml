@@ -60,7 +60,7 @@ jobs:
       - name: Grep version fron NPM registry
         id: grep_version
         run: |
-          echo "##[set-output name=current_version;]$(yarn info @tesler-ui/core versions | grep -Eo "${{ env.PACKAGE_VERSION }}(-alpha[0-9]{1,})?" | sort -r | head -1 | xargs echo)"
+          echo "##[set-output name=current_version;]$(yarn info @tesler-ui/core versions | grep -Eo "${{ env.PACKAGE_VERSION }}(-alpha[0-9]{1,})?" | sort -Vr | head -1 | xargs echo)"
 
       - name: Bump release version
         id: bump_version
