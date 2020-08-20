@@ -124,19 +124,18 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
 
     // Tag values limit
     const tagLimit = 5
-    const assocTag = pendingDataChanges && Object.values(pendingDataChanges).filter(item => item._associate) || []
-    const visibleTags = assocTag.map(item => ({
+    const visibleTags = selectedRecords.map(item => ({
         ...item,
         _value: String(item[props.assocValueKey] || ''),
         _closable: true
     })).slice(0, tagLimit)
-    const hiddenTagsCount = assocTag.length - tagLimit
-    const tags: AssociatedItemTag[] = assocTag.length > tagLimit
+    const hiddenTagsCount = selectedRecords.length - tagLimit
+    const tags: AssociatedItemTag[] = selectedRecords.length > tagLimit
         ? [
             ...visibleTags,
             { id: 'control', _associate: false, _value: `... ${hiddenTagsCount}` }
         ]
-        : assocTag.map(item => ({ ...item, _value: String(item[props.assocValueKey] || ''), _closable: true }))
+        : selectedRecords.map(item => ({ ...item, _value: String(item[props.assocValueKey] || ''), _closable: true }))
 
     const defaultTitle = tags.length
         ? <div>
