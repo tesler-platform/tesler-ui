@@ -26,7 +26,7 @@ export function useAssocRecords<T extends AssociatedItem>(
                     return false
                 }
 
-                return item._associate
+                return item?._associate
             })
         }
         return records
