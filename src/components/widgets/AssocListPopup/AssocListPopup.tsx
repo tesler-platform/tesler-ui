@@ -27,7 +27,9 @@ export interface IAssocListRecord {
 export interface IAssocListActions {
     onSave: (bcNames: string[]) => void,
     onFilter: (bcName: string, filter: BcFilter) => void,
-    onDeleteTag: (bcName: string, dataItem: DataItem) => void
+    removeFilter: (bcName: string, filter: BcFilter) => void,
+    onDeleteTag: (bcName: string, dataItem: DataItem) => void,
+    onDeleteAssociations: (bcName: string, parentId: string, depth: number, assocValueKey: string, selected: boolean) => void,
     onCancel: () => void,
     onClose: () => void
 }
@@ -50,6 +52,7 @@ export interface IAssocListProps extends IAssocListOwnProps {
         [cursor: string]: PendingDataItem
     },
     data?: AssociatedItem[],
+    bcFilters?: BcFilter[],
     isFilter?: boolean,
     calleeBCName?: string
 }
@@ -70,7 +73,9 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         onCancel,
         onClose,
         onSave,
+        bcFilters,
         onFilter,
+        removeFilter,
         onDeleteTag,
 
         width,
@@ -103,13 +108,24 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         const filterValue = selectedRecords
         .map(item => item.id)
 
-        onFilter(props.calleeBCName, {
-            type: FilterType.equalsOneOf,
-            fieldName: props.associateFieldKey,
-            value: filterValue
-        })
+        if (filterValue.length > 0) {
+            onFilter(props.calleeBCName, {
+                type: FilterType.equalsOneOf,
+                fieldName: props.associateFieldKey,
+                value: filterValue
+            })
+        } else {
+            const currentFilters = bcFilters?.find(filterItem => filterItem.fieldName === props.associateFieldKey)?.value
+            currentFilters
+            ? removeFilter(props.calleeBCName, {
+                type: FilterType.equalsOneOf,
+                fieldName: props.associateFieldKey,
+                value: currentFilters
+            })
+            : $do.emptyAction(null)
+        }
         onClose()
-    }, [onFilter, onClose, props.calleeBCName, props.associateFieldKey, selectedRecords])
+    }, [onFilter, removeFilter, bcFilters, onClose, props.calleeBCName, props.associateFieldKey, selectedRecords])
 
     const cancelData = React.useCallback(() => {
         onCancel()
@@ -117,11 +133,13 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
     }, [onCancel, onClose])
 
     const handleDeleteTag = React.useCallback((val: DataItem) => {
+        if (!val._associate && props.widget.options.hierarchyGroupDeselection) {
+            props.onDeleteAssociations(props.widget.bcName, val.id, (val.level as number + 1), props.assocValueKey, false)
+        }
         onDeleteTag(props.widget.bcName, val)
     },
-        [props.onDeleteTag,props.widget.bcName]
+        [props.onDeleteTag,props.widget.bcName, props.onDeleteAssociations]
     )
-
     // Tag values limit
     const tagLimit = 5
     const visibleTags = selectedRecords.map(item => ({
@@ -229,6 +247,7 @@ function mapStateToProps(store: Store, ownProps: IAssocListOwnProps) {
         bcLoading: bc?.loading,
         pendingDataChanges: store.view.pendingDataChanges[bcName],
         data: data,
+        bcFilters,
         isFilter,
         calleeBCName
     }
@@ -264,8 +283,15 @@ const mapDispatchToProps = createMapDispatchToProps(
                     ctx.dispatch($do.bcCancelPendingChanges({bcNames: [ctx.props.bcName]}))
                 }
             },
+            onDeleteAssociations: (bcName: string, parentId: string, depth: number, assocValueKey: string, selected: boolean) => {
+                ctx.dispatch($do.changeDescendantsAssociationsFull({ bcName, parentId, depth, assocValueKey, selected }))
+            },
             onFilter: (bcName: string, filter: BcFilter) => {
                 ctx.dispatch($do.bcAddFilter({ bcName, filter }))
+                ctx.dispatch($do.bcForceUpdate({ bcName }))
+            },
+            removeFilter: (bcName: string, filter: BcFilter) => {
+                ctx.dispatch($do.bcRemoveFilter({ bcName, filter }))
                 ctx.dispatch($do.bcForceUpdate({ bcName }))
             },
             onDeleteTag: (
