@@ -303,16 +303,6 @@ const showAssocPopup: Epic = (action$, store) => action$.ofType(types.showViewPo
                 }
             })
         }
-    } else {
-        const assocDataValues = state.data[bcName].filter(dataItem => dataItem._associate)
-        assocDataValues.forEach((record) => {
-            popupInitPendingChanges[record.id] = {
-                ...record,
-                id: record.id,
-                _associate: true,
-                _value: record[action.payload.assocValueKey]
-            }
-        })
     }
     return Observable.of($do.changeDataItems({
         bcName,
