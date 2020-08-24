@@ -201,7 +201,15 @@ export interface WidgetOptions {
      * Record field which value will be used as a title for the whole record
      * for this particular widget
      */
-    displayedValueKey?: string
+    displayedValueKey?: string,
+    /**
+     * Disable tooltip with error text
+     */
+    disableHoverError?: boolean,
+    /**
+     * Disable notification after failed operation
+     */
+    disableNotification?: boolean
 }
 
 export interface WidgetMeta {

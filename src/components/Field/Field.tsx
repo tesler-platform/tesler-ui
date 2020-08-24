@@ -45,6 +45,7 @@ interface FieldOwnProps {
     forcedValue?: DataValue,
     historyMode?: boolean,
     customProps?: Record<string, any>,
+    disableHoverError?: boolean
 }
 
 interface FieldProps extends FieldOwnProps {
@@ -414,7 +415,7 @@ function mapStateToProps(store: Store, ownProps: FieldOwnProps) {
     ?.[ownProps.cursor]
     ?.[ownProps.widgetFieldMeta.key]
     const widget = store.view.widgets.find(item => item.name === ownProps.widgetName)
-    const showErrorPopup = widget?.type !== WidgetTypes.Form
+    const showErrorPopup = widget?.type !== WidgetTypes.Form && !ownProps.disableHoverError
     const filterValue = store.screen.filters[ownProps.bcName]
         ?.find(filter => filter.fieldName === ownProps.widgetFieldMeta.key)
         ?.value.toString()
