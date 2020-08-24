@@ -368,6 +368,7 @@ const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperat
     const dataItem = state.data[bcName].find(item => item.id === cursor)
     const pendingChanges = state.view.pendingDataChanges[bcName]?.[cursor]
     const rowMeta = bcUrl && state.view.rowMeta[bcName]?.[bcUrl]
+    const options = state.view.widgets.find(widget => widget.name === widgetName)?.options
 
     // there is no row meta when parent bc custom operation's postaction triggers autosave, because custom operation call bcForceUpdate
     if (rowMeta) {
@@ -410,7 +411,7 @@ const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperat
     .catch((e: AxiosError) => {
         console.log(e)
         // Защита от блокировки виджета при автосохранении
-        if (action.payload.onSuccessAction) {
+        if (action.payload.onSuccessAction && !options?.disableNotification) {
             openButtonWarningNotification(
                 i18n.t('There are pending changes. Please save them or cancel.'),
                 i18n.t('Cancel changes'),
