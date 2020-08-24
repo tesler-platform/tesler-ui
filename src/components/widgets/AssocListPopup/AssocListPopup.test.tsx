@@ -38,6 +38,7 @@ describe('AssocListPopup test', () => {
     const actionProps: IAssocListActions = {
         onSave: jest.fn(),
         onFilter: jest.fn(),
+        removeFilter: jest.fn(),
         onDeleteTag: jest.fn(),
         onCancel: jest.fn(),
         onClose: jest.fn(),
