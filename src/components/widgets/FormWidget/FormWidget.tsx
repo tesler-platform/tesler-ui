@@ -70,6 +70,7 @@ export const FormWidget: FunctionComponent<FormWidgetProps> = (props) => {
                                     cursor={cursor}
                                     widgetName={name}
                                     widgetFieldMeta={field}
+                                    disableHoverError={props.meta.options?.disableHoverError}
                                 />
                             </Form.Item>
                         </Col>
