@@ -53,6 +53,15 @@ export const combineEpics = (customEpics: CustomEpics) => {
                 return
             }
         })
+        if (customEpics[coreSlice]) {
+            Object.entries(customEpics[coreSlice]).forEach((entry) => {
+                const p = coreSliceEpics[entry[0] as keyof typeof coreSliceEpics]
+                if (!p) {
+                    resultSliceEpics.push(entry[1])
+                }
+            })
+        }
+
         resultSlices.push(defaultCombineEpics(...resultSliceEpics))
     })
     // Handle root epic slices without core implementations

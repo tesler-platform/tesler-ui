@@ -38,7 +38,7 @@ const initialState: ViewState  = {
  * @param action Redux action
  * @param store Store instance for read-only access of different branches of Redux store
  */
-export function view(state = initialState, action: AnyAction, store: Store) {
+export function view(state = initialState, action: AnyAction, store: Store): ViewState {
     switch (action.type) {
         case types.selectView: {
             return {
@@ -342,11 +342,12 @@ export function view(state = initialState, action: AnyAction, store: Store) {
             return { ...state, pendingValidationFails: initialState.pendingValidationFails }
         }
         case types.showViewPopup: {
-            const { bcName, calleeBCName, associateFieldKey, assocValueKey, active, isFilter } = action.payload
+            const { bcName, calleeBCName, associateFieldKey, assocValueKey, active, isFilter, type } = action.payload
             const widgetValueKey = store.view.widgets.find(item => item.bcName === bcName)?.options?.displayedValueKey
             return {
                 ...state,
                 popupData: {
+                    type,
                     bcName,
                     calleeBCName,
                     associateFieldKey,
@@ -354,6 +355,17 @@ export function view(state = initialState, action: AnyAction, store: Store) {
                     active,
                     isFilter
                 },
+            }
+        }
+        case types.showFileUploadPopup: {
+            const bcName = state.widgets.find(item => item.name === action.payload.widgetName)?.bcName
+            return {
+                ...state,
+                popupData: {
+                    type: 'file-upload',
+                    bcName, // should be null
+                    calleeBCName: bcName
+                }
             }
         }
         case types.viewPutPickMap:

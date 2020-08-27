@@ -1,4 +1,4 @@
-import {types, Epic, $do, AnyAction} from '../actions/actions'
+import {types, Epic, $do, AnyAction, ActionsMap} from '../actions/actions'
 import {Observable} from 'rxjs/Observable'
 import * as api from '../api/api'
 import {buildBcUrl} from '../utils/strings'
@@ -6,7 +6,10 @@ import {OperationTypeCrud,
     OperationError,
     OperationErrorEntity,
     OperationModalInvokeConfirm,
-    OperationPostInvokeConfirmType} from '../interfaces/operation'
+    OperationPostInvokeConfirmType,
+    OperationPostInvokeAny,
+     OperationPreInvoke
+} from '../interfaces/operation'
 import {findBcDescendants} from '../utils/bo'
 import {buildLocation} from '../Provider'
 import {changeLocation} from '../reducers/router'
@@ -15,10 +18,15 @@ import {parseBcCursors} from '../utils/history'
 import {WidgetTypes} from '../interfaces/widget'
 import {MultivalueSingleValue, PendingDataItem} from '../interfaces/data'
 import {matchOperationRole} from '../utils/operations'
+import {Store as AppState} from '../interfaces/store'
+import {Store} from 'redux'
 
-const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperation)
-.filter(action => matchOperationRole('none', action.payload, store.getState()))
-.mergeMap((action) => {
+/**
+ * Default implementation of `sendOperation` handler 
+ * @param action 
+ * @param store 
+ */
+export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store: Store<AppState, AnyAction>) {
     const state = store.getState()
     const screenName = state.screen.screenName
     const {bcName, operationType, widgetName} = action.payload
@@ -49,7 +57,6 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
         const postInvoke = response.postActions[0]
         // TODO: Remove in 2.0.0 in favor of postInvokeConfirm (is this todo needed?)
         const preInvoke = response.preInvoke
-        const postInvokeConfirm = Object.values(OperationPostInvokeConfirmType).includes(postInvoke?.type as OperationPostInvokeConfirmType)
         // defaultSaveOperation mean that executed custom autosave and postAction will be ignored
         // drop pendingChanges and onSuccessAction execute instead
         return defaultSaveOperation
@@ -61,25 +68,7 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
         : Observable.concat(
             Observable.of($do.sendOperationSuccess({ bcName, cursor })),
             Observable.of($do.bcForceUpdate({ bcName })),
-            postInvoke
-                ? Observable.of($do.processPostInvoke({ bcName, postInvoke, widgetName: context.widgetName }))
-                : Observable.empty<never>(),
-            postInvokeConfirm
-                ? Observable.of($do.processPostInvokeConfirm({
-                    bcName,
-                    operationType,
-                    widgetName,
-                    postInvokeConfirm: postInvoke as OperationModalInvokeConfirm
-                }))
-                : Observable.empty<never>(),
-            preInvoke
-                ? Observable.of($do.processPreInvoke({
-                    bcName,
-                    operationType,
-                    widgetName,
-                    preInvoke,
-                }))
-                : Observable.empty<never>(),
+            ...postOperationRoutine(widgetName, postInvoke, preInvoke, operationType, bcName),
         )
     })
     .catch((e: AxiosError) => {
@@ -93,7 +82,22 @@ const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperati
         }
         return Observable.of($do.sendOperationFail({ bcName, bcUrl, viewError, entityError }))
     })
-})
+}
+
+/**
+ * Handle any `sendOperation` action which is not part of built-in operations types
+ *
+ * Request will be send to `custom-action/${screenName}/${bcUrl}?_action=${action.payload.type}` endpoint,
+ * with pending changes of the widget as requst body.
+ * 
+ * Fires sendOperationSuccess, bcForceUpdate and postOperationRoutine
+ * 
+ * @param action$ Payload includes operation type and widget that initiated operation
+ * @param store 
+ */
+const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperation)
+.filter(action => matchOperationRole('none', action.payload, store.getState()))
+.mergeMap((action) => sendOperationEpicImpl(action, store))
 
 const sendOperationAssociate: Epic = (action$, store) => action$.ofType(types.sendOperation)
 .filter(action => matchOperationRole(OperationTypeCrud.associate, action.payload, store.getState()))
@@ -315,6 +319,83 @@ const showAssocPopup: Epic = (action$, store) => action$.ofType(types.showViewPo
     }))
 })
 
+/**
+ * Show popup for bulk file uploads
+ *
+ * @param action$ `sendOperation` with `file-upload` role
+ * @param store 
+ */
+const showFileUploadPopup: Epic = (action$, store) => action$.ofType(types.sendOperation)
+.filter(action => matchOperationRole(OperationTypeCrud.fileUpload, action.payload, store.getState()))
+.mergeMap((action) => {
+    return Observable.concat(
+        Observable.of($do.bcChangeCursors({ cursorsMap: { [action.payload.bcName]: null }})),
+        Observable.of($do.showFileUploadPopup({ widgetName: action.payload.widgetName }))
+    )
+})
+
+const fileUploadConfirm: Epic = (action$, store) => action$.ofType(types.bulkUploadFiles)
+.mergeMap(action => {
+    const state = store.getState()
+    const bcName = state.view.popupData.bcName
+    const bcUrl = buildBcUrl(bcName, true)
+    const widgetName = state.view.widgets.find(item => item.bcName === bcName)?.name
+    const data = {
+        bulkIds: action.payload.fileIds
+    }
+    return api.customAction(state.screen.screenName, bcUrl, data, null, { _action: 'file-upload-save' })
+    .mergeMap(response => {
+        const postInvoke = response.postActions[0]
+        const preInvoke = response.preInvoke
+        return Observable.concat(
+            Observable.of($do.sendOperationSuccess({ bcName, cursor: null })),
+            Observable.of($do.bcForceUpdate({ bcName })),
+            Observable.of($do.closeViewPopup({ bcName })),
+            ...postOperationRoutine(widgetName, postInvoke, preInvoke, OperationTypeCrud.save, bcName)
+        )
+    })
+})
+
+/**
+ * Returns an array of observables for handling post- and pre-invokes from any epics handling operations
+ * 
+ * @param widgetName Name of the widget that initiated the operation
+ * @param postInvoke Response post-invoke
+ * @param preInvoke Response pre-invoke
+ * @param operationType Which operation was performed
+ * @param bcName 
+ */
+function postOperationRoutine(
+    widgetName: string,
+    postInvoke: OperationPostInvokeAny,
+    preInvoke: OperationPreInvoke,
+    operationType: string,
+    bcName: string // TODO: Remove in 2.0.0
+) {
+    const postInvokeConfirm = Object.values(OperationPostInvokeConfirmType).includes(postInvoke?.type as OperationPostInvokeConfirmType)
+    const result: AnyAction[] = []
+    if (postInvoke) {
+        result.push($do.processPostInvoke({ bcName, postInvoke, widgetName }))
+    }
+    if (postInvokeConfirm) {
+        result.push($do.processPostInvokeConfirm({
+            bcName,
+            operationType,
+            widgetName,
+            postInvokeConfirm: postInvoke as OperationModalInvokeConfirm
+        }))
+    }
+    if (preInvoke) {
+        result.push($do.processPreInvoke({
+            bcName,
+            operationType,
+            widgetName,
+            preInvoke,
+        }))
+    }
+    return result.map(item => Observable.of(item))
+}
+
 export const viewEpics = {
     sendOperation,
     getRowMetaByForceActive,
@@ -322,5 +403,7 @@ export const viewEpics = {
     clearPendingDataChangesAfterCursorChange,
     selectTableCellInit,
     showAllTableRecordsInit,
-    showAssocPopup
+    showAssocPopup,
+    showFileUploadPopup,
+    fileUploadConfirm
 }

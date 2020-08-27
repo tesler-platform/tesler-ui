@@ -1,8 +1,9 @@
 import React, {FunctionComponent} from 'react'
-import {connect} from 'react-redux'
+import {connect, useSelector} from 'react-redux'
 import {Store} from '../../interfaces/store'
 import {CustomWidget, CustomWidgetDescriptor, WidgetMeta} from '../../interfaces/widget'
 import DashboardLayout from '../ui/DashboardLayout/DashboardLayout'
+import {FileUploadPopup} from '../../components/FileUploadPopup/FileUploadPopup'
 
 export interface ViewProps {
     widgets: WidgetMeta[],
@@ -21,6 +22,7 @@ export const CustomizationContext: React.Context<{
 
 export const View: FunctionComponent<ViewProps> = (props) => {
     let layout: React.ReactNode = null
+    const fileUploadPopup = useSelector((state: Store) => state.view.popupData?.type === 'file-upload')
     if (props.customLayout) {
         layout = <props.customLayout
             widgets={props.widgets}
@@ -38,6 +40,7 @@ export const View: FunctionComponent<ViewProps> = (props) => {
     }
 
     return <CustomizationContext.Provider value={{ customFields: props.customFields }}>
+        {fileUploadPopup && <FileUploadPopup />}
         {layout}
     </CustomizationContext.Provider>
 }
