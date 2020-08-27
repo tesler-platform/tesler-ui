@@ -2,24 +2,33 @@ import {DrillDownType} from './router'
 import {AppNotificationType} from './objectMap'
 import { DataItem } from './data'
 
+/**
+ * TODO: Rename to CoreOperationRole in 2.0.0
+ */
 export const enum OperationTypeCrud {
     create = 'create',
     save = 'save',
     delete = 'delete',
     associate = 'associate',
-    cancelCreate = 'cancel-create'
+    cancelCreate = 'cancel-create',
+    fileUpload = 'file-upload'
 }
 
-export const crudOperations = [
-    OperationTypeCrud.create, OperationTypeCrud.save, OperationTypeCrud.delete, OperationTypeCrud.associate, OperationTypeCrud.cancelCreate
+export const coreOperations = [
+    OperationTypeCrud.create,
+    OperationTypeCrud.save,
+    OperationTypeCrud.delete,
+    OperationTypeCrud.associate,
+    OperationTypeCrud.cancelCreate,
+    OperationTypeCrud.fileUpload
 ]
 
 /**
  *
  * @param operationType
  */
-export function isCrud(operationType: string): operationType is OperationTypeCrud {
-    return crudOperations.includes(operationType as OperationTypeCrud)
+export function isCoreOperation(operationType: string): operationType is OperationTypeCrud {
+    return coreOperations.includes(operationType as OperationTypeCrud)
 }
 
 /**

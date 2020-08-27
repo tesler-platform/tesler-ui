@@ -22,7 +22,7 @@ import {Store} from 'redux'
 import {LoginResponse, SessionScreen} from '../interfaces/session'
 import {Action as HistoryAction} from 'history'
 import {DrillDownType, Route} from '../interfaces/router'
-import {ViewMetaResponse, ApplicationError} from '../interfaces/view'
+import {ViewMetaResponse, ApplicationError, PopupType} from '../interfaces/view'
 import {DataItem, MultivalueSingleValue, PendingDataItem, PickMap} from '../interfaces/data'
 import {Store as CoreStore} from '../interfaces/store'
 import {RowMeta} from '../interfaces/rowMeta'
@@ -576,7 +576,18 @@ export class ActionPayloadTypes {
         associateFieldKey?: string,
         assocValueKey?: string,
         active?: boolean,
-        isFilter?: boolean
+        isFilter?: boolean,
+        type?: PopupType
+    } = z
+
+    /**
+     * TODO
+     */
+    showFileUploadPopup: {
+        /**
+         * Name of the widget that initiated popup opening
+         */
+        widgetName: string
     } = z
 
     /**
@@ -1063,6 +1074,16 @@ export class ActionPayloadTypes {
     } = z
 
     /**
+     * Save uploaded files to the widget
+     */
+    bulkUploadFiles: {
+        /**
+         * Ids of uploaded files
+         */
+        fileIds: string[]
+    } = z
+
+    /**
      * TODO
      */
     emptyAction: null = z
@@ -1087,11 +1108,10 @@ export const needSaveAction = (action: string) => {
 // action-creators
 export const $do = util.createActionCreators(new ActionPayloadTypes())
 export type ActionsMap = util.uActionsMap<ActionPayloadTypes>
-
 /**
  * Any of the core actions
  */
-export type AnyAction = util.AnyOfMap<ActionsMap> | {type: ' UNKNOWN ACTION '}
+export type AnyAction = util.AnyOfMap<ActionsMap> | { type: ' UNKNOWN ACTION ', payload?: any }
 
 export interface ActionsObservable<T extends AnyAction> extends rActionsObservable<T> {
     /**
