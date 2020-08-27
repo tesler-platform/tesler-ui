@@ -528,14 +528,6 @@ const saveAssociationsActive: Epic = (action$, store) => action$.ofType(types.sa
     const state = store.getState()
     const calleeBCName = state.view.popupData.calleeBCName
     const bcNames = action.payload.bcNames
-    // TODO: Доделать иерархию
-    // const isHierarchy = !Array.isArray(action.payload.delta)
-    // const data = isHierarchy
-    //     ? action.payload.delta as Record<string, AssociatedItem[]>
-    //     : action.payload.delta as AssociatedItem[]
-    // const bcUrl = isHierarchy
-    //     ? null
-    //     : buildBcUrl(calleeBCName, true)
     const bcUrl = buildBcUrl(calleeBCName, true)
     const pendingChanges = (state.view.pendingDataChanges[
         bcNames[0]

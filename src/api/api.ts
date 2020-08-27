@@ -155,7 +155,7 @@ export function deleteBcData(screenName: string, bcUrl: string, context: ApiCall
 export function customAction(
     screenName: string,
     bcUrl: string,
-    data: PendingDataItem & { vstamp: number },
+    data: Record<string, any>,
     context: ApiCallContext,
     params?: GetParamsMap
 ) {

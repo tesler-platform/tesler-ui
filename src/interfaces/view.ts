@@ -61,24 +61,52 @@ export interface ViewMetaResponse {
     ignoreHistory?: boolean
 }
 
+export type PopupType = 'assoc' | 'file-upload' | null
+
 /**
- * Дескриптор текущего открытого во всплывающем окне виджета
- * TODO: Разделить интерфейс на пиклисты и ассоки
+ * Describes currently open popup
  *
- * @param bcName Имя бизнес-компоненты виджета
- * @param calleeBCName Имя бизнес-компоненты виджета, который запросил всплывающий виджет
- * @param associateFieldKey ???
- * @param assocValueKey ???
- * @param active Если этот флаг указан, то виджет отправляет выбранные значения на бэк по кнопке подтверждения в модальном окне
- * @param filter this popup is filter form
+ * TODO: Split interface by popup types
  */
 export interface PopupData {
-    bcName: string,
+    /**
+     * Business component of the widget that initiated popup
+     *
+     * TODO: Will me removed in favor of widgetName in 2.0.0
+     */
     calleeBCName?: string,
+    /**
+     * Type of the popup
+     *
+     * TODO: Will not be optional in 2.0.0
+     */
+    type?: PopupType,
+    /**
+     * Business component for widget in Popup
+     *
+     * TODO: Move to inherited interfaces (not all popups display widgets)
+     */
+    bcName?: string,
+    /**
+     * TODO: Description + move to AssocPopupDescriptor
+     */
     associateFieldKey?: string,
+    /**
+     * TODO: Description + move to AssocPopupDescriptor
+     */
     assocValueKey?: string,
+    /**
+     * If true popup confirm button will send selected items to Tesler API
+     *
+     * TODO: Move to AssocPopupDescriptor
+     */
     active?: boolean,
-    isFilter?: boolean
+    /**
+     * This popup is used as a filter
+     *
+     * TODO: Used only by assocs so probably move to AssocPopupDescriptor
+     */
+    isFilter?: boolean,
 }
 
 export const enum FieldType {

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Operation, isOperationGroup, OperationGroup, OperationTypeCrud, crudOperations} from '../interfaces/operation'
+import {Operation, isOperationGroup, OperationGroup, OperationTypeCrud, coreOperations} from '../interfaces/operation'
 import {buildBcUrl} from './strings'
 import {Store} from '../interfaces/store'
 import {ActionPayloadTypes} from '../actions/actions'
@@ -49,7 +49,7 @@ export function flattenOperations(operations: Array<Operation | OperationGroup>)
  * @param payload sendOperation action payload
  * @param store Store instance
  */
-export function matchOperationRole(role: OperationTypeCrud | 'none', payload: ActionPayloadTypes['sendOperation'], store: Store) {
+export function matchOperationRole(role: OperationTypeCrud | 'none' | string, payload: ActionPayloadTypes['sendOperation'], store: Store) {
     if (payload.operationType === role) {
         return true
     }
@@ -57,7 +57,7 @@ export function matchOperationRole(role: OperationTypeCrud | 'none', payload: Ac
     const operations = flattenOperations(store.view.rowMeta[payload.bcName]?.[bcUrl]?.actions)
     const operation = operations.find(item => item.type === payload.operationType)
     if (role === 'none') {
-        return crudOperations.every(item => item !== payload.operationType && item !== operation?.actionRole)
+        return coreOperations.every(item => item !== payload.operationType && item !== operation?.actionRole)
     }
     return operation?.actionRole === role
 }
