@@ -27,9 +27,9 @@ export interface IAssocListRecord {
 export interface IAssocListActions {
     onSave: (bcNames: string[]) => void,
     onFilter: (bcName: string, filter: BcFilter) => void,
-    removeFilter: (bcName: string, filter: BcFilter) => void,
     onDeleteTag: (bcName: string, dataItem: DataItem) => void,
     onDeleteAssociations: (bcName: string, parentId: string, depth: number, assocValueKey: string, selected: boolean) => void,
+    onRemoveFilter?: (bcName: string, filter: BcFilter) => void,
     onCancel: () => void,
     onClose: () => void
 }
@@ -75,7 +75,7 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         onSave,
         bcFilters,
         onFilter,
-        removeFilter,
+        onRemoveFilter,
         onDeleteTag,
 
         width,
@@ -116,7 +116,7 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         } else {
             const currentFilters = bcFilters?.find(filterItem => filterItem.fieldName === props.associateFieldKey)?.value
             currentFilters
-            ? removeFilter(props.calleeBCName, {
+            ? onRemoveFilter?.(props.calleeBCName, {
                 type: FilterType.equalsOneOf,
                 fieldName: props.associateFieldKey,
                 value: currentFilters
@@ -124,7 +124,7 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
             : $do.emptyAction(null)
         }
         onClose()
-    }, [onFilter, removeFilter, bcFilters, onClose, props.calleeBCName, props.associateFieldKey, selectedRecords])
+    }, [onFilter, onRemoveFilter, bcFilters, onClose, props.calleeBCName, props.associateFieldKey, selectedRecords])
 
     const cancelData = React.useCallback(() => {
         onCancel()
@@ -290,7 +290,7 @@ const mapDispatchToProps = createMapDispatchToProps(
                 ctx.dispatch($do.bcAddFilter({ bcName, filter }))
                 ctx.dispatch($do.bcForceUpdate({ bcName }))
             },
-            removeFilter: (bcName: string, filter: BcFilter) => {
+            onRemoveFilter: (bcName: string, filter: BcFilter) => {
                 ctx.dispatch($do.bcRemoveFilter({ bcName, filter }))
                 ctx.dispatch($do.bcForceUpdate({ bcName }))
             },
