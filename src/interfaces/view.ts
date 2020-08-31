@@ -106,7 +106,7 @@ export interface PopupData {
      *
      * TODO: Used only by assocs so probably move to AssocPopupDescriptor
      */
-    isFilter?: boolean,
+    isFilter?: boolean
 }
 
 export const enum FieldType {
