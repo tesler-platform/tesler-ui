@@ -184,7 +184,7 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
             }
         }
         case types.sendOperation: {
-            return (action.payload.operationType === OperationTypeCrud.associate)
+            return (operationsHandledLocally.includes(action.payload.operationType))
                 ? state
                 : {
                     ...state,
@@ -475,5 +475,7 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
             return state
     }
 }
+
+const operationsHandledLocally: string[] = [OperationTypeCrud.associate, OperationTypeCrud.fileUpload]
 
 export default screen

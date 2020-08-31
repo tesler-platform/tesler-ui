@@ -3,16 +3,16 @@ import {Upload, Icon} from 'antd'
 import {useSelector, useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import {Store} from '../../interfaces/store'
-import {axiosInstance} from '../../Provider'
 import {Popup} from '../../components/ui/Popup/Popup'
 import {$do} from '../../actions/actions'
 import * as styles from './FileUploadPopup.less'
+import {getFileUploadEndpoint} from '../../utils/api'
 
 export const FileUploadPopup: React.FC = () => {
     const {t} = useTranslation()
     const popupData = useSelector((state: Store) => state.view.popupData)
     const dispatch = useDispatch()
-    const uploadUrl = `${axiosInstance.defaults.baseURL}/file`
+    const uploadUrl = getFileUploadEndpoint()
     const [ids, setIds] = React.useState<Record<string, string>>({})
     return <div>
         <Popup

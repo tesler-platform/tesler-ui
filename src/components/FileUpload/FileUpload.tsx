@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {Store} from '../../interfaces/store'
 import {Dispatch} from 'redux'
 import {$do} from '../../actions/actions'
-import {applyParams} from '../../utils/api'
+import {applyParams, getFileUploadEndpoint} from '../../utils/api'
 import styles from './FileUpload.less'
 import {DataItem} from '../../interfaces/data'
 import {Icon, Upload} from 'antd'
@@ -11,7 +11,6 @@ import {UploadFile} from 'antd/es/upload/interface'
 import cn from 'classnames'
 import {useTranslation} from 'react-i18next'
 import {ChangeDataItemPayload} from '../Field/Field'
-import {axiosInstance} from '../../Provider'
 
 export interface FileUploadOwnProps {
     fieldName: string,
@@ -95,8 +94,8 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
     const uploadParams = {
         source: props.fileSource
     }
-    const downloadUrl = applyParams(`${axiosInstance.defaults.baseURL || '/'}file`, downloadParams)
-    const uploadUrl = applyParams(`${axiosInstance.defaults.baseURL || '/'}file`, uploadParams)
+    const downloadUrl = applyParams(getFileUploadEndpoint(), downloadParams)
+    const uploadUrl = applyParams(getFileUploadEndpoint(), uploadParams)
 
     const uploadProps = {
         disabled: disabled,
@@ -114,7 +113,7 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
                 source: props.fileSource,
                 id: props.fieldDataItem?.[props.snapshotFileIdKey]?.toString()
             }
-            const diffDownloadUrl = applyParams(`${axiosInstance.defaults.baseURL || '/'}file`, diffDownloadParams)
+            const diffDownloadUrl = applyParams(getFileUploadEndpoint(), diffDownloadParams)
             const diffFileName = props.fieldDataItem?.[props.snapshotKey]
 
             if ((diffDownloadParams.id || downloadParams.id) && diffDownloadParams.id !== downloadParams.id) {
