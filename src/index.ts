@@ -46,16 +46,16 @@ const buildLocation = getBuildLocationInstance
 
 /**
  * This is our public API.
- * 
+ *
  * Any code that should be available to a client application should be exported from here.
  * Then it becomes available for import from client application:
  * import {matchOperationRole} from `@tesler-ui/core`
- * 
+ *
  * The only exception is typings (they are imported directly).
- * 
+ *
  * Keep in mind that every item here MUST BE backward-compatible until the next major release,
  * so be reasonable and responsible when introducing changes or new items.
- * 
+ *
  * Every block has `Stable` and `Unstable` sections. Items in `Stable` sections have shown themself pretty
  * robust and not likely be subjects of revisions. Items in `Unstable` sections require your attention in the
  * next major release.
@@ -63,8 +63,8 @@ const buildLocation = getBuildLocationInstance
 
 /**
  * Tesler UI `instance`
- * 
- * TODO: 2.0.0 sh
+ *
+ * TODO: 2.0.0 should do better job at instantiating utilities (class?)
  */
 export {
     // Stable
@@ -78,7 +78,7 @@ export {
 
 /**
  * Components
- * 
+ *
  * Make sure every component has backward-compatible props, i.e. no new mandatory props or changing types
  */
 export * from './components'
@@ -95,7 +95,7 @@ export * from './api'
 
 /**
  * Router
- * 
+ *
  * Router API is not looking good at the moment
  */
 export {

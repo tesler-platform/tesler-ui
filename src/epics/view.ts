@@ -22,9 +22,10 @@ import {Store as AppState} from '../interfaces/store'
 import {Store} from 'redux'
 
 /**
- * Default implementation of `sendOperation` handler 
- * @param action 
- * @param store 
+ * Default implementation of `sendOperation` handler
+ *
+ * @param action
+ * @param store
  */
 export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store: Store<AppState, AnyAction>) {
     const state = store.getState()
@@ -89,11 +90,11 @@ export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store
  *
  * Request will be send to `custom-action/${screenName}/${bcUrl}?_action=${action.payload.type}` endpoint,
  * with pending changes of the widget as requst body.
- * 
+ *
  * Fires sendOperationSuccess, bcForceUpdate and postOperationRoutine
- * 
+ *
  * @param action$ Payload includes operation type and widget that initiated operation
- * @param store 
+ * @param store
  */
 const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperation)
 .filter(action => matchOperationRole('none', action.payload, store.getState()))
@@ -323,7 +324,7 @@ const showAssocPopup: Epic = (action$, store) => action$.ofType(types.showViewPo
  * Show popup for bulk file uploads
  *
  * @param action$ `sendOperation` with `file-upload` role
- * @param store 
+ * @param store
  */
 const showFileUploadPopup: Epic = (action$, store) => action$.ofType(types.sendOperation)
 .filter(action => matchOperationRole(OperationTypeCrud.fileUpload, action.payload, store.getState()))
@@ -358,12 +359,12 @@ const fileUploadConfirm: Epic = (action$, store) => action$.ofType(types.bulkUpl
 
 /**
  * Returns an array of observables for handling post- and pre-invokes from any epics handling operations
- * 
+ *
  * @param widgetName Name of the widget that initiated the operation
  * @param postInvoke Response post-invoke
  * @param preInvoke Response pre-invoke
  * @param operationType Which operation was performed
- * @param bcName 
+ * @param bcName
  */
 function postOperationRoutine(
     widgetName: string,
