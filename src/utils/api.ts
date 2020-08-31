@@ -255,6 +255,22 @@ export function applyRawParams(url: string, qso: object) {
     return `${addTailControlSequences(url)}${result && `${result}`}`
 }
 
+/**
+ * Get Tesler API file upload endpoint based on baseURL of axios instance 
+ *
+ * Handles empty baseURL and trailing slash
+ *
+ * @returns File upload endpoint
+ */
+export function getFileUploadEndpoint() {
+    if (!axiosInstance.defaults.baseURL) {
+        return '/file'
+    }
+    return axiosInstance.defaults.baseURL.endsWith('/')
+        ? `${axiosInstance.defaults.baseURL}file`
+        : `${axiosInstance.defaults.baseURL}/file`
+}
+
 export {
     axiosForApi,
     axiosGet,
