@@ -1,3 +1,40 @@
+# Version 1.20.0
+
+## Features
+
+* Every widget type can now provide its own card wrapper via extended use of `customWidgets` prop of `<View />` component ([#360](https://github.com/tesler-platform/tesler-ui/pull/380)):
+```tsx
+<View
+    customWidgets={{
+        // Form widgets will be rendered by custom component with default wrapper
+        [WidgetTypes.Form]: (props) => <div>Form</div>,
+        // List widgets will be rendered by custom component with custom wrapper
+        [WidgetTypes.List]: {
+            component: (props) => <div>List</div>,
+            card: (props) => <div className="wrapper">{props.children}</div>
+        }
+    }}
+/>
+```
+* `<FullHierarchy />` now provides an option to exclude descendants from a search result ([#403](https://github.com/tesler-platform/tesler-ui/issues/403))
+* `<TableWidget />` now have `header` property to customize header block of the widget ([#408](https://github.com/tesler-platform/tesler-ui/issues/408))
+* New widget type: `<InfoWidget/>` ([#353](https://github.com/tesler-platform/tesler-ui/issues/353))
+* Introduction of bulk operations: we now have built-in implementation for [bulk creating records from files](http://idocs.tesler.io/ui/#/screen/features/view/bulk-actions/) and a [documentation page](http://idocs.tesler.io/ui/#/screen/tutorial/view/bulk-actions-customization/) for how to implement other useful bulk operations (bulk update, bulk delete) from the client side ([#424](https://github.com/tesler-platform/tesler-ui/issues/424))
+
+## Fixes
+
+* `<FullHierarchy />` bugfix ([#403](https://github.com/tesler-platform/tesler-ui/issues/403)):
+  * No backend request send for highlighting search results
+  * Clearing the filter and applying a sorting now corrently clears hierarchy data
+* `<AssocListPopup />` not showing tags after items selected and popup is reopened ([#415](https://github.com/tesler-platform/tesler-ui/issues/415))
+* Epics for `saveAssociations` action now correctly handle post invokes ([#406](https://github.com/tesler-platform/tesler-ui/issues/406))
+* `<AssocListPopup />` should also remove descendent items for removed tag ([#410](https://github.com/tesler-platform/tesler-ui/issues/410))
+* Multivalue fields should properly remove filters instead of setting an empty array filter ([#418](https://github.com/tesler-platform/tesler-ui/issues/418))
+
+## Misc
+
+* Following deprecation of TSLint (https://medium.com/palantir/tslint-in-2019-1a144c2317a9), we now use ESLint ([#398](https://github.com/tesler-platform/tesler-ui/pull/398))
+
 # Version 1.19.0
 
 ## Feautres
