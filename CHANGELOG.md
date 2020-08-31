@@ -1,3 +1,10 @@
+# Version 1.20.1
+
+## Fixes
+
+* `file-upload` action shouldn't set `loading` state for widget ([#426](https://github.com/tesler-platform/tesler-ui/pull/426))
+* file uploaders should properly handle trailing slash for axios baseURL ([#426](https://github.com/tesler-platform/tesler-ui/pull/426))
+
 # Version 1.20.0
 
 ## Features
