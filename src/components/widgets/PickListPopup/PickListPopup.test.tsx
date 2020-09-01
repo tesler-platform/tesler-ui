@@ -1,10 +1,11 @@
 import React from 'react'
 import {PickListPopup, PickListPopupOwnProps, PickListPopupProps} from './PickListPopup'
-import {FieldType} from 'interfaces/view'
+import {FieldType} from '../../../interfaces/view'
 import {shallow} from 'enzyme'
-import {PickMap} from 'interfaces/data'
-import {WidgetTypes} from 'interfaces/widget'
+import {PickMap} from '../../../interfaces/data'
+import {WidgetTypes} from '../../../interfaces/widget'
 import {Table} from 'antd'
+import Pagination from '../../ui/Pagination/Pagination'
 
 describe('PickListPopup test', () => {
     const toHideProps: PickListPopupOwnProps = {
@@ -55,7 +56,7 @@ describe('PickListPopup test', () => {
     it('should render default title and footer', () => {
         const wrapper = shallow(<PickListPopup {...props} {...actionsProps} showed={true}/>)
         expect(shallow(wrapper.props().title.props.children).text()).toEqual(toHideProps.widget.title)
-        expect(shallow(wrapper.props().footer).find('Connect(Pagination)').length).toEqual(1)
+        expect(shallow(wrapper.props().footer).find(Pagination).length).toEqual(1)
     })
 
     it('should render custom title, table and footer', () => {
