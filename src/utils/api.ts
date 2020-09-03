@@ -256,7 +256,7 @@ export function applyRawParams(url: string, qso: object) {
 }
 
 /**
- * Get Tesler API file upload endpoint based on baseURL of axios instance 
+ * Get Tesler API file upload endpoint based on baseURL of axios instance
  *
  * Handles empty baseURL and trailing slash
  *

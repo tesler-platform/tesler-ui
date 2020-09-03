@@ -1,8 +1,7 @@
 import React, {RefAttributes} from 'react'
-import moment from 'moment'
+import moment, {Moment} from 'moment'
 import {DatePicker} from 'antd'
 import {DatePickerProps} from 'antd/es/date-picker/interface'
-import {toISOLocal} from '../../../utils/dates'
 import * as styles from './DatePickerField.less'
 import cn from 'classnames'
 import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
@@ -32,6 +31,7 @@ const outputMonthYearFormat = 'MMMM YYYY'
 const outputDateFormat = 'DD.MM.YYYY'
 const outputDateTimeFormat = 'DD.MM.YYYY HH:mm'
 const outputDateTimeWithSecondsFormat = 'DD.MM.YYYY HH:mm:ss'
+const isoLocalFormatter = (date: Moment) => date.format('YYYY-MM-DD[T]HH:mm:ss')
 
 const DatePickerField: React.FunctionComponent<IDatePickerFieldProps> = (props) => {
     const {
@@ -52,7 +52,7 @@ const DatePickerField: React.FunctionComponent<IDatePickerFieldProps> = (props) 
         </ReadOnlyField>
     }
 
-    const dateFormatter = (props.dateFormatter) ? props.dateFormatter : toISOLocal
+    const dateFormatter = (props.dateFormatter) ? props.dateFormatter : isoLocalFormatter
     const datePickerRef = React.useRef(null)
     const handleChange = React.useCallback(
         (date: moment.Moment) => {
