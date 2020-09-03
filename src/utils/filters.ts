@@ -4,11 +4,16 @@ import qs from 'query-string'
 import {FieldType} from '../interfaces/view'
 
 /**
- * Map an input array of BcFilter objects into a dictionary of GET-request params
+ * Maps an input array of BcFilter objects into a dictionary of GET-request params
  *
- * Name of the param formed as `${filter.fieldName}.${filter.type}`
- * Value of the param is a stringified JSON array with each `filter.value` item turned
- * to string if `filter.value` is an array or just `filter.value` otherwise.
+ * Name of the param formed as field name and filter type, separated by dot,
+ * e.g. `${filter.fieldName}.${filter.type}`
+ *
+ * Value of the param is:
+ * - for non-array values, stringified filter value
+ * - for array values, a comma-separated list of stringified elements with each element enclosed in double quotes
+ *
+ * @see {@link parseFilters} Reverse function
  *
  * @param filters Filters for business components
  * @returns Dictionary of query-params for GET-request
@@ -30,9 +35,12 @@ export function getFilters(filters: BcFilter[]) {
 }
 
 /**
- * TODO
+ * Maps an input array of business component sorters into a dictionary of query params for
+ * Tesler API, where values are field names and keys follows the template:
+ * `_sort.${index}.${item.direction}`
  *
- * @param sorters
+ * @param sorters Array of business component sorters
+ * @returns Dictionary of query-params for GET-request
  */
 export function getSorters(sorters: BcSorter[]) {
     if (!sorters || !sorters.length) {
@@ -48,6 +56,7 @@ export function getSorters(sorters: BcSorter[]) {
 /**
  * Function for parsing filters from string into BcFilter type
  *
+ * @see {@link getFilters} Reverse function
  * @param defaultFilters string representation of filters
  */
 export function parseFilters(defaultFilters: string) {
@@ -72,7 +81,7 @@ export function parseFilters(defaultFilters: string) {
             })
         }
     })
-    return result.length ? result : null
+    return result
 }
 
 /**

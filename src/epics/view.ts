@@ -10,7 +10,6 @@ import {OperationTypeCrud,
     OperationPostInvokeAny,
      OperationPreInvoke
 } from '../interfaces/operation'
-import {findBcDescendants} from '../utils/bo'
 import {buildLocation} from '../Provider'
 import {changeLocation} from '../reducers/router'
 import {AxiosError} from 'axios'
@@ -197,9 +196,13 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
 const clearPendingDataChangesAfterCursorChange: Epic = (action$, store) => action$.ofType(types.bcChangeCursors)
 .mergeMap((action) => {
     const state = store.getState()
-    const childBcList = Object.keys(action.payload.cursorsMap).map(
-        (bcName) => findBcDescendants(bcName, state.screen.bo.bc)
-    ).reduce((a, b) => a.concat(b), [])
+    const childBcList = Object.keys(action.payload.cursorsMap)
+    .map(bcName => {
+        return Object.values(state.screen.bo.bc)
+        .filter(item => item.parentName === bcName)
+        .map(item => item.name)
+    })
+    .reduce((a, b) => a.concat(b), [])
 
     /*
     *  Если при загрузке view курсор проставился не во всех бк
