@@ -18,11 +18,17 @@ const processPostInvoke: Epic = (action$, store) => action$.ofType(types.process
     const state = store.getState()
     switch (action.payload.postInvoke.type) {
         case OperationPostInvokeType.drillDown:
-            return Observable.of($do.drillDown({
+            return Observable.concat(
+                /**
+                 * Cancel pending changes before postAction drillDown.
+                 * Allows exclude execute custom autoSave.
+                 */
+            Observable.of($do.bcCancelPendingChanges({bcNames: [action.payload.bcName]})),
+            Observable.of($do.drillDown({
                 ...action.payload.postInvoke as OperationPostInvokeDrillDown,
                 route: state.router,
                 widgetName: action.payload.widgetName
-            }))
+            })))
         case OperationPostInvokeType.postDelete: {
             const cursorsMap: ObjectMap<string> = { [action.payload.bcName]: null }
             const result: AnyAction[] = [$do.bcChangeCursors({ cursorsMap })]
