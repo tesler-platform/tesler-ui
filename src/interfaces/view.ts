@@ -50,7 +50,7 @@ export interface ViewMetaResponse {
     id: number,
     name: string,
     title?: string,
-    // template?: EViewTemplate,
+    template?: string,
     customizable?: boolean,
     editable?: boolean,
     url: string,
