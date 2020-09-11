@@ -7,6 +7,24 @@
         border-radius: 5px 5px 0 0;
     }
 
+    :global(.ant-form-item-children) {
+        white-space: pre-wrap;
+    }
+
+    :global(.ant-form-item) {
+        max-height: 200px;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: 3px;
+            background-color: #d5d5d5;
+        }
+    }
+
     :global(.ant-modal-close) {
         right: -72px;
         top: -20px;
