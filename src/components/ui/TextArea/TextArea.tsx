@@ -8,11 +8,13 @@ import InputDefaultClass from 'antd/lib/input/TextArea'
 import styles from './TextArea.less'
 import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
 import {TextAreaProps as AntdTextAreaProps} from 'antd/lib/input/TextArea'
+import HiddenString from '../HiddenString/HiddenString'
 
 type AdditionalAntdTextAreaProps = Partial<Omit<AntdTextAreaProps, 'onChange'>>
 export interface TextAreaProps extends AdditionalAntdTextAreaProps {
     defaultValue?: string | null,
     maxInput?: number,
+    showLength?: number,
     onChange?: (value: string) => void,
     popover?: boolean,
     disabled?: boolean,
@@ -32,7 +34,9 @@ export const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
             backgroundColor={props.backgroundColor}
             onDrillDown={props.onDrillDown}
         >
-            {props.defaultValue}
+            {props.showLength
+                ? <HiddenString inputString={props.defaultValue} showLength={props.showLength}/>
+                :props.defaultValue}
         </ReadOnlyField>
     }
 

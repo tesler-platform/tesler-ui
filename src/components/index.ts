@@ -17,6 +17,7 @@ export {default as Popup} from './ui/Popup/Popup'
 export {default as ColumnTitle} from './ColumnTitle/ColumnTitle'
 export {default as MultivalueField} from './Multivalue/MultivalueField'
 export {default as MultiValueListRecord} from './Multivalue/MultiValueListRecord'
+export {default as HiddenString} from './ui/HiddenString/HiddenString'
 // Containers
 export {default as TemplatedTitle} from './TemplatedTitle/TemplatedTitle'
 export {default as View} from './View/View'

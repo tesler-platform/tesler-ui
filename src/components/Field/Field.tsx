@@ -30,6 +30,7 @@ import {CustomizationContext} from '../../components/View/View'
 import {InteractiveInput} from '../../components/ui/InteractiveInput/InteractiveInput'
 import HistoryField from '../../components/ui/HistoryField/HistoryField'
 import SearchHighlight from '../ui/SearchHightlight/SearchHightlight'
+import HiddenString from '../ui/HiddenString/HiddenString'
 
 interface FieldOwnProps {
     widgetFieldMeta: WidgetField,
@@ -233,6 +234,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
             resultField = <TextArea
                 {...commonProps}
                 maxInput={props.widgetFieldMeta.maxInput}
+                showLength={props.widgetFieldMeta.showLength}
                 defaultValue={value as any}
                 onChange={handleChange}
                 className={cn({[readOnlyFieldStyles.error]: props.metaError})}
@@ -335,7 +337,9 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                     readOnlyFieldStyles.hint
                 )}
             >
-                {value}
+                {props.widgetFieldMeta.showLength
+                    ? <HiddenString inputString={value} showLength={props.widgetFieldMeta.showLength}/>
+                    : value}
             </ReadOnlyField>
             break
         case FieldType.radio:
@@ -356,7 +360,9 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                             source={(value || '').toString()}
                             search={escapedSrc(props.filterValue)}
                             match={formatString => <b>{formatString}</b>}/>
-                        : value}
+                        : props.widgetFieldMeta.showLength
+                            ? <HiddenString inputString={value} showLength={props.widgetFieldMeta.showLength}/>
+                            : value}
                 </ReadOnlyField>
                 : <InteractiveInput
                     suffixClassName={props.suffixClassName}

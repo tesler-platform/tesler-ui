@@ -45,6 +45,10 @@ export interface WidgetFieldBase {
      */
     maxInput?: number,
     /**
+     * Hide end part of string text field
+     */
+    showLength?: number,
+    /**
      * Whether the field is hidden
      */
     hidden?: boolean
