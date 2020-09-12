@@ -17,6 +17,7 @@ import {AxiosError} from 'axios'
 import i18n from 'i18next'
 import {FilterType} from '../interfaces/filters'
 import {matchOperationRole} from '../utils/operations'
+import {PendingValidationFailsFormat} from '../interfaces/view'
 
 const maxDepthLevel = 10
 
@@ -342,10 +343,12 @@ const bcDeleteDataEpic: Epic = (action$, store) => action$.ofType(types.sendOper
     const cursor = state.screen.bo.bc[bcName].cursor
     const bcUrl = buildBcUrl(bcName, true)
     const context = { widgetName: action.payload.widgetName }
+    const isTargetFormatPVF = state.view.pendingValidationFailsFormat === PendingValidationFailsFormat.target
     return api.deleteBcData(state.screen.screenName, bcUrl, context)
     .mergeMap(data => {
         const postInvoke = data.postActions[0]
         return Observable.concat(
+            isTargetFormatPVF ? Observable.of($do.bcCancelPendingChanges({bcNames: [bcName]})) : Observable.empty<never>(),
             Observable.of($do.bcFetchDataRequest({ bcName, widgetName })),
             postInvoke
                 ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName}))

@@ -5,7 +5,7 @@ import {Form, Icon, Input, Tooltip} from 'antd'
 import {$do} from '../../actions/actions'
 import {Store} from '../../interfaces/store'
 import {DataItem, DataValue, MultivalueSingleValue, PendingDataItem} from '../../interfaces/data'
-import {FieldType} from '../../interfaces/view'
+import {FieldType, PendingValidationFails, PendingValidationFailsFormat} from '../../interfaces/view'
 import {RowMetaField} from '../../interfaces/rowMeta'
 import {WidgetField, WidgetTypes} from '../../interfaces/widget'
 import DatePickerField from '../ui/DatePickerField/DatePickerField'
@@ -409,7 +409,10 @@ function mapStateToProps(store: Store, ownProps: FieldOwnProps) {
     const bcUrl = buildBcUrl(ownProps.bcName, true)
     const rowMeta = bcUrl && store.view.rowMeta[ownProps.bcName]?.[bcUrl]
     const rowFieldMeta = rowMeta?.fields.find(field => field.key === ownProps.widgetFieldMeta.key)
-    const missing = store.view.pendingValidationFails?.[ownProps.widgetFieldMeta.key]
+    const missing = store.view.pendingValidationFailsFormat === PendingValidationFailsFormat.target
+        ? (store.view.pendingValidationFails as PendingValidationFails)
+            ?.[ownProps.bcName]?.[ownProps.cursor]?.[ownProps.widgetFieldMeta.key]
+        : store.view.pendingValidationFails?.[ownProps.widgetFieldMeta.key]
     const metaError = missing || rowMeta?.errors?.[ownProps.widgetFieldMeta.key]
     const pendingValue = store.view.pendingDataChanges[ownProps.bcName]
     ?.[ownProps.cursor]
