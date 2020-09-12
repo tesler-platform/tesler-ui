@@ -35,7 +35,11 @@ export interface ViewState extends ViewMetaResponse {
     selectedCell?: ViewSelectedCell,
     systemNotifications?: SystemNotification[],
     error?: ApplicationError,
-    pendingValidationFails?: Record<string, string>,
+    pendingValidationFails?: {
+        [bcName: string]: {
+            [cursor: string]: Record<string, string>
+        }
+    },
     modalInvoke?: {
         operation: {
             bcName: string,

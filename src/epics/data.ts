@@ -353,6 +353,7 @@ const bcDeleteDataEpic: Epic = (action$, store) => action$.ofType(types.sendOper
     .mergeMap(data => {
         const postInvoke = data.postActions[0]
         return Observable.concat(
+            Observable.of($do.bcCancelPendingChanges({bcNames: [bcName]})),
             Observable.of($do.bcFetchDataRequest({ bcName, widgetName })),
             postInvoke
                 ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName}))

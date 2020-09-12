@@ -412,7 +412,7 @@ function mapStateToProps(store: Store, ownProps: FieldOwnProps) {
     const bcUrl = buildBcUrl(ownProps.bcName, true)
     const rowMeta = bcUrl && store.view.rowMeta[ownProps.bcName]?.[bcUrl]
     const rowFieldMeta = rowMeta?.fields.find(field => field.key === ownProps.widgetFieldMeta.key)
-    const missing = store.view.pendingValidationFails?.[ownProps.widgetFieldMeta.key]
+    const missing = store.view.pendingValidationFails?.[ownProps.bcName]?.[ownProps.cursor]?.[ownProps.widgetFieldMeta.key]
     const metaError = missing || rowMeta?.errors?.[ownProps.widgetFieldMeta.key]
     const pendingValue = store.view.pendingDataChanges[ownProps.bcName]
     ?.[ownProps.cursor]

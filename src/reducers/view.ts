@@ -191,12 +191,13 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
             }
         }
         case types.changeDataItem: {
+            const actionBcName = action.payload.bcName
             const prevBc = state.pendingDataChanges[action.payload.bcName] || {}
             const prevCursor = prevBc[action.payload.cursor] || {}
             const prevPending = prevCursor || {}
             const nextPending = { ...prevPending, ...action.payload.dataItem }
-            const bcUrl = buildBcUrl(action.payload.bcName, true, store)
-            const rowMeta = state.rowMeta[action.payload.bcName]?.[bcUrl]
+            const bcUrl = buildBcUrl(actionBcName, true, store)
+            const rowMeta = state.rowMeta[actionBcName]?.[bcUrl]
             const nextValidationFails: Record<string, string> = {}
             Object.keys(nextPending).forEach(fieldKey => {
                 const required = rowMeta?.fields.find(item => item.required && item.key === fieldKey)
@@ -204,7 +205,7 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                     || nextPending[fieldKey] === undefined
                     || nextPending[fieldKey] === ''
                 if (required && isEmpty) {
-                    nextValidationFails[fieldKey] = i18n.t('This field is mandatory')
+                    nextValidationFails[fieldKey] = i18n.t('This field is mandatory') as string
                 }
             })
             return {
@@ -216,7 +217,13 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                         [action.payload.cursor]: nextPending
                     }
                 },
-                pendingValidationFails: nextValidationFails
+                pendingValidationFails: {
+                    ...state.pendingValidationFails,
+                    [actionBcName]: {
+                        ...state.pendingValidationFails[actionBcName],
+                        [action.payload.cursor]: nextValidationFails
+                    }
+                }
             }
         }
         case types.changeDataItems: {
@@ -247,10 +254,14 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                 })
                 pendingDataChanges[bcName] = pendingBcChanges
             })
+            const pendingValidationFails = { ...state.pendingValidationFails }
+            action.payload.bcNames.forEach(i => {
+                pendingValidationFails[i] = {}
+            })
             return {
                 ...state,
                 pendingDataChanges,
-                pendingValidationFails: initialState.pendingValidationFails
+                pendingValidationFails
             }
         }
         case types.dropAllAssociationsSameBc: {
@@ -272,7 +283,10 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
             return {
                 ...state,
                 pendingDataChanges,
-                pendingValidationFails: initialState.pendingValidationFails
+                pendingValidationFails: {
+                    ...state.pendingValidationFails,
+                    [action.payload.bcName]: {}
+                }
             }
         }
         case types.dropAllAssociationsFull: {
@@ -299,7 +313,11 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
             return {
                 ...state,
                 pendingDataChanges,
-                pendingValidationFails: initialState.pendingValidationFails
+                pendingValidationFails: {
+                    ...state.pendingValidationFails,
+                    [action.payload.bcName]: {}
+                }
+
             }
         }
         case types.sendOperationSuccess:
@@ -314,7 +332,13 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                         [action.payload.cursor]: {}
                     }
                 },
-                pendingValidationFails: initialState.pendingValidationFails,
+                pendingValidationFails: {
+                    ...state.pendingValidationFails,
+                    [action.payload.bcName]: {
+                        ...state.pendingValidationFails[action.payload.bcName],
+                        [action.payload.cursor]: {}
+                    }
+                },
                 handledForceActive: {
                     ...state.handledForceActive,
                     [action.payload.bcName]: {
@@ -332,10 +356,24 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                     pendingDataChanges[bcName] = {}
                 }
             }
+            let pendingValidationFails = { ...state.pendingValidationFails }
+            if (action.payload?.bcNames?.length > 0) {
+                /**
+                 * Clear a `pendingValidationFails` for specific BC names
+                 */
+                action.payload.bcNames.forEach(i => {
+                    pendingValidationFails[i] = {}
+                })
+            } else {
+                /**
+                 * Clear a `pendingValidationFails` completely
+                 */
+                pendingValidationFails = initialState.pendingValidationFails
+            }
             return {
                 ...state,
                 pendingDataChanges,
-                pendingValidationFails: initialState.pendingValidationFails
+                pendingValidationFails
             }
         }
         case types.clearValidationFails: {
