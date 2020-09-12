@@ -10,6 +10,21 @@ export interface ViewSelectedCell {
     fieldKey: string
 }
 
+export interface PendingValidationFails {
+    [bcName: string]: {
+        [cursor: string]: Record<string, string>
+    }
+}
+
+/**
+ * Describes format of `pendingValidationFails`
+ * TODO remove in 2.0.0
+ */
+export const enum PendingValidationFailsFormat {
+    old = 'old',
+    target = 'target'
+}
+
 export interface ViewState extends ViewMetaResponse {
     rowMeta: {
         [bcName: string]: {
@@ -35,7 +50,15 @@ export interface ViewState extends ViewMetaResponse {
     selectedCell?: ViewSelectedCell,
     systemNotifications?: SystemNotification[],
     error?: ApplicationError,
-    pendingValidationFails?: Record<string, string>,
+    /**
+     * For backward compatibility
+     *
+     * `old` describes `pendingValidationFails` as `Record<string, string>`
+     * `target` describes `pendingValidationFails` as `PendingValidationFails`
+     */
+    pendingValidationFailsFormat?: PendingValidationFailsFormat.old | PendingValidationFailsFormat.target, // TODO remove in 2.0.0
+    // TODO 2.0.0: should be `pendingValidationFails?: PendingValidationFails`
+    pendingValidationFails?: Record<string, string> | PendingValidationFails,
     modalInvoke?: {
         operation: {
             bcName: string,

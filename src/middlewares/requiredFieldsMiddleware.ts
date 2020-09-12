@@ -3,16 +3,17 @@
  */
 
 import {AnyAction, Dispatch, Middleware, MiddlewareAPI} from 'redux'
-import {$do, types, ActionPayloadTypes} from '../actions/actions'
+import {$do, ActionPayloadTypes, types} from '../actions/actions'
 import {Operation, OperationGroup} from '../interfaces/operation'
 import {Store as CoreStore} from '../interfaces/store'
 import {buildBcUrl} from '../utils/strings'
 import {openButtonWarningNotification} from '../utils/notifications'
 import i18n from 'i18next'
-import {PendingDataItem, DataItem} from '../interfaces/data'
+import {DataItem, PendingDataItem} from '../interfaces/data'
 import {RowMetaField} from '../interfaces/rowMeta'
 import {WidgetField, WidgetFieldBlock, isWidgetFieldBlock, TableLikeWidgetTypes, WidgetTableMeta} from '../interfaces/widget'
 import {flattenOperations} from '../utils/operations'
+import {PendingValidationFailsFormat} from '../interfaces/view'
 
 const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) => (next: Dispatch) =>
 (action: AnyAction) => {
@@ -61,7 +62,7 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
         }
 
         // If operation is not validation-sensetive and validation failed, offer to drop pending changes
-        if (state.view.pendingValidationFails && Object.keys(state.view.pendingValidationFails).length) {
+        if (hasPendingValidationFails(state, bcName)) {
             openButtonWarningNotification(
                 i18n.t('Required fields are missing'),
                 i18n.t('Cancel changes'),
@@ -129,4 +130,32 @@ function getRequiredFieldsMissing(record: DataItem, pendingChanges: PendingDataI
  */
 export function createRequiredFieldsMiddleware() {
     return requiredFields as Middleware
+}
+
+/**
+ * Checks if `pendingValidationFails` is not empty
+ *
+ * @param store
+ * @param bcName
+ */
+export function hasPendingValidationFails(store: CoreStore, bcName: string) {
+    // TODO 2.0.0: remove this `if` block of code
+    if (store.view.pendingValidationFailsFormat !== PendingValidationFailsFormat.target &&
+        store.view.pendingValidationFails && Object.keys(store.view.pendingValidationFails).length) {
+        return true
+    }
+    let checkResult = false
+    const bcPendingValidations = store.view.pendingValidationFails?.[bcName] as {[cursor: string]: Record<string, string>}
+    const cursorsList =  bcPendingValidations && Object.keys(bcPendingValidations)
+    if (!cursorsList) {
+        return false
+    }
+    let i = 0
+    for (; i < cursorsList.length; i++) {
+        if (Object.keys(bcPendingValidations[cursorsList[i]]).length) {
+            checkResult = true
+            break
+        }
+    }
+    return checkResult
 }
