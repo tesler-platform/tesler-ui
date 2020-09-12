@@ -224,9 +224,13 @@ describe('Readonly field drilldown', () => {
         )
         expect(wrapper.find('PickListField').length).toEqual(1)
     })
-    it('should render render tooltip in custom position', () => {
+    it('should render tooltip in custom position', () => {
         store.getState().view.pendingValidationFails = {
-            [fieldMeta.key]: 'error'
+            [testBcName]: {
+                [fieldProperties.cursor]: {
+                    [fieldMeta.key]: 'error'
+                }
+            }
         }
         store.getState().view.widgets = [{
             name: 'test',
