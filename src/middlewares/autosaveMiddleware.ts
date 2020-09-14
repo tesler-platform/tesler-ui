@@ -22,6 +22,11 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
             const isSelectTableCellInit = action.type === types.selectTableCellInit
 
             /**
+             * Saving actions should be ignored
+             */
+            const isNotSaveAction = isSendOperation && action.payload.operationType !== OperationTypeCrud.save
+
+            /**
              * Checking if the action is `needSaveAction` but not `sendOperation` or `selectTableCellInit` action
              * because those actions will be checked lower
              */
@@ -81,25 +86,43 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
             /**
              * final condition
              */
-            const isNeedSaveCondition = isNeedSaveActionNotSendOperation
-                || isSendOperationCreate
-                || isSendOperationForAnotherBc
-                || isSelectTableCellInitOnAnotherRowOrWidget
-                || isChangeDataItemForAnotherCursor
+            const isNeedSaveCondition = isNotSaveAction &&
+                (
+                    isNeedSaveActionNotSendOperation
+                    || isSendOperationCreate
+                    || isSendOperationForAnotherBc
+                    || isSelectTableCellInitOnAnotherRowOrWidget
+                    || isChangeDataItemForAnotherCursor
+                )
             /**
              * Default save operation CRUD
              */
             if (isNeedSaveCondition) {
                 const pendingDataChanges = state.view.pendingDataChanges
                 const bcList = Object.keys(pendingDataChanges)
-                // find BC with changes
-                const baseBcNameIndex = bcList
-                .findIndex(bcName => bcHasPendingAutosaveChanges(state, bcName, state.screen.bo.bc[bcName]?.cursor))
+                /**
+                 * Here we need to find BC with unsaved changes called `baseBcName`
+                 * because current action will be dispatched after `baseBcName` saving.
+                 * 1. We need to check out if bcName of current action is suitable for that aim
+                 * 2. Otherwise find first unsaved bcName
+                 */
+                const baseBcNameIndex = action.payload?.bcName
+                    && bcHasPendingAutosaveChanges(state, action.payload.bcName, state.screen.bo.bc[action.payload.bcName]?.cursor)
+                    ? bcList.findIndex(bcName => bcName === action.payload?.bcName)
+                    : bcList.findIndex(bcName => bcHasPendingAutosaveChanges(state, bcName, state.screen.bo.bc[bcName]?.cursor))
                 const baseBcName = bcList[baseBcNameIndex]
+                /**
+                 * Here we need to form a list of rest BC names.
+                 * We exclude `baseBcName` from `bcList`
+                 */
                 if (baseBcNameIndex > -1) {bcList.splice(baseBcNameIndex, 1)}
-                const baseWidget = baseBcName && state.view.widgets.find((v: WidgetMeta) => v.bcName === baseBcName)
+                /**
+                 * Saving process
+                 */
                 if (baseBcName) {
-                    // save all BCs except `baseBcName`
+                    /**
+                     * Save all BCs except `baseBcName`
+                     */
                     bcList.forEach(bcName => {
                         const widget = state.view.widgets.find((v: WidgetMeta) => v.bcName === bcName)
                         const cursor = state.screen.bo.bc[bcName]?.cursor
@@ -111,15 +134,16 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
                             }))
                         }
                     })
-                    if (action.payload.operationType !== OperationTypeCrud.save) {
-                        // save `baseBcName`'s BC
-                        return next($do.sendOperation({
-                            bcName: baseBcName,
-                            operationType: OperationTypeCrud.save,
-                            widgetName: baseWidget.name,
-                            onSuccessAction: action
-                        }))
-                    }
+                    /**
+                     * save `baseBcName`'s BC
+                     */
+                    const baseWidget = baseBcName && state.view.widgets.find((v: WidgetMeta) => v.bcName === baseBcName)
+                    return next($do.sendOperation({
+                        bcName: baseBcName,
+                        operationType: OperationTypeCrud.save,
+                        widgetName: baseWidget.name,
+                        onSuccessAction: action
+                    }))
                 }
             }
 
@@ -142,7 +166,7 @@ export function createAutoSaveMiddleware() {
 function bcHasPendingAutosaveChanges(store: CoreStore, bcName: string, cursor: string) {
     const pendingChanges = store.view.pendingDataChanges
     const cursorChanges = pendingChanges[bcName]?.[cursor]
-    const result = cursorChanges && !Object.keys(cursorChanges).includes('_associate') && Object.values(cursorChanges).length
+    const result = cursorChanges && !Object.keys(cursorChanges).includes('_associate') && Object.values(cursorChanges).length > 0
     return result
 }
 

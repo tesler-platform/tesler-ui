@@ -10,7 +10,6 @@ import {OperationTypeCrud,
     OperationPostInvokeAny,
      OperationPreInvoke
 } from '../interfaces/operation'
-import {findBcDescendants} from '../utils/bo'
 import {buildLocation} from '../Provider'
 import {changeLocation} from '../reducers/router'
 import {AxiosError} from 'axios'
@@ -193,13 +192,11 @@ const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.c
 /*
 *   Эпик, который очищает дельту по дочерним бк при смене курсора
 * TODO При реализации автосохранения потеряет смысл, можно будет удалить
+* Initial code of `clearPendingDataChangesAfterCursorChange` is deleted. TODO: refactor a rest part of epic
 */
 const clearPendingDataChangesAfterCursorChange: Epic = (action$, store) => action$.ofType(types.bcChangeCursors)
 .mergeMap((action) => {
     const state = store.getState()
-    const childBcList = Object.keys(action.payload.cursorsMap).map(
-        (bcName) => findBcDescendants(bcName, state.screen.bo.bc)
-    ).reduce((a, b) => a.concat(b), [])
 
     /*
     *  Если при загрузке view курсор проставился не во всех бк
@@ -218,9 +215,7 @@ const clearPendingDataChangesAfterCursorChange: Epic = (action$, store) => actio
         return Observable.of($do.bcChangeCursors({ cursorsMap: cursorsDiffMap }))
     }
 
-    return (action.payload.keepDelta)
-        ? Observable.empty<never>()
-        : Observable.of<AnyAction>($do.bcCancelPendingChanges({bcNames: childBcList}))
+    return Observable.empty<never>()
 })
 
 const selectTableCellInit: Epic = (action$, store) => action$.ofType(types.selectTableCellInit)

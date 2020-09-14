@@ -356,10 +356,20 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                     pendingDataChanges[bcName] = {}
                 }
             }
-            const pendingValidationFails = { ...state.pendingValidationFails }
-            action.payload.bcNames.forEach(i => {
-                pendingValidationFails[i] = {}
-            })
+            let pendingValidationFails = { ...state.pendingValidationFails }
+            if (action.payload?.bcNames?.length > 0) {
+                /**
+                 * Clear a `pendingValidationFails` for specific BC names
+                 */
+                action.payload.bcNames.forEach(i => {
+                    pendingValidationFails[i] = {}
+                })
+            } else {
+                /**
+                 * Clear a `pendingValidationFails` completely
+                 */
+                pendingValidationFails = initialState.pendingValidationFails
+            }
             return {
                 ...state,
                 pendingDataChanges,
