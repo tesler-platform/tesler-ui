@@ -54,7 +54,7 @@ const MultivalueTag: React.FunctionComponent<MultivalueTagProps> = (props) => {
                     return <Tag
                         onClick={(e) => {e.stopPropagation()}}
                         title={val.value}
-                        closable={!props.disabled}
+                        closable={!props.disabled && !loading}
                         id={val.id}
                         key={val.id}
                         onClose={() => {
