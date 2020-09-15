@@ -52,7 +52,7 @@ const MultivalueTag: React.FunctionComponent<MultivalueTagProps> = (props) => {
                 { (props.value || []).map(val => {
                     return <Tag
                         title={val.value}
-                        closable={!props.disabled}
+                        closable={!props.disabled && !loading}
                         id={val.id}
                         key={val.id}
                         onClose={() => {
