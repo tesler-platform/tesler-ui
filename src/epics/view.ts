@@ -283,7 +283,7 @@ const showAssocPopup: Epic = (action$, store) => action$.ofType(types.showViewPo
     const state = store.getState()
 
     const assocWidget = state.view.widgets.find((widget) => widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup)
-    if (!assocWidget?.options?.hierarchyFull) {
+    if (assocWidget?.options && !assocWidget.options?.hierarchyFull) {
         return Observable.empty<never>()
     }
 
