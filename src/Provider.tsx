@@ -105,7 +105,7 @@ export function configureStore<ClientState, ClientActions extends Action<any>>(
     // TODO: Extract this to an utility
     const reducers = { ...coreReducers } as CombinedReducersMapObject<CoreStore & ClientState, CombinedActions>
     Object.keys(customReducers).forEach((reducerName: Extract<keyof ClientState, string>) => {
-        const coreInitialState = coreReducers[reducerName]
+        const coreInitialState = coreReducers[reducerName]?.(undefined, {type: ' UNKNOWN ACTION '})
         const reducerInitialState = {
             ...(coreInitialState || {} as ClientState),
             ...customReducers[reducerName].initialState,
