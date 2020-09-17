@@ -6,9 +6,14 @@ import {Modal, Input} from 'antd'
 import {$do} from '../../actions/actions'
 import {useTranslation} from 'react-i18next'
 import {OperationPostInvokeConfirmType, OperationModalInvokeConfirm, OperationPreInvokeType} from '../../interfaces/operation'
+import cn from 'classnames'
 import styles from './ModalInvoke.less'
 
-interface ModalInvokeProps {
+interface ModalInvokeOwnProps {
+    className?: string
+}
+
+interface ModalInvokeProps extends ModalInvokeOwnProps {
     bcName: string,
     operationType: string,
     widgetName: string,
@@ -88,7 +93,7 @@ const ModalInvoke: React.FunctionComponent<ModalInvokeProps> = (props) => {
         }
         default: {
             return <Modal
-                className={styles.modal}
+                className={cn(styles.modal, props.className)}
                 visible={true}
                 title={props.confirmOperation?.messageContent || t('Are you sure?')}
                 okText={t('Ok')}
