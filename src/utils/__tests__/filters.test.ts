@@ -144,6 +144,12 @@ describe('parseFilters', () => {
         expect(spy).toHaveBeenCalled()
         spy.mockRestore()
     })
+
+    it('returns null on empty input', () => {
+        expect(parseFilters('')).toBe(null)
+        expect(parseFilters(null)).toBe(null)
+        expect(parseFilters(undefined)).toBe(null)
+    })
 })
 
 describe('parseSorters', () => {
