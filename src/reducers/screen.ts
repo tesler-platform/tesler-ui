@@ -389,8 +389,12 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
         }
         case types.bcRemoveFilter: {
             const { bcName, filter } = action.payload
-            const prevFilters = state.filters[bcName] || []
-            const newFilters = prevFilters.filter(item => item.fieldName !== filter?.fieldName || item.type !== item.type)
+            const prevBcFilters = state.filters[bcName] || []
+            const newBcFilters = prevBcFilters.filter(item => item.fieldName !== filter?.fieldName || item.type !== item.type)
+            const newFilters = { ...state.filters, [bcName]: newBcFilters }
+            if (!newBcFilters.length) {
+                delete newFilters[bcName]
+            }
             return {
                 ...state,
                 bo: {
@@ -403,13 +407,12 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                         }
                     }
                 },
-                filters: {
-                    ...state.filters,
-                    [bcName]: newFilters
-                }
+                filters: newFilters
             }
         }
         case types.bcRemoveAllFilters: {
+            const filters = { ...state.filters }
+            delete filters[action.payload.bcName]
             return {
                 ...state,
                 bo: {
@@ -422,10 +425,7 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                         }
                     }
                 },
-                filters: {
-                    ...state.filters,
-                    [action.payload.bcName]: []
-                }
+                filters
             }
         }
         case types.bcAddSorter: {
