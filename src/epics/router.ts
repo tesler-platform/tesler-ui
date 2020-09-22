@@ -173,48 +173,51 @@ const drillDown: Epic = (action$, store) => action$.ofType(types.drillDown)
             const [urlBase, urlParams] = url.split('?')
             const urlFilters = qs.parse(urlParams).filters
             const urlSorters = qs.parse(urlParams).sorters
-            if (urlFilters || urlSorters) {
-                const prevState = state.router
-                const nextState = defaultParseLocation(parsePath(urlBase))
-                const diff = shallowCompare(prevState, nextState, ['params'])
-                try {
-                    const updateBcNames: string[] = []
-                    if (urlFilters) {
-                        const filters = JSON.parse(urlFilters)
-                        Object.keys(filters).map((bcName) => {
-                            if (filters[bcName].length) {
-                                const parsedFilters = parseFilters(filters[bcName])
-                                parsedFilters.forEach((item) => {
-                                    store.dispatch($do.bcAddFilter({bcName, filter: item}))
-                                })
-                                if (!diff.length) {
-                                    store.dispatch($do.bcForceUpdate({bcName}))
-                                }
-                            } else {
-                                store.dispatch($do.bcRemoveAllFilters({bcName}))
-                            }
-                            if (!updateBcNames.includes(bcName)) {
-                                updateBcNames.push(bcName)
-                            }
-                        })
-                    }
-                    if (urlSorters) {
-                        const sorters = JSON.parse(urlSorters)
-                        Object.keys(sorters).map((bcName) => {
-                            const parsedSorters = parseSorters(sorters[bcName])
-                            store.dispatch($do.bcAddSorter({bcName, sorter: parsedSorters}))
-                            if (!diff.length) {
-                                store.dispatch($do.bcForceUpdate({bcName}))
-                            }
-                            if (!updateBcNames.includes(bcName)) {
-                                updateBcNames.push(bcName)
-                            }
-                        })
-                    }
-                    updateBcNames.forEach(bcName => store.dispatch($do.bcForceUpdate({bcName})))
-                } catch (e) {
-                    console.warn(e)
+            let newFilters: Record<string, string> = null
+            let newSorters: Record<string, string> = null
+            try {
+                newFilters = JSON.parse(urlFilters)
+            } catch {
+                console.warn('Failed to parse filters on drilldown')
+                newFilters = {}
+            }
+            try {
+                newSorters = JSON.parse(urlSorters)
+            } catch {
+                console.warn('Failed to parse sorters on drilldown')
+                newSorters = {}
+            }
+            const bcToUpdate: Record<string, boolean> = {}
+            // If filter drilldown specifies new filters or explicitly says they are empty, drop previous filters
+            Object.keys(state.screen.filters).forEach(bcName => {
+                if (newFilters[bcName] === '' || newFilters[bcName]) {
+                    bcToUpdate[bcName] = true
+                    store.dispatch($do.bcRemoveAllFilters({ bcName }))
                 }
+            })
+            // Apply each new filter
+            Object.entries(newFilters).forEach(([ bcName, filterExpression ]) => {
+                const parsedFilters = parseFilters(filterExpression)
+                parsedFilters?.forEach(filter => {
+                    bcToUpdate[bcName] = true
+                    store.dispatch($do.bcAddFilter({ bcName, filter }))
+                })
+            })
+            // Apply each new sorter
+            Object.entries(newSorters).forEach(([ bcName, sortExpression ]) => {
+                const sorter = parseSorters(sortExpression)
+                store.dispatch($do.bcAddSorter({ bcName, sorter }))
+                bcToUpdate[bcName] = true
+            })
+            const prevState = state.router
+            const nextState = defaultParseLocation(parsePath(url))
+            const willUpdateAnyway = shallowCompare(prevState, nextState, ['params']).length > 0
+            // If screen or view is different all BC will update anyway so there is no need
+            // to manually set them for update
+            if (!willUpdateAnyway) {
+                Object.keys(bcToUpdate).forEach(bcName => {
+                    store.dispatch($do.bcForceUpdate({ bcName }))
+                })
             }
             historyObj.push(makeRelativeUrl(urlBase))
             break
