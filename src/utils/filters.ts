@@ -81,7 +81,7 @@ export function parseFilters(defaultFilters: string) {
             })
         }
     })
-    return result
+    return result.length ? result : null
 }
 
 /**
