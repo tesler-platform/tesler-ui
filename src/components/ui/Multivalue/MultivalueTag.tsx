@@ -43,6 +43,7 @@ const MultivalueTag: React.FunctionComponent<MultivalueTagProps> = (props) => {
                 styles.multivalue,
                 { [styles.disabled]: props.disabled, [styles.error]: props.metaError })
             }
+            onClick={loading && props.disabled ? undefined : handleOpen}
         >
             <div
                 data-text={props.placeholder}
@@ -51,6 +52,7 @@ const MultivalueTag: React.FunctionComponent<MultivalueTagProps> = (props) => {
                     { [styles.disabled]: props.disabled })}>
                 { (props.value || []).map(val => {
                     return <Tag
+                        onClick={(e) => {e.stopPropagation()}}
                         title={val.value}
                         closable={!props.disabled}
                         id={val.id}
