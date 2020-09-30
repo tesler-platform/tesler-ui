@@ -154,7 +154,8 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
         bcUrl,
         fetchParams
     )
-    .mergeMap(data => {
+        .takeUntil(action$.ofType(types.logout))
+        .mergeMap(data => {
         const newCursor = data.data[0]?.id
         const fetchChildrenBcData = (data.data?.length)
             ? (depthLevel)
