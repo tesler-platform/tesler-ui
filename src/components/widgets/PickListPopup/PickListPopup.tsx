@@ -35,8 +35,12 @@ export interface PickListPopupOwnProps extends Omit<PopupProps, 'bcName' | 'chil
 }
 
 export interface PickListPopupProps extends PickListPopupOwnProps {
+    /**
+     * @deprecated TODO: Remove in 2.0.0, now handled by Widget.tsx
+     */
+    showed?: boolean,
+
     data: DataItem[],
-    showed: boolean,
     pickMap: PickMap,
     cursor: string,
     parentBCName: string,
@@ -53,7 +57,6 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
         components,
 
         data,
-        showed,
         pickMap,
         cursor,
         parentBCName,
@@ -62,6 +65,7 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
 
         ...rest
     } = props
+
     const columns: Array<ColumnProps<DataItem>> = props.widget.fields
     .filter(item => item.type !== FieldType.hidden && !item.hidden)
     .map(item => {
@@ -145,8 +149,8 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
 
     return <Popup
         title={title}
-        showed={props.showed}
         size="large"
+        showed
         onOkHandler={props.onClose}
         onCancelHandler={props.onClose}
         bcName={props.widget.bcName}
@@ -172,7 +176,6 @@ function mapStateToProps(store: Store, props: PickListPopupOwnProps) {
     const parentBCName = bc?.parentName
     return {
         pickMap: store.view.pickMap,
-        showed: store.view.popupData.bcName === props.widget.bcName,
         data: store.data[props.widget.bcName],
         cursor: store.screen.bo.bc[parentBCName]?.cursor,
         parentBCName: bc?.parentName,
