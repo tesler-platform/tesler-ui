@@ -9,7 +9,7 @@ import Field from '../../Field/Field'
 import {useFlatFormFields} from '../../../hooks/useFlatFormFields'
 import styles from './FormWidget.less'
 import cn from 'classnames'
-import {FieldType} from '../../../interfaces/view'
+import {FieldType, PendingValidationFails, PendingValidationFailsFormat} from '../../../interfaces/view'
 import TemplatedTitle from '../../TemplatedTitle/TemplatedTitle'
 
 interface FormWidgetOwnProps {
@@ -93,7 +93,9 @@ function mapStateToProps(store: Store, ownProps: FormWidgetOwnProps) {
     const fields = rowMeta?.fields
     const metaErrors = rowMeta?.errors
     const cursor = bc?.cursor
-    const missingFields = store.view.pendingValidationFails?.[bcName]?.[cursor]
+    const missingFields = store.view.pendingValidationFailsFormat === PendingValidationFailsFormat.target
+        ? (store.view.pendingValidationFails as PendingValidationFails)?.[bcName]?.[cursor]
+        : store.view.pendingValidationFails
     return {
         cursor,
         fields,

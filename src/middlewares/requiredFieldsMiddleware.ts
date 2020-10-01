@@ -3,16 +3,17 @@
  */
 
 import {AnyAction, Dispatch, Middleware, MiddlewareAPI} from 'redux'
-import {$do, types, ActionPayloadTypes} from '../actions/actions'
+import {$do, ActionPayloadTypes, types} from '../actions/actions'
 import {Operation, OperationGroup} from '../interfaces/operation'
 import {Store as CoreStore} from '../interfaces/store'
 import {buildBcUrl} from '../utils/strings'
 import {openButtonWarningNotification} from '../utils/notifications'
 import i18n from 'i18next'
-import {PendingDataItem, DataItem} from '../interfaces/data'
+import {DataItem, PendingDataItem} from '../interfaces/data'
 import {RowMetaField} from '../interfaces/rowMeta'
-import {WidgetField, WidgetFieldBlock, isWidgetFieldBlock, TableLikeWidgetTypes} from '../interfaces/widget'
+import {isWidgetFieldBlock, TableLikeWidgetTypes, WidgetField, WidgetFieldBlock} from '../interfaces/widget'
 import {flattenOperations} from '../utils/operations'
+import {PendingValidationFailsFormat} from 'interfaces/view'
 
 const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) => (next: Dispatch) =>
 (action: AnyAction) => {
@@ -138,8 +139,13 @@ export function createRequiredFieldsMiddleware() {
  * @param bcName
  */
 export function hasPendingValidationFails(store: CoreStore, bcName: string) {
+    // TODO 2.0.0: remove this `if` block of code
+    if (store.view.pendingValidationFailsFormat !== PendingValidationFailsFormat.target &&
+        store.view.pendingValidationFails && Object.keys(store.view.pendingValidationFails).length) {
+        return true
+    }
     let checkResult = false
-    const bcPendingValidations = store.view.pendingValidationFails?.[bcName]
+    const bcPendingValidations = store.view.pendingValidationFails?.[bcName] as {[cursor: string]: Record<string, string>}
     const cursorsList =  bcPendingValidations && Object.keys(bcPendingValidations)
     if (!cursorsList) {
         return false

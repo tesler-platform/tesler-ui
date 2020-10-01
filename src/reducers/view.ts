@@ -1,5 +1,5 @@
 import {AnyAction, types} from '../actions/actions'
-import {ViewState} from '../interfaces/view'
+import {PendingValidationFails, PendingValidationFailsFormat, ViewState} from '../interfaces/view'
 import {PendingDataItem} from '../interfaces/data'
 import {Store} from '../interfaces/store'
 import {OperationTypeCrud} from '../interfaces/operation'
@@ -19,6 +19,7 @@ const initialState: ViewState  = {
     popupData: {bcName: null},
     pendingDataChanges: {},
     infiniteWidgets: [],
+    pendingValidationFailsFormat: PendingValidationFailsFormat.old,
     pendingValidationFails: {},
     handledForceActive: {},
     selectedCell: null,
@@ -199,6 +200,7 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
             const bcUrl = buildBcUrl(actionBcName, true, store)
             const rowMeta = state.rowMeta[actionBcName]?.[bcUrl]
             const nextValidationFails: Record<string, string> = {}
+            const isTargetFormatPVF = state.pendingValidationFailsFormat === PendingValidationFailsFormat.target
             Object.keys(nextPending).forEach(fieldKey => {
                 const required = rowMeta?.fields.find(item => item.required && item.key === fieldKey)
                 const isEmpty = nextPending[fieldKey] === null
@@ -217,13 +219,15 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                         [action.payload.cursor]: nextPending
                     }
                 },
-                pendingValidationFails: {
-                    ...state.pendingValidationFails,
-                    [actionBcName]: {
-                        ...state.pendingValidationFails[actionBcName],
-                        [action.payload.cursor]: nextValidationFails
+                pendingValidationFails: isTargetFormatPVF
+                    ? {
+                        ...state.pendingValidationFails as PendingValidationFails,
+                        [actionBcName]: {
+                            ...state.pendingValidationFails[actionBcName] as {[cursor: string]: Record<string, string>},
+                            [action.payload.cursor]: nextValidationFails
+                        }
                     }
-                }
+                    : nextValidationFails
             }
         }
         case types.changeDataItems: {
@@ -254,14 +258,17 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                 })
                 pendingDataChanges[bcName] = pendingBcChanges
             })
+            const isTargetFormatPVF = state.pendingValidationFailsFormat === PendingValidationFailsFormat.target
             const pendingValidationFails = { ...state.pendingValidationFails }
-            action.payload.bcNames.forEach(i => {
-                pendingValidationFails[i] = {}
-            })
+            if (isTargetFormatPVF) {
+                action.payload.bcNames.forEach(i => {
+                    pendingValidationFails[i] = {}
+                })
+            }
             return {
                 ...state,
                 pendingDataChanges,
-                pendingValidationFails
+                pendingValidationFails: isTargetFormatPVF ? pendingValidationFails : initialState.pendingValidationFails
             }
         }
         case types.dropAllAssociationsSameBc: {
@@ -279,14 +286,17 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                 }
                 pendingDataChanges[action.payload.bcName] = pendingBcChanges
             })
+            const isTargetFormatPVF = state.pendingValidationFailsFormat === PendingValidationFailsFormat.target
 
             return {
                 ...state,
                 pendingDataChanges,
-                pendingValidationFails: {
-                    ...state.pendingValidationFails,
-                    [action.payload.bcName]: {}
-                }
+                pendingValidationFails: isTargetFormatPVF
+                    ? {
+                        ...state.pendingValidationFails as PendingValidationFails,
+                        [action.payload.bcName]: {}
+                    }
+                    : initialState.pendingValidationFails
             }
         }
         case types.dropAllAssociationsFull: {
@@ -309,20 +319,24 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                     }
                 })
             pendingDataChanges[bcName] = pendingBcChanges
+            const isTargetFormatPVF = state.pendingValidationFailsFormat === PendingValidationFailsFormat.target
 
             return {
                 ...state,
                 pendingDataChanges,
-                pendingValidationFails: {
-                    ...state.pendingValidationFails,
-                    [action.payload.bcName]: {}
-                }
+                pendingValidationFails: isTargetFormatPVF
+                    ? {
+                        ...state.pendingValidationFails as PendingValidationFails,
+                        [action.payload.bcName]: {}
+                    }
+                    : initialState.pendingValidationFails
 
             }
         }
         case types.sendOperationSuccess:
         case types.bcSaveDataSuccess: {
             const prevBc = state.pendingDataChanges[action.payload.bcName] || {}
+            const isTargetFormatPVF = state.pendingValidationFailsFormat === PendingValidationFailsFormat.target
             return {
                 ...state,
                 pendingDataChanges: {
@@ -332,13 +346,15 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                         [action.payload.cursor]: {}
                     }
                 },
-                pendingValidationFails: {
-                    ...state.pendingValidationFails,
-                    [action.payload.bcName]: {
-                        ...state.pendingValidationFails[action.payload.bcName],
-                        [action.payload.cursor]: {}
+                pendingValidationFails: isTargetFormatPVF
+                    ? {
+                        ...state.pendingValidationFails as PendingValidationFails,
+                        [action.payload.bcName]: {
+                            ...state.pendingValidationFails[action.payload.bcName] as {[cursor: string]: Record<string, string>},
+                            [action.payload.cursor]: {}
+                        }
                     }
-                },
+                    : initialState.pendingValidationFails,
                 handledForceActive: {
                     ...state.handledForceActive,
                     [action.payload.bcName]: {
@@ -356,24 +372,27 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                     pendingDataChanges[bcName] = {}
                 }
             }
+            const isTargetFormatPVF = state.pendingValidationFailsFormat === PendingValidationFailsFormat.target
             let pendingValidationFails = { ...state.pendingValidationFails }
-            if (action.payload?.bcNames?.length > 0) {
-                /**
-                 * Clear a `pendingValidationFails` for specific BC names
-                 */
-                action.payload.bcNames.forEach(i => {
-                    pendingValidationFails[i] = {}
-                })
-            } else {
-                /**
-                 * Clear a `pendingValidationFails` completely
-                 */
-                pendingValidationFails = initialState.pendingValidationFails
+            if (isTargetFormatPVF) {
+                if (action.payload?.bcNames?.length > 0) {
+                    /**
+                     * Clear a `pendingValidationFails` for specific BC names
+                     */
+                    action.payload.bcNames.forEach(i => {
+                        pendingValidationFails[i] = {}
+                    })
+                } else {
+                    /**
+                     * Clear a `pendingValidationFails` completely
+                     */
+                    pendingValidationFails = initialState.pendingValidationFails
+                }
             }
             return {
                 ...state,
                 pendingDataChanges,
-                pendingValidationFails
+                pendingValidationFails: isTargetFormatPVF ? pendingValidationFails : initialState.pendingValidationFails
             }
         }
         case types.clearValidationFails: {

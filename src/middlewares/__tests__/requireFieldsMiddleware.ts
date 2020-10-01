@@ -1,27 +1,29 @@
 import {hasPendingValidationFails} from '../requiredFieldsMiddleware'
 import {mockStore} from '../../tests/mockStore'
+import {PendingValidationFailsFormat} from 'interfaces/view'
 
-describe('hasPendingValidationFails test', () => {
-    let initStore = mockStore().getState()
-    initStore = {
-        ...initStore,
-        bo: {
-            ...initStore.bo,
-            bc: {
-                test: {
-                }
+let initStore = mockStore().getState()
+initStore = {
+    ...initStore,
+    bo: {
+        ...initStore.bo,
+        bc: {
+            test: {
             }
         }
     }
-    const bcName = Object.keys(initStore.screen.bo.bc)[0]
-    it('should return `false`', () =>  {
+}
+const bcName = Object.keys(initStore.screen.bo.bc)[0]
+describe('hasPendingValidationFails target format test', () => {
+    it('1. should return `false`', () =>  {
         expect(hasPendingValidationFails(initStore, bcName)).toBeFalsy()
     })
-    it('should return `false`', () =>  {
+    it('2. should return `false`', () =>  {
         const store = {
             ...initStore,
             view: {
                 ...initStore.view,
+                pendingValidationFailsFormat: PendingValidationFailsFormat.target,
                 pendingValidationFails: {
                     [bcName]: {}
                 }
@@ -29,11 +31,12 @@ describe('hasPendingValidationFails test', () => {
         }
         expect(hasPendingValidationFails(store, bcName)).toBeFalsy()
     })
-    it('should return `false`', () =>  {
+    it('3. should return `false`', () =>  {
         const store = {
             ...initStore,
             view: {
                 ...initStore.view,
+                pendingValidationFailsFormat: PendingValidationFailsFormat.target,
                 pendingValidationFails: {
                     [bcName]: {
                         '1000': {}
@@ -43,11 +46,12 @@ describe('hasPendingValidationFails test', () => {
         }
         expect(hasPendingValidationFails(store, bcName)).toBeFalsy()
     })
-    it('should return `true`', () =>  {
+    it('1. should return `true`', () =>  {
         const store = {
             ...initStore,
             view: {
                 ...initStore.view,
+                pendingValidationFailsFormat: PendingValidationFailsFormat.target,
                 pendingValidationFails: {
                     [bcName]: {
                         '1000': {
@@ -59,11 +63,12 @@ describe('hasPendingValidationFails test', () => {
         }
         expect(hasPendingValidationFails(store, bcName)).toBeTruthy()
     })
-    it('should return `true`', () =>  {
+    it('2. should return `true`', () =>  {
         const store = {
             ...initStore,
             view: {
                 ...initStore.view,
+                pendingValidationFailsFormat: PendingValidationFailsFormat.target,
                 pendingValidationFails: {
                     'anotherBc': {},
                     [bcName]: {
@@ -72,6 +77,24 @@ describe('hasPendingValidationFails test', () => {
                             aa: 'aaa'
                         }
                     }
+                }
+            }
+        }
+        expect(hasPendingValidationFails(store, bcName)).toBeTruthy()
+    })
+})
+
+describe('hasPendingValidationFails old format test' , () => {
+    it('should return `false`', () =>  {
+        expect(hasPendingValidationFails(initStore, bcName)).toBeFalsy()
+    })
+    it('should return `true`', () =>  {
+        const store = {
+            ...initStore,
+            view: {
+                ...initStore.view,
+                pendingValidationFails: {
+                    aaa: 'aaa'
                 }
             }
         }
