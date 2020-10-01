@@ -44,7 +44,11 @@ export interface IAssocListOwnProps extends Omit<PopupProps, 'bcName' | 'childre
 }
 
 export interface IAssocListProps extends IAssocListOwnProps {
-    showed: boolean,
+    /**
+     * @deprecated TODO: Remove in 2.0.0, now handled by Widget.tsx
+     */
+    showed?: boolean,
+
     assocValueKey?: string,
     associateFieldKey?: string,
     bcLoading: boolean,
@@ -65,10 +69,6 @@ type AssociatedItemTag = Omit<AssociatedItem, 'vstamp'> & {
 }
 
 export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActions> = (props) => {
-    if (!props.showed) {
-        return null
-    }
-
     const {
         onCancel,
         onClose,
@@ -82,7 +82,6 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         components,
         widget,
 
-        showed,
         assocValueKey,
         associateFieldKey,
         bcLoading,
@@ -241,7 +240,6 @@ function mapStateToProps(store: Store, ownProps: IAssocListOwnProps) {
     }
 
     return {
-        showed: store.view.popupData.bcName === bcName,
         assocValueKey: store.view.popupData.assocValueKey,
         associateFieldKey: associateFieldKey,
         bcLoading: bc?.loading,
