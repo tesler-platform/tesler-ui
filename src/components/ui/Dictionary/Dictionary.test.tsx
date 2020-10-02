@@ -1,4 +1,4 @@
-import {shallow} from 'enzyme'
+import {mount, shallow} from 'enzyme'
 import Dictionary, {DictionaryProps, getIconByParams} from './Dictionary'
 import * as React from 'react'
 import {MultivalueSingleValue} from 'interfaces/data'
@@ -77,7 +77,7 @@ describe('Dictionary test in default mode', () => {
         expect(wrapper.find('Option').prop('title')).toEqual(rProps.value)
     })
 
-    it('should render options from value (condition branch)', () => {
+    it('should render options from value (condition branch 1)', () => {
         const rProps = {...props}
         rProps.values = null
         const wrapper = shallow(<Dictionary {...rProps}/>)
@@ -86,13 +86,43 @@ describe('Dictionary test in default mode', () => {
         expect(wrapper.find('Option').prop('title')).toEqual(rProps.value)
     })
 
-    it('should render options from value (condition branch)', () => {
+    it('should render options from value (condition branch 2)', () => {
         const rProps = {...props}
         rProps.values = []
         rProps.value = null
         const wrapper = shallow(<Dictionary {...rProps}/>)
-        expect(wrapper.find('Select').findWhere(i => i.prop('value') === rProps.value).length).toEqual(1)
+        expect(wrapper.find('Select').findWhere(i => i.prop('value') === rProps.value).length).toEqual(0)
         expect(wrapper.find('Option').length).toEqual(0)
+    })
+
+    it('should render placeholder', () => {
+        const rProps = {...props}
+        rProps.values = []
+        rProps.value = null
+        rProps.placeholder = 'Choose one'
+        const wrapper = mount(<Dictionary {...rProps}/>)
+        expect(wrapper.find('Select').findWhere(i => i.prop('value') === undefined).length).toBeGreaterThan(0)
+        const placeholderDisplay = wrapper
+        .find('div')
+        .findWhere(i => i.hasClass('ant-select-selection__placeholder')).get(0)
+            .props.style.display
+
+        expect(placeholderDisplay).toEqual('block')
+    })
+
+    it('should not render placeholder', () => {
+        const rProps = {...props}
+        rProps.values = []
+        rProps.value = 'German'
+        rProps.placeholder = 'Choose one'
+        const wrapper = mount(<Dictionary {...rProps}/>)
+        expect(wrapper.find('Select').findWhere(i => i.prop('value') === undefined).length).toBeGreaterThan(0)
+        const placeholderDisplay = wrapper
+        .find('div')
+        .findWhere(i => i.hasClass('ant-select-selection__placeholder')).get(0)
+            .props.style.display
+
+        expect(placeholderDisplay).toEqual('none')
     })
 })
 
@@ -141,6 +171,30 @@ describe('Dictionary test in multiple mode', () => {
         rProps.value = []
         const wrapper = shallow(<Dictionary {...rProps}/>)
         expect(wrapper.find('Option').length).toEqual(0)
+    })
+
+    it('should render placeholder', () => {
+        const rProps = {...props}
+        rProps.values = null
+        rProps.value = []
+        rProps.placeholder = 'Choose one'
+        const wrapper = mount(<Dictionary {...rProps}/>)
+        const placeholderDisplay = wrapper
+        .find('div')
+        .findWhere(i => i.hasClass('ant-select-selection__placeholder')).get(0).props.style.display
+        expect(placeholderDisplay).toEqual('block')
+    })
+
+    it('should not render placeholder', () => {
+        const rProps = {...props}
+        rProps.values = null
+        rProps.value = [{value: 'German', id: 'German'}]
+        rProps.placeholder = 'Choose one'
+        const wrapper = mount(<Dictionary {...rProps}/>)
+        const placeholderDisplay = wrapper
+        .find('div')
+        .findWhere(i => i.hasClass('ant-select-selection__placeholder')).get(0).props.style.display
+        expect(placeholderDisplay).toEqual('none')
     })
 })
 
