@@ -11,6 +11,7 @@ export interface DictionaryProps {
     readOnly?: boolean,
     disabled?: boolean,
     fieldName: string,
+    placeholder?: string,
     style?: React.CSSProperties,
     metaIcon?: JSX.Element,
     valueIcon?: string,
@@ -51,9 +52,9 @@ const Dictionary: React.FunctionComponent<DictionaryProps> = (props) => {
 
     const resultValue = React.useMemo(() => {
         if (props.multiple) {
-            return (props.value as MultivalueSingleValue[])?.map(i => i.value)
+            return (props.value as MultivalueSingleValue[])?.map(i => i.value) ?? []
         } else {
-            return props.value
+            return props.value ?? undefined
         }
     }, [props.value, props.multiple, props.values])
 
