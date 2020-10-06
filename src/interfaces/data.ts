@@ -112,12 +112,7 @@ export interface MultivalueSingleValueOptions {
 }
 
 /**
- * `key` is name of field, for which the value will be set up.
- * A value of `key` is name of field, from which the value will be gotten.
- * Пикмап.
- * Ключ указывает название поля, куда будет подставлено значение. Значение этого ключа указывает название поля, из которого будет взято
- * значение.
+ * `x` is name of field, for which the value will be set up.
+ * A value of `x` is name of field, from which the value will be gotten.
  */
-export interface PickMap {
-    [key: string]: string
-}
+export type PickMap = Record<string, string>

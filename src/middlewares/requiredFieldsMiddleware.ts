@@ -11,7 +11,7 @@ import {openButtonWarningNotification} from '../utils/notifications'
 import i18n from 'i18next'
 import {PendingDataItem, DataItem} from '../interfaces/data'
 import {RowMetaField} from '../interfaces/rowMeta'
-import {WidgetField, WidgetFieldBlock, isWidgetFieldBlock, TableLikeWidgetTypes} from '../interfaces/widget'
+import {WidgetField, WidgetFieldBlock, isWidgetFieldBlock, TableLikeWidgetTypes, WidgetTableMeta} from '../interfaces/widget'
 import {flattenOperations} from '../utils/operations'
 
 const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) => (next: Dispatch) =>
@@ -52,7 +52,7 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
             })
             const dataItem: PendingDataItem = getRequiredFieldsMissing(record, pendingValues, Object.values(fieldsToCheck))
             // For tables, try to autofocus on first missing field
-            if (dataItem && TableLikeWidgetTypes.includes(widget?.type)) {
+            if (dataItem && TableLikeWidgetTypes.includes((widget as WidgetTableMeta)?.type)) {
                 dispatch($do.selectTableCellInit({ widgetName, rowId: cursor, fieldKey: Object.keys(dataItem)[0] }))
             }
             return dataItem

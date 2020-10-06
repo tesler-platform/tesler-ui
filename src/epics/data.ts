@@ -780,7 +780,7 @@ const changeAssociationFull: Epic = (action$, store) => action$.ofType(types.cha
 .mergeMap(action => {
     const state = store.getState()
     const result: Array<Observable<AnyAction>> = []
-
+    const assocValueKey = action.payload.assocValueKey || state.view.popupData?.assocValueKey
     const bcName = action.payload.bcName
     const allData = state.data[bcName]
     const selected = action.payload.dataItem._associate
@@ -816,7 +816,7 @@ const changeAssociationFull: Epic = (action$, store) => action$.ofType(types.cha
                     depth: depth,
                     widgetName: action.payload.widgetName,
                     dataItem: { ...prevSelected, _associate: false },
-                    assocValueKey: action.payload.assocValueKey
+                    assocValueKey
                 })))
             }
         } else {
@@ -825,7 +825,7 @@ const changeAssociationFull: Epic = (action$, store) => action$.ofType(types.cha
                 bcName,
                 parentId: action.payload.dataItem.id,
                 depth: depth + 1,
-                assocValueKey: action.payload.assocValueKey,
+                assocValueKey,
                 selected: false
             })))
         }
@@ -845,9 +845,9 @@ const changeAssociationFull: Epic = (action$, store) => action$.ofType(types.cha
             dataItem: {
                 ...parentItem,
                 _associate: true,
-                _value: parentItem[action.payload.assocValueKey]
+                _value: parentItem[assocValueKey]
             },
-            assocValueKey: action.payload.assocValueKey
+            assocValueKey
         })))
     }
 
@@ -871,7 +871,7 @@ const changeAssociationFull: Epic = (action$, store) => action$.ofType(types.cha
                 depth: parentDepth,
                 widgetName: action.payload.widgetName,
                 dataItem: { ...parentItem, _associate: false },
-                assocValueKey: action.payload.assocValueKey
+                assocValueKey
             })))
         }
     }

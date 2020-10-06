@@ -1,0 +1,126 @@
+/*
+ * TESLER-UI
+ * Copyright (C) 2018-2020 Tesler Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import React, { ComponentType } from 'react'
+import {useSelector, shallowEqual} from 'react-redux'
+import {ListChildComponentProps} from 'react-window'
+import TreeVirtualized from '../../ui/TreeVirtualized/TreeVirtualized'
+import {Store} from '../../../interfaces/store'
+import {WidgetTableMeta} from '../../../interfaces/widget'
+import {buildBcUrl} from '../../../utils/strings'
+import {DataItemNode} from '../../../interfaces/tree'
+import ColumnTitle from '../../../components/ColumnTitle/ColumnTitle'
+import styles from './FlatTree.less'
+import {DataItem} from '../../../interfaces/data'
+
+/**
+ * Properties for `FlatTreePopup` widget
+ */
+interface FlatTreeProps {
+    /**
+     * Widget configuration
+     */
+    meta: WidgetTableMeta,
+    /**
+     * Widget width, default is 808px
+     */
+    width?: number,
+    /**
+     * Widget height, default is 375px
+     */
+    height?: number,
+    /**
+     * Height of item in the list, default is 60px
+     */
+    itemSize?: number,
+    /**
+     * Customization of items renderer
+     */
+    children?: ComponentType<ListChildComponentProps>,
+    /**
+     * Callback to fire when item is selected
+     */
+    onSelect?: (selected: DataItem) => void
+}
+
+const emptyData: DataItemNode[] = []
+
+/**
+ * Widget dislaying tree-like data with items expandable into nested subtrees as
+ * flat virtualized list of items.
+ *
+ * Data must be presorted (every parent is followed by its descendants) for this widget.
+ *
+ * @param props Widget props
+ */
+export const FlatTree: React.FC<FlatTreeProps> = (props) => {
+    const {
+        meta,
+        width = 808,
+        height = 375,
+        itemSize = 60
+    } = props
+    const fields = React.useMemo(() => meta.fields.filter(item => !item.hidden), [meta.fields])
+    const fieldsKeys = React.useMemo(() => fields.map(item => item.key), [fields])
+    const { data, fieldsRowMeta } = useSelector((store: Store) => {
+        const bc = store.screen.bo.bc[meta.bcName]
+        const bcUrl = buildBcUrl(meta.bcName, true)
+        const rowMeta = store.view.rowMeta[meta.bcName]?.[bcUrl]
+        const loading = bc?.loading || !rowMeta
+        return {
+            data: loading
+                ? emptyData
+                : store.data[meta.bcName] as DataItemNode[],
+            fieldsRowMeta: rowMeta?.fields
+        }
+    }, shallowEqual)
+
+    const filters = useSelector((state: Store) => state.screen.filters[meta.bcName])
+
+    return <div>
+        <div className={styles.filters} style={{ width }}>
+            <div className={styles.control}>
+                {
+                    // Place for selectAll checkbox
+                }
+            </div>
+            { fields.map(field =>
+                <div key={field.key} className={styles.column}>
+                    <ColumnTitle
+                        key={field.key}
+                        widgetName={props.meta.name}
+                        widgetMeta={field}
+                        rowMeta={fieldsRowMeta?.find(item => item.key === field.key)}
+                    />
+                </div>
+            )}
+        </div>
+        <TreeVirtualized<DataItemNode>
+            items={data}
+            width={width}
+            height={height}
+            itemSize={itemSize}
+            fields={fieldsKeys}
+            filters={filters}
+            onSelect={props.onSelect}
+        >
+            {props.children}
+        </TreeVirtualized>
+    </div>
+}
+
+export default React.memo(FlatTree)
