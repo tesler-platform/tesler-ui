@@ -1,5 +1,6 @@
 import React, {FunctionComponent} from 'react'
 import {Modal, Form, Collapse, Icon} from 'antd'
+import {useTranslation} from 'react-i18next'
 import {ApplicationError, SystemError, BusinessError, ApplicationErrorType} from '../../../interfaces/view'
 import cn from 'classnames'
 import styles from './ErrorPopup.less'
@@ -12,12 +13,13 @@ export interface ErrorPopupOwnProps {
 }
 
 export const ErrorPopup: FunctionComponent<ErrorPopupOwnProps> = (props) => {
+    const {t} = useTranslation()
     const systemError = props.error as SystemError
     const businessError = props.error as BusinessError
     const title = <header className={styles.header}>
         <Icon className={styles.icon} type="exclamation-circle-o" />
         <span className={styles.title}>
-            {props.title || 'Ошибка'}
+            {props.title || t('Error')}
         </span>
     </header>
 
@@ -36,17 +38,17 @@ export const ErrorPopup: FunctionComponent<ErrorPopupOwnProps> = (props) => {
                     businessError.message
                 }
                 { props.error.type === ApplicationErrorType.SystemError &&
-                    'Произошла системная ошибка'
+                    t('System error has been occurred')
                 }
                 { props.error.type === ApplicationErrorType.NetworkError &&
-                    'Отсутствует связь с сервером'
+                    t('There is no connection to the server')
                 }
             </Form.Item>
             { props.error.type === ApplicationErrorType.SystemError &&
-            <Form.Item label="Код ошибки">
+            <Form.Item label={t('Error code')}>
                 {systemError.code}
                 <Collapse bordered={false}>
-                    <Collapse.Panel header="Подробности" key="1">
+                    <Collapse.Panel header={t('Details')} key="1">
                         {systemError.details}
                     </Collapse.Panel>
                 </Collapse>
