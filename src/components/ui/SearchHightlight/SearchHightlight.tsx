@@ -4,7 +4,7 @@ import {splitIntoTokens} from '../../../utils/strings'
 interface SearchHighlightProps {
     source: string,
     search: string | RegExp,
-    match: (substring: string) => React.ReactNode,
+    match?: (substring: string) => React.ReactNode,
     notMatch?: (substring: string) => React.ReactNode
 }
 
@@ -19,7 +19,7 @@ const SearchHighlight: React.FC<SearchHighlightProps> = (props) => {
                     : item === props.search
                 if (isMatch) {
                     return <React.Fragment key={index}>
-                        {props.match(item) || item}
+                        {props.match?.(item) || defaultHighlighter(item)}
                     </React.Fragment>
                 }
                 return <React.Fragment key={index}>
@@ -28,5 +28,14 @@ const SearchHighlight: React.FC<SearchHighlightProps> = (props) => {
             })}
     </>
 }
+
+/**
+ * Default renderer for highlighting search results.
+ *
+ * Wraps an argument into `<b>` tag.
+ *
+ * @param value
+ */
+export const defaultHighlighter = (value: string) => <b>{value}</b>
 
 export default React.memo(SearchHighlight)

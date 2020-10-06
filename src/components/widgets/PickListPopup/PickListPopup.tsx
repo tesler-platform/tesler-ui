@@ -19,6 +19,7 @@ import {buildBcUrl} from '../../../utils/strings'
 import {FieldType} from '../../../interfaces/view'
 import Pagination from '../../ui/Pagination/Pagination'
 import {PaginationMode} from '../../../interfaces/widget'
+import cn from 'classnames'
 
 export interface PickListPopupActions {
     onChange: (payload: ChangeDataItemPayload) => void,
@@ -27,11 +28,13 @@ export interface PickListPopupActions {
 
 export interface PickListPopupOwnProps extends Omit<PopupProps, 'bcName' | 'children' | 'showed'> {
     widget: WidgetTableMeta,
+    className?: string,
     components?: {
         title?: React.ReactNode,
         table?: React.ReactNode,
         footer?: React.ReactNode
-    }
+    },
+    disableScroll?: boolean
 }
 
 export interface PickListPopupProps extends PickListPopupOwnProps {
@@ -145,7 +148,9 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
                 pagination={false}
             />
         </div>
-    const table = props.components?.table === undefined ? defaultTable : props.components.table
+    const table = props.bcLoading
+        ? <Skeleton loading paragraph={{rows: 5}}/>
+        : props.components?.table === undefined ? defaultTable : props.components.table
 
     return <Popup
         title={title}
@@ -158,12 +163,10 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
         disablePagination={props.widget.options?.hierarchyFull}
         footer={footer}
         {...rest}
+        className={cn(props.className, { [styles.disableScroll]: props.disableScroll })}
     >
         <div>
-            {(props.bcLoading)
-                ? <Skeleton loading paragraph={{rows: 5}}/>
-                : {...table}
-            }
+            {table}
         </div>
     </Popup>
 }

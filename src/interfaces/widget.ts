@@ -18,19 +18,28 @@ export const enum WidgetTypes {
     WidgetCreator = 'WidgetCreator',
     Pivot = 'Pivot',
     DimFilter = 'DimFilter',
-    Text = 'Text'
+    Text = 'Text',
+    FlatTree = 'FlatTree',
+    FlatTreePopup = 'FlatTreePopup'
 }
 
 /**
  * Different widget types that are considered `tables` in nature for purposes of applying some shared features.
  * For example, autofocus on missing required field should work for tables but not forms.
  */
-export const TableLikeWidgetTypes: Array<WidgetTypes | string> = [
+export const TableLikeWidgetTypes = [
     WidgetTypes.List,
     WidgetTypes.DataGrid,
     WidgetTypes.AssocListPopup,
-    WidgetTypes.PickListPopup
-]
+    WidgetTypes.PickListPopup,
+    WidgetTypes.FlatTree,
+    WidgetTypes.FlatTreePopup
+] as const
+
+/**
+ * All widget types that displau table-like data
+ */
+type TableLikeWidgetType = typeof TableLikeWidgetTypes[number]
 
 export interface WidgetFieldBase {
     type: FieldType,
@@ -143,6 +152,9 @@ export type RadioButtonFieldMeta = AllWidgetTypeFieldBase & {
     type: FieldType.radio
 }
 
+/**
+ * Field descriptor in widget configuration
+ */
 export type WidgetField = NumberFieldMeta
     | DateFieldMeta
     | DateTimeFieldMeta
@@ -269,39 +281,101 @@ export interface WidgetShowCondition {
 /**
  * Description of the list of fields of block type.
  *
- * @deprecated
- * Used to create a block grouping of fields
- *
- * @param blockId Block ID.
- * @param name The name of the block.
- * @param Fields an array of fields of type T.
- *
+ * @deprecated Used to create a block grouping of fields
  */
 export interface WidgetFieldBlock<T> {
+    /**
+     * Block ID
+     */
     blockId: number,
+    /**
+     * Name of the block
+     */
     name: string,
+    /**
+     * Fields contained in the block
+     */
     fields: T[],
+    /**
+     * @deprecated TODO: Remove in 2.0.0, used to denote a new row in old layout system for forms
+     */
     newRow?: boolean,
+    /**
+     * @deprecated TODO: Remove in 2.0.0, used to ...
+     */
     break?: boolean
 }
 
 export type WidgetFieldsOrBlocks<T> = Array<T | WidgetFieldBlock<T>>
 
+/**
+ * Configuration for widgets dislaying form data
+ */
 export interface WidgetFormMeta extends WidgetMeta {
+    /**
+     * Unambiguous marker for JSON file specifing widget type
+     */
     type: WidgetTypes.Form,
+    /**
+     * Descriptor for fields or block of fields on the form
+     */
     fields: WidgetFieldsOrBlocks<WidgetFormField>
 }
 
+/**
+ * Configuration for widgets displaying table-like data
+ */
 export interface WidgetTableMeta extends WidgetMeta {
-    type: WidgetTypes.List | WidgetTypes.DataGrid,
+    /**
+     * Unambiguous marker for JSON file specifing widget type
+     */
+    type: TableLikeWidgetType,
+    /**
+     * Descriptor for table columns
+     */
     fields: WidgetListField[]
 }
 
+/**
+ * Configuration for widgets displaying read-only table data
+ */
 export interface WidgetInfoMeta extends WidgetMeta {
+    /**
+     * Unambiguous marker for JSON file specifing widget type
+     */
     type: WidgetTypes.Info,
+    /**
+     * Descriptor for fields or block of fields on the form
+     */
     fields: WidgetFieldsOrBlocks<WidgetInfoField>,
+    /**
+     * Options for customizing widget
+     */
     options?: WidgetOptions & WidgetInfoOptions
 }
+
+/**
+ * Configuration for widgets displaying markdown text
+ */
+export interface WidgetTextMeta extends WidgetMeta {
+    /**
+     * Unambiguous marker for JSON file specifing widget type
+     */
+    type: WidgetTypes.Text,
+    /**
+     * Text to display
+     */
+    description: string,
+    /**
+     * Title text
+     */
+    descriptionTitle: string
+}
+
+/**
+ * A widget configuration of any known type
+ */
+export type WidgetMetaAny = WidgetFormMeta | WidgetTableMeta | WidgetTextMeta | WidgetInfoMeta
 
 /**
  * Description of possible positioning options
@@ -323,32 +397,27 @@ export interface TableOperations {
 }
 
 /**
- * ReactComponent here is just a union representing a component, so you say
- * "our ColumnTitle can get some external React component as long as it have the same props contract
- * and so can use it instead of our default implementation
+ * Configuration descriptor for hierarchy subset of table widgets.
+ *
+ * Each descriptor describes a specific level of hierarchy
  */
-export type ReactComponent<props> = ConnectedComponent<any, props> | FunctionComponent<props>
-
 export interface WidgetTableHierarchy {
+    /**
+     * Which business component is displayed on this level
+     */
     bcName: string,
+    /**
+     * What record field to use as displayed value of that record
+     */
     assocValueKey?: string,
+    /**
+     * If true only one item can be selected
+     */
     radio?: boolean,
+    /**
+     * Fields that will be displayed on this hierarchy level
+     */
     fields: WidgetListField[]
-}
-
-/**
- * Description of the interface for the widget displaying text with support for markdowns
- */
-export interface WidgetTextMeta extends WidgetMeta {
-    type: WidgetTypes.Text,
-    /**
-     * Text to display
-     */
-    description: string,
-    /**
-     * Title text
-     */
-    descriptionTitle: string
 }
 
 /**

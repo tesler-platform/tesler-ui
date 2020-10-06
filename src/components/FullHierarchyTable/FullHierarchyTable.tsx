@@ -30,8 +30,11 @@ export interface FullHierarchyTableOwnProps {
     parentId?: string,
     selectable?: boolean,
     expandedRowKeys?: string[],
-    searchPlaceholder?: string,
-    onRow?: (record: DataItem, index: number) => TableEventListeners
+    onRow?: (record: DataItem, index: number) => TableEventListeners,
+    /**
+     * @deprecated TODO: No longer in use, remove in 2.0.0,
+     */
+    searchPlaceholder?: string
 }
 
 interface FullHierarchyTableProps {

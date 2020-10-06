@@ -22,42 +22,39 @@
  * @param predicate Search condition for the target tree node
  * @returns Matching node and a tree depth where this node was found
  */
-export function breadthFirstSearch<T extends TreeNode>(
+export function breadthFirstSearch<T>(
     root: T,
-    predicate: (current: TreeNode | any) => boolean,
-    depth = 1
+    predicate: (current: any) => boolean,
+    depth = 1,
+    childrenProperty = 'child' as keyof T
 ): BreadthFirstResult<T> {
+
     // Check the root if we can stop searching
     const rootMatch = predicate(root) && root
-    if (!rootMatch && !root.child) {
+    const rootChildren = root[childrenProperty] as unknown as T[]
+    if (!rootMatch && !rootChildren) {
         return null
     }
     if (rootMatch) {
         return { node: rootMatch, depth }
     }
     // Check all nodes on current depth
-    let simpleLeaf = root.child
-    .filter(item => !item.child)
+    let simpleLeaf = rootChildren
+    .filter(item => !item[childrenProperty])
     .find(item => predicate(item))
     if (simpleLeaf) {
-        return { node: simpleLeaf as T, depth: depth + 1 }
+        return { node: simpleLeaf, depth: depth + 1 }
     }
     // Move to the next depth
     let resultDepth = depth
-    root.child
-        .some(item => {
-            const search = breadthFirstSearch(item, predicate, resultDepth + 1)
-            simpleLeaf = search?.node
-            resultDepth = search?.depth
-            return search?.node
-        })
-    return simpleLeaf ? { node: simpleLeaf as T, depth: resultDepth } : null
+    rootChildren.some(item => {
+        const search = breadthFirstSearch<T>(item, predicate, resultDepth + 1, childrenProperty ?? 'child' as keyof T)
+        simpleLeaf = search?.node
+        resultDepth = search?.depth
+        return search?.node
+    })
+    return simpleLeaf ? { node: simpleLeaf, depth: resultDepth } : null
 }
-
-/**
- * Breadth-first tree node
- */
-export type TreeNode = { child?: TreeNode[] } & Record<any, any>
 
 /**
  * Bredth-first search result

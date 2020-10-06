@@ -813,7 +813,10 @@ export class ActionPayloadTypes {
         depth: number,
         widgetName: string,
         dataItem: AssociatedItem,
-        assocValueKey: string
+        /**
+         * @deprecated TODO: Remove in 2.0.0 in favor of store.view.popupData.assocValueKey instead
+         */
+        assocValueKey?: string
     } = z
 
     /**
