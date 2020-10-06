@@ -3,15 +3,12 @@ import {connect} from 'react-redux'
 import {Skeleton, Spin} from 'antd'
 import {Store} from '../../interfaces/store'
 import {
-    WidgetMeta,
     WidgetTypes,
-    WidgetFormMeta,
-    WidgetTableMeta,
     WidgetShowCondition,
     CustomWidgetDescriptor,
     isCustomWidget,
-    WidgetInfoMeta,
-    WidgetTextMeta
+    WidgetMetaAny,
+    WidgetMeta
 } from '../../interfaces/widget'
 import TableWidget from '../widgets/TableWidget/TableWidget'
 import TextWidget from '../widgets/TextWidget/TextWidget'
@@ -24,9 +21,11 @@ import {BcMetaState} from '../../interfaces/bc'
 import {ViewState} from '../../interfaces/view'
 import {DataState} from '../../interfaces/data'
 import {buildBcUrl} from '../../utils/strings'
+import FlatTreePopup from '../widgets/FlatTree/FlatTreePopup'
+import FlatTree from '../widgets/FlatTree/FlatTree'
 
 interface WidgetOwnProps {
-    meta: WidgetMeta,
+    meta: WidgetMeta | WidgetMetaAny,
     card?: (props: any) => React.ReactElement<any>,
     children?: React.ReactNode
 }
@@ -42,7 +41,11 @@ interface WidgetProps extends WidgetOwnProps {
 
 const skeletonParams = { rows: 5 }
 
-const SKIP_WRAPPING_WIDGETS: string[] = [WidgetTypes.AssocListPopup, WidgetTypes.PickListPopup]
+const SKIP_WRAPPING_WIDGETS: string[] = [
+    WidgetTypes.AssocListPopup,
+    WidgetTypes.PickListPopup,
+    WidgetTypes.FlatTreePopup
+]
 
 export const Widget: FunctionComponent<WidgetProps> = (props) => {
     if (!props.showWidget) {
@@ -107,7 +110,11 @@ export const Widget: FunctionComponent<WidgetProps> = (props) => {
  * @param customWidgets Dictionary where key is a widget type and value is a component that should be rendered
  * @param children Widgets children component, returned in case type is unknown
  */
-function chooseWidgetType(widgetMeta: WidgetMeta, customWidgets?: Record<string, CustomWidgetDescriptor>, children?: React.ReactNode) {
+function chooseWidgetType(
+    widgetMeta: WidgetMeta | WidgetMetaAny,
+    customWidgets?: Record<string, CustomWidgetDescriptor>,
+    children?: React.ReactNode
+) {
     const customWidget = customWidgets?.[widgetMeta.type]
 
     if (customWidget) {
@@ -115,27 +122,31 @@ function chooseWidgetType(widgetMeta: WidgetMeta, customWidgets?: Record<string,
             const CustomWidgetComponent = customWidget
             return <CustomWidgetComponent meta={widgetMeta} />
         }
-
         const DescriptorComponent = customWidget.component
         return <DescriptorComponent meta={widgetMeta} />
     }
-    switch (widgetMeta.type) {
+    const knownWidgetMeta = widgetMeta as WidgetMetaAny
+    switch (knownWidgetMeta.type) {
         case WidgetTypes.List:
         case WidgetTypes.DataGrid:
             return <TableWidget
-                meta={widgetMeta as WidgetTableMeta}
+                meta={knownWidgetMeta}
                 showRowActions
             />
         case WidgetTypes.Form:
-            return <FormWidget meta={widgetMeta as WidgetFormMeta} />
+            return <FormWidget meta={knownWidgetMeta} />
         case WidgetTypes.Text:
-            return <TextWidget meta={widgetMeta as WidgetTextMeta} />
+            return <TextWidget meta={knownWidgetMeta} />
         case WidgetTypes.AssocListPopup:
-            return <AssocListPopup widget={widgetMeta as WidgetTableMeta} />
+            return <AssocListPopup widget={knownWidgetMeta} />
         case WidgetTypes.PickListPopup:
-            return <PickListPopup widget={widgetMeta as WidgetTableMeta} />
+            return <PickListPopup widget={knownWidgetMeta} />
         case WidgetTypes.Info:
-            return <InfoWidget meta={widgetMeta as WidgetInfoMeta}/>
+            return <InfoWidget meta={knownWidgetMeta}/>
+        case WidgetTypes.FlatTree:
+            return <FlatTree meta={knownWidgetMeta} />
+        case WidgetTypes.FlatTreePopup:
+            return <FlatTreePopup meta={knownWidgetMeta} />
         default:
             return children
     }

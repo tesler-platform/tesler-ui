@@ -1,7 +1,7 @@
-import React, {FunctionComponent} from 'react'
+import React, {FunctionComponent, ComponentType} from 'react'
 import cn from 'classnames'
 import {RowMetaField} from '../../interfaces/rowMeta'
-import {ReactComponent, WidgetListField} from '../../interfaces/widget'
+import {WidgetListField} from '../../interfaces/widget'
 import ColumnFilter, {ColumnFilterOwnProps} from './ColumnFilter'
 import ColumnSort from './ColumnSort'
 import styles from './ColumnTitle.less'
@@ -13,7 +13,7 @@ export interface ColumnTitle {
     widgetMeta: WidgetListField,
     rowMeta: RowMetaField,
     components?: {
-        filter?: ReactComponent<ColumnFilterOwnProps>
+        filter?: ComponentType<ColumnFilterOwnProps>
     },
     className?: string
 }

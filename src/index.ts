@@ -128,10 +128,10 @@ export {
     // Stable
     matchOperationRole,
     getFilters,
+    TableLikeWidgetTypes,
     // Unstable
     buildBcUrl,
     flattenOperations,
-    TableLikeWidgetTypes
 }
 
 /**
