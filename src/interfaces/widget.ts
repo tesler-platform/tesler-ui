@@ -26,6 +26,8 @@ export const enum WidgetTypes {
 /**
  * Different widget types that are considered `tables` in nature for purposes of applying some shared features.
  * For example, autofocus on missing required field should work for tables but not forms.
+ *
+ * TODO: Make extension point
  */
 export const TableLikeWidgetTypes = [
     WidgetTypes.List,
@@ -37,7 +39,18 @@ export const TableLikeWidgetTypes = [
 ] as const
 
 /**
- * All widget types that displau table-like data
+ * Widgets that are considered `popups` and usually excluded from widgets layout grid
+ *
+ * TODO: Make extenstion point
+ */
+export const PopupWidgetTypes = [
+    WidgetTypes.PickListPopup,
+    WidgetTypes.AssocListPopup,
+    WidgetTypes.FlatTreePopup
+] as const
+
+/**
+ * All widget types that display table-like data
  */
 type TableLikeWidgetType = typeof TableLikeWidgetTypes[number]
 
