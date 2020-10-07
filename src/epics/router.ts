@@ -1,6 +1,20 @@
-/**
- * Для эпиков работы с маршрутизацией
+/*
+ * TESLER-UI
+ * Copyright (C) 2018-2020 Tesler Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 import {$do, AnyAction, Epic, types} from '../actions/actions'
 import {Observable} from 'rxjs/Observable'
 import * as api from '../api/api'
@@ -14,6 +28,8 @@ import {defaultParseLocation} from '../Provider'
 import {shallowCompare} from '../utils/redux'
 import {parsePath} from 'history'
 import {parseFilters, parseSorters} from '../utils/filters'
+import {notification} from 'antd'
+import i18n from 'i18next'
 
 /**
  * Epic of changing the current route
@@ -21,6 +37,8 @@ import {parseFilters, parseSorters} from '../utils/filters'
  * Checks route parameters (screen, view, BC cursors) relative to those
  * that are currently stored in the store, and in case of a mismatch
  * initiates reloading the screen, view or BC with new cursors.
+ *
+ * @param action$ changeLocation
  */
 const changeLocation: Epic = (action$, store) => action$.ofType(types.changeLocation)
 .mergeMap(action => {
@@ -98,6 +116,14 @@ const changeLocation: Epic = (action$, store) => action$.ofType(types.changeLoca
     return Observable.concat(...resultObservables)
 })
 
+/**
+ * Fires `selectScreen` or `selectScreenFail` to set requested in url screen as active
+ * after succesful login.
+ *
+ * For server-side router fires `handleRouter` instead.
+ *
+ * @param action$ loginDone
+ */
 const loginDone: Epic = (action$, store) => action$.ofType(types.loginDone)
 .switchMap(action => {
     const state = store.getState()
@@ -280,6 +306,34 @@ const handleRouter: Epic = (action$, store) => action$.ofType(types.handleRouter
     })
 })
 
+/**
+ * Throws a error popup when attempting to navigate to the screen which is missing for current session
+ *
+ * @param action$ selectScreenFail
+ */
+const selectScreenFail: Epic = (action$) => action$.ofType(types.selectScreenFail)
+.mergeMap(action => {
+    notification.error({
+        message: i18n.t('Screen is missing or unavailable for your role', { screenName: action.payload.screenName }),
+        duration: 15
+    })
+    return Observable.empty()
+})
+
+/**
+ * Throws a error popup when attempting to navigate to the view which is missing for current session
+ *
+ * @param action$ selectViewFail
+ */
+const selectViewFail: Epic = (action$) => action$.ofType(types.selectViewFail)
+.mergeMap(action => {
+    notification.error({
+        message: i18n.t('View is missing or unavailable for your role', { viewName: action.payload.viewName }),
+        duration: 15
+    })
+    return Observable.empty()
+})
+
 export const routerEpics = {
     changeLocation,
     loginDone,
@@ -287,5 +341,7 @@ export const routerEpics = {
     changeView,
     drillDown,
     userDrillDown,
-    handleRouter
+    handleRouter,
+    selectScreenFail,
+    selectViewFail
 }
