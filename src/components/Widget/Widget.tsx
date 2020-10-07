@@ -8,7 +8,8 @@ import {
     CustomWidgetDescriptor,
     isCustomWidget,
     WidgetMetaAny,
-    WidgetMeta
+    WidgetMeta,
+    PopupWidgetTypes
 } from '../../interfaces/widget'
 import TableWidget from '../widgets/TableWidget/TableWidget'
 import TextWidget from '../widgets/TextWidget/TextWidget'
@@ -41,12 +42,6 @@ interface WidgetProps extends WidgetOwnProps {
 
 const skeletonParams = { rows: 5 }
 
-const SKIP_WRAPPING_WIDGETS: string[] = [
-    WidgetTypes.AssocListPopup,
-    WidgetTypes.PickListPopup,
-    WidgetTypes.FlatTreePopup
-]
-
 export const Widget: FunctionComponent<WidgetProps> = (props) => {
     if (!props.showWidget) {
         return null
@@ -54,7 +49,7 @@ export const Widget: FunctionComponent<WidgetProps> = (props) => {
 
     const customWidget = props.customWidgets?.[props.meta.type]
 
-    const skipCardWrapping = SKIP_WRAPPING_WIDGETS.includes(props.meta.type)
+    const skipCardWrapping = PopupWidgetTypes.includes(props.meta.type as typeof PopupWidgetTypes[number])
 
     if (skipCardWrapping) {
         return <> {chooseWidgetType(props.meta, props.customWidgets, props.children)} </>
@@ -157,10 +152,9 @@ function mapStateToProps(store: Store, ownProps: WidgetOwnProps) {
     const bc = store.screen.bo.bc[bcName]
     const parent = store.screen.bo.bc[bc?.parentName]
     const hasParent = !!parent
-    let showWidget = true
-    if (store.view.popupData.bcName === bcName) {
-        showWidget = true
-    }
+    let showWidget = PopupWidgetTypes.includes(ownProps.meta.type as typeof PopupWidgetTypes[number])
+        ? store.view.popupData.bcName === bcName
+        : true
     if (ownProps.meta.showCondition && !Array.isArray(ownProps.meta.showCondition)) {
         showWidget = checkShowCondition(ownProps.meta.showCondition, store.screen.bo.bc, store.data, store.view)
     }

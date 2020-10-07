@@ -4,7 +4,7 @@ import {Store} from 'redux'
 import {Provider} from 'react-redux'
 import {Skeleton} from 'antd'
 import {mockStore} from '../../tests/mockStore'
-import {WidgetField, WidgetTypes} from '../../interfaces/widget'
+import {WidgetField, WidgetTypes, PopupWidgetTypes} from '../../interfaces/widget'
 import {Store as CoreStore} from '../../interfaces/store'
 import {$do} from '../../actions/actions'
 import {BcMetaState} from '../../interfaces/bc'
@@ -12,6 +12,9 @@ import Form from '../widgets/FormWidget/FormWidget'
 import Table from '../widgets/TableWidget/TableWidget'
 import Widget, {Widget as SimpleWidget} from './Widget'
 import styles from './Widget.less'
+import AssocListPopup from '../widgets/AssocListPopup/AssocListPopup'
+import PickListPopup from '../widgets/PickListPopup/PickListPopup'
+import FlatTreePopup from '../widgets/FlatTree/FlatTreePopup'
 
 const exampleBcName = 'bcExample'
 const widgetMeta = {
@@ -156,5 +159,45 @@ describe('Uses info from widget descriptor', () => {
         expect(widget.find('article.blueCard').length).toBe(1)
         expect(widget.find('div.customComponent').length).toBe(1)
         expect(widget.find(`.${styles.container}`).length).toBe(0)
+    })
+})
+
+describe('widget visibility', () => {
+    let store: Store<CoreStore> = null
+    type PopupWidgetsDictionary = {
+        [key in typeof PopupWidgetTypes[number]]: React.ComponentType<any>
+    }
+    const widgetNames: PopupWidgetsDictionary = {
+        AssocListPopup: AssocListPopup,
+        PickListPopup: PickListPopup,
+        FlatTreePopup: FlatTreePopup
+    }
+
+    beforeAll(() => {
+        store = mockStore()
+        store.getState().screen.bo.bc[exampleBcName] = { parentName: 'parentBcExample' } as BcMetaState
+        store.getState().screen.bo.bc.parentBcExample = {} as BcMetaState
+        store.getState().popupData = { bcName: null }
+    })
+
+    afterEach(() => {
+        store.getState().popupData = { bcName: null }
+    })
+
+    it('shows popup widgets only when their are opened', () => {
+        PopupWidgetTypes.forEach(popupWidgetType => {
+            const wrapper = mount(
+                <Provider store={store}>
+                    <Widget meta={{ ...widgetMeta, type: popupWidgetType }} />
+                </Provider>
+            )
+            expect(wrapper.find(widgetNames[popupWidgetType]).length).toBe(0)
+            store.dispatch($do.showViewPopup({ bcName: exampleBcName }))
+            wrapper.update()
+            expect(wrapper.find(widgetNames[popupWidgetType]).length).toBe(1)
+            store.dispatch($do.closeViewPopup({ bcName: exampleBcName }))
+            wrapper.update()
+            expect(wrapper.find(widgetNames[popupWidgetType]).length).toBe(0)
+        })
     })
 })
