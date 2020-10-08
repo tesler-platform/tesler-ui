@@ -5,6 +5,7 @@ import Pagination from '../../ui/Pagination/Pagination'
 import {PaginationMode} from '../../../interfaces/widget'
 import * as styles from './Popup.less'
 import {ModalProps} from 'antd/lib/modal'
+import cn from 'classnames'
 
 export interface PopupProps extends ModalProps {
     onOkHandler?: () => void,
@@ -36,7 +37,7 @@ export const Popup: FunctionComponent<PopupProps> = (props) => {
         disablePagination,
         defaultOkText,
         defaultCancelText,
-
+        className,
         width,
         title,
         footer,
@@ -70,7 +71,7 @@ export const Popup: FunctionComponent<PopupProps> = (props) => {
     return <div>
         <Modal
             title={computedTitle}
-            className={styles.popupModal}
+            className={cn(styles.popupModal, className)}
             visible={showed}
             getContainer={false}
             width={computedWidth}
