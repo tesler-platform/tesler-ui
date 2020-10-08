@@ -255,7 +255,13 @@ export interface WidgetOptions {
     /**
      * Disable notification after failed operation
      */
-    disableNotification?: boolean
+    disableNotification?: boolean,
+    /**
+     * Allow selecting multiple items for FlatListPopup
+     *
+     * TODO: Move to separate interface
+     */
+    multiple?: boolean
 }
 
 export interface WidgetMeta {

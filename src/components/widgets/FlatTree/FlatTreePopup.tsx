@@ -22,8 +22,10 @@ import {WidgetTableMeta} from '../../../interfaces/widget'
 import {FlatTree} from './FlatTree'
 import PickListPopup from '../PickListPopup/PickListPopup'
 import {Store} from '../../../interfaces/store'
-import {DataItem, PendingDataItem} from '../../../interfaces/data'
 import {$do} from '../../../actions/actions'
+import {PopupFooter} from '../../../components/ui/Popup/PopupFooter'
+import {useSingleSelect} from './useSingleSelect'
+import {useMultipleSelect} from './useMultipleSelect'
 
 /**
  * Properties for `FlatTreePopup` widget
@@ -48,6 +50,14 @@ export interface FlatTreePopupProps {
  * @param props Widget props
  */
 export const FlatTreePopup: React.FC<FlatTreePopupProps> = (props) => {
+    const {
+        multiple,
+        hierarchyGroupSelection,
+        hierarchyGroupDeselection,
+        hierarchyRadioAll,
+        hierarchyRadio: hierarchyRootRadio
+    } = (props.meta.options ?? {})
+
     const bcName = props.meta.bcName
     const dispatch = useDispatch()
 
@@ -64,26 +74,40 @@ export const FlatTreePopup: React.FC<FlatTreePopupProps> = (props) => {
         return store.view.pickMap
     }, shallowEqual)
 
-    const handleSelect = React.useCallback((selected: DataItem) => {
-        const dataItem: PendingDataItem = { }
-        if (!pickListDescriptor) {
-            return
-        }
-        Object.entries(pickListDescriptor).forEach(([ key, value ]) => {
-            dataItem[key] = selected[value]
-        })
-        dispatch($do.changeDataItem({ bcName: parentBcName, cursor: parentCursor, dataItem }))
-        dispatch($do.viewClearPickMap(null))
+    const handleSingleSelect = useSingleSelect(pickListDescriptor, bcName, parentCursor, parentBcName)
+    const handleMultipleSelect = useMultipleSelect(
+        bcName,
+        hierarchyGroupSelection,
+        hierarchyGroupDeselection,
+        hierarchyRadioAll,
+        hierarchyRootRadio
+    )
+    const handleSelect = multiple ? handleMultipleSelect : handleSingleSelect
+
+    const handleConfirmMultiple = React.useCallback(() => {
+        dispatch($do.saveAssociations({ bcNames: [bcName] }))
+        dispatch($do.bcCancelPendingChanges({ bcNames: [bcName] }))
+        dispatch($do.closeViewPopup({ bcName }))
+    }, [bcName])
+
+    const handleCancelMultiple = React.useCallback(() => {
         dispatch($do.closeViewPopup({ bcName }))
         dispatch($do.bcRemoveAllFilters({ bcName }))
-    }, [pickListDescriptor, parentCursor, bcName])
+        dispatch($do.bcCancelPendingChanges({ bcNames: [bcName] }))
+    }, [bcName])
+
+    const footer = React.useMemo(() => {
+        return multiple
+            ? <PopupFooter onAccept={handleConfirmMultiple} onCancel={handleCancelMultiple} />
+            : null
+    }, [multiple])
 
     const components = React.useMemo(() => {
         return {
-            table: <FlatTree meta={props.meta} onSelect={handleSelect}>
+            table: <FlatTree meta={props.meta} multiple={multiple} onSelect={handleSelect}>
                 {props.children}
             </FlatTree>,
-            footer: null
+            footer
         }
     }, [props.meta, handleSelect])
 

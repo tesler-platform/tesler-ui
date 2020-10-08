@@ -17,12 +17,15 @@
 
 import React from 'react'
 import {ListChildComponentProps} from 'react-window'
-import {Icon, Popover} from 'antd'
+import {Icon, Checkbox} from 'antd'
 import {TreeNodeBidirectional} from '../../../interfaces/tree'
 import SearchHightlight from '../SearchHightlight/SearchHightlight'
 import {escapedSrc} from '../../../utils/strings'
 import styles from './TreeVirtualizedNode.less'
 import {BcFilter} from '../../../interfaces/filters'
+import {useSelector} from 'react-redux'
+import {Store } from '../../../interfaces/store'
+import {WidgetListField} from '../../../interfaces/widget'
 
 /**
  * Properties for `TreeVirtualizedNode` component
@@ -37,11 +40,15 @@ export interface TreeVirtualizedNodeData<T> {
     /**
      * Fields of the item that should be displayed as columns
      */
-    fields: Array<keyof T>,
+    fields: WidgetListField[],
     /**
      * An array of ids of expanded nodes
      */
     expandedItems: string[],
+    /**
+     * Allow selecting multiple items
+     */
+    multiple?: boolean,
     /**
      * Fields with values matching this expression will be highlighted;
      *
@@ -59,7 +66,7 @@ export interface TreeVirtualizedNodeData<T> {
     /**
      * Fires when selectin a node
      */
-    onSelect?: (item: T) => void
+    onSelect?: ((item: T) => void) | ((item: T, selected: boolean) => void)
 }
 
 /**
@@ -81,7 +88,21 @@ export function TreeVirtualizedNode<T extends TreeNodeBidirectional>(props: Tree
     const data = props.data
     const item = data.items[props.index]
     const expanded = data.expandedItems?.includes(item.id)
+    const pendingSelected = useSelector((store: Store) => {
+        return Object.values(store.view.pendingDataChanges)?.[0]
+    })
+    const checked = pendingSelected?.[item.id] === undefined
+        ? (item as any)._associate
+        : pendingSelected?.[item.id]._associate
     return <div className={styles.row} style={props.style}>
+        { data.multiple &&
+            <div className={styles.controls}>
+                <Checkbox
+                    checked={checked}
+                    onChange={() => data.onSelect(item, !checked)}
+                />
+            </div>
+        }
         <div className={styles.controls}>
             { item.children?.length &&
                 <button
@@ -95,27 +116,27 @@ export function TreeVirtualizedNode<T extends TreeNodeBidirectional>(props: Tree
                 </button>
             }
         </div>
-        { data.fields?.map(key => {
-            const filter = data.filters?.find(f => f.fieldName === key)
+        { data.fields?.map((field: WidgetListField) => {
+            const filter = data.filters?.find(f => f.fieldName === field.key)
+            const source = (item as any)[field.key] as string
             const content = filter
                 ? <SearchHightlight
-                    source={item[key] as unknown as string}
+                    source={source}
                     search={escapedSrc(filter.value as string)}
                     match={data.searchHighlighter}
                 />
-                : item[key]
+                : source
+            const onClick = data.multiple
+                ? undefined
+                : () => (data.onSelect as (d: T) => void)?.(item)
             return <div
-                key={key as string}
+                key={field.key}
                 className={styles.column}
-                onClick={() => data.onSelect?.(item)}
+                style={field.width ? { minWidth: field.width, maxWidth: field.width } : undefined}
+                onClick={onClick}
             >
                 <div className={styles.content}>
                     { content }
-                </div>
-                <div className={styles.more}>
-                    <Popover content={content} placement="right">
-                        <Icon type="double-right" />
-                    </Popover>
                 </div>
             </div>
         })}
