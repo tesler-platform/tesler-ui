@@ -23,6 +23,7 @@ import {assignTreeLinks, getDescendants} from '../../../utils/tree'
 import {useSearchResult} from './useSearchResult'
 import {useMatchingNodes} from './useMatchingNodes'
 import {BcFilter, FilterType} from '../../../interfaces/filters'
+import {WidgetListField} from '../../../interfaces/widget'
 
 /**
  * Properties for TreeVirtualized component
@@ -35,11 +36,15 @@ export interface TreeVirtualizedProps<T> extends Omit<FixedSizeListProps, 'itemC
     /**
      * Fields to display as tree node
      */
-    fields: Array<keyof T>,
+    fields: WidgetListField[],
+    /**
+     * Allow selecting multiple items
+     */
+    multiple?: boolean,
     /**
      * Fired when node is selected
      */
-    onSelect?: (item: T) => void,
+    onSelect?: ((item: T) => void) | ((item: T, selected: boolean) => void),
     /**
      * Custom node render can be provided
      */
@@ -120,10 +125,11 @@ export function TreeVirtualized<T extends DataNode>(props: TreeVirtualizedProps<
             fields,
             filters,
             expandedItems: expandedNodes,
+            multiple: props.multiple,
             onToggle: handleToggle,
             onSelect: props.onSelect
         }
-    }, [resultItems, handleToggle, expandedNodes, filters, fields, props.onSelect])
+    }, [resultItems, handleToggle, expandedNodes, filters, fields, props.multiple, props.onSelect])
     return <FixedSizeList
         {...rest}
         itemCount={memoizedData.items.length}

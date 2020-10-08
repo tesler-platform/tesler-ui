@@ -21,20 +21,31 @@ import {TreeVirtualized} from '../TreeVirtualized'
 import {TreeVirtualizedNode, TreeVirtualizedNodeProps} from '../TreeVirtualizedNode'
 import {act} from 'react-dom/test-utils'
 import {FilterType} from '../../../../interfaces/filters'
+import {FieldType} from '../../../../interfaces/view'
+import {Store as CoreStore} from '../../../../interfaces/store'
+import {Store} from 'redux'
+import {mockStore} from '../../../../tests/mockStore'
+import {Provider} from 'react-redux'
 
 describe('<TreeVirtualized />', () => {
     const sample = getTreeSample()
+    let store: Store<CoreStore> = null
+    beforeAll(() => {
+        store = mockStore()
+    })
+
     it('respects `matchCase` option when searching', () => {
-        const wrapper = mount(
-            <TreeVirtualized<typeof sample[number]>
-                items={sample}
-                width={640}
-                height={480}
-                itemSize={45}
-                filters={[{ fieldName: 'name', value: 'lucky', type: FilterType.contains }]}
-                fields={['name']}
-                onSelect={jest.fn}
-            />
+        let wrapper = mount(<Provider store={store}>
+                <TreeVirtualized<typeof sample[number]>
+                    items={sample}
+                    width={640}
+                    height={480}
+                    itemSize={45}
+                    filters={[{ fieldName: 'name', value: 'lucky', type: FilterType.contains }]}
+                    fields={[{ key: 'name', title: '', type: FieldType.input }]}
+                    onSelect={jest.fn}
+                />
+            </Provider>
         )
         expect(wrapper.find(TreeVirtualizedNode).length).toBe(6)
         expect(wrapper.find(TreeVirtualizedNode).at(0).text()).toBe('two')
@@ -43,22 +54,35 @@ describe('<TreeVirtualized />', () => {
         expect(wrapper.find(TreeVirtualizedNode).at(3).text()).toBe('Lucky Twelve')
         expect(wrapper.find(TreeVirtualizedNode).at(4).text()).toBe('three')
         expect(wrapper.find(TreeVirtualizedNode).at(5).text()).toBe('lucky Eight')
-        wrapper.setProps({ matchCase: true })
+        wrapper = mount(<Provider store={store}>
+            <TreeVirtualized<typeof sample[number]>
+                matchCase={true}
+                items={sample}
+                width={640}
+                height={480}
+                itemSize={45}
+                filters={[{ fieldName: 'name', value: 'lucky', type: FilterType.contains }]}
+                fields={[{ key: 'name', title: '', type: FieldType.input }]}
+                onSelect={jest.fn}
+            />
+            </Provider>
+        )
         expect(wrapper.find(TreeVirtualizedNode).length).toBe(2)
         expect(wrapper.find(TreeVirtualizedNode).at(0).text()).toBe('three')
         expect(wrapper.find(TreeVirtualizedNode).at(1).text()).toBe('lucky Eight')
     })
 
     it('expands node or collapse node and all descendants on toggle', () => {
-        const wrapper = mount(
+        const wrapper = mount(<Provider store={store}>
             <TreeVirtualized<typeof sample[number]>
                 items={sample}
                 width={640}
                 height={480}
                 itemSize={45}
-                fields={['name']}
+                fields={[{ key: 'name', title: '', type: FieldType.input }]}
                 onSelect={jest.fn}
             />
+            </Provider>
         )
         // initial
         expect(wrapper.find(TreeVirtualizedNode).length).toBe(3)

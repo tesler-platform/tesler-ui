@@ -94,8 +94,8 @@ describe('<FlatTreePopup />', () => {
             <Provider store={store}>
                 <FlatTreePopup meta={widget} />
             </Provider>
-        )
-        wrapper.find(FlatTree).props().onSelect({ id: 'test', name: 'Test', vstamp: 0 })
+        );
+        (wrapper.find(FlatTree).props().onSelect as (item: any) => void)({ id: 'test', name: 'Test', vstamp: 0 })
         expect(dispatch).toHaveBeenCalledTimes(0)
     })
 
@@ -108,8 +108,8 @@ describe('<FlatTreePopup />', () => {
             <Provider store={store}>
                 <FlatTreePopup meta={widget} />
             </Provider>
-        )
-        wrapper.find(FlatTree).props().onSelect({ id: 'test', name: 'Test', vstamp: 0 })
+        );
+        (wrapper.find(FlatTree).props().onSelect as (item: any) => void)({ id: 'test', name: 'Test', vstamp: 0 })
         expect(dispatch).toHaveBeenCalledWith(
             expect.objectContaining({
                 type: coreActions.changeDataItem,

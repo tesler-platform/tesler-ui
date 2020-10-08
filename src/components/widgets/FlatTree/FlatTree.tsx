@@ -22,10 +22,12 @@ import TreeVirtualized from '../../ui/TreeVirtualized/TreeVirtualized'
 import {Store} from '../../../interfaces/store'
 import {WidgetTableMeta} from '../../../interfaces/widget'
 import {buildBcUrl} from '../../../utils/strings'
-import {DataItemNode} from '../../../interfaces/tree'
+import {DataItemNode, TreeAssociatedRecord} from '../../../interfaces/tree'
 import ColumnTitle from '../../../components/ColumnTitle/ColumnTitle'
 import styles from './FlatTree.less'
 import {DataItem} from '../../../interfaces/data'
+import {Checkbox} from 'antd'
+import {FieldType} from '../../../interfaces/view'
 
 /**
  * Properties for `FlatTreePopup` widget
@@ -48,13 +50,17 @@ interface FlatTreeProps {
      */
     itemSize?: number,
     /**
+     * Allow selecting multiple items
+     */
+    multiple?: boolean,
+    /**
      * Customization of items renderer
      */
     children?: ComponentType<ListChildComponentProps>,
     /**
      * Callback to fire when item is selected
      */
-    onSelect?: (selected: DataItem) => void
+    onSelect?: ((selected: DataItem) => void) | ((record: TreeAssociatedRecord, selected: boolean) => void)
 }
 
 const emptyData: DataItemNode[] = []
@@ -74,8 +80,10 @@ export const FlatTree: React.FC<FlatTreeProps> = (props) => {
         height = 375,
         itemSize = 60
     } = props
-    const fields = React.useMemo(() => meta.fields.filter(item => !item.hidden), [meta.fields])
-    const fieldsKeys = React.useMemo(() => fields.map(item => item.key), [fields])
+    const fields = React.useMemo(() => meta.fields.filter(item => {
+        return item.type !== FieldType.hidden && !item.hidden
+    }), [meta.fields])
+
     const { data, fieldsRowMeta } = useSelector((store: Store) => {
         const bc = store.screen.bo.bc[meta.bcName]
         const bcUrl = buildBcUrl(meta.bcName, true)
@@ -94,12 +102,17 @@ export const FlatTree: React.FC<FlatTreeProps> = (props) => {
     return <div>
         <div className={styles.filters} style={{ width }}>
             <div className={styles.control}>
-                {
-                    // Place for selectAll checkbox
-                }
+                { props.multiple && <div className={styles.selectAll}>
+                    <Checkbox disabled />
+                </div>}
             </div>
+            <div className={styles.control} />
             { fields.map(field =>
-                <div key={field.key} className={styles.column}>
+                <div
+                    key={field.key}
+                    className={styles.column}
+                    style={width ? { maxWidth: field.width } : undefined}
+                >
                     <ColumnTitle
                         key={field.key}
                         widgetName={props.meta.name}
@@ -114,8 +127,9 @@ export const FlatTree: React.FC<FlatTreeProps> = (props) => {
             width={width}
             height={height}
             itemSize={itemSize}
-            fields={fieldsKeys}
+            fields={fields}
             filters={filters}
+            multiple={props.multiple}
             onSelect={props.onSelect}
         >
             {props.children}
