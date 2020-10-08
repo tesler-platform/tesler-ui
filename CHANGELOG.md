@@ -1,3 +1,25 @@
+# Version 1.21.0
+
+## Features
+
+* `<ModalInvoke />` now accepts `className` property ([#447](https://github.com/tesler-platform/tesler-ui/issues/447))
+* Support `disableHoverError` widget option that disables errors highlights on `<FormWidget />` ([#420](https://github.com/tesler-platform/tesler-ui/issues/420))
+* Support `disableNotification` widget option that disables error notification after save action ([#420](https://github.com/tesler-platform/tesler-ui/issues/420))
+* Popup widgets now rendered only when required instead of hanging around all the time hidden ([#459](https://github.com/tesler-platform/tesler-ui/issues/459))
+* `<ErrorPopup />` now uses tokens from i18n dictionary for error messages ([#464](https://github.com/tesler-platform/tesler-ui/issues/464))
+* `<MultivalueTag />` now also opens popup when clicking on empty space inside the input ([#453](https://github.com/tesler-platform/tesler-ui/issues/453))
+* :red_circle: [Deprecation warning]: `pendingValidationFails` field in `ViewState` interface now separates validation errors by
+business component name and cursors to handle situations when multiple records on multiple widgets failed validation simultanously; support for previous format will be removed in 2.0.0 ([#441](https://github.com/tesler-platform/tesler-ui/issues/441))
+* show notification when requested route references missing screen or view; notification can be customized by overriding `selectScreenFail` and `selectViewFail` epics of `router` slice ([#466](https://github.com/tesler-platform/tesler-ui/issues/466))
+* New widget types: `<FlatTree />` and `<FlatTreePopup />` to display virtualized tree data; `<TreeVirtualized />` component to build custom widget types aroung virtualized trees ([#455](https://github.com/tesler-platform/tesler-ui/issues/455))
+
+## Fixes
+
+* `customReducers` passed to `<Provider />` ignored the initial state for core reducer slices (e.g. `screen`, `view`, etc.) which could lead to NPE crashes if custom initial state doesn't include some optional fiedlds ([#445](https://github.com/tesler-platform/tesler-ui/issues/445))
+* `template` field should be available in `ViewMetaResponse` interface ([#431](https://github.com/tesler-platform/tesler-ui/issues/431))
+* Drilldown to the same view with specific instruction to drop filters no longer causes stale data ([#374](https://github.com/tesler-platform/tesler-ui/issues/374))
+* `<Dictionary />` now corretly shows placeholder ([#463](https://github.com/tesler-platform/tesler-ui/issues/463))
+
 # Version 1.20.1
 
 ## Fixes
