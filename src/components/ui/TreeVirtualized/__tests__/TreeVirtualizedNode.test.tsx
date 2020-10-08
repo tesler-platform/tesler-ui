@@ -21,9 +21,14 @@ import {TreeVirtualizedNode, TreeVirtualizedNodeData} from '../TreeVirtualizedNo
 import {assignTreeLinks} from '../../../../utils/tree'
 import styles from '../TreeVirtualizedNode.less'
 import {TreeNodeBidirectional} from '../../../../interfaces/tree'
-import {Popover, Icon} from 'antd'
+import {Icon} from 'antd'
 import SearchHightlight from '../../SearchHightlight/SearchHightlight'
 import {FilterType} from '../../../../interfaces/filters'
+import {FieldType} from '../../../../interfaces/view'
+import {Store as CoreStore} from '../../../../interfaces/store'
+import {Store} from 'redux'
+import {mockStore} from '../../../../tests/mockStore'
+import {Provider} from 'react-redux'
 
 type TestDataItem = {
     id: string,
@@ -33,80 +38,105 @@ type TestDataItem = {
 }
 
 describe('<TreeVirtualizedNode />', () => {
-
+    let store: Store<CoreStore> = null
+    beforeAll(() => {
+        store = mockStore()
+    })
     const items = getTreeSample()
     const itemData: TreeVirtualizedNodeData<TestDataItem> = {
         items,
-        fields: ['name'],
+        fields: [{ key: 'name', title: '', type: FieldType.input }],
         onToggle: null,
         filters: null,
         expandedItems: null
     }
 
     it('renders expand button for nodes with chilren', () => {
-        const wrapper = mount(<TreeVirtualizedNode index={0} style={null} data={itemData} />)
+        let wrapper = mount(<Provider store={store}>
+            <TreeVirtualizedNode index={0} style={null} data={itemData} />
+        </Provider>
+        )
         expect(wrapper.find('button').find(Icon).props().type).toBe('plus-square')
-        wrapper.setProps({ data: { ...itemData, expandedItems: ['1'] } })
+        wrapper = mount(<Provider store={store}>
+            <TreeVirtualizedNode index={0} style={null} data={{ ...itemData, expandedItems: ['1'] }} />
+        </Provider>
+        )
         expect(wrapper.find('button').find(Icon).props().type).toBe('minus-square')
-        wrapper.setProps({ index: 3 })
+        wrapper = mount(<Provider store={store}>
+            <TreeVirtualizedNode index={3} style={null} data={{ ...itemData, expandedItems: ['1'] }} />
+        </Provider>
+        )
         expect(wrapper.find('button').length).toBe(0)
     })
 
     it('fires `onToggle` when expanding/collapsing node', () => {
         const onToggle = jest.fn()
-        const wrapper = mount(
+        const wrapper = mount(<Provider store={store}>
             <TreeVirtualizedNode
                 index={0}
                 style={null}
                 data={{ ...itemData, onToggle }}
             />
-        )
+        </Provider>)
         wrapper.find('button').simulate('click')
         expect(onToggle).toBeCalledWith('1')
     })
 
     it('renders node with content optionally highlighted through search expression', () => {
-        const wrapper = mount(<TreeVirtualizedNode index={0} style={null} data={itemData} />)
+        let wrapper = mount(
+            <Provider store={store}>
+                <TreeVirtualizedNode index={0} style={null} data={itemData} />
+            </Provider>
+        )
         expect(wrapper.find(`.${styles.content}`).text()).toBe('one')
-        wrapper.setProps({ index: 7 })
+        wrapper = mount(
+            <Provider store={store}>
+                <TreeVirtualizedNode index={7} style={null} data={itemData} />
+            </Provider>
+        )
         expect(wrapper.find(`.${styles.content}`).text()).toBe('Lucky Eight')
         const searchHighlighter = (text: string) => <b>{text}</b>
-        wrapper.setProps({
-            data: {
-                ...itemData,
-                filters: [{ value: 'Lucky', fieldName: 'name', type: FilterType.contains }],
-                searchHighlighter
-            }
-        })
+        wrapper = mount(
+            <Provider store={store}>
+                <TreeVirtualizedNode
+                    index={7}
+                    style={null}
+                    data={{
+                        ...itemData,
+                        filters: [{ value: 'Lucky', fieldName: 'name', type: FilterType.contains }],
+                        searchHighlighter
+                    }}
+                />
+            </Provider>
+        )
         const searchHightlightProps = wrapper.find(`.${styles.content}`).find(SearchHightlight).props()
         expect(searchHightlightProps.source).toBe('Lucky Eight')
         expect(searchHightlightProps.search).toStrictEqual(/(Lucky)/gi)
         expect(searchHightlightProps.match).toBe(searchHighlighter)
     })
 
-    it('renders button to show popup with full text on hover', () => {
-        const wrapper = mount(<TreeVirtualizedNode index={7} style={null} data={itemData} />)
-        expect(wrapper.find(`.${styles.more}`).find(Popover).props().content).toBe('Lucky Eight')
-    })
-
     it('fires `onSelect` if possible when selecting a node', () => {
         const onSelect = jest.fn()
-        const wrapper = mount(<TreeVirtualizedNode index={2} style={null} data={itemData} />)
+        let wrapper = mount(<Provider store={store}>
+            <TreeVirtualizedNode index={2} style={null} data={itemData} />
+        </Provider>)
         wrapper.find(`.${styles.column}`).simulate('click')
         expect(onSelect).toBeCalledTimes(0)
-        wrapper.setProps({ data: { ...itemData, onSelect }})
+        wrapper = mount(<Provider store={store}>
+            <TreeVirtualizedNode index={2} style={null} data={{ ...itemData, onSelect }} />
+        </Provider>)
         wrapper.find(`.${styles.column}`).simulate('click')
         expect(onSelect).toBeCalledWith(items[2])
     })
 
     it('renders no columns when fields not provided', () => {
-        const wrapper = mount(
+        const wrapper = mount(<Provider store={store}>
             <TreeVirtualizedNode
                 index={0}
                 style={null}
                 data={{ ...itemData, fields: null }}
             />
-        )
+        </Provider>)
         expect(wrapper.find(`.${styles.row}`).length).toBe(1)
         expect(wrapper.find(`.${styles.column}`).length).toBe(0)
     })

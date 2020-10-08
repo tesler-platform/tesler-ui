@@ -16,6 +16,7 @@
  */
 
 import {DataItem} from './data'
+import {AssociatedItem} from './operation'
 
 export interface BaseDataNode {
     /**
@@ -80,6 +81,8 @@ export interface TreeNodeBidirectional extends DataNode {
      */
     children?: TreeNodeBidirectional[]
 }
+
+export type TreeAssociatedRecord = DataNode & AssociatedItem
 
 /**
  * Tree node that keeps a status if it is expanded (i.e. children also should be displayed)
