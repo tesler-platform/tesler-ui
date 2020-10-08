@@ -101,11 +101,11 @@ export const FlatTree: React.FC<FlatTreeProps> = (props) => {
 
     return <div>
         <div className={styles.filters} style={{ width }}>
-            <div className={styles.control}>
-                { props.multiple && <div className={styles.selectAll}>
+            { props.multiple &&
+                <div className={styles.control}>
                     <Checkbox disabled />
-                </div>}
-            </div>
+                </div>
+            }
             <div className={styles.control} />
             { fields.map(field =>
                 <div
