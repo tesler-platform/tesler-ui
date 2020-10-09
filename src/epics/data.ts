@@ -946,7 +946,7 @@ function requestBcChildren(bcName: string) {
     return childrenBcMap
 }
 
-const removeMultivalueTag: Epic = (action$, store) => action$.ofType(types.removeMultivalueTag)
+export const removeMultivalueTag: Epic = (action$, store) => action$.ofType(types.removeMultivalueTag)
 .mergeMap(action => {
     const state = store.getState()
 
