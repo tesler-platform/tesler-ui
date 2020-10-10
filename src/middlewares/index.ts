@@ -3,7 +3,7 @@ import {createRequiredFieldsMiddleware} from './requiredFieldsMiddleware'
 import {createPreInvokeMiddleware} from './preInvokeMiddleware'
 
 export const middlewares = {
-    autosave: createAutoSaveMiddleware(),
-    requiredFields: createRequiredFieldsMiddleware(),
-    preInvoke: createPreInvokeMiddleware()
+    autosave: createAutoSaveMiddleware?.(),
+    requiredFields: createRequiredFieldsMiddleware?.(),
+    preInvoke: createPreInvokeMiddleware?.()
 }
