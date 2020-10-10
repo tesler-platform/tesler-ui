@@ -19,6 +19,7 @@ import {MultivalueSingleValue, PendingDataItem} from '../interfaces/data'
 import {matchOperationRole} from '../utils/operations'
 import {Store as AppState} from '../interfaces/store'
 import {Store} from 'redux'
+import {fileUploadConfirm} from './view/fileUploadConfirm'
 
 /**
  * Default implementation of `sendOperation` handler
@@ -330,27 +331,7 @@ const showFileUploadPopup: Epic = (action$, store) => action$.ofType(types.sendO
     )
 })
 
-const fileUploadConfirm: Epic = (action$, store) => action$.ofType(types.bulkUploadFiles)
-.mergeMap(action => {
-    const state = store.getState()
-    const bcName = state.view.popupData.bcName
-    const bcUrl = buildBcUrl(bcName, true)
-    const widgetName = state.view.widgets.find(item => item.bcName === bcName)?.name
-    const data = {
-        bulkIds: action.payload.fileIds
-    }
-    return api.customAction(state.screen.screenName, bcUrl, data, null, { _action: 'file-upload-save' })
-    .mergeMap(response => {
-        const postInvoke = response.postActions[0]
-        const preInvoke = response.preInvoke
-        return Observable.concat(
-            Observable.of($do.sendOperationSuccess({ bcName, cursor: null })),
-            Observable.of($do.bcForceUpdate({ bcName })),
-            Observable.of($do.closeViewPopup({ bcName })),
-            ...postOperationRoutine(widgetName, postInvoke, preInvoke, OperationTypeCrud.save, bcName)
-        )
-    })
-})
+
 
 /**
  * Returns an array of observables for handling post- and pre-invokes from any epics handling operations
@@ -361,7 +342,7 @@ const fileUploadConfirm: Epic = (action$, store) => action$.ofType(types.bulkUpl
  * @param operationType Which operation was performed
  * @param bcName
  */
-function postOperationRoutine(
+export function postOperationRoutine(
     widgetName: string,
     postInvoke: OperationPostInvokeAny,
     preInvoke: OperationPreInvoke,

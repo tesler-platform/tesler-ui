@@ -127,7 +127,7 @@ export function TreeVirtualizedNode<T extends TreeNodeBidirectional>(props: Tree
                 />
                 : source
             const onClick = data.multiple
-                ? undefined
+                ? () => (data.onSelect as (d: T, selected: boolean) => void)?.(item, !checked)
                 : () => (data.onSelect as (d: T) => void)?.(item)
             return <div
                 key={field.key}
