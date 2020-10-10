@@ -20,7 +20,7 @@ export interface AssocTableProps extends AssocTableOwnProps {
     data: AssociatedItem[],
     assocValueKey: string,
     pendingChanges: Record<string, PendingDataItem>,
-    onSelect: (bcName: string, dataItem: AssociatedItem) => void,
+    onSelect: (bcName: string, dataItem: AssociatedItem, selected: boolean) => void,
     onSelectAll: (bcName: string, cursors: string[], dataItems: PendingDataItem[]) => void
 }
 
@@ -31,17 +31,15 @@ export const AssocTable: FunctionComponent<AssocTableProps> = (props) => {
         type: 'checkbox',
         selectedRowKeys: selectedRecords.map(item => item.id),
         onSelect: (record: AssociatedItem, selected: boolean) => {
-            props.onSelect(props.meta.bcName, {
-                id: record.id,
-                vstamp: record.vstamp,
-                _value: record[props.assocValueKey],
-                _associate: selected
-            })
+            const dataItem = {
+                ...record,
+                _value: record[props.assocValueKey]
+            }
+            props.onSelect(props.meta.bcName, dataItem, selected)
         },
         onSelectAll: (selected: boolean, selectedRows: DataItem[], changedRows: DataItem[]) => {
             props.onSelectAll(props.meta.bcName, changedRows.map(item => item.id), changedRows.map(item => ({
-                id: item.id,
-                vstamp: item.vstamp,
+                ...item,
                 _value: item[props.assocValueKey],
                 _associate: selected
             })))
@@ -67,14 +65,17 @@ function mapStateToProps(state: Store, ownProps: AssocTableOwnProps) {
     }
 }
 
-/**
- *
- * @param dispatch
- */
-export function mapDispatchToProps(dispatch: Dispatch) {
+function mapDispatchToProps(dispatch: Dispatch) {
     return {
-        onSelect: (bcName: string, dataItem: AssociatedItem) => {
-            dispatch($do.changeDataItem({bcName, cursor: dataItem.id, dataItem}))
+        onSelect: (bcName: string, dataItem: AssociatedItem, selected: boolean) => {
+            dispatch($do.changeDataItem({
+                bcName,
+                cursor: dataItem.id,
+                dataItem: {
+                    ...dataItem,
+                    _associate: selected,
+                }
+            }))
         },
         onSelectAll: (bcName: string, cursors: string[], dataItems: PendingDataItem[]) => {
             dispatch($do.changeDataItems({ bcName, cursors, dataItems }))

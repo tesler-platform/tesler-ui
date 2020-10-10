@@ -1094,11 +1094,6 @@ export class ActionPayloadTypes {
 
 // action-types
 export const types = util.createActionTypes(new ActionPayloadTypes())
-/**
- * Checks if need to perform autosave on specified action type call
- *
- * @param action
- */
 export const needSaveAction = (action: string) => {
     const actions: string[] = [
         types.changeLocation,
