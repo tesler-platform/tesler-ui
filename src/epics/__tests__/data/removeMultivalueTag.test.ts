@@ -18,29 +18,30 @@
 import {Store} from 'redux'
 import {Store as CoreStore} from '../../../interfaces/store'
 import {mockStore} from '../../../tests/mockStore'
-import {WidgetTableMeta, WidgetTypes} from '../../../interfaces/widget'
+import {WidgetTableMeta, WidgetTypes, WidgetTableHierarchy} from '../../../interfaces/widget'
 import {FieldType} from '../../../interfaces/view'
-import {removeMultivalueTag} from '../../data'
+import {removeMultivalueTag} from '../../data/removeMultivalueTag'
 import {$do, types as coreActions} from '../../../actions/actions'
 import {ActionsObservable} from 'redux-observable'
 import {testEpic} from '../../../tests/testEpic'
 
-describe('removeMultivalueTag', () => {
+describe('removeMultivalueTag for full hierarchies', () => {
     let store: Store<CoreStore> = null
 
     beforeAll(() => {
         store = mockStore()
         store.getState().screen.bo.bc.bcExample = bcExample
         store.getState().data.bcExample = [{ id: '1', name: 'one', vstamp: 0 }]
-        store.getState().data.bcExamplePopup = [{ id: '9', name: 'one', vstamp: 0 }]
-        store.getState().view.widgets = [widget]
+        store.getState().data.bcExamplePopup = [{ id: '9', name: 'one', vstamp: 0, _associate: true }]
+        store.getState().view.widgets = [getWidgetMeta()]
     })
 
     afterEach(() => {
         store.getState().screen.bo.bc.bcExample = bcExample
+        store.getState().view.widgets = [getWidgetMeta()]
     })
 
-    it('sets `_associate`: false for removed item on popup and a new value for field bc', () => {
+    it('sets a new value for field bc', () => {
         const action = $do.removeMultivalueTag({
             bcName: 'bcExample',
             popupBcName: 'bcExamplePopup',
@@ -52,39 +53,216 @@ describe('removeMultivalueTag', () => {
         const epic = removeMultivalueTag(ActionsObservable.of(action), store)
 
         testEpic(epic, (result) => {
-            expect(result.length).toBe(2)
+            expect(result.length).toBe(1)
             expect(result[0]).toEqual(expect.objectContaining({
-                type: coreActions.changeDataItem,
-                payload:  {
-                    bcName: 'bcExamplePopup',
-                    cursor: '9',
-                    dataItem: { ...action.payload.removedItem, _associate: false }
-                }
-            }))
-            expect(result[1]).toEqual(expect.objectContaining({
                 type: coreActions.changeDataItem,
                 payload:  {
                     bcName: 'bcExample',
                     cursor: '1',
-                    dataItem: { exampleField: [] }
+                    dataItem: { exampleField: action.payload.dataItem }
+                }
+            }))
+        })
+    })
+
+    it('removes every associated children when `hierarchyGroupDeselection` enabled', () => {
+        store.getState().view.widgets[0].options.hierarchyGroupDeselection = true
+        store.getState().data.bcExamplePopup = getData()
+        store.getState().view.pendingDataChanges.bcExamplePopup = {
+            '932': { _associate: true, name: 'one three two' }
+        }
+        const removedItem = { id: '9', value: 'one' }
+        const dataItem = getSelectedItems().filter(item => item.id !== removedItem.id)
+        const action = $do.removeMultivalueTag({
+            bcName: 'bcExample',
+            popupBcName: 'bcExamplePopup',
+            cursor: '1',
+            associateFieldKey: 'exampleField',
+            dataItem,
+            removedItem
+        })
+        const epic = removeMultivalueTag(ActionsObservable.of(action), store)
+        testEpic(epic, (result) => {
+            expect(result[0]).toEqual(expect.objectContaining({
+                type: coreActions.changeDataItem,
+                payload: {
+                    bcName: 'bcExample',
+                    cursor: '1',
+                    dataItem: {
+                        exampleField: [
+                            { id: '1', value: 'root' },
+                            { id: '8', value: 'two' },
+                            { id: '921', value: 'one two one' },
+                            { id: '931', value: 'one three one' },
+                            { id: '932', value: 'one three two' },
+                        ]
+                    }
+                }
+            }))
+        })
+    })
+
+    it('removes every associated descendant when `hierarchyGroupDeselection` and `hierarchyTraverse` enabled', () => {
+        store.getState().view.widgets[0].options.hierarchyGroupDeselection = true
+        store.getState().view.widgets[0].options.hierarchyTraverse = true
+        store.getState().data.bcExamplePopup = getData()
+        store.getState().view.pendingDataChanges.bcExamplePopup = {
+            '932': { _associate: true, name: 'one three two' }
+        }
+        const removedItem = { id: '9', value: 'one' }
+        const dataItem = getSelectedItems().filter(item => item.id !== removedItem.id)
+        const action = $do.removeMultivalueTag({
+            bcName: 'bcExample',
+            popupBcName: 'bcExamplePopup',
+            cursor: '1',
+            associateFieldKey: 'exampleField',
+            dataItem,
+            removedItem
+        })
+        const epic = removeMultivalueTag(ActionsObservable.of(action), store)
+        testEpic(epic, (result) => {
+            expect(result[0]).toEqual(expect.objectContaining({
+                type: coreActions.changeDataItem,
+                payload: {
+                    bcName: 'bcExample',
+                    cursor: '1',
+                    dataItem: {
+                        exampleField: [
+                            { id: '1', value: 'root' },
+                            { id: '8', value: 'two' },
+                        ]
+                    }
+                }
+            }))
+        })
+    })
+
+    it('removes parent node if removed last child when `hierarchyGroupDeselection` enabled', () => {
+        store.getState().view.widgets[0].options.hierarchyGroupDeselection = true
+        store.getState().data.bcExamplePopup = getData()
+        store.getState().view.pendingDataChanges.bcExamplePopup = {
+            '932': { _associate: true, name: 'one three two' }
+        }
+        const removedItem = { id: '921', value: 'one' }
+        const dataItem = getSelectedItems().filter(item => item.id !== removedItem.id)
+        const action = $do.removeMultivalueTag({
+            bcName: 'bcExample',
+            popupBcName: 'bcExamplePopup',
+            cursor: '1',
+            associateFieldKey: 'exampleField',
+            dataItem,
+            removedItem
+        })
+        const epic = removeMultivalueTag(ActionsObservable.of(action), store)
+        testEpic(epic, (result) => {
+            expect(result[0]).toEqual(expect.objectContaining({
+                type: coreActions.changeDataItem,
+                payload: {
+                    bcName: 'bcExample',
+                    cursor: '1',
+                    dataItem: {
+                        exampleField: [
+                            { id: '1', value: 'root' },
+                            { id: '8', value: 'two' },
+                            { id: '9', value: 'one' },
+                            { id: '931', value: 'one three one' },
+                            { id: '932', value: 'one three two' },
+                            { id: '94', value: 'one four' }
+                        ]
+                    }
+                }
+            }))
+        })
+    })
+
+    it('removes parent node if removed last descendant when `hierarchyGroupDeselection` and `hierarchyTraverse` enabled', () => {
+        store.getState().view.widgets[0].options.hierarchyGroupDeselection = true
+        store.getState().view.widgets[0].options.hierarchyTraverse = true
+        store.getState().data.bcExamplePopup = getData()
+        .map(item => ({ ...item, _associate: ['1', '9'].includes(item.id) }))
+        store.getState().view.pendingDataChanges.bcExamplePopup = {
+            '932': { _associate: true, name: 'one three two' }
+        }
+        const removedItem = { id: '932', value: 'one three two' }
+        const dataItem = getSelectedItems().filter(item => ['1', '8', '9', '932'].includes(item.id))
+        const action = $do.removeMultivalueTag({
+            bcName: 'bcExample',
+            popupBcName: 'bcExamplePopup',
+            cursor: '1',
+            associateFieldKey: 'exampleField',
+            dataItem,
+            removedItem
+        })
+        const epic = removeMultivalueTag(ActionsObservable.of(action), store)
+        testEpic(epic, (result) => {
+            expect(result[0]).toEqual(expect.objectContaining({
+                type: coreActions.removeMultivalueTag,
+                payload: {
+                    ...action.payload,
+                    removedItem: { id: '93', value: null }
+                }
+            }))
+        })
+    })
+
+    it('fires two `changeDataItem` for non-full hierarchies', () => {
+        store.getState().view.widgets[0].options = { hierarchyFull: false, hierarchy: separateHierarchy }
+        const action = $do.removeMultivalueTag({
+            bcName: 'bcExample',
+            popupBcName: 'bcExamplePopup',
+            cursor: '1',
+            associateFieldKey: 'exampleField',
+            dataItem: [],
+            removedItem: { id: '999', value: 'remove item' }
+        })
+        store.getState().view.pendingDataChanges.bcExamplePopup = {
+            '888': { _associate: true, name: 'one three two' }
+        }
+        store.getState().view.pendingDataChanges.bcExamplePopup2 = {
+            '999': { _associate: true, name: 'one three two' }
+        }
+        const epic = removeMultivalueTag(ActionsObservable.of(action), store)
+
+        testEpic(epic, (result) => {
+            expect(result.length).toBe(2)
+            const [ self, parent ] = result
+            expect(self).toEqual(expect.objectContaining({
+                type: coreActions.changeDataItem,
+                payload:  {
+                    bcName: 'bcExamplePopup2',
+                    cursor: '999',
+                    dataItem: { _associate: false, id: '999', value: 'remove item' }
+                }
+            }))
+            expect(parent).toEqual(expect.objectContaining({
+                type: coreActions.changeDataItem,
+                payload:  {
+                    bcName: 'bcExample',
+                    cursor: '1',
+                    dataItem: { exampleField: action.payload.dataItem }
                 }
             }))
         })
     })
 })
 
-const widget: WidgetTableMeta = {
-    name: 'widget-example',
-    type: WidgetTypes.AssocListPopup,
-    title: null,
-    bcName: 'bcExamplePopup',
-    position: 1,
-    gridWidth: null,
-    fields: [{
-        key: 'name',
-        title: 'Test Column',
-        type: FieldType.input
-    }]
+function getWidgetMeta(): WidgetTableMeta {
+    return {
+        name: 'widget-example',
+        type: WidgetTypes.AssocListPopup,
+        title: null,
+        bcName: 'bcExamplePopup',
+        position: 1,
+        gridWidth: null,
+        fields: [{
+            key: 'name',
+            title: 'Test Column',
+            type: FieldType.input
+        }],
+        options: {
+            hierarchyFull: true
+        }
+    }
 }
 
 const bcExample = {
@@ -94,3 +272,46 @@ const bcExample = {
     cursor: null as string,
     loading: false
 }
+
+/**
+ * Full hierarchy data from the store
+ */
+function getData() {
+    return [
+        { id: '1', parentId: '0', name: 'root', vstamp: 0, _associate: true },
+        { id: '8', parentId: '1', name: 'two', vstamp: 0, _associate: true },
+        { id: '9', parentId: '1', name: 'one', vstamp: 0, _associate: true },
+        { id: '91', parentId: '9', name: 'one one', vstamp: 0, _associate: false },
+        { id: '92', parentId: '9', name: 'one two', vstamp: 0, _associate: true },
+        { id: '921', parentId: '92', name: 'one two one', vstamp: 0, _associate: true },
+        { id: '93', parentId: '9', name: 'one three', vstamp: 0, _associate: false },
+        { id: '931', parentId: '93', name: 'one three one', vstamp: 0, _associate: true },
+        { id: '932', parentId: '93', name: 'one three two', vstamp: 0, _associate: false }, // overrided
+        { id: '94', parentId: '9', name: 'one four', vstamp: 0, _associate: true }
+    ]
+}
+
+/**
+ * Currently selected items displayed by MultivalueTag
+ */
+function getSelectedItems() {
+    return [
+        { id: '1', value: 'root' },
+        { id: '8', value: 'two' },
+        { id: '9', value: 'one' },
+        { id: '92', value: 'one two' },
+        { id: '921', value: 'one two one' },
+        { id: '931', value: 'one three one' },
+        { id: '932', value: 'one three two' }, // from pendingChanges
+        { id: '94', value: 'one four' }
+    ]
+}
+
+/**
+ * Configuration for widget where each level of hierarchy represented by different
+ * business component
+ */
+const separateHierarchy: WidgetTableHierarchy[] = [
+    { bcName: 'bcExamplePopup1', fields: [{ type: FieldType.input, title: 'name', key: 'name' }] },
+    { bcName: 'bcExamplePopup2', fields: [{ type: FieldType.input, title: 'name', key: 'name' }] },
+]

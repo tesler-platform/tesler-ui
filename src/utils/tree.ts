@@ -22,7 +22,7 @@
 import {DataNode, TreeNodeBidirectional, TreeNodeDescending} from '../interfaces/tree'
 
 /**
- * Modifies input array by assigning each element:
+ * Assigns for each element:
  *
  * - `parent` property, which is a reference to parent mode found through `parentId` match.
  * - `children` property, which is an array of references to child nodes.
@@ -30,10 +30,11 @@ import {DataNode, TreeNodeBidirectional, TreeNodeDescending} from '../interfaces
  * `parentId`: '0' considered a root pseudo-node
  *
  * @param flat Flat array representation of tree structure
+ * @returns New array
  */
 export function assignTreeLinks<T extends DataNode>(flat: T[]) {
+    const result = flat.map(item => ({ ...item })) as Array<T & TreeNodeBidirectional>
     const map: Record<string, number> = {}
-    const result = flat as Array<T & TreeNodeBidirectional>
     result.forEach(item => {
         if (!item.parentId || item.parentId === '0') {
             return

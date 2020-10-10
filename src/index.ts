@@ -182,3 +182,4 @@ export {
  * Epics implementations
  */
 export {sendOperationEpicImpl} from './epics/view'
+export {removeMultivalueTagImpl} from './epics/data/removeMultivalueTag'
