@@ -11,21 +11,20 @@ import {AxiosInstance} from 'axios'
 import qs from 'query-string'
 import {initHistory} from './reducers/router'
 import {combineReducers} from './utils/redux'
+import {createAutoSaveMiddleware} from './middlewares/autosaveMiddleware'
+import {createRequiredFieldsMiddleware} from './middlewares/requiredFieldsMiddleware'
+import {createPreInvokeMiddleware} from './middlewares/preInvokeMiddleware'
 import {initLocale} from './imports/i18n'
 import {Resource, i18n} from 'i18next'
 import CustomEpics, {isLegacyCustomEpics, AnyEpic} from './interfaces/customEpics'
 import combineEpics from './utils/combineEpics'
 import {legacyCoreEpics} from './epics'
-import {combineMiddlewares} from './utils/combineMiddlewares'
-import {middlewares as coreMiddlewares} from './middlewares'
-import {CustomMiddlewares} from './interfaces/customMiddlewares'
 
 export interface ProviderProps<ClientState, ClientActions> {
     children: React.ReactNode,
     customReducers?: ClientReducersMapObject<ClientState, ClientActions>,
     customActions?: any,
     customEpics?: CustomEpics | AnyEpic,
-    customMiddlewares?: CustomMiddlewares,
     axiosInstance?: AxiosInstance,
     parseLocation?: (loc: Location<any>) => Route, // TODO: Combine into configuration object
     buildLocation?: (route: Route) => string, // TODO: Combine into configuration object
@@ -94,13 +93,11 @@ export function getLocaleProviderInstance() {
  * @param customReducers
  * @param customEpics
  * @param useEpics
- * @param customMiddlewares
  */
 export function configureStore<ClientState, ClientActions extends Action<any>>(
     customReducers = {} as ClientReducersMapObject<ClientState, ClientActions>,
     customEpics: CustomEpics | Epic<any, ClientState>= null,
-    useEpics = true,
-    customMiddlewares: CustomMiddlewares = null
+    useEpics = true
 ): Store<ClientState & CoreStore> {
     type CombinedActions = AnyAction & ClientActions
     // If core reducer slices have a matching client app reducer slice
@@ -126,9 +123,11 @@ export function configureStore<ClientState, ClientActions extends Action<any>>(
             reducers[reducerName as keyof ClientState] = customReducers[reducerName].reducer
         }
     })
-
-    const middlewares: Middleware[] = combineMiddlewares(coreMiddlewares, customMiddlewares)
-
+    const middlewares: Middleware[] = [
+        createAutoSaveMiddleware(),
+        createRequiredFieldsMiddleware(),
+        createPreInvokeMiddleware()
+    ]
     if (useEpics) {
         const epics = isLegacyCustomEpics(customEpics)
             ? legacyCombineEpics(legacyCoreEpics, customEpics)
@@ -144,7 +143,7 @@ export function configureStore<ClientState, ClientActions extends Action<any>>(
 
 const Provider = <ClientState extends Partial<CoreStore>, ClientActions extends Action<any>, >
 (props: ProviderProps<ClientState, ClientActions>) => {
-    store = configureStore(props.customReducers, props.customEpics, props.useEpics, props.customMiddlewares)
+    store = configureStore(props.customReducers, props.customEpics, props.useEpics)
     initHistory()
     localeProviderInstance = initLocale(props.lang || 'en', props.langDictionary)
     if (props.axiosInstance) {
