@@ -1,17 +1,24 @@
+# Version 1.22.1
+
+## Fixes
+
+* Revert middleware customization as it's apparently sometimes cause action douplication ([#376](https://github.com/tesler-platform/tesler-ui/issues/376))
+
 # Version 1.22.0
 
 ## Features
 
-* Redux middlewares are now customizable [#381](https://github.com/tesler-platform/tesler-ui/pull/381)
+* Redux middlewares are now customizable ([#381](https://github.com/tesler-platform/tesler-ui/pull/381))
 
 ## Fixes
 
-* Autosave fixes [#376](https://github.com/tesler-platform/tesler-ui/issues/376):
+* Autosave fixes ([#376](https://github.com/tesler-platform/tesler-ui/issues/376)):
   * should not fire when `operationType` is `save`
   * should fire for `sendOperation` initiated by different business component (aside of having pending `_associate`)
   * should fire for `selectTableCellInit` initiated by different row or widget
-* Sometimes a node stayed selected after removing last child despite the `hierarchyTraverse` widget option [#443](https://github.com/tesler-platform/tesler-ui/issues/443)
-* `removeMultivalueTag` now correctly processes `hierarchyTraverse` and `hierarchyGroupDeselection` widget options [#443](https://github.com/tesler-platform/tesler-ui/issues/443)
+* Sometimes a node stayed selected after removing last child despite the `hierarchyTraverse` widget option ([#443](https://github.com/tesler-platform/tesler-ui/issues/443))
+* `removeMultivalueTag` now correctly processes `hierarchyTraverse` and `hierarchyGroupDeselection` widget options ([#443](https://github.com/tesler-platform/tesler-ui/issues/443))
+* `<TreeNodeVirtualized />` should toggle on click
 
 # Version 1.21.0
 
