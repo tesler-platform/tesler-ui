@@ -55,6 +55,11 @@ export function testEpic(
         const nextActionNotifications = actual
             .filter(item => item.notification.kind === 'N')
             .map(item => item.notification.value)
+        actual
+        .filter(item => item.notification.kind === 'E' )
+        .forEach(item => {
+            console.error(item.notification.error)
+        })
         callback(nextActionNotifications)
     })
     testScheduler
