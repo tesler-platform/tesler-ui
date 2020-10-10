@@ -18,6 +18,7 @@ import i18n from 'i18next'
 import {FilterType} from '../interfaces/filters'
 import {matchOperationRole} from '../utils/operations'
 import {PendingValidationFailsFormat} from '../interfaces/view'
+import {removeMultivalueTag} from './data/removeMultivalueTag'
 
 const maxDepthLevel = 10
 
@@ -946,100 +947,6 @@ function requestBcChildren(bcName: string) {
     return childrenBcMap
 }
 
-export const removeMultivalueTag: Epic = (action$, store) => action$.ofType(types.removeMultivalueTag)
-.mergeMap(action => {
-    const state = store.getState()
-    const result: Array<Observable<AnyAction>> = []
-    let removedItemBc = action.payload.popupBcName
-    const popupFirstLevelDelta = state.view.pendingDataChanges[removedItemBc]
-    const widget = state.view.widgets.find((checkWidget) =>
-        checkWidget.bcName === action.payload.popupBcName && checkWidget.type === WidgetTypes.AssocListPopup
-    )
-    const allData = state?.data[removedItemBc] || []
-    const removeDataItem = allData?.find(item => item.id === action.payload.removedItem.id)
-    const deltaId = Object.values(state.view.pendingDataChanges
-        [action.payload.bcName]?.[action.payload.cursor]?.[action.payload.associateFieldKey] || {}).map(item => item.id)
-    const delta = allData.filter(item => deltaId?.includes(item.id))
-    const parentDepth = removeDataItem.level as number -1
-
-    if (!popupFirstLevelDelta || !popupFirstLevelDelta[removeDataItem.id]) {
-        if (widget?.options?.hierarchy) {
-            widget.options?.hierarchy.some((hierarchyData) => {
-                const hierarchyDelta = state.view.pendingDataChanges[hierarchyData.bcName]
-                if (hierarchyDelta?.[removeDataItem.id]) {
-                    removedItemBc = hierarchyData.bcName
-                    return true
-                }
-                return false
-            })
-        }
-    }
-
-    if (parentDepth && widget.options?.hierarchyTraverse) {
-        const parentItem = (removeDataItem.level > 1) && allData?.find((item) => item.id === removeDataItem.parentId)
-        const removedItem = action.payload.dataItem.find(item => item.id === parentItem.id)
-        const currentLevelData = allData?.filter(
-            (item) => item.level === removeDataItem?.level && (item.level === 1 || (item.parentId === removeDataItem?.parentId))
-        )
-        const currentLevelDelta = delta.filter(
-            (item) => item.level === removeDataItem?.level && (item.level === 1 || (item.parentId === removeDataItem?.parentId))
-        )
-        const wasLastInDelta = !currentLevelDelta
-            .filter(item => item.id !== removeDataItem.id)
-            .filter(item => item.level === removeDataItem.level).length
-        // delta include only associated items and contain associated dataItems
-        const wasLastInData = delta?.length > 0 || currentLevelData
-            .filter(item => item.id !== removeDataItem.id)
-            .every(item => item._associate === false)
-
-        if (removedItem && wasLastInData && wasLastInDelta) {
-            result.push(Observable.of($do.removeMultivalueTag({
-                bcName: action.payload.bcName,
-                popupBcName: action.payload.popupBcName,
-                cursor: action.payload.cursor,
-                associateFieldKey: action.payload.associateFieldKey,
-                dataItem: action.payload.dataItem.filter(item => item.id !== parentItem.id),
-                removedItem: removedItem
-            })))
-        }
-    }
-
-    if (widget.options?.hierarchyGroupDeselection) {
-        // delta include only associated items and contain associated dataItems
-        const currentData = delta.length > 0 ? [] : allData.filter(item => item._associate === true)
-        const currentDataItems = [...currentData, ...delta]
-        const childDataItems = currentDataItems.filter(item => item.parentId === removeDataItem.id)
-        const deleteItems: DataItem[] = []
-        while(childDataItems.length > 0){
-            const tempItem = childDataItems.shift()
-            deleteItems.push(tempItem)
-            const nextChild = currentDataItems.filter(item => item.parentId === tempItem.id)
-            if (nextChild.length){
-                nextChild.forEach(item => childDataItems.push(item))
-            }
-        }
-        if (deleteItems.length) {
-            result.push(Observable.of($do.changeDataItem({
-                bcName: action.payload.bcName,
-                cursor: action.payload.cursor,
-                dataItem: {
-                    [action.payload.associateFieldKey]: action.payload.dataItem
-                        .filter(item => !deleteItems.map(deleteItem => deleteItem.id).includes(item.id))
-                }
-            })))
-        }
-    }
-    return Observable.concat(
-        Observable.of($do.changeDataItem({
-            bcName: action.payload.bcName,
-            cursor: action.payload.cursor,
-            dataItem: {
-                [action.payload.associateFieldKey]: action.payload.dataItem
-            }
-        })),
-        ...result
-    )
-})
 
 export const dataEpics = {
     bcFetchRowMetaRequest,
