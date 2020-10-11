@@ -20,6 +20,7 @@ import {matchOperationRole} from '../utils/operations'
 import {Store as AppState} from '../interfaces/store'
 import {Store} from 'redux'
 import {fileUploadConfirm} from './view/fileUploadConfirm'
+import {showFileUploadPopup} from './view/showFileUploadPopup'
 
 /**
  * Default implementation of `sendOperation` handler
@@ -315,23 +316,6 @@ const showAssocPopup: Epic = (action$, store) => action$.ofType(types.showViewPo
         dataItems: Object.values(popupInitPendingChanges)
     }))
 })
-
-/**
- * Show popup for bulk file uploads
- *
- * @param action$ `sendOperation` with `file-upload` role
- * @param store
- */
-const showFileUploadPopup: Epic = (action$, store) => action$.ofType(types.sendOperation)
-.filter(action => matchOperationRole(OperationTypeCrud.fileUpload, action.payload, store.getState()))
-.mergeMap((action) => {
-    return Observable.concat(
-        Observable.of($do.bcChangeCursors({ cursorsMap: { [action.payload.bcName]: null }})),
-        Observable.of($do.showFileUploadPopup({ widgetName: action.payload.widgetName }))
-    )
-})
-
-
 
 /**
  * Returns an array of observables for handling post- and pre-invokes from any epics handling operations
