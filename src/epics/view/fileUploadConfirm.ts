@@ -35,8 +35,9 @@ export function fileUploadConfirmImpl(
         const state = store.getState()
         const bcName = state.view.popupData.bcName
         const bcUrl = buildBcUrl(bcName, true)
-        console.warn(bcUrl)
         const widgetName = state.view.widgets.find(item => item.bcName === bcName)?.name
+        console.warn(bcName)
+        console.warn(state.view.widgets[0].bcName)
         const data = {
             bulkIds: action.payload.fileIds
         }
