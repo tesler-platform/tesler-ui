@@ -24,6 +24,18 @@ import {fileUploadConfirm} from '../fileUploadConfirm'
 import {$do, types as coreActions} from '../../../actions/actions'
 import {ActionsObservable} from 'redux-observable'
 import {testEpic} from '../../../tests/testEpic'
+import * as api from '../../../api/api'
+import {customAction} from '../../../api/api'
+import {Observable} from 'rxjs'
+
+const customActionMock = jest.fn().mockImplementation((args: Parameters<typeof customAction>) => {
+    return Observable.of({ record: null,
+        postActions: [],
+        preInvoke: null
+    })
+})
+
+jest.spyOn<any, any>(api, 'customAction').mockImplementation(customActionMock)
 
 describe('fileUploadConfirm', () => {
     let store: Store<CoreStore> = null
@@ -32,18 +44,28 @@ describe('fileUploadConfirm', () => {
         store = mockStore()
         store.getState().screen.screenName = 'test'
         store.getState().screen.bo.bc.bcExample = bcExample
-        store.getState().data.bcExample = [{ id: '1', name: 'one', vstamp: 0 }]
-        store.getState().data.bcExamplePopup = [{ id: '9', name: 'one', vstamp: 0, _associate: true }]
         store.getState().view.widgets = [getWidgetMeta()]
         store.getState().view.popupData = { bcName: 'bcExample' }
     })
 
     afterEach(() => {
-        store.getState().screen.bo.bc.bcExample = bcExample
         store.getState().view.widgets = [getWidgetMeta()]
     })
 
-    it.skip('sets a new value for field bc', () => {
+    it('sends `customAction` request', () => {
+        store.getState().view.widgets[0] = { ...getWidgetMeta(), bcName: 'missingBc' }
+        const action = $do.bulkUploadFiles({
+            fileIds: ['123', '567']
+        })
+        const epic = fileUploadConfirm(ActionsObservable.of(action), store)
+        testEpic(epic, (result) => {
+            expect(customActionMock).toBeCalledWith('test', 'bcExample/1', {
+                bulkIds: action.payload.fileIds
+            }, null, { _action: 'file-upload-save' })
+        })
+    })
+
+    it('fires `sendOperationSuccess`, `bcForceUpdate` and `closeViewPopup` actions', () => {
         const action = $do.bulkUploadFiles({
             fileIds: ['123', '567']
         })
@@ -61,9 +83,15 @@ describe('fileUploadConfirm', () => {
             }))
             expect(result[2]).toEqual(expect.objectContaining({
                 type: coreActions.closeViewPopup,
-                payload:  { bcName: 'bcForceUpdate' }
+                payload:  { bcName: 'bcExample' }
             }))
         })
+    })
+
+    it.skip('processes post and preinvokes', () => {
+        /**
+         * TODO
+         */
     })
 
 })
@@ -73,7 +101,7 @@ function getWidgetMeta(): WidgetTableMeta {
         name: 'widget-example',
         type: WidgetTypes.AssocListPopup,
         title: null,
-        bcName: 'bcExamplePopup',
+        bcName: 'bcExample',
         position: 1,
         gridWidth: null,
         fields: [{
