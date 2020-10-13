@@ -33,7 +33,10 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
             const defaultSaveWidget = state.view.widgets?.find(item => item?.options?.actionGroups?.defaultSave)
             const defaultCursor = state.screen.bo.bc?.[defaultSaveWidget?.bcName]?.cursor
             const pendingData = state.view?.pendingDataChanges?.[defaultSaveWidget?.bcName]?.[defaultCursor]
-            if (defaultSaveWidget && action.type === types.changeLocation && pendingData) {
+            const isChangeLocation = defaultSaveWidget
+                && action.type === types.changeLocation
+                && Object.keys(pendingData || {}).length > 0
+            if (isChangeLocation) {
                 return next($do.sendOperation({
                     bcName: defaultSaveWidget.bcName,
                     operationType: defaultSaveWidget.options.actionGroups.defaultSave,
