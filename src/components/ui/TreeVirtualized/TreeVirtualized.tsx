@@ -90,8 +90,9 @@ export function TreeVirtualized<T extends DataNode>(props: TreeVirtualizedProps<
         return filters?.filter(filter => filter.type === FilterType.contains)
         .every(filter => {
             return props.matchCase
-                ? (item[filter.fieldName] as unknown as string).includes(filter.value as string)
-                : (item[filter.fieldName] as unknown as string).toLowerCase().includes(filter.value as string)
+                ? (item[filter.fieldName] as unknown as string).includes(String(filter.value || ''))
+                : (item[filter.fieldName] as unknown as string).toLowerCase()
+                .includes(String(filter.value || '').toLowerCase())
         })
     }, [props.matchCase, filters])
     /**
