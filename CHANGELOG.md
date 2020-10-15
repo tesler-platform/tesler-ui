@@ -1,3 +1,10 @@
+# Version 1.22.2
+
+## Fixes
+
+* `<TreeVirtualized />` handles `matchCase` option incorrectly
+* Missing export for `<SearchHighlight />` component
+
 # Version 1.22.1
 
 ## Fixes
