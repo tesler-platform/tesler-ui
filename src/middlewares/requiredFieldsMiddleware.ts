@@ -119,7 +119,7 @@ function getRequiredFieldsMissing(record: DataItem, pendingChanges: PendingDataI
             falsyValue = true
         }
         if (field.required && falsyValue) {
-            result[field.key] = null
+            result[field.key] = Array.isArray(effectiveValue) ? [] : null
         }
     })
     return Object.keys(result).length > 0 ? result : null
