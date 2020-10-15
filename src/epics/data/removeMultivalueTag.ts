@@ -35,7 +35,7 @@ import {Store as CoreStore} from '../../interfaces/store'
  * fire instead of `changeDataItem`.
  *
  * For non-full hierarchies two `changeDataItem` actions will fire, first to drop `_associate` flag
- * of remove item and second to update value of soure record.
+ * of remove item and second to update value of source record.
  * Widget options are not tested for non-full hierarchies.
  *
  * @param action removeMultivalueTag
@@ -137,24 +137,40 @@ export function removeMultivalueTagImpl(action: ActionsMap['removeMultivalueTag'
             dataItem: { [associateFieldKey]: action.payload.dataItem.filter(item => !removedNodes.includes(item.id)) }
         })) as Observable<AnyAction>
     }
-    return Observable.concat(
-        // Non-full hierarches drops removed item's `_associate` flag`
-        Observable.of($do.changeDataItem({
-            /**
-             * This is incorrect and will break if different BC has records with
-             * identical ids.
-             *
-             * TODO: Record `level` should be mapped to hierarchyData index instead
-             */
-            bcName: widget.options.hierarchy.find(hierarchyData => {
+    // Non-full hierarchies drops removed item's `_associate` flag`
+    // And also updates source record value
+    if (widget.options?.hierarchy || widget.options?.hierarchySameBc) {
+        return Observable.concat(
+            Observable.of($do.changeDataItem({
+                /**
+                 * This is incorrect and will break if different BC has records with
+                 * identical ids.
+                 *
+                 * TODO: Record `level` should be mapped to hierarchyData index instead
+                 */
+                bcName: widget.options?.hierarchy?.find(hierarchyData => {
                     return state.view.pendingDataChanges[hierarchyData.bcName]
                         ?.[action.payload.removedItem.id]
                 })
-                ?.bcName ?? bcName,
+                    ?.bcName ?? bcName,
+                cursor: action.payload.removedItem.id,
+                dataItem: { ...action.payload.removedItem as any, _associate: false }
+            })),
+            Observable.of($do.changeDataItem({
+                bcName,
+                cursor,
+                dataItem: { [associateFieldKey]: action.payload.dataItem }
+            }))
+        ) as Observable<AnyAction>
+    }
+    // Non hierarchies drops removed item's `_associate` flag` from popup BC
+    // And also updates source record value
+    return Observable.concat(
+        Observable.of($do.changeDataItem({
+            bcName: popupBcName,
             cursor: action.payload.removedItem.id,
             dataItem: { ...action.payload.removedItem as any, _associate: false }
         })),
-        // And also updates source record value
         Observable.of($do.changeDataItem({
             bcName,
             cursor,

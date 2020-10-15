@@ -244,6 +244,39 @@ describe('removeMultivalueTag for full hierarchies', () => {
             }))
         })
     })
+
+    it('removes associated item for non-hierarchies', () => {
+        store.getState().data.bcExamplePopup = getData()
+        store.getState().view.widgets[0].options = {
+            hierarchyFull: false,
+            hierarchy: undefined,
+            hierarchySameBc: false,
+        }
+        store.getState().view.pendingDataChanges.bcExamplePopup = {
+            '932': { _associate: true, name: 'one three two' }
+        }
+        const removedItem = { id: '921', value: 'one' }
+        const dataItem = getSelectedItems().filter(item => item.id !== removedItem.id)
+        const action = $do.removeMultivalueTag({
+            bcName: 'bcExample',
+            popupBcName: 'bcExamplePopup',
+            cursor: '1',
+            associateFieldKey: 'exampleField',
+            dataItem,
+            removedItem
+        })
+        const epic = removeMultivalueTag(ActionsObservable.of(action), store)
+        testEpic(epic, (result) => {
+            expect(result[0]).toEqual(expect.objectContaining({
+                type: coreActions.changeDataItem,
+                payload: {
+                    bcName: 'bcExamplePopup',
+                    cursor: '921',
+                    dataItem: { _associate: false, id: '921', value: 'one' },
+                }
+            }))
+        })
+    })
 })
 
 function getWidgetMeta(): WidgetTableMeta {

@@ -206,6 +206,7 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                 const isEmpty = nextPending[fieldKey] === null
                     || nextPending[fieldKey] === undefined
                     || nextPending[fieldKey] === ''
+                    || (Array.isArray(nextPending[fieldKey]) && Object.keys(nextPending[fieldKey]).length === 0)
                 if (required && isEmpty) {
                     nextValidationFails[fieldKey] = i18n.t('This field is mandatory') as string
                 }
