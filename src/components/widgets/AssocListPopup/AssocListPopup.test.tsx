@@ -2,9 +2,34 @@ import React from 'react'
 import {AssocListPopup, IAssocListActions, IAssocListProps} from './AssocListPopup'
 import {WidgetTypes} from 'interfaces/widget'
 import {FieldType} from 'interfaces/view'
-import {shallow} from 'enzyme'
+import {Provider} from 'react-redux'
+import {Store} from 'redux'
+import {Store as CoreStore} from '../../../interfaces/store'
+import {mockStore} from '../../../tests/mockStore'
+import * as redux from 'react-redux'
+import {mount} from 'enzyme'
+import {Modal} from 'antd'
 
 describe('AssocListPopup test', () => {
+    let store: Store<CoreStore> = null
+    const dispatch = jest.fn()
+
+    beforeAll(() => {
+        store = mockStore()
+    })
+
+    beforeEach(() => {
+        jest.spyOn(redux, 'useDispatch').mockImplementation(() => {
+            return dispatch
+        })
+    })
+
+    afterEach(() => {
+        dispatch.mockClear()
+        jest.resetAllMocks()
+        store.getState().view.pickMap = null
+    })
+
     const defProps: IAssocListProps = {
         widget: {
             name: 'UserPopup',
@@ -46,9 +71,12 @@ describe('AssocListPopup test', () => {
     }
 
     it('should render default title, table and footer', () => {
-        const wrapper = shallow(<AssocListPopup {...defProps} {...actionProps}/>)
-        expect(wrapper.props().title).toEqual(defProps.widget.title)
-        expect(wrapper.props().footer).toEqual(undefined)
+        const wrapper = mount(
+            <Provider store={store}>
+                <AssocListPopup {...defProps} {...actionProps}/>
+            </Provider>)
+        expect(wrapper.find(AssocListPopup).props().widget.title).toEqual(defProps.widget.title)
+        expect(wrapper.find(AssocListPopup).props().footer).toEqual(undefined)
         expect(wrapper.find('Connect(AssocTable)').length).toEqual(1)
     })
 
@@ -58,17 +86,20 @@ describe('AssocListPopup test', () => {
         const customTable = <p>{customTableText}</p>
         const customFooterText = 'custom Footer'
         const customFooter = <i>{customFooterText}</i>
-        const wrapper = shallow(<AssocListPopup
-            {...defProps}
-            {...actionProps}
-            components={{
-                title: customTitle,
-                table: customTable,
-                footer: customFooter
-            }}
-        />)
-        expect(wrapper.props().title).toEqual(customTitle)
-        expect(wrapper.props().footer).toEqual(customFooter)
-        expect(shallow(wrapper.props().children).text()).toEqual(customTableText)
+        const wrapper = mount(
+            <Provider store={store}>
+                <AssocListPopup
+                    {...defProps}
+                    {...actionProps}
+                    components={{
+                        title: customTitle,
+                        table: customTable,
+                        footer: customFooter
+                    }}
+                />
+            </Provider>)
+        expect(wrapper.find(AssocListPopup).children().props().title).toEqual(customTitle)
+        expect(wrapper.find(Modal).props().footer).toEqual(customFooter)
+        expect(wrapper.find('p').children().text()).toBe(customTableText)
     })
 })

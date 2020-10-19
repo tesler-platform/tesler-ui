@@ -8,6 +8,8 @@ import InputDefaultClass from 'antd/lib/input/TextArea'
 import styles from './TextArea.less'
 import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
 import {TextAreaProps as AntdTextAreaProps} from 'antd/lib/input/TextArea'
+import SearchHighlight from '../SearchHightlight/SearchHightlight'
+import {escapedSrc} from '../../../utils/strings'
 
 type AdditionalAntdTextAreaProps = Partial<Omit<AntdTextAreaProps, 'onChange'>>
 export interface TextAreaProps extends AdditionalAntdTextAreaProps {
@@ -22,7 +24,8 @@ export interface TextAreaProps extends AdditionalAntdTextAreaProps {
     maxRows?: number,
     className?: string,
     backgroundColor?: string,
-    onDrillDown?: () => void
+    onDrillDown?: () => void,
+    filterValue?: string
 }
 
 export const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
@@ -32,7 +35,12 @@ export const TextArea: React.FunctionComponent<TextAreaProps> = (props) => {
             backgroundColor={props.backgroundColor}
             onDrillDown={props.onDrillDown}
         >
-            {props.defaultValue}
+            {props.filterValue
+                ? <SearchHighlight
+                    source={(props.defaultValue || '').toString()}
+                    search={escapedSrc(props.filterValue)}
+                    match={formatString => <b>{formatString}</b>}/>
+                : props.defaultValue}
         </ReadOnlyField>
     }
 

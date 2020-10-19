@@ -45,6 +45,9 @@ export const FilterPopup: React.FC<FilterPopupProps> = (props) => {
     const widget = useSelector((store: Store) => {
         return store.view.widgets.find(item => item.name === props.widgetName)
     })
+    const viewName = useSelector((store: Store) => {
+        return store.view.name
+    })
     const filter = useSelector((store: Store) => {
         return store.screen.filters[widget?.bcName]?.find(item => item.fieldName === props.fieldKey)
     })
@@ -59,7 +62,9 @@ export const FilterPopup: React.FC<FilterPopupProps> = (props) => {
         const newFilter: BcFilter = {
             type: getFilterType(widgetMeta.type),
             value: props.value,
-            fieldName: props.fieldKey
+            fieldName: props.fieldKey,
+            viewName,
+            widgetName: widget.name
         }
         if (!props.value) {
             dispatch($do.bcRemoveFilter({ bcName: widget.bcName, filter }))
