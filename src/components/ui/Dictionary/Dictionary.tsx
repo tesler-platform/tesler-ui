@@ -3,6 +3,8 @@ import {Icon, Select as AntdSelect} from 'antd'
 import Select, {SelectProps} from '../Select/Select'
 import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
 import {MultivalueSingleValue} from '../../../interfaces/data'
+import SearchHighlight from '../SearchHightlight/SearchHightlight'
+import {escapedSrc} from '../../../utils/strings'
 
 export interface DictionaryProps {
     value?: MultivalueSingleValue[] | string | null,
@@ -19,7 +21,8 @@ export interface DictionaryProps {
     className?: string,
     backgroundColor?: string,
     onDrillDown?: () => void,
-    multiple?: boolean
+    multiple?: boolean,
+    filterValue?: string
 }
 
 const Dictionary: React.FunctionComponent<DictionaryProps> = (props) => {
@@ -33,7 +36,12 @@ const Dictionary: React.FunctionComponent<DictionaryProps> = (props) => {
             backgroundColor={props.backgroundColor}
             onDrillDown={props.onDrillDown}
         >
-            {readOnlyValue}
+            {props.filterValue
+                ? <SearchHighlight
+                    source={(readOnlyValue || '').toString()}
+                    search={escapedSrc(props.filterValue)}
+                    match={formatString => <b>{formatString}</b>}/>
+                : readOnlyValue}
         </ReadOnlyField>
     }
 

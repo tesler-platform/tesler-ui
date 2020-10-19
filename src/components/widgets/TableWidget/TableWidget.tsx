@@ -1,5 +1,5 @@
 import React, {FunctionComponent} from 'react'
-import {connect} from 'react-redux'
+import {connect, useSelector} from 'react-redux'
 import {Dispatch} from 'redux'
 import {Dropdown, Icon, Menu, Skeleton, Table} from 'antd'
 import {ColumnProps, TableProps, TableRowSelection} from 'antd/es/table'
@@ -368,6 +368,10 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
         props.onSelectCell(recordId, props.meta.name, fieldKey)
     }
 
+    const viewName = useSelector((store: Store) => {
+        return store.view?.name
+    })
+
     const columns: Array<ColumnProps<DataItem>> = React.useMemo(() => {
         return props.meta.fields
             .filter((item: WidgetListField) => item.type !== FieldType.hidden && !item.hidden)
@@ -386,9 +390,17 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
                     width: item.width,
                     render: (text: string, dataItem: DataItem) => {
                         if (item.type === FieldType.multivalue) {
+                            const filterValueKey = props.filters
+                                ?.filter(filterItem => filterItem.widgetName === props.meta.name && filterItem.viewName === viewName)
+                                ?.find(filter => filter.fieldName === item.key)
+                                ?.value.toString()
+                            const filterValue = (dataItem[item.key] as MultivalueSingleValue[])
+                                ?.find(bcDataItem => filterValueKey?.split(',')?.includes(bcDataItem.id))
+                                ?.value.toString()
                             return <MultivalueHover
                                 data={(dataItem[item.key] || emptyMultivalue) as MultivalueSingleValue[]}
                                 displayedValue={item.displayedKey && dataItem[item.displayedKey]}
+                                filterValue={item.displayedKey && filterValueKey ? dataItem[item.displayedKey]?.toString() : filterValue}
                             />
                         }
 

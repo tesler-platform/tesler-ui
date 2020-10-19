@@ -4,12 +4,15 @@ import {Store} from 'redux'
 import {Provider} from 'react-redux'
 import {mockStore} from '../../tests/mockStore'
 import {
+    CheckboxFieldMeta,
     DateFieldMeta,
     DictionaryFieldMeta,
+    InputFieldMeta,
     MultiFieldMeta,
     MultivalueFieldMeta,
     NumberFieldMeta,
     PickListFieldMeta,
+    RadioButtonFieldMeta,
     TextFieldMeta,
     WidgetField,
     WidgetTypes
@@ -19,6 +22,9 @@ import {FieldType} from '../../interfaces/view'
 import Field from './Field'
 import ActionLink from '../ui/ActionLink/ActionLink'
 import ReadOnlyField from '../ui/ReadOnlyField/ReadOnlyField'
+import CheckboxPicker from '../ui/CheckboxPicker/CheckboxPicker'
+import RadioButton from '../ui/RadioButton/RadioButton'
+import MultivalueHover from '../ui/Multivalue/MultivalueHover'
 
 const testBcName = 'bcExample'
 const initialCursor = '1001'
@@ -139,7 +145,7 @@ describe('Readonly field drilldown', () => {
         expect(wrapper.find('Memo(DatePickerField)').length).toEqual(1)
     })
 
-    it('should render NumberInput', () => {
+    it('should render NumberInput at Number type', () => {
         const numberFieldMeta = {key: 'someInput', type: FieldType.number, label: fieldName,}
         const numberFieldProperties = {...fieldProperties, readonly: false}
         const wrapper = mount(
@@ -151,6 +157,86 @@ describe('Readonly field drilldown', () => {
             </Provider>
         )
         expect(wrapper.find('Memo(NumberInput)').length).toEqual(1)
+    })
+
+    it('should render NumberInput at Money type', () => {
+        const numberFieldMeta = {key: 'someInput', type: FieldType.money, label: fieldName,}
+        const numberFieldProperties = {...fieldProperties, readonly: false}
+        const wrapper = mount(
+            <Provider store={store}>
+                <Field
+                    {...numberFieldProperties}
+                    widgetFieldMeta={numberFieldMeta as NumberFieldMeta}
+                />
+            </Provider>
+        )
+        expect(wrapper.find('Memo(NumberInput)').length).toEqual(1)
+    })
+
+    it('should render NumberInput at Percent type', () => {
+        const numberFieldMeta = {key: 'someInput', type: FieldType.percent, label: fieldName,}
+        const numberFieldProperties = {...fieldProperties, readonly: false}
+        const wrapper = mount(
+            <Provider store={store}>
+                <Field
+                    {...numberFieldProperties}
+                    widgetFieldMeta={numberFieldMeta as NumberFieldMeta}
+                />
+            </Provider>
+        )
+        expect(wrapper.find('Memo(NumberInput)').length).toEqual(1)
+    })
+
+    it('should render Checkbox', () => {
+        const checkboxFieldMeta = {key: 'someInput', type: FieldType.checkbox, label: fieldName,}
+        const wrapper = mount(
+            <Provider store={store}>
+                <Field
+                    {...fieldProperties}
+                    widgetFieldMeta={checkboxFieldMeta as CheckboxFieldMeta}
+                />
+            </Provider>
+        )
+        expect(wrapper.find(CheckboxPicker).length).toEqual(1)
+    })
+
+    it('should render Radio', () => {
+        const radioButtonFieldMeta = {key: 'someInput', type: FieldType.radio, label: fieldName,}
+        const wrapper = mount(
+            <Provider store={store}>
+                <Field
+                    {...fieldProperties}
+                    widgetFieldMeta={radioButtonFieldMeta as RadioButtonFieldMeta}
+                />
+            </Provider>
+        )
+        expect(wrapper.find(RadioButton).length).toEqual(1)
+    })
+
+    it('should render Hint', () => {
+        const hintFieldMeta = {key: 'someInput', type: FieldType.hint, label: fieldName,}
+        const wrapper = mount(
+            <Provider store={store}>
+                <Field
+                    {...fieldProperties}
+                    widgetFieldMeta={hintFieldMeta as InputFieldMeta}
+                />
+            </Provider>
+        )
+        expect(wrapper.find(ReadOnlyField).length).toEqual(1)
+    })
+
+    it('should render MultivalueHover', () => {
+        const multivalueHoverFieldMeta = {key: 'someInput', type: FieldType.multivalueHover, label: fieldName,}
+        const wrapper = mount(
+            <Provider store={store}>
+                <Field
+                    {...fieldProperties}
+                    widgetFieldMeta={multivalueHoverFieldMeta as MultivalueFieldMeta}
+                />
+            </Provider>
+        )
+        expect(wrapper.find(MultivalueHover).length).toEqual(1)
     })
 
     it('should render Dictionary', () => {

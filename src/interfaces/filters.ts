@@ -16,7 +16,9 @@ export const enum FilterType {
 export interface BcFilter {
     type: FilterType,
     fieldName: string,
-    value: DataValue | DataValue[]
+    value: DataValue | DataValue[],
+    viewName?: string,
+    widgetName?: string
 }
 
 export interface BcSorter {

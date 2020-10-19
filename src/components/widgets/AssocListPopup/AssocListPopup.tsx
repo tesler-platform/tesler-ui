@@ -1,5 +1,5 @@
 import React, {FunctionComponent} from 'react'
-import {connect} from 'react-redux'
+import {connect, useSelector} from 'react-redux'
 import {$do} from '../../../actions/actions'
 import {DataItem, DataValue, PendingDataItem} from '../../../interfaces/data'
 import {Store} from '../../../interfaces/store'
@@ -59,7 +59,8 @@ export interface IAssocListProps extends IAssocListOwnProps {
     data?: AssociatedItem[],
     bcFilters?: BcFilter[],
     isFilter?: boolean,
-    calleeBCName?: string
+    calleeBCName?: string,
+    calleeWidgetName?: string
 }
 
 const emptyData: AssociatedItem[] = []
@@ -89,6 +90,7 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         pendingDataChanges,
         isFilter,
         calleeBCName,
+        calleeWidgetName,
         ...rest
     } = props
 
@@ -103,6 +105,9 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
         onClose()
     }, [onSave, onClose])
 
+    const viewName = useSelector((store: Store) => {
+        return store.view.name
+    })
 
     const filterData = React.useCallback(() => {
         const filterValue = selectedRecords
@@ -111,7 +116,9 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
             onFilter(props.calleeBCName, {
                 type: FilterType.equalsOneOf,
                 fieldName: props.associateFieldKey,
-                value: filterValue
+                value: filterValue,
+                viewName,
+                widgetName: props.calleeWidgetName
             })
         } else {
             const currentFilters = bcFilters?.find(filterItem => filterItem.fieldName === props.associateFieldKey)?.value
@@ -233,6 +240,7 @@ function mapStateToProps(store: Store, ownProps: IAssocListOwnProps) {
     const bc = store.screen.bo.bc[bcName]
     const isFilter = store.view.popupData.isFilter
     const calleeBCName = store.view.popupData.calleeBCName
+    const calleeWidgetName = store.view.popupData.calleeWidgetName
     const associateFieldKey = store.view.popupData.associateFieldKey
     const data = store.data[bcName] || emptyData
     const bcFilters = store.screen.filters?.[calleeBCName]
@@ -253,7 +261,8 @@ function mapStateToProps(store: Store, ownProps: IAssocListOwnProps) {
         data: data,
         bcFilters,
         isFilter,
-        calleeBCName
+        calleeBCName,
+        calleeWidgetName
     }
 }
 

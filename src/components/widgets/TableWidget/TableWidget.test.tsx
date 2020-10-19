@@ -1,5 +1,5 @@
 import React, {ReactElement} from 'react'
-import {shallow} from 'enzyme'
+import {mount} from 'enzyme'
 import {TableWidget, TableWidgetProps} from './TableWidget'
 import {WidgetTableMeta, WidgetTypes} from 'interfaces/widget'
 import {FieldType} from 'interfaces/view'
@@ -8,8 +8,32 @@ import {RowMetaField} from 'interfaces/rowMeta'
 import {BcFilter, FilterGroup} from 'interfaces/filters'
 import {RouteType} from 'interfaces/router'
 import {Table} from 'antd'
+import {Store} from 'redux'
+import {Store as CoreStore} from '../../../interfaces/store'
+import {mockStore} from '../../../tests/mockStore'
+import * as redux from 'react-redux'
+import {Provider} from 'react-redux'
 
 describe('TableWidget test', () => {
+    let store: Store<CoreStore> = null
+    const dispatch = jest.fn()
+
+    beforeAll(() => {
+        store = mockStore()
+    })
+
+    beforeEach(() => {
+        jest.spyOn(redux, 'useDispatch').mockImplementation(() => {
+            return dispatch
+        })
+    })
+
+    afterEach(() => {
+        dispatch.mockClear()
+        jest.resetAllMocks()
+        store.getState().view.pickMap = null
+    })
+
     const hideFieldProps: WidgetTableMeta = {
         name: 'widgetName',
         title: 'wTitle',
@@ -66,25 +90,34 @@ describe('TableWidget test', () => {
     }
 
     it('should hide "hidden": true fields', () => {
-        const wrapper = shallow(<TableWidget
-            {...restProps}
-            meta={{...hideFieldProps}}
-        />)
+        const wrapper = mount(
+            <Provider store={store}>
+                <TableWidget
+                    {...restProps}
+                    meta={{...hideFieldProps}}
+                />
+            </Provider>)
         expect(wrapper.find(Table).length).toEqual(1)
         expect(wrapper.find(Table).props().columns.length).toEqual(1)
     })
 
     it('should render custom column title', () => {
         const customTitleText = 'Some title'
-        const wrapper1 = shallow(<TableWidget
-            {...restProps}
-            meta={{...hideFieldProps}}
-        />)
-        const wrapper = shallow(<TableWidget
-            {...restProps}
-            meta={{...hideFieldProps}}
-            columnTitleComponent={() => <div>{customTitleText}</div>}
-        />)
+        const wrapper1 = mount(
+            <Provider store={store}>
+                <TableWidget
+                    {...restProps}
+                    meta={{...hideFieldProps}}
+                />
+            </Provider>)
+        const wrapper = mount(
+            <Provider store={store}>
+                <TableWidget
+                    {...restProps}
+                    meta={{...hideFieldProps}}
+                    columnTitleComponent={() => <div>{customTitleText}</div>}
+                />
+            </Provider>)
         expect(wrapper.find(Table).props().columns.findIndex(i => (i.title as ReactElement).props.children === customTitleText)).toEqual(0)
         expect(wrapper1.find(Table).props().columns.findIndex(
             i => (i.title as ReactElement).props.widgetName === hideFieldProps.name
