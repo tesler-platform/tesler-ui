@@ -61,6 +61,7 @@ export const ColumnFilter: React.FC<ColumnFilterProps> = (props) => {
             dispatch($do.showViewPopup({
                 bcName: fieldMeta.popupBcName,
                 calleeBCName: props.widget?.bcName,
+                calleeWidgetName: props.widget?.name,
                 assocValueKey: fieldMeta.assocValueKey,
                 associateFieldKey: fieldMeta.associateFieldKey,
                 isFilter: true

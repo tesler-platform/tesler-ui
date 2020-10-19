@@ -144,7 +144,8 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
         placeholder,
         readOnly: props.readonly,
         backgroundColor: bgColor,
-        onDrillDown: handleDrilldown
+        onDrillDown: handleDrilldown,
+        filterValue: props.filterValue
     }
     const commonInputProps: any = {
         cursor: props.cursor,
@@ -187,6 +188,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 value={(value || '').toString()}
                 showTime={props.widgetFieldMeta.type === FieldType.dateTime}
                 showSeconds={props.widgetFieldMeta.type === FieldType.dateTimeWithSeconds}
+                filterValue={props.filterValue}
             />
             break
         case FieldType.number:
@@ -230,6 +232,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 fieldName={props.widgetFieldMeta.key}
                 onChange={handleChange}
                 multiple={props.widgetFieldMeta.multiple}
+                filterValue={props.filterValue}
             />
             break
         case FieldType.text:
@@ -239,6 +242,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 defaultValue={value as any}
                 onChange={handleChange}
                 className={cn({[readOnlyFieldStyles.error]: props.metaError})}
+                filterValue={props.filterValue}
             />
             break
         case FieldType.multifield:
@@ -420,9 +424,11 @@ function mapStateToProps(store: Store, ownProps: FieldOwnProps) {
     const pendingValue = store.view.pendingDataChanges[ownProps.bcName]
     ?.[ownProps.cursor]
     ?.[ownProps.widgetFieldMeta.key]
+    const viewName = store.view.name
     const widget = store.view.widgets.find(item => item.name === ownProps.widgetName)
     const showErrorPopup = widget?.type !== WidgetTypes.Form && !ownProps.disableHoverError
     const filterValue = store.screen.filters[ownProps.bcName]
+        ?.filter(filterItem => filterItem.widgetName === widget.name && filterItem.viewName === viewName)
         ?.find(filter => filter.fieldName === ownProps.widgetFieldMeta.key)
         ?.value.toString()
     return {
