@@ -204,13 +204,13 @@ const drillDown: Epic = (action$, store) => action$.ofType(types.drillDown)
             try {
                 newFilters = JSON.parse(urlFilters)
             } catch {
-                console.warn('Failed to parse filters on drilldown')
+                urlFilters && console.warn('Failed to parse filters on drilldown')
                 newFilters = {}
             }
             try {
                 newSorters = JSON.parse(urlSorters)
             } catch {
-                console.warn('Failed to parse sorters on drilldown')
+                urlSorters && console.warn('Failed to parse sorters on drilldown')
                 newSorters = {}
             }
             const bcToUpdate: Record<string, boolean> = {}
