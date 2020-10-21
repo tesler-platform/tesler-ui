@@ -1,3 +1,11 @@
+# Version 1.22.3
+
+## Fixes
+
+* Console falsly reports broken filters when they are not specified ([#484](https://github.com/tesler-platform/tesler-ui/issues/484))
+* `removeMultivalueTag` now doesn't crash for non-hierarchy popups ([#478](https://github.com/tesler-platform/tesler-ui/issues/478))
+* `cancel-create` operation should dispatch `sendOperationSuccess` ([#488](https://github.com/tesler-platform/tesler-ui/pull/488))
+
 # Version 1.22.2
 
 ## Fixes
