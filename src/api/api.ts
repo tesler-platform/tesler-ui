@@ -22,6 +22,7 @@ import {BcDataResponse, DataItem, DataItemResponse, PendingDataItem} from '../in
 import {RowMetaResponse} from '../interfaces/rowMeta'
 import {AssociatedItem} from '../interfaces/operation'
 import {Observable} from 'rxjs/Observable'
+import axios, {CancelToken} from 'axios'
 
 type GetParamsMap = ObjectMap<string | number>
 
@@ -36,13 +37,14 @@ export function routerRequest(path: string, params: object) {
 }
 
 /**
- * TODO
+ * Send request for BC data
  *
  * @param screenName
  * @param bcUrl
  * @param params
+ * @param cancelToken
  */
-export function fetchBcData(screenName: string, bcUrl: string, params: GetParamsMap = {}) {
+export function fetchBcData(screenName: string, bcUrl: string, params: GetParamsMap = {}, cancelToken?: CancelToken) {
     const noLimit = params._limit === 0
     const queryStringObject = {
         ...params,
@@ -50,7 +52,7 @@ export function fetchBcData(screenName: string, bcUrl: string, params: GetParams
         _limit: !noLimit && (('_limit' in params) ? params._limit : 30)
     }
     const url = applyParams(buildUrl`data/${screenName}/` + bcUrl, queryStringObject)
-    return axiosGet<BcDataResponse>(url)
+    return axiosGet<BcDataResponse>(url, {cancelToken})
 }
 
 /**
@@ -78,18 +80,19 @@ export function fetchBcDataAll(screenName: string, bcUrl: string, params: GetPar
 }
 
 /**
- * TODO
+ * Send request for `row-meta`
  *
  * @param screenName
  * @param bcUrl
  * @param params
+ * @param cancelToken
  */
-export function fetchRowMeta(screenName: string, bcUrl: string, params?: GetParamsMap) {
+export function fetchRowMeta(screenName: string, bcUrl: string, params?: GetParamsMap, cancelToken?: CancelToken) {
     const url = applyParams(
         buildUrl`row-meta/${screenName}/` + bcUrl,
         params
     )
-    return axiosGet<RowMetaResponse>(url).map(response => response.data.row)
+    return axiosGet<RowMetaResponse>(url, {cancelToken}).map(response => response.data.row)
 }
 
 /**
@@ -207,4 +210,18 @@ export function associate(
 export function getRmByForceActive(screenName: string, bcUrl: string, data: PendingDataItem & { vstamp: number }, params?: GetParamsMap) {
     const url = applyParams(buildUrl`row-meta/${screenName}/` + bcUrl, params)
     return axiosPost<RowMetaResponse>(url, {data}).map((response) => response.data.row)
+}
+
+/**
+ * Returns new cancel token and cancel callback
+ */
+export function createCanceler() {
+    let cancel: () => void
+    const cancelToken = new axios.CancelToken((c) => {
+        cancel = c
+    })
+    return {
+        cancel,
+        cancelToken
+    }
 }

@@ -19,6 +19,7 @@ import {FilterType} from '../interfaces/filters'
 import {matchOperationRole} from '../utils/operations'
 import {PendingValidationFailsFormat} from '../interfaces/view'
 import {removeMultivalueTag} from './data/removeMultivalueTag'
+import {cancelRequestActionTypes, cancelRequestEpic} from '../utils/cancelRequestEpic'
 import {bcCancelCreateDataEpic} from './data/bcCancelCreateDataEpic'
 
 const maxDepthLevel = 10
@@ -59,8 +60,24 @@ const bcFetchRowMetaRequest: Epic = (action$, store) => action$.ofType(types.bcF
     const bcName = action.payload.bcName
     const cursor = state.screen.bo.bc[bcName].cursor
     const bcUrl = buildBcUrl(bcName, true)
-    const fetch = api.fetchRowMeta(screenName, bcUrl)
-    return fetch
+    const canceler = api.createCanceler()
+    const cancelFlow = cancelRequestEpic(
+        action$,
+        cancelRequestActionTypes,
+        canceler.cancel,
+        $do.bcFetchRowMetaFail({ bcName })
+    )
+    const cancelByParentBc = cancelRequestEpic(
+        action$,
+        [types.bcSelectRecord],
+        canceler.cancel,
+        $do.bcFetchRowMetaFail({ bcName }),
+        (filteredAction) => {
+            const actionBc = filteredAction.payload.bcName
+            return state.screen.bo.bc[bcName].parentName === actionBc
+        }
+    )
+    const normalFlow = api.fetchRowMeta(screenName, bcUrl, undefined, canceler.cancelToken)
     .map(rowMeta => {
         return $do.bcFetchRowMetaSuccess({ bcName, rowMeta, bcUrl, cursor })
     })
@@ -68,6 +85,7 @@ const bcFetchRowMetaRequest: Epic = (action$, store) => action$.ofType(types.bcF
         console.error(error)
         return Observable.of($do.bcFetchRowMetaFail({ bcName }))
     })
+    return Observable.race(cancelFlow, cancelByParentBc, normalFlow)
 })
 
 /**
@@ -146,18 +164,29 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
     ) {
         fetchParams._limit = 0
     }
-    const cancelFlow = action$.ofType(types.selectView).filter((item) => {
-        return true
-    }).mergeMap(() => {
-        return Observable.of($do.bcFetchDataFail({ bcName, bcUrl, depth: depthLevel }))
-    })
-    .take(1)
+    const canceler = api.createCanceler()
+    const cancelFlow = cancelRequestEpic(
+        action$,
+        cancelRequestActionTypes,
+        canceler.cancel,
+        $do.bcFetchDataFail({ bcName, bcUrl, depth: depthLevel })
+    )
+    const cancelByParentBc = cancelRequestEpic(
+        action$,
+        [types.bcSelectRecord],
+        canceler.cancel,
+        $do.bcFetchDataFail({ bcName, bcUrl, depth: depthLevel }),
+        (filteredAction) => {
+            const actionBc = filteredAction.payload.bcName
+            return bc.parentName === actionBc
+        }
+    )
     const normalFlow = api.fetchBcData(
         state.screen.screenName,
         bcUrl,
-        fetchParams
+        fetchParams,
+        canceler.cancelToken
     )
-        .takeUntil(action$.ofType(types.logout))
         .mergeMap(data => {
         const newCursor = data.data[0]?.id
         const fetchChildrenBcData = (data.data?.length)
@@ -209,7 +238,7 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
         console.error(error)
         return Observable.of($do.bcFetchDataFail({bcName: action.payload.bcName, bcUrl, depth: depthLevel}))
     })
-    return Observable.race(cancelFlow, normalFlow)
+    return Observable.race(cancelFlow, cancelByParentBc, normalFlow)
 })
 
 const bcLoadMore: Epic = (action$, store) => action$.ofType(types.bcLoadMore)
@@ -231,14 +260,14 @@ const bcLoadMore: Epic = (action$, store) => action$.ofType(types.bcLoadMore)
         ...getSorters(sorters)
     }
 
-    const cancelFlow = action$.ofType(types.selectView).filter((item) => {
-        return true
-    }).mergeMap(() => {
-        return Observable.of($do.bcFetchDataFail({ bcName, bcUrl }))
-    })
-    .take(1)
-
-    const normalFlow = api.fetchBcData(state.screen.screenName, bcUrl, fetchParams)
+    const canceler = api.createCanceler()
+    const cancelFlow = cancelRequestEpic(
+        action$,
+        cancelRequestActionTypes,
+        canceler.cancel,
+        $do.bcFetchDataFail({ bcName, bcUrl })
+    )
+    const normalFlow = api.fetchBcData(state.screen.screenName, bcUrl, fetchParams, canceler.cancelToken)
     .mergeMap(data => {
         const oldBcDataIds = state.data[bcName]?.map(i => i.id)
         const newData = [...state.data[bcName], ...data.data.filter((i: DataItem) => !oldBcDataIds.includes(i.id))]
@@ -295,7 +324,19 @@ const inlinePickListFetchDataEpic: Epic = (action$, store) => action$.ofType(typ
 .mergeMap((action) => {
     const {bcName, searchSpec, searchString} = action.payload
     const bcUrl = buildBcUrl(bcName, false)
-    return api.fetchBcData(store.getState().screen.screenName, bcUrl, {[searchSpec + '.contains']: searchString})
+    const canceler = api.createCanceler()
+    const cancelFlow = cancelRequestEpic(
+        action$,
+        cancelRequestActionTypes,
+        canceler.cancel,
+        $do.bcFetchDataFail({ bcName, bcUrl })
+    )
+    const normalFlow = api.fetchBcData(
+        store.getState().screen.screenName,
+        bcUrl,
+        {[searchSpec + '.contains']: searchString},
+        canceler.cancelToken
+    )
     .mergeMap(data => {
         return Observable.of($do.bcFetchDataSuccess({bcName, data: data.data, bcUrl}))
     })
@@ -303,6 +344,7 @@ const inlinePickListFetchDataEpic: Epic = (action$, store) => action$.ofType(typ
         console.error(error)
         return Observable.of($do.bcFetchDataFail({bcName: action.payload.bcName, bcUrl}))
     })
+    return Observable.race(cancelFlow, normalFlow)
 })
 
 const bcNewDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperation)
