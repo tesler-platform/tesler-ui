@@ -19,6 +19,7 @@ import {FilterType} from '../interfaces/filters'
 import {matchOperationRole} from '../utils/operations'
 import {PendingValidationFailsFormat} from '../interfaces/view'
 import {removeMultivalueTag} from './data/removeMultivalueTag'
+import {bcCancelCreateDataEpic} from './data/bcCancelCreateDataEpic'
 
 const maxDepthLevel = 10
 
@@ -443,37 +444,6 @@ const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperat
             viewError = operationError?.error?.popup?.[0]
         }
         return Observable.of($do.bcSaveDataFail({ bcName, bcUrl, viewError, entityError }))
-    })
-})
-
-const bcCancelCreateDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperation)
-.filter(action => matchOperationRole(OperationTypeCrud.cancelCreate, action.payload, store.getState()))
-.mergeMap((action) => {
-    const state = store.getState()
-    const screenName = state.screen.screenName
-    const bcName = action.payload.bcName
-    const bcUrl = buildBcUrl(bcName, true)
-    const bc = state.screen.bo.bc[bcName]
-    const cursor = bc.cursor
-    const context = { widgetName: action.payload.widgetName }
-    const record = state.data[bcName]?.find(item => item.id === bc.cursor)
-    const pendingRecordChange = state.view.pendingDataChanges[bcName]?.[bc.cursor]
-    const data = record && { ...pendingRecordChange, vstamp: record.vstamp }
-    const params = { _action: action.payload.operationType }
-    const cursorsMap: ObjectMap<string> = { [action.payload.bcName]: null }
-    return api.customAction(screenName, bcUrl, data, context, params)
-    .mergeMap(response => {
-        const postInvoke = response.postActions[0]
-        return Observable.concat(
-            Observable.of($do.bcChangeCursors({ cursorsMap })),
-            postInvoke
-                ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName: context.widgetName}))
-                : Observable.empty<never>()
-        )
-    })
-    .catch((error: any) => {
-        console.log(error)
-        return Observable.of($do.bcDeleteDataFail({ bcName }))
     })
 })
 
