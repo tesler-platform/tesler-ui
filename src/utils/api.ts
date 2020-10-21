@@ -112,10 +112,12 @@ function onErrorHook(error: AxiosError, callContext?: ApiCallContext) {
             }
         }
     } else {
-        const networkError = {
-            type: ApplicationErrorType.NetworkError,
+        if (!axios.isCancel(error)) {
+            const networkError = {
+                type: ApplicationErrorType.NetworkError,
+            }
+            getStoreInstance().dispatch($do.showViewError({error: networkError}))
         }
-        getStoreInstance().dispatch($do.showViewError({error: networkError}))
     }
     throw error
 }
