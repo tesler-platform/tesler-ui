@@ -1,5 +1,5 @@
 import React, {FunctionComponent} from 'react'
-import {Modal, Form, Collapse, Icon} from 'antd'
+import {Modal, Form, Collapse, Icon, Button} from 'antd'
 import {useTranslation} from 'react-i18next'
 import {ApplicationError, SystemError, BusinessError, ApplicationErrorType} from '../../../interfaces/view'
 import cn from 'classnames'
@@ -13,9 +13,18 @@ export interface ErrorPopupOwnProps {
 }
 
 export const ErrorPopup: FunctionComponent<ErrorPopupOwnProps> = (props) => {
-    const {t} = useTranslation()
+    const errorRef = React.useRef(null)
     const systemError = props.error as SystemError
     const businessError = props.error as BusinessError
+
+    const handleCopyDetails = React.useCallback(
+        () => {
+            errorRef.current.select()
+            document.execCommand('copy')
+        },
+        [errorRef]
+    )
+    const {t} = useTranslation()
     const title = <header className={styles.header}>
         <Icon className={styles.icon} type="exclamation-circle-o" />
         <span className={styles.title}>
@@ -50,6 +59,21 @@ export const ErrorPopup: FunctionComponent<ErrorPopupOwnProps> = (props) => {
                 <Collapse bordered={false}>
                     <Collapse.Panel header={t('Details')} key="1">
                         {systemError.details}
+                        {systemError?.error &&
+                        <>
+                            <br/>
+                            <Button className={styles.mt5}
+                                    onClick={handleCopyDetails}>{t('Copy details to clipboard')}</Button>
+                            <br/>
+
+                            <textarea
+                                className={cn(styles.detailsArea, styles.mt5)}
+                                readOnly={true}
+                                ref={errorRef}
+                                value={JSON.stringify(systemError.error.response, undefined, 2)}
+                            />
+                        </>
+                        }
                     </Collapse.Panel>
                 </Collapse>
             </Form.Item>
@@ -59,4 +83,4 @@ export const ErrorPopup: FunctionComponent<ErrorPopupOwnProps> = (props) => {
     </Modal>
 }
 
-export default ErrorPopup
+export default React.memo(ErrorPopup)
