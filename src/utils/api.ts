@@ -5,7 +5,7 @@ import {axiosInstance, getStoreInstance} from '../Provider'
 import {TeslerResponse} from '../interfaces/objectMap'
 import {$do} from '../actions/actions'
 import {OperationError} from '../interfaces/operation'
-import {BusinessError, ApplicationErrorType} from '../interfaces/view'
+import {BusinessError, ApplicationErrorType, SystemError} from '../interfaces/view'
 import {openButtonWarningNotification} from './notifications'
 import {historyObj} from '../reducers/router'
 
@@ -91,6 +91,15 @@ function onErrorHook(error: AxiosError, callContext?: ApiCallContext) {
                     null,
                     'action_edit_error'
                 )
+                break
+            }
+            case 500 : {
+                const systemError: SystemError = {
+                    type: ApplicationErrorType.SystemError,
+                    details: error.response.statusText,
+                    error: error
+                }
+                getStoreInstance().dispatch($do.showViewError({error: systemError}))
                 break
             }
             default : {
