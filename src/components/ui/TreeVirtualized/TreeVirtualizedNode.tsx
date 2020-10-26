@@ -118,7 +118,7 @@ export function TreeVirtualizedNode<T extends TreeNodeBidirectional>(props: Tree
         </div>
         { data.fields?.map((field: WidgetListField) => {
             const filter = data.filters?.find(f => f.fieldName === field.key)
-            const source = (item as any)[field.key] as string
+            const source = String((item as any)[field.key] ?? '')
             const content = filter
                 ? <SearchHightlight
                     source={source}
