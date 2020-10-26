@@ -50,7 +50,7 @@ describe('<TreeVirtualized />', () => {
         expect(wrapper.find(TreeVirtualizedNode).length).toBe(6)
         expect(wrapper.find(TreeVirtualizedNode).at(0).text()).toBe('two')
         expect(wrapper.find(TreeVirtualizedNode).at(1).text()).toBe('ten')
-        expect(wrapper.find(TreeVirtualizedNode).at(2).text()).toBe('eleven')
+        expect(wrapper.find(TreeVirtualizedNode).at(2).text()).toBe('')
         expect(wrapper.find(TreeVirtualizedNode).at(3).text()).toBe('Lucky Twelve')
         expect(wrapper.find(TreeVirtualizedNode).at(4).text()).toBe('three')
         expect(wrapper.find(TreeVirtualizedNode).at(5).text()).toBe('lucky Eight')
@@ -125,7 +125,7 @@ function getTreeSample() {
         { id: '2', name: 'two', parentId: '0' },
         { id: '21', name: 'nine', parentId: '2' },
         { id: '22', name: 'ten', parentId: '2' },
-        { id: '221', name: 'eleven', parentId: '22' },
+        { id: '221', name: null, parentId: '22' },
         { id: '2211', name: 'Lucky Twelve', parentId: '221' },
         { id: '3', name: 'three', parentId: '0' },
         { id: '31', name: 'seven', parentId: '3' },

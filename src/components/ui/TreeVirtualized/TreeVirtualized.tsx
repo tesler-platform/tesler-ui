@@ -89,10 +89,11 @@ export function TreeVirtualized<T extends DataNode>(props: TreeVirtualizedProps<
     const searchPredicate = React.useCallback((item) => {
         return filters?.filter(filter => filter.type === FilterType.contains)
         .every(filter => {
+            const src = String(item[filter.fieldName] ?? '')
+            const target = String(filter.value ?? '')
             return props.matchCase
-                ? (item[filter.fieldName] as unknown as string).includes(String(filter.value || ''))
-                : (item[filter.fieldName] as unknown as string).toLowerCase()
-                .includes(String(filter.value || '').toLowerCase())
+                ? src.includes(target)
+                : src.toLowerCase().includes(target.toLowerCase())
         })
     }, [props.matchCase, filters])
     /**
