@@ -1,3 +1,14 @@
+# Version 1.23.0
+
+## Features
+
+* `<ErrorPopup />` now provides a button to save error message to the clipboard ([#490](https://github.com/tesler-platform/tesler-ui/issues/490))
+* `data` and `meta` resuests now can be canceled with `cancelRequestEpic` ([#486](https://github.com/tesler-platform/tesler-ui/issues/486))
+
+## Fixes
+
+* `TreeVirtualized` and `TreeVirtualizedNode` crash for null values ([#493](https://github.com/tesler-platform/tesler-ui/pull/493))
+
 # Version 1.22.3
 
 ## Fixes
