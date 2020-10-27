@@ -155,6 +155,16 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
         ...getSorters(sorters)
     }
 
+    if (action.type === types.bcForceUpdate) {
+        const infinityPaginationWidget = widgetName && state.view.infiniteWidgets.includes(widgetName) ||
+            state.view.widgets?.filter(item => item.bcName === bcName)
+                ?.find(item => state.view.infiniteWidgets.includes(item.name))?.name
+        if (infinityPaginationWidget) {
+            fetchParams._page = 1
+            fetchParams._limit = limit * page
+        }
+    }
+
     if (action.type === types.bcFetchDataPages) {
         fetchParams._page = action.payload.from || 1
         fetchParams._limit = (action.payload.to || page - fetchParams._page) * limit
