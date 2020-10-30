@@ -30,7 +30,7 @@ export function getTemplate(literals: TemplateStringsArray, ...placeholders: any
 export function buildBcUrl(bcName: string, includeSelf = false, store?: Store) {
     const storeInstance = store || globalStore.getState()
     const bcMap = storeInstance.screen.bo.bc
-    const bc = storeInstance.screen.bo.bc[bcName]
+    const bc = bcMap[bcName]
     if (!bc) {
         return null
     }

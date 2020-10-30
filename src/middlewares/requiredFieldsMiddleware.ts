@@ -18,10 +18,10 @@ import {PendingValidationFailsFormat} from '../interfaces/view'
 const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) => (next: Dispatch) =>
 (action: AnyAction) => {
     const state = getState()
-    if (action.type === types.sendOperation) {
-        const { bcName, operationType, widgetName } = action.payload as unknown as ActionPayloadTypes['sendOperation']
-        const cursor = state.screen.bo.bc[bcName]?.cursor
-        const bcUrl = buildBcUrl(bcName, true)
+    const { bcName, operationType, widgetName } = (action.payload ?? {}) as unknown as ActionPayloadTypes['sendOperation']
+    const cursor = state.screen.bo.bc[bcName]?.cursor
+    if (action.type === types.sendOperation && cursor) {
+        const bcUrl = buildBcUrl(bcName, true, getState())
         const record = state.data[bcName]?.find(item => item.id === cursor)
         const rowMeta = bcUrl && state.view.rowMeta[bcName]?.[bcUrl]
         const pendingValues = state.view.pendingDataChanges[bcName]?.[cursor]
@@ -36,7 +36,7 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
             state.view.widgets
             .filter(item => item.bcName === widget.bcName)
             .forEach(item => {
-                const itemFieldsCalc: object[] = item.fields
+                const itemFieldsCalc = item.fields
                 if (item.fields) {
                     item.fields.forEach((block: object | WidgetFieldBlock<object>) => {
                         if (isWidgetFieldBlock(block)) {
