@@ -1,11 +1,11 @@
-# Version 1.23.1
+# Version 1.23.1 (October 30, 2020)
 
 ## Fixes
 
 * Already fetched pages are missing after `bcForceUpdate` dispatch for widgets with "load more" pagination type ([#495](https://github.com/tesler-platform/tesler-ui/issues/495))
 * `requiredFieldsMiddleware` shouldn't fire when called on BC without a cursor ([#497](https://github.com/tesler-platform/tesler-ui/issues/497))
 
-# Version 1.23.0
+# Version 1.23.0 (October 26, 2020)
 
 ## Features
 
@@ -16,7 +16,7 @@
 
 * `TreeVirtualized` and `TreeVirtualizedNode` crash for null values ([#493](https://github.com/tesler-platform/tesler-ui/pull/493))
 
-# Version 1.22.3
+# Version 1.22.3 (October 21, 2020)
 
 ## Fixes
 
@@ -24,20 +24,20 @@
 * `removeMultivalueTag` now doesn't crash for non-hierarchy popups ([#478](https://github.com/tesler-platform/tesler-ui/issues/478))
 * `cancel-create` operation should dispatch `sendOperationSuccess` ([#488](https://github.com/tesler-platform/tesler-ui/pull/488))
 
-# Version 1.22.2
+# Version 1.22.2 (October 15, 2020)
 
 ## Fixes
 
 * `<TreeVirtualized />` handles `matchCase` option incorrectly
 * Missing export for `<SearchHighlight />` component
 
-# Version 1.22.1
+# Version 1.22.1 (October 10, 2020)
 
 ## Fixes
 
 * Revert middleware customization as it's apparently sometimes cause action douplication ([#376](https://github.com/tesler-platform/tesler-ui/issues/376))
 
-# Version 1.22.0
+# Version 1.22.0 (October 10, 2020)
 
 ## Features
 
@@ -53,7 +53,7 @@
 * `removeMultivalueTag` now correctly processes `hierarchyTraverse` and `hierarchyGroupDeselection` widget options ([#443](https://github.com/tesler-platform/tesler-ui/issues/443))
 * `<TreeNodeVirtualized />` should toggle on click
 
-# Version 1.21.0
+# Version 1.21.0 (October 8, 2020)
 
 ## Features
 
@@ -75,14 +75,14 @@ business component name and cursors to handle situations when multiple records o
 * Drilldown to the same view with specific instruction to drop filters no longer causes stale data ([#374](https://github.com/tesler-platform/tesler-ui/issues/374))
 * `<Dictionary />` now corretly shows placeholder ([#463](https://github.com/tesler-platform/tesler-ui/issues/463))
 
-# Version 1.20.1
+# Version 1.20.1 (August, 31, 2020)
 
 ## Fixes
 
 * `file-upload` action shouldn't set `loading` state for widget ([#426](https://github.com/tesler-platform/tesler-ui/pull/426))
 * file uploaders should properly handle trailing slash for axios baseURL ([#426](https://github.com/tesler-platform/tesler-ui/pull/426))
 
-# Version 1.20.0
+# Version 1.20.0 (August, 31, 2020)
 
 ## Features
 
@@ -119,7 +119,7 @@ business component name and cursors to handle situations when multiple records o
 
 * Following deprecation of TSLint (https://medium.com/palantir/tslint-in-2019-1a144c2317a9), we now use ESLint ([#398](https://github.com/tesler-platform/tesler-ui/pull/398))
 
-# Version 1.19.0
+# Version 1.19.0 (August 19, 2020)
 
 ## Feautres
 
@@ -158,7 +158,7 @@ business component name and cursors to handle situations when multiple records o
 * `<ColumnTitle />` refactoring and test coverage ([#352](https://github.com/tesler-platform/tesler-ui/pull/352))
 
 
-# Version 1.18.2
+# Version 1.18.2 (July 30, 2020)
 
 ## Fixes
 
@@ -166,13 +166,13 @@ business component name and cursors to handle situations when multiple records o
 * Adding empty filter crashes the application if there was already present non-empty filter ([#360](https://github.com/tesler-platform/tesler-ui/issues/360))
 * Incorrect check for `autoSaveBefore` in 1.18.0 causes required fields validation when it shouldn't (e.g. cancel operations) ([#368](https://github.com/tesler-platform/tesler-ui/issues/368))
 
-# Verson 1.18.1
+# Verson 1.18.1 (July 28, 2020)
 
 ## Fixes
 
 * Export `matchOperationRole` and `flattenOperations` utilities
 
-# Verson 1.18.0
+# Verson 1.18.0 (July 28, 2020)
 
 ## Features
 
@@ -182,21 +182,21 @@ business component name and cursors to handle situations when multiple records o
 
 * Filter by date does not keep its state and erroneously shows time ([#354](https://github.com/tesler-platform/tesler-ui/issues/354))
 
-# Version 1.17.4
+# Version 1.17.4 (July 21, 2020)
 
 ## Fixes
 
 * Hierarchy filter effect erroneously has reversed condition for early return ([#341](https://github.com/tesler-platform/tesler-ui/issues/341))
 * `showViewPopup` action should not initiate data fetch when popup BC is the same as in the initiator widget
 
-# Version 1.17.3
+# Version 1.17.3 (July 20, 2020)
 
 ## Fixes
 
 * Refactor `<FullHierarchyComponent />` expanded rows routine to cover all cases of erroneous collapses of the whole tree after selecting node ([#341](https://github.com/tesler-platform/tesler-ui/issues/341))
 * Unit tests stumble on reducers accessing other slices of store due to not using project implementation of `combineReducers`
 
-# Version 1.17.2
+# Version 1.17.2 (July 16, 2020)
 
 ## Fixes
 
@@ -204,13 +204,13 @@ business component name and cursors to handle situations when multiple records o
 * `<AssocListPopup />` doesn't show already selected records in tags section; `saveAssociationsPassive` erroneously clears selected records ([#339](https://github.com/tesler-platform/tesler-ui/issues/339))
 * User drilldown to the current cursor and `bcPath` shouldn't drop current cursor and fire drilldown respectively ([#343](https://github.com/tesler-platform/tesler-ui/issues/343))
 
-# Version 1.17.1
+# Version 1.17.1 (July 16, 2020)
 
 ## Fixes
 
 * Wrong typings and missing properties when importing `<Popup />` component
 
-# Version 1.17.0
+# Version 1.17.0 (July 16, 2020)
 
 ## Features
 
@@ -225,7 +225,7 @@ business component name and cursors to handle situations when multiple records o
 
 * Default view layout should not override custom one ([#326](https://github.com/tesler-platform/tesler-ui/issues/326))
 
-# Version 1.16.0
+# Version 1.16.0 (June 30, 2020)
 
 ## Features
 
@@ -238,7 +238,7 @@ business component name and cursors to handle situations when multiple records o
 * Export `<Popup />` and provide `defaultOkText` and `defaultCancelText` properties
 * preInvoke Middleware to handle `sendOperation` actions having assigned pre-invoke ([#283](https://github.com/tesler-platform/tesler-ui/issues/283))
 
-# Version 1.15.0
+# Version 1.15.0 (June 15, 2020)
 
 ## Features
 
@@ -250,14 +250,14 @@ business component name and cursors to handle situations when multiple records o
 * AssocListPopup Tag value not displayed due to incorrectly accessing value by `assocFieldKey` instead of `assocValueKey` ([#279](https://github.com/tesler-platform/tesler-ui/issues/279))
 * Replace data fetch request for save operiations with meta fetch and children bc data fetch, as the data of the source bc might be isolated during the draft stage and unavailable until the record is saved ([#247](https://github.com/tesler-platform/tesler-ui/issues/247))
 
-# Version 1.14.1
+# Version 1.14.1 (June 4, 2020)
 
 ## Fixes
 
 * `limit` calculated incorrectly after 1.14.0 leading to broken pagination ([#264](https://github.com/tesler-platform/tesler-ui/issues/264))
 * `<TableWidget />` does not recalculate columns after 1.14.0 due to missing prop dependency leading to missing filtration and sorting ([#270](https://github.com/tesler-platform/tesler-ui/issues/270))
 
-# Version 1.14.0
+# Version 1.14.0 (June 2, 2020)
 
 ## Features
 
@@ -281,7 +281,7 @@ business component name and cursors to handle situations when multiple records o
 * Autosave middleware reserved for tables erroneously applied to other widgets by `requiredFieldsMiddleware` ([#257](https://github.com/tesler-platform/tesler-ui/issues/257))
 * `multivalue` field no longer lose already selected values after selecting additional values in popup ([#226](https://github.com/tesler-platform/tesler-ui/issues/226))
 
-# Version 1.13.0
+# Version 1.13.0 (May 3, 2020)
 
 ## Features
 
@@ -293,7 +293,7 @@ business component name and cursors to handle situations when multiple records o
 * `Field`: Fixed overwriting the default Ant properties of components. If passed property is not defined then it is removed from commonProps and commonInputProps. ([#215](https://github.com/tesler-platform/tesler-ui/issues/215))
 * Exported ownProps interfaces of all `src/components/ui` components ([#219](https://github.com/tesler-platform/tesler-ui/issues/219))
 
-# Version 1.12.0
+# Version 1.12.0 (April 23, 2020)
 
 ## Features
 
@@ -301,14 +301,14 @@ business component name and cursors to handle situations when multiple records o
 * Support http codes 409 to warn about conflicting changes and 401 to logout when session expired ([#200](https://github.com/tesler-platform/tesler-ui/issues/200))
 * Support `placeholder` property for fields ([#210](https://github.com/tesler-platform/tesler-ui/issues/210))
 
-# Version 1.11.1
+# Version 1.11.1 (April 17, 2020)
 
 ## Fixes
 
 * MultivalueField loses BC while screen changing ([#197](https://github.com/tesler-platform/tesler-ui/issues/197))
 
 
-# Version 1.11.0
+# Version 1.11.0 (April 17, 2020)
 
 ## Features
 
@@ -335,7 +335,7 @@ return <ul>
 * `<TextArea />` should not be recreated on every value change ([#191](https://github.com/tesler-platform/tesler-ui/issues/191)). 
 
 
-# Version 1.10.0
+# Version 1.10.0 (April 6, 2020)
 
 ## Features
 
@@ -370,13 +370,13 @@ Previous implementation is now deprecated and will be removed in 2.0.0.
 
 * Remove unused `groupName`, `newRow`, `break` properties from `WidgetFieldBase` interface as they were never implemented for Tesler
 
-# Version 1.9.1
+# Version 1.9.1 (April 1, 2020)
 
 ## Fixes
 
 * Temporary fix for `<Pagination />` component crashing the page with #300 and #310 React invariants after 1.8.4 added i18n tokens (#167).
 
-# Version 1.9.0
+# Version 1.9.0 (March 28, 2020)
 
 ## Features
 
@@ -387,7 +387,7 @@ Previous implementation is now deprecated and will be removed in 2.0.0.
 
 * `<Field />` component throws console warnings for unknown html properties (#164). 
 
-# Version 1.8.4
+# Version 1.8.4 (March 27, 2020)
 
 ## Fixes
 
@@ -395,19 +395,19 @@ Previous implementation is now deprecated and will be removed in 2.0.0.
 * Missing i18n tokens for `<ColumnTitle />`, `<FileUpload />`, `<Pagination />`, `<PickInput />`, `<Popup />` and `view` reducer (#161).
 * `<TableWidget />` column headers should not break words (#162).
 
-# Version 1.8.3
+# Version 1.8.3 (March 26, 2020)
 
 ## Fixes
 
 * Drilldown fields crashing the application after 1.8.0 update (#156).
 
-# Version 1.8.2
+# Version 1.8.2 (March 25, 2020)
 
 ## Fixes
 
 * Dropdown components not showing their icons after 1.8.1 update.
 
-# Version 1.8.1
+# Version 1.8.1 (March 24, 2020)
 
 ## Fixes
 
@@ -419,7 +419,7 @@ Previous implementation is now deprecated and will be removed in 2.0.0.
 * Use typescript version 3.8.3
 * Use antd version 3.26.13
 
-# Version 1.8.0
+# Version 1.8.0 (March 23, 2020)
 
 ## Features
 
@@ -441,27 +441,27 @@ See [FilterGroup class](https://github.com/tesler-platform/tesler/blob/master/te
 * When having an unsaved changes on a widget and calling an operation for another widget, autosave procedure should be initiated for the changes (#144).
 * Respect `hidden` field type in `<PickListPopup />` (#146).
 
-# Version 1.7.3
+# Version 1.7.3 (March 4, 2020)
 
 ## Fixes
 
 * Make a datepicker with an empty value to keep the selected locale (#133).
 * Pass hierarchy depth level to custom fields (#135).
 
-# Version 1.7.2
+# Version 1.7.2 (March 1, 2020)
 
 ## Fixes
 
 * Widget meta should reuse existing `description` field instead of introducing new `documentation` field to avoid adittional work on Tesler API (#126).
 * Post action operation should not try to access row meta when there isn't one (#129).
 
-# Version 1.7.1
+# Version 1.7.1 (February 28, 2020)
 
 ## Fixes
 
 * Revert the changes for not sending empty but required forceActive fields introduced in 1.6.0
 
-# Version 1.7.0
+# Version 1.7.0 (February 28, 2020)
 
 ## Features
 
@@ -470,7 +470,7 @@ See [FilterGroup class](https://github.com/tesler-platform/tesler/blob/master/te
 * List widget in hierarchy mode now correctly displays all field types.
 * List widget now supports full hierarchy mode.
 
-# Version 1.6.0
+# Version 1.6.0 (February 27, 2020)
 
 ## Features
 
@@ -487,13 +487,13 @@ See [FilterGroup class](https://github.com/tesler-platform/tesler/blob/master/te
 * Validation does not work when we click on actions or change forceActive, if the widget has required fields (#118).
 * Unfilled required fields are sent to the backend as modified (value=null) (#118).
 
-# Version 1.5.2
+# Version 1.5.2 (February 25, 2020)
 
 ## Fixes
 
 * Fix error when custom internationalization language has no matching core dictionary
 
-# Version 1.5.1
+# Version 1.5.1 (February 19, 2020)
 
 ## Fixes
 
@@ -504,7 +504,7 @@ See [FilterGroup class](https://github.com/tesler-platform/tesler/blob/master/te
 * Remove page reset on table sort (#85).
 * `OperationPostInvoke` should allow `type` field to be a string to correctly support custom postInvokes. 
 
-# Version 1.5.0
+# Version 1.5.0 (February 13, 2020)
 
 ## Features
 
@@ -519,7 +519,7 @@ See [FilterGroup class](https://github.com/tesler-platform/tesler/blob/master/te
 
 * Disable check for the presence of `save` action in row meta for autosave middleware until we investigate the cases when this check fails due to missing cursor (#99).
 
-# Version 1.4.4
+# Version 1.4.4 (February 7, 2020)
 
 ## Fixes
 
@@ -531,25 +531,25 @@ See [FilterGroup class](https://github.com/tesler-platform/tesler/blob/master/te
   * When filtering returns 0 rows, then after clicking on "Reset" button the values ​​in the filter are not reset (#91)
   * Filtering does not work in Picklists (#91)
 
-# Version 1.4.3
+# Version 1.4.3 (February 4, 2020)
 
 ## Fixes
 
 * Broken IE11 support due to `markdown` dependency hosted on npm in ES6 format
 
-# Version 1.4.2
+# Version 1.4.2 (February 4, 2020)
 
 ## Fixes
 
 * Incorrect `isViewNavigationGroup` safeguard falsy reported true for navigation categories (1.4.0).
 
-# Version 1.4.1
+# Version 1.4.1 (February 4, 2020)
 
 ## Fixes
 
 * Broken navigation structure in 1.4.0.
 
-# Version 1.4.0
+# Version 1.4.0 (February 3, 2020)
 
 ## Features
 
@@ -561,7 +561,7 @@ See [FilterGroup class](https://github.com/tesler-platform/tesler/blob/master/te
 
 * `hidden` field type should not be displayed on `Form`, `List`, `DataGrid` widgets (#73).
 
-# Version 1.3.0
+# Version 1.3.0 (January 28, 2020)
 
 ## Features
 
@@ -577,13 +577,13 @@ See [FilterGroup class](https://github.com/tesler-platform/tesler/blob/master/te
   * Align the first column and "+" on the top edge.
   * Align the data in the 2nd and 3rd columns.
 
-# Version 1.2.2
+# Version 1.2.2 (January 27, 2020)
 
 ## Fixes
 
 * Required number fields are erroneously cleared on record create/save and on blur if only zero value entered, due to their incorrect work with `undefined` valudes (#58).
 
-# Version 1.2.1
+# Version 1.2.1 (January 24, 2020)
 
 ## Fixes
 
@@ -592,14 +592,14 @@ See [FilterGroup class](https://github.com/tesler-platform/tesler/blob/master/te
 * List widget in hierarchy mode should support drilldown field (#51).
 * RowMeta request isn`t sent when the forceActive field changes (#53).
 
-# Version 1.2.0
+# Version 1.2.0 (January 23, 2020)
 
 ## Features
 
 * PickList widget now supports hierarchy tables, i.e. widget options `hierarchy`, `hierarchySameBc` and `hierarchyFull` now work the same way as in regular Table widgets (#49).
 * New `hierarchyDisableRoot: boolean` flag added to control if rows on top of hierarchy are selectablable or not (#49).
 
-# Version 1.1.6
+# Version 1.1.6 (January 22, 2020)
 
 ## Fixes
 
@@ -608,7 +608,7 @@ See [FilterGroup class](https://github.com/tesler-platform/tesler/blob/master/te
 * Change location with cursors change should initiate data fetch even if View was not updated (e.g. drilldown on the same View) (#34).
 * Changelog incorrectly referenced #34 instead of #32 in 1.1.4 release.
 
-# Version 1.1.5
+# Version 1.1.5 (January 20, 2020)
 
 ## Fixes
 
@@ -618,7 +618,7 @@ See [FilterGroup class](https://github.com/tesler-platform/tesler/blob/master/te
 
 * Add release workflow
 
-# Version 1.1.4
+# Version 1.1.4 (January 17, 2020)
 
 ## Fixes
 
@@ -629,7 +629,7 @@ See [FilterGroup class](https://github.com/tesler-platform/tesler/blob/master/te
 
 * Add pull request pipeline
 
-# Version 1.1.3
+# Version 1.1.3 (January 11, 2020)
 
 ## Fixes
 
@@ -637,7 +637,7 @@ See [FilterGroup class](https://github.com/tesler-platform/tesler/blob/master/te
 * `List` widgets erroneously fetched data only for the first level of hierarchy (#25).
 * Hierarchy widgets positioned expand icon incorrectly.
 
-# Version 1.1.2
+# Version 1.1.2 (January 10, 2020)
 
 ## Fixes
 
@@ -648,13 +648,13 @@ See [FilterGroup class](https://github.com/tesler-platform/tesler/blob/master/te
 * Webpack config incorrectly referred `LICENSE.MD` instead of `LICENSE`
 * Non-working readme links on NPM 
 
-# Version 1.1.1
+# Version 1.1.1 (December 30, 2019)
 
 ## Fixes
 
 * Broken npm package
 
-# Version 1.1.0
+# Version 1.1.0 (December 30, 2019)
 
 ## Features
 
@@ -677,7 +677,7 @@ See [FilterGroup class](https://github.com/tesler-platform/tesler/blob/master/te
 * Update contributing guide with corrections for `Branch organization` section
 * .md files are now included in npm release
 
-# Version 1.0.0
+# Version 1.0.0 (December 23, 2019)
 
 * Public release
 * `[BREAKING CHANGE]` `id` field is removed from widget meta in favor of `name` field (as `id` is autogenerated after every update and unfit for widget-based business logic). All corresponding `widgetId` properties should be replaced with `widgetName` field.
