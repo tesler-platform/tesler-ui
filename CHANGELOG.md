@@ -1,3 +1,10 @@
+# Version 1.23.1
+
+## Fixes
+
+* Already fetched pages are missing after `bcForceUpdate` dispatch for widgets with "load more" pagination type ([#495](https://github.com/tesler-platform/tesler-ui/issues/495))
+* `requiredFieldsMiddleware` shouldn't fire when called on BC without a cursor ([#497](https://github.com/tesler-platform/tesler-ui/issues/497))
+
 # Version 1.23.0
 
 ## Features
