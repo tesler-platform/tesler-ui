@@ -21,6 +21,7 @@ import ColumnTitle from '../ColumnTitle/ColumnTitle'
 import cn from 'classnames'
 import {useHierarchyCache} from './utils/useHierarchyCache'
 import {useExpandedKeys} from './utils/useExpandedKeys'
+import {getColumnWidth} from '../../utils/hierarchy'
 
 export interface FullHierarchyTableOwnProps {
     meta: WidgetTableMeta,
@@ -81,7 +82,8 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
     const fields = props.meta.fields
     const loading = props.loading
     const depthLevel = props.depth || 1
-    const indentLevel = depthLevel - 1
+    const levelValues = props.data?.map(item => item.level)
+    const maxDepth = levelValues && Math.max(...levelValues) || 1
 
     const textFilters = React.useMemo(() => props.bcFilters?.filter(filter =>
             [FilterType.contains, FilterType.equals].includes(filter.type)),
@@ -197,8 +199,8 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
         title: '',
         key: '_indentColumn',
         dataIndex: null as string,
-        className: cn(styles.selectColumn, styles[`padding${indentLevel}`]),
-        width: '100px',
+        className: cn(styles.selectColumn, styles[`padding${depthLevel - 1}`]),
+        width: getColumnWidth('_indentColumn', depthLevel, fields, props.rowMetaFields, maxDepth),
         render: (text: string, dataItem: AssociatedItem): React.ReactNode => {
             return null
         }
@@ -220,8 +222,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                     </ColumnTitle>,
                     key: item.key,
                     dataIndex: item.key,
-                    width: item.width || null,
-                    className: cn({[styles[`padding${indentLevel}`]]: fields[0].key === item.key && indentLevel}),
+                    width: getColumnWidth(item.key, depthLevel, fields, props.rowMetaFields, maxDepth, item.width),
                     render: (text: string, dataItem: AssociatedItem) => {
                         if (item.type === FieldType.multivalue) {
                             return <MultivalueHover
@@ -230,17 +231,23 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                             />
                         }
 
-                        return <Field
-                            bcName={bcName}
-                            cursor={dataItem.id}
-                            widgetName={props.meta.name}
-                            widgetFieldMeta={item}
-                            readonly
-                        />
+                        /**
+                         * Column width problems
+                         * https://github.com/ant-design/ant-design/issues/13825
+                         */
+                        return <div style={{wordWrap: 'break-word', wordBreak: 'break-word'}}>
+                            <Field
+                                bcName={bcName}
+                                cursor={dataItem.id}
+                                widgetName={props.meta.name}
+                                widgetFieldMeta={item}
+                                readonly
+                            />
+                        </div>
                     }
                 }))
         ]
-    }, [indentLevel, fields, props.meta.name, textFilters])
+    }, [depthLevel, fields, props.meta.name, textFilters])
 
     return loading
         ? <Skeleton loading paragraph={{rows: 5}}/>
