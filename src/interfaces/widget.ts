@@ -69,7 +69,11 @@ export interface WidgetFieldBase {
     /**
      * Whether the field is hidden
      */
-    hidden?: boolean
+    hidden?: boolean,
+    /**
+     * Shift value of different hierarchy level
+     */
+    hierarchyShift?: boolean
 }
 
 export interface WidgetListFieldBase extends WidgetFieldBase {
