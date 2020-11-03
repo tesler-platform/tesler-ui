@@ -144,18 +144,18 @@ describe('<TreeVirtualizedNode />', () => {
 
 function getTreeSample() {
     const tree = [
-        { id: '1', name: 'one', parentId: '0' },
-        { id: '2', name: 'two', parentId: '0' },
-        { id: '3', name: 'three', parentId: '0' },
-        { id: '11', name: 'four', parentId: '1' },
-        { id: '12', name: 'five', parentId: '1' },
-        { id: '13', name: 'six', parentId: '1' },
-        { id: '31', name: 'seven', parentId: '3' },
-        { id: '32', name: 'Lucky Eight', parentId: '3' },
-        { id: '21', name: 'nine', parentId: '2' },
-        { id: '22', name: 'ten', parentId: '2' },
-        { id: '221', name: 'eleven', parentId: '22' },
-        { id: '2211', name: 'Lucky Twelve', parentId: '221' },
+        { id: '1', name: 'one', parentId: '0', level: 1 },
+        { id: '2', name: 'two', parentId: '0', level: 1 },
+        { id: '3', name: 'three', parentId: '0', level: 1 },
+        { id: '11', name: 'four', parentId: '1', level: 2 },
+        { id: '12', name: 'five', parentId: '1', level: 2 },
+        { id: '13', name: 'six', parentId: '1', level: 2 },
+        { id: '31', name: 'seven', parentId: '3', level: 2 },
+        { id: '32', name: 'Lucky Eight', parentId: '3', level: 2 },
+        { id: '21', name: 'nine', parentId: '2', level: 2 },
+        { id: '22', name: 'ten', parentId: '2', level: 2 },
+        { id: '221', name: 'eleven', parentId: '22', level: 3 },
+        { id: '2211', name: 'Lucky Twelve', parentId: '221', level: 4 },
     ]
     return assignTreeLinks(tree)
 }
