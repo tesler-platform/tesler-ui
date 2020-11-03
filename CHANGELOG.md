@@ -1,3 +1,9 @@
+# Version 1.23.2 (November 3, 2020)
+
+## Fixes
+
+* `<TreeVirtualized />` should not rely on input data being presorted: they might be not, which leads to children nodes expanding wrong direction ([#503](https://github.com/tesler-platform/tesler-ui/pull/503))
+
 # Version 1.23.1 (October 30, 2020)
 
 ## Fixes
