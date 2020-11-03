@@ -21,6 +21,7 @@ import {PendingValidationFailsFormat} from '../interfaces/view'
 import {removeMultivalueTag} from './data/removeMultivalueTag'
 import {cancelRequestActionTypes, cancelRequestEpic} from '../utils/cancelRequestEpic'
 import {bcCancelCreateDataEpic} from './data/bcCancelCreateDataEpic'
+import {bcNewDataEpic} from './data/bcNewDataEpic'
 
 const maxDepthLevel = 10
 
@@ -355,45 +356,6 @@ const inlinePickListFetchDataEpic: Epic = (action$, store) => action$.ofType(typ
         return Observable.of($do.bcFetchDataFail({bcName: action.payload.bcName, bcUrl}))
     })
     return Observable.race(cancelFlow, normalFlow)
-})
-
-const bcNewDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperation)
-.filter(action => matchOperationRole(OperationTypeCrud.create, action.payload, store.getState()))
-.mergeMap((action) => {
-    const state = store.getState()
-    const bcName = action.payload.bcName
-    const bcUrl = buildBcUrl(bcName)
-    const context = { widgetName: action.payload.widgetName }
-    const params = { _action: action.payload.operationType}
-    return api.newBcData(state.screen.screenName, bcUrl, context, params)
-    .mergeMap(data => {
-        const rowMeta = data.row
-        const dataItem: DataItem = { id: null, vstamp: -1 }
-        data.row.fields.forEach(field => {
-            dataItem[field.key] = field.currentValue
-        })
-        const postInvoke = data.postActions[0]
-        const cursor = dataItem.id
-        return Observable.concat(
-            Observable.of($do.bcNewDataSuccess({ bcName, dataItem, bcUrl })),
-            Observable.of($do.bcFetchRowMetaSuccess({ bcName, bcUrl: `${bcUrl}/${cursor}`, rowMeta, cursor})),
-            postInvoke
-                ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName: action.payload.widgetName }))
-                : Observable.empty<never>(),
-            Observable.of($do.changeDataItem({
-                bcName: action.payload.bcName,
-                cursor: cursor,
-                dataItem: {
-                    id: cursor
-                }
-            }))
-
-        )
-    })
-    .catch((error: any) => {
-        console.log(error)
-        return Observable.of($do.bcNewDataFail({ bcName }))
-    })
 })
 
 const bcDeleteDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperation)
@@ -976,7 +938,6 @@ function requestBcChildren(bcName: string) {
     }
     return childrenBcMap
 }
-
 
 export const dataEpics = {
     bcFetchRowMetaRequest,

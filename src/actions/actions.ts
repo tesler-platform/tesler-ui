@@ -50,27 +50,37 @@ export class ActionPayloadTypes {
 
     /**
      * Browser location change occured (either through history listener or manually)
-     *
-     * @param rawLocation Change was requested to browser url
-     * @param location Change was requested to precalculated application route
-     * @param action History API type, usually 'PUSH'
      */
     changeLocation: {
+        /**
+         * Change was requested to browser url
+         */
         rawLocation?: string,
+        /**
+         * Change was requested to precalculated application route
+         */
         location?: Route,
+        /**
+         * History API type, usually 'PUSH'
+         */
         action: HistoryAction
     } = z
 
     /**
      * Authentication request
-     *
-     * @param login User-provided login
-     * @param password User-provided password
-     * @param role Optionally user can choose a role to authentificate with
      */
     login: {
+        /**
+         * User-provided login
+         */
         login: string,
+        /**
+         * User-provided password
+         */
         password: string,
+        /**
+         * Optionally user can choose a role to authentificate with
+         */
         role?: string
     } = z
 
@@ -81,10 +91,13 @@ export class ActionPayloadTypes {
 
     /**
      * Login was unsuccesful
-     *
-     * @param errorMsg Reason could be provided
      */
-    loginFail: { errorMsg: string } = z
+    loginFail: {
+        /**
+         * Reason could be provided
+         */
+        errorMsg: string
+    } = z
 
     /**
      * Logout was requested, manually or through stale session
@@ -102,19 +115,21 @@ export class ActionPayloadTypes {
      * TODO: 2.0.0 Should be string (just the screen name) instead;
      *
      * Initially this was due to `screen` reducer did not having access to `session` part of redux store
-     *
-     * @param screen Request initiated with all the meta from login response
      */
     selectScreen: {
+        /**
+         * Request initiated with all the meta from login response
+         */
         screen: SessionScreen
     } = z
 
     /**
      * Request to change active screen was unsuccesful (incorrect path, unknown screen, etc.)
-     *
-     * @param screenName Which screen was requested originally
      */
     selectScreenFail: {
+        /**
+         * Which screen was requested originally
+         */
         screenName: string
     } = z
 
@@ -137,23 +152,32 @@ export class ActionPayloadTypes {
 
     /**
      * Fetch data request for business component was initiated
-     *
-     * @param widgetName What widget requires data (widget can only request its own data here)
-     *
-     * @deprecated TODO: 2.0.0 Should be removed in favor of widgetName
-     * @param bcName The business component to fetch data for
-     *
-     * @deprecated TODO: 2.0.0 Should be all moved to separate hierarchy-specific action
-     * @param depth The level of hierarchy to fetch data for
-     * @param ignorePageLimit Page size should be ignored
-     * @param keepDelta Pending changes should not be dropped when performing this request (due to
-     * hierarchy expanging through cursor change, for same BC hierarchy this leads to data loss)
      */
     bcFetchDataRequest: {
+        /**
+         * The business component to fetch data for
+         *
+         * @deprecated TODO: 2.0.0 Should be removed in favor of widgetName
+         */
         bcName: string,
+        /**
+         * The level of hierarchy to fetch data for
+         *
+         * @deprecated TODO: 2.0.0 Should be all moved to separate hierarchy-specific action
+         */
         depth?: number,
+        /**
+         * What widget requires data (widget can only request its own data here)
+         */
         widgetName: string,
+        /**
+         * Page size should be ignored
+         */
         ignorePageLimit?: boolean,
+        /**
+         * Pending changes should not be dropped when performing this request
+         * (due to hierarchy expanging through cursor change, for same BC hierarchy this leads to data loss)
+         */
         keepDelta?: boolean
     } = z
 
@@ -183,142 +207,178 @@ export class ActionPayloadTypes {
 
     /**
      * Fetch data request for searchable fields
-     *
-     * @param bcName The business component to fetch data for
-     * @param searchSpec Search expression // TODO: Check format
-     * @param searchString Value to search for
      */
     inlinePickListFetchDataRequest: {
+        /**
+         * The business component to fetch data for
+         */
         bcName: string,
+        /**
+         * Search expression // TODO: Check format
+         */
         searchSpec: string,
+        /**
+         * Value to search for
+         */
         searchString: string
     } = z
 
     /**
      * Fetch data request was succesful
-     *
-     * @param data Data records from response for this business component
-     * @param bcUrl BC url with respect of parents cursors
-     * @param hasNext If there are more data to fetch (other pages etc.)
-     *
-     * @deprecated TODO: 2.0.0 Remove in favor of widgetName
-     * @param bcName Business component that requested data
-     *
-     * @deprecated TODO: 2.0.0 Should be all moved to separate hierarchy-specific action
-     * @param depth For same BC hierarchies, the level which was requested
      */
     bcFetchDataSuccess: {
+        /**
+         * Business component that requested data
+         *
+         * @deprecated TODO: 2.0.0 Remove in favor of widgetName
+         */
         bcName: string,
+        /**
+         * Data records from response for this business component
+         */
         data: DataItem[],
+        /**
+         * For same BC hierarchies, the level which was requested
+         *
+         * @deprecated TODO: 2.0.0 Should be all moved to separate hierarchy-specific action
+         */
         depth?: number,
+        /**
+         * BC url with respect of parents cursors
+         */
         bcUrl: string,
+        /**
+         * If there are more data to fetch (other pages etc.)
+         */
         hasNext?: boolean
     } = z
 
     /**
      * Fetch data request wac unsuccesful
-     *
-     * @param bcName Business component that initiated data fetch
-     * @param bcUrl BC url with respect of parents cursors
-     *
-     * @deprecated TODO: 2.0.0 Should be all moved to separate hierarchy-specific action
-     * @param depth For same BC hierarchies, the level which was requested
      */
     bcFetchDataFail: {
+        /**
+         * Business component that initiated data fetch
+         */
         bcName: string,
+        /**
+         * BC url with respect of parents cursors
+         */
         bcUrl: string,
+        /**
+         * For same BC hierarchies, the level which was requested
+         *
+         * @deprecated TODO: 2.0.0 Should be all moved to separate hierarchy-specific action
+         */
         depth?: number
     } = z
 
     /**
      * Fetch next chunk of data for table widgets with infinite scroll
-     *
-     * @param bcName Business component that initiated data fetch
-     * @param widgetName Widget that initiated row meta fetch
      */
     bcLoadMore: {
+        /**
+         * Business component that initiated data fetch
+         */
         bcName: string,
+        /**
+         * Widget that initiated row meta fetch
+         */
         widgetName?: string
     } = z
 
     /**
      * Fetch meta information for active record of business component
-     *
-     * @param widgetName Widget that initiated row meta fetch
-     *
-     * @deprecated TODO: 2.0.0 Remove in favor of widgetName
-     * @param bcName Business component that initiated row meta fetch
      */
     bcFetchRowMeta: {
+        /**
+         *
+         * Business component that initiated row meta fetch
+         *
+         * @deprecated TODO: 2.0.0 Remove in favor of widgetName
+         */
         bcName: string,
+        /**
+         * Widget that initiated row meta fetch
+         */
         widgetName: string
     } = z
 
     /**
-     * TODO
+     * Puts row meta received from Tesler API to the store.
      *
-     * @param bcName
-     * @param bcUrl
-     * @param rowMeta
-     * @param cursor
+     * Updates values in `data` store slice with new values from row meta when possible.
      */
     bcFetchRowMetaSuccess: {
+        /**
+         * Business component that initiated row meta fetch
+         */
         bcName: string,
+        /**
+         * Path to BC with respect to ancestors BC and their cursors
+         */
         bcUrl: string,
+        /**
+         * Row meta returned by Tesler API
+         */
         rowMeta: RowMeta,
+        /**
+         * Cursor for a record that initiated row meta fetch.
+         *
+         * Can be empty (e.g. BC has no records) or will be set to new id for `create` operation.
+         */
         cursor?: string
     } = z
 
     /**
      * TODO
-     *
-     * @param bcName
      */
     bcFetchRowMetaFail: {
         bcName: string
     } = z
 
     /**
-     * TODO
+     * @deprecated Not used; `sendOperation` with `create` role is used instead
      *
-     * @param bcName
+     * TODO: Remove in 2.0.0
      */
     bcNewData: {
+        /**
+         * Business component for which to create a new record
+         */
         bcName: string
     } = z
 
     /**
-     * TODO
-     *
-     * @param bcName
-     * @param dataItem
-     * @param bcUrl
+     * Put new record draft to `data` store slice
      */
     bcNewDataSuccess: {
+        /**
+         * Business component for which new record was created
+         */
         bcName: string,
+        /**
+         * New record with `id` returned by Tesler API and vstamp = -1 (denoting a record draft)
+         */
         dataItem: DataItem,
+        /**
+         * Path to BC with respect to ancestors BC and their cursors
+         */
         bcUrl: string
     } = z
 
     /**
-     * TODO
-     *
-     * @param bName
-     */
-
-    /**
-     * TODO
-     *
-     * @param bcName
+     * Dispatched when record creation failed
      */
     bcNewDataFail: {
+        /**
+         * Business component for which record creation failed
+         */
         bcName: string
     } = z
 
     /**
      * TODO
-     *
-     * @param bcName
      */
     bcDeleteDataFail: {
         bcName: string
@@ -326,11 +386,6 @@ export class ActionPayloadTypes {
 
     /**
      * Request to change Force active field was unsuccesful
-     *
-     * @param bcName
-     * @param bcUrl
-     * @param viewError
-     * @param entityError
      */
     forceActiveChangeFail: {
         bcName: string,
@@ -341,21 +396,31 @@ export class ActionPayloadTypes {
 
     /**
      * Perform CustomAction
-     *
-     * @param bcName The business component to fetch data for
-     * @param operationType Type of operation to be performed
-     * @param widgetName What widget requires data
-     * @param onSuccessAction Any other action
-     * @param confirm params for confirm modal
-     * @param bcKey key called bk
      */
     sendOperation: {
+        /**
+         * The business component to fetch data for
+         */
         bcName: string,
+        /**
+         * Type of operation to be performed
+         */
         operationType: OperationTypeCrud | string,
+        /**
+         * What widget requires data
+         */
         widgetName: string,
+        /**
+         * Any other action
+         */
         onSuccessAction?: AnyAction,
+        /**
+         * params for confirm modal
+         */
         confirm?: string,
         /**
+         * key called bk
+         *
          * @deprecated TODO: Remove in 2.0.0
          */
         bcKey?: string,
@@ -367,11 +432,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param bcUrl
-     * @param viewError
-     * @param entityError
      */
     sendOperationFail: {
         bcName: string,
@@ -382,9 +442,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param cursor
      */
     sendOperationSuccess: {
         bcName: string,
@@ -393,58 +450,66 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param postInvoke
-     * @param cursor
-     * @param widgetName What widget initiated original operation, TODO: mandatory in 2.0.0
-     *
-     * @deprecated TODO: Prefer widgetName instead (2.0.0)
-     * @param bcName
      */
     processPostInvoke: {
+        /**
+         * @deprecated TODO: Prefer widgetName instead (2.0.0)
+         */
         bcName: string,
         postInvoke: OperationPostInvokeAny,
         cursor?: string,
+        /**
+         * What widget initiated original operation, TODO: mandatory in 2.0.0
+         */
         widgetName?: string
     } = z
 
     /**
      * Operation to perform preInvoke actions
-     *
-     * @param bcName The business component to fetch data for
-     * @param operationType Type of operation to be performed
-     * @param widgetName What widget requires data
-     * @param preInvoke the action that will be performed before the main operation
      */
     processPreInvoke: {
+        /**
+         * The business component to fetch data for
+         */
         bcName: string,
+        /**
+         * Type of operation to be performed
+         */
         operationType: string,
+        /**
+         * What widget requires data
+         */
         widgetName: string,
+        /**
+         * Action that will be performed before the main operation
+         */
         preInvoke: OperationPreInvoke
     } = z
 
     /**
      * Operation to perform postInvokeConfirm actions
-     *
-     * @param bcName The business component to fetch data for
-     * @param operationType Type of operation to be performed
-     * @param widgetName What widget requires data
-     * @param postInvokeConfirm the action that will be performed after the main operation and confirmation
      */
     processPostInvokeConfirm: {
+        /**
+         * The business component to fetch data for
+         */
         bcName: string,
+        /**
+         * Type of operation to be performed
+         */
         operationType: string,
+        /**
+         * What widget requires data
+         */
         widgetName: string,
+        /**
+         * Action that will be performed after the main operation and confirmation
+         */
         postInvokeConfirm: OperationPostInvokeConfirm
     } = z
 
     /**
      * TODO
-     *
-     * @param widgetName
-     * @param bcName
-     * @param cursor
-     * @param fieldKey
      */
     userDrillDown: {
         widgetName: string,
@@ -455,10 +520,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcUrl
-     * @param bcName
-     * @param cursor
      */
     userDrillDownSuccess: {
         bcUrl: string,
@@ -468,11 +529,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param url
-     * @param drillDownType
-     * @param urlName
-     * @param route
      */
     drillDown: {
         url: string,
@@ -484,9 +540,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param cursorsMap
-     * @param keepDelta
      */
     bcChangeCursors: {
         cursorsMap: ObjectMap<string>,
@@ -495,10 +548,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param depth
-     * @param cursor
      */
     bcChangeDepthCursor: {
         bcName: string,
@@ -508,11 +557,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param cursors
-     * @param dataItems
-     * @param disableRetry
      */
     changeDataItem: {
         bcName: string,
@@ -523,10 +567,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param cursors
-     * @param dataItems
      */
     changeDataItems: {
         bcName: string,
@@ -536,12 +576,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param currentRecordData
-     * @param rowMeta
-     * @param bcName
-     * @param bcUrl
-     * @param cursor
      */
     forceActiveRmUpdate: {
         /**
@@ -556,13 +590,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param calleeBCName
-     * @param associateFieldKey
-     * @param assocValueKey
-     * @param active
-     * @param isFilter
      */
     showViewPopup: {
         /**
@@ -592,8 +619,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
      */
     closeViewPopup: {
         bcName: string
@@ -601,9 +626,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param map
-     * @param bcName
      */
     viewPutPickMap: {
         map: PickMap,
@@ -617,10 +639,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcNames
-     * @param calleeBCName
-     * @param associateFieldKey
      */
     saveAssociations: {
         bcNames: string[],
@@ -633,9 +651,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param records
      */
     changeAssociations: {
         bcName: string,
@@ -644,13 +659,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param popupBcName
-     * @param cursor
-     * @param associateFieldKey
-     * @param dataItem
-     * @param removedItem
      */
     removeMultivalueTag: {
         bcName: string,
@@ -663,10 +671,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param cursor
-     * @param dataItem
      */
     bcSaveDataSuccess: {
         bcName: string,
@@ -676,11 +680,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param bcUrl
-     * @param entityError
-     * @param viewError
      */
     bcSaveDataFail: {
         bcName: string,
@@ -691,27 +690,30 @@ export class ActionPayloadTypes {
 
     /**
      * Save info about current operation for confirm modal
-     *
-     * @param operation Current operation
-     * @param confirmOperation Text for confirm modal
      */
     operationConfirmation: {
+        /**
+         * Current operation
+         */
         operation: {
             bcName: string,
             operationType: OperationTypeCrud | string,
             widgetName: string
         },
+        /**
+         * Text for confirm modal
+         */
         confirmOperation: OperationPostInvokeConfirm
     } = z
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param widgetName What widget requires data (widget can only request its own data here)
      */
     bcForceUpdate: {
         bcName: string,
+        /**
+         * What widget requires data (widget can only request its own data here)
+         */
         widgetName?: string
     } = z
 
@@ -732,8 +734,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcNames
      */
     bcCancelPendingChanges: {
         bcNames: string[]
@@ -741,11 +741,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param cursor
-     * @param ignoreChildrenPageLimit
-     * @param keepDelta
      */
     bcSelectRecord: {
         bcName: string,
@@ -756,10 +751,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param depth
-     * @param cursor
      */
     bcSelectDepthRecord: {
         bcName: string,
@@ -769,11 +760,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param widgetName
-     * @param dataItem
-     * @param assocValueKey
      */
     changeAssociation: {
         bcName: string,
@@ -784,12 +770,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param depth
-     * @param widgetName
-     * @param dataItem
-     * @param assocValueKey
      */
     changeAssociationSameBc: {
         bcName: string,
@@ -801,12 +781,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param depth
-     * @param widgetName
-     * @param dataItem
-     * @param assocValueKey
      */
     changeAssociationFull: {
         bcName: string,
@@ -821,10 +795,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param assocValueKey
-     * @param selected
      */
     changeChildrenAssociations: {
         bcName: string,
@@ -834,11 +804,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param depth
-     * @param assocValueKey
-     * @param selected
      */
     changeChildrenAssociationsSameBc: {
         bcName: string,
@@ -849,12 +814,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param parentId
-     * @param depth
-     * @param assocValueKey
-     * @param selected
      */
     changeDescendantsAssociationsFull: {
         bcName: string,
@@ -866,8 +825,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcNames
      */
     dropAllAssociations: {
         bcNames: string[]
@@ -875,9 +832,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param depthFrom
      */
     dropAllAssociationsSameBc: {
         bcName: string,
@@ -886,10 +840,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param depth
-     * @param dropDescendants
      */
     dropAllAssociationsFull: {
         bcName: string,
@@ -899,9 +849,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param path
-     * @param params
      */
     handleRouter: {
         path: string,
@@ -910,10 +857,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param widgetName
-     * @param rowId
-     * @param fieldKey
      */
     selectTableCellInit: {
         widgetName: string,
@@ -923,10 +866,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param widgetName
-     * @param rowId
-     * @param fieldKey
      */
     selectTableCell: {
         widgetName: string,
@@ -936,10 +875,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param cursor
-     * @param router
      */
     showAllTableRecordsInit: {
         bcName: string,
@@ -952,9 +887,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param type
-     * @param message
      */
     showNotification: {
         type: AppNotificationType,
@@ -963,8 +895,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param id
      */
     closeNotification: {
         id: number
@@ -972,9 +902,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param filter
      */
     bcAddFilter: {
         bcName: string,
@@ -983,9 +910,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param filter
      */
     bcRemoveFilter: {
         bcName: string,
@@ -994,8 +918,6 @@ export class ActionPayloadTypes {
 
     /**
      * Remove all filters at once
-     *
-     * @param bcName
      */
     bcRemoveAllFilters: {
         bcName: string
@@ -1003,9 +925,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param sorter
      */
     bcAddSorter: {
         bcName: string,
@@ -1014,9 +933,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param sorter
      */
     bcRemoveSorter: {
         bcName: string,
@@ -1025,9 +941,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param bcName
-     * @param page
      */
     bcChangePage: {
         bcName: string,
@@ -1036,8 +949,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param error
      */
     showViewError: {
         error: ApplicationError
@@ -1060,8 +971,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param fileId
      */
     downloadFile: {
         fileId: string
@@ -1069,8 +978,6 @@ export class ActionPayloadTypes {
 
     /**
      * TODO
-     *
-     * @param url
      */
     downloadFileByUrl: {
         url: string

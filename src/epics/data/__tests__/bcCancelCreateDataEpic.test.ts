@@ -32,7 +32,7 @@ import {OperationTypeCrud, OperationPostInvokeRefreshBc, OperationPostInvokeType
 const customActionMock = jest.fn().mockImplementation((...args: Parameters<typeof customAction>) => {
     const [screenName] = args
     if (screenName === 'crash') {
-        throw Error('test request crash')
+        return Observable.throw('test request crash')
     }
     return Observable.of({ record: null,
         postActions: screenName === 'withPostInvoke' ? [postInvoke] : [],
@@ -60,6 +60,7 @@ describe('bcCancelCreateDataEpic', () => {
     afterEach(() => {
         store.getState().view.widgets = [getWidgetMeta()]
         store.getState().screen.screenName = 'test'
+        jest.clearAllMocks()
     })
 
     it('sends `customAction` request', () => {
@@ -99,7 +100,7 @@ describe('bcCancelCreateDataEpic', () => {
         })
     })
 
-    it('processes post invoke', () => {
+    it('processs post invoke', () => {
         store.getState().screen.screenName = 'withPostInvoke'
         const action = $do.sendOperation({
             bcName: 'bcExample',
@@ -122,8 +123,7 @@ describe('bcCancelCreateDataEpic', () => {
         })
     })
 
-    // TODO: Doesn't work
-    it.skip('dispatch `bcDeleteDataFail` and console error on crash', () => {
+    it('dispatch `bcDeleteDataFail` and console error on crash', () => {
         store.getState().screen.screenName = 'crash'
         const action = $do.sendOperation({
             bcName: 'bcMissing',
@@ -137,7 +137,7 @@ describe('bcCancelCreateDataEpic', () => {
             expect(result.length).toBe(1)
             expect(result[0]).toEqual(expect.objectContaining({
                 type: coreActions.bcDeleteDataFail,
-                payload:  { bcName: 'bcExample' }
+                payload:  { bcName: 'bcMissing' }
             }))
         })
     })
