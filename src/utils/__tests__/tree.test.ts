@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {assignTreeLinks, getDescendants, buildSearchResultTree} from '../tree'
+import {assignTreeLinks, getDescendants, buildSearchResultTree, presort} from '../tree'
 
 describe('assignTreeLinks', () => {
     const sample = getAssignTreeLinksSample()
@@ -62,20 +62,61 @@ describe('buildSearchResultTree', () => {
     })
 })
 
+describe('presort', () => {
+    it('sorts data so that every parent followed by its descendant', () => {
+        const sample = getUnsortedSample()
+        const unsorted = assignTreeLinks(sample)
+        const sorted = presort(unsorted)
+        const expected = [
+            { id: '1', parentId: '0', level: 1 },
+            { id: '11', parentId: '1', level: 2 },
+            { id: '12', parentId: '1', level: 2 },
+            { id: '13', parentId: '1', level: 2 },
+            { id: '2', parentId: '0', level: 1 },
+            { id: '21', parentId: '2', level: 2 },
+            { id: '22', parentId: '2', level: 2 },
+            { id: '221', parentId: '22', level: 3 },
+            { id: '2211', parentId: '221', level: 4 },
+            { id: '3', parentId: '0', level: 1 },
+            { id: '31', parentId: '3', level: 2 },
+            { id: '32', parentId: '3', level: 2 }
+        ]
+        expect(unsorted.every((item, index) => expected[index].id === item.id)).toBe(false)
+        expect(sorted.every((item, index) => expected[index].id === item.id)).toBe(true)
+    })
+})
+
 function getAssignTreeLinksSample() {
     return [
-        { id: '1', parentId: '0' },
-        { id: '2', parentId: '0' },
-        { id: '3', parentId: '0' },
-        { id: '11', parentId: '1' },
-        { id: '12', parentId: '1' },
-        { id: '13', parentId: '1' },
-        { id: '31', parentId: '3' },
-        { id: '312', parentId: '3' },
-        { id: '21', parentId: '2' },
-        { id: '22', parentId: '2' },
-        { id: '221', parentId: '22' },
-        { id: '2211', parentId: '221' },
+        { id: '1', parentId: '0', level: 1 },
+        { id: '2', parentId: '0', level: 1 },
+        { id: '3', parentId: '0', level: 1 },
+        { id: '11', parentId: '1', level: 2 },
+        { id: '12', parentId: '1', level: 2 },
+        { id: '13', parentId: '1', level: 2 },
+        { id: '31', parentId: '3', level: 2 },
+        { id: '32', parentId: '3', level: 2 },
+        { id: '21', parentId: '2', level: 2 },
+        { id: '22', parentId: '2', level: 2 },
+        { id: '221', parentId: '22', level: 3 },
+        { id: '2211', parentId: '221', level: 4 }
+    ]
+}
+
+function getUnsortedSample() {
+    return [
+        { id: '11', parentId: '1', level: 2 },
+        { id: '12', parentId: '1', level: 2 },
+        { id: '13', parentId: '1', level: 2 },
+        { id: '1', parentId: '0', level: 1 },
+        { id: '21', parentId: '2', level: 2 },
+        { id: '2211', parentId: '221', level: 4 },
+        { id: '221', parentId: '22', level: 3 },
+        { id: '22', parentId: '2', level: 2 },
+        { id: '2', parentId: '0', level: 1 },
+        { id: '31', parentId: '3', level: 2 },
+        { id: '32', parentId: '3', level: 2 },
+        { id: '3', parentId: '0', level: 1 },
     ]
 }
 

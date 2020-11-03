@@ -19,7 +19,7 @@ import React from 'react'
 import {FixedSizeList, FixedSizeListProps, ListChildComponentProps} from 'react-window'
 import TreeVirtualizedNode from './TreeVirtualizedNode'
 import {DataNode, TreeNodeBidirectional} from '../../../interfaces/tree'
-import {assignTreeLinks, getDescendants} from '../../../utils/tree'
+import {assignTreeLinks, getDescendants, presort} from '../../../utils/tree'
 import {useSearchResult} from './useSearchResult'
 import {useMatchingNodes} from './useMatchingNodes'
 import {BcFilter, FilterType} from '../../../interfaces/filters'
@@ -30,7 +30,7 @@ import {WidgetListField} from '../../../interfaces/widget'
  */
 export interface TreeVirtualizedProps<T> extends Omit<FixedSizeListProps, 'itemCount' | 'children'> {
     /**
-     * Presorted (every parent is followed by its descendants) flat array of nodes
+     * Flat array of nodes
      */
     items: T[],
     /**
@@ -72,12 +72,12 @@ const initialExpanded: Record<string, boolean> = { '0': true }
 export function TreeVirtualized<T extends DataNode>(props: TreeVirtualizedProps<T>) {
     const { items, fields, filters, matchCase, children, ...rest } = props
     /**
-     * Flat representation with
+     * Flat representation with assigned parent and children references
      */
     const [flatTree, setFlatTree] = React.useState<TreeNodeBidirectional[]>()
     React.useEffect(() => {
         const nextFlatTree = assignTreeLinks(items)
-        setFlatTree(nextFlatTree)
+        setFlatTree(presort(nextFlatTree))
     }, [items])
     /**
      * An array of ids for expanded nodes
