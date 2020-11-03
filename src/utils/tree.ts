@@ -95,3 +95,21 @@ export function buildSearchResultTree<T extends TreeNodeBidirectional = TreeNode
     // todo: iterate through result directly
     return nodes.filter(item => result[item.id] === true)
 }
+
+/**
+ * Presort items based on their `level` property: each parent is followed by its descendant.
+ * Items with level `1` considered to be root-level items.
+ *
+ * Notice: not very performant and almost always wasted as Tesler API mostly returns already
+ * sorted data.
+ *
+ * @param data Unsorted data
+ */
+export function presort(data: TreeNodeBidirectional[]) {
+    const result: string[] = []
+    data.filter(item => item.level === 1).forEach(item => {
+        result.push(item.id)
+        getDescendants(item.children, result)
+    })
+    return result.map(id => data.find(match => match.id === id))
+}
