@@ -17,7 +17,7 @@
 
 import React from 'react'
 import {mount} from 'enzyme'
-import {TreeVirtualized} from '../TreeVirtualized'
+import {TreeVirtualized, TreeVirtualizedDomContainer} from '../TreeVirtualized'
 import {TreeVirtualizedNode, TreeVirtualizedNodeProps} from '../TreeVirtualizedNode'
 import {act} from 'react-dom/test-utils'
 import {FilterType} from '../../../../interfaces/filters'
@@ -113,6 +113,27 @@ describe('<TreeVirtualized />', () => {
         expect(wrapper.find(TreeVirtualizedNode).at(0).text()).toBe('one')
         expect(wrapper.find(TreeVirtualizedNode).at(1).text()).toBe('two')
         expect(wrapper.find(TreeVirtualizedNode).at(2).text()).toBe('three')
+    })
+
+    it('provides `scrollToIndex` and `scrollToItem` helpers for Selenium tests', () => {
+        const largeSample = new Array(200).fill(null).map((item, index) => {
+            return { id: index.toString(), parentId: '0', level: 1 }
+        })
+        const wrapper = mount(<Provider store={store}>
+            <TreeVirtualized<typeof largeSample[number]>
+                items={largeSample}
+                width={640}
+                height={480}
+                itemSize={45}
+                fields={[{ key: 'name', title: '', type: FieldType.input }]}
+                onSelect={jest.fn}
+            />
+            </Provider>
+        )
+        const container = (wrapper.getDOMNode() as TreeVirtualizedDomContainer)
+        container.scrollToItem('50', 'id', 'start')
+        wrapper.update()
+        expect((wrapper.find(TreeVirtualizedNode).at(0).props() as any).index).toBe(48)
     })
 })
 
