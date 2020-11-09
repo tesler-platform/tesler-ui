@@ -600,6 +600,7 @@ export class ActionPayloadTypes {
          * @deprecated TODO: Remove in 2.0.0 in favor of widget name
          */
         calleeBCName?: string,
+        calleeWidgetName?: string,
         associateFieldKey?: string,
         assocValueKey?: string,
         active?: boolean,
