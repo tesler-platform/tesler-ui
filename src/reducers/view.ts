@@ -400,7 +400,7 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
             return { ...state, pendingValidationFails: initialState.pendingValidationFails }
         }
         case types.showViewPopup: {
-            const { bcName, calleeBCName, associateFieldKey, assocValueKey, active, isFilter, type } = action.payload
+            const { bcName, calleeBCName, calleeWidgetName, associateFieldKey, assocValueKey, active, isFilter, type } = action.payload
             const widgetValueKey = store.view.widgets.find(item => item.bcName === bcName)?.options?.displayedValueKey
             return {
                 ...state,
@@ -408,6 +408,7 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                     type,
                     bcName,
                     calleeBCName,
+                    calleeWidgetName,
                     associateFieldKey,
                     assocValueKey: assocValueKey ?? widgetValueKey,
                     active,
