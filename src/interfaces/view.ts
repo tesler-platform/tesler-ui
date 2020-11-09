@@ -100,6 +100,10 @@ export interface PopupData {
      */
     calleeBCName?: string,
     /**
+     * Name of the widget that initiated popup
+     */
+    calleeWidgetName?: string,
+    /**
      * Type of the popup
      *
      * TODO: Will not be optional in 2.0.0
