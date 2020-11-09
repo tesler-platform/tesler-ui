@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import React from 'react'
-import {FixedSizeList, FixedSizeListProps, ListChildComponentProps} from 'react-window'
+import React, {RefCallback} from 'react'
+import {FixedSizeList, FixedSizeListProps, ListChildComponentProps, Align} from 'react-window'
 import TreeVirtualizedNode from './TreeVirtualizedNode'
 import {DataNode, TreeNodeBidirectional} from '../../../interfaces/tree'
 import {assignTreeLinks, getDescendants, presort} from '../../../utils/tree'
@@ -57,6 +57,20 @@ export interface TreeVirtualizedProps<T> extends Omit<FixedSizeListProps, 'itemC
      * If true, casing of searchExpression will be respected
      */
     matchCase?: boolean
+}
+
+/**
+ * Container element containing console helpers for autotests
+ */
+export type TreeVirtualizedDomContainer = HTMLDivElement & {
+    /**
+     * Scroll to the specified item
+     *
+     * @param column Target column key
+     * @param value Target cell value
+     * @param align `react-window` Align
+     */
+    scrollToItem(column: string, value: string, align?: Align): void
 }
 
 /**
@@ -132,8 +146,23 @@ export function TreeVirtualized<T extends DataNode>(props: TreeVirtualizedProps<
             onSelect: props.onSelect
         }
     }, [resultItems, handleToggle, expandedNodes, filters, fields, props.multiple, props.onSelect])
+    /**
+     * Console helpers for auto tests
+     */
+    const outerRef = React.useRef<TreeVirtualizedDomContainer>()
+    const autotestUtils: RefCallback<FixedSizeList> = React.useCallback((node) => {
+        if (node && outerRef.current) {
+            outerRef.current.scrollToItem = (value, column, align) => {
+                const rowIndex = resultItems.findIndex((item => (item as any)[column] === value))
+                node.scrollToItem(rowIndex, align)
+            }
+        }
+    }, [resultItems])
     return <FixedSizeList
         {...rest}
+        outerRef={outerRef}
+        ref={autotestUtils}
+        className="TreeVirtualized__container"
         itemCount={memoizedData.items.length}
         itemData={memoizedData}
     >

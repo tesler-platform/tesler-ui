@@ -109,7 +109,9 @@ export function presort(data: TreeNodeBidirectional[]) {
     const result: string[] = []
     data.filter(item => item.level === 1).forEach(item => {
         result.push(item.id)
-        getDescendants(item.children, result)
+        if (item.children) {
+            getDescendants(item.children, result)
+        }
     })
     return result.map(id => data.find(match => match.id === id))
 }
