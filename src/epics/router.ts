@@ -18,18 +18,13 @@
 import {$do, AnyAction, Epic, types} from '../actions/actions'
 import {Observable} from 'rxjs/Observable'
 import * as api from '../api/api'
-import {historyObj} from '../reducers/router'
 import {ObjectMap} from '../interfaces/objectMap'
-import {makeRelativeUrl, parseBcCursors} from '../utils/history'
+import {parseBcCursors} from '../utils/history'
 import {buildBcUrl} from '../utils/strings'
 import {DrillDownType, RouteType} from '../interfaces/router'
-import qs from 'query-string'
-import {defaultParseLocation} from '../Provider'
-import {shallowCompare} from '../utils/redux'
-import {parsePath} from 'history'
-import {parseFilters, parseSorters} from '../utils/filters'
 import {notification} from 'antd'
 import i18n from 'i18next'
+import {drillDown} from './router/drilldown'
 
 /**
  * Epic of changing the current route
@@ -171,82 +166,6 @@ const changeView: Epic = (action$, store) => action$.ofType(types.selectView)
     })
     if (Object.keys(cursorsDiffMap).length) {
         return Observable.of($do.bcChangeCursors({ cursorsMap: cursorsDiffMap }))
-    }
-    return Observable.empty()
-})
-
-const drillDown: Epic = (action$, store) => action$.ofType(types.drillDown)
-.switchMap(action => {
-    const state = store.getState()
-    const url = action.payload.url
-    switch (action.payload.drillDownType) {
-        case DrillDownType.external:
-            window.location.href = url
-            break
-        case DrillDownType.externalNew:
-            if (/^[a-z0-9]+:\/\//i.test(url)) {
-                window.open(url)
-            }
-            break
-        case DrillDownType.relative:
-            window.location.href = `${window.location.origin}/${url}`
-            break
-        case DrillDownType.relativeNew:
-            window.open(`${window.location.origin}/${url}`, '_blank')
-            break
-        case DrillDownType.inner:
-        default:
-            const [urlBase, urlParams] = url.split('?')
-            const urlFilters = qs.parse(urlParams).filters
-            const urlSorters = qs.parse(urlParams).sorters
-            let newFilters: Record<string, string> = null
-            let newSorters: Record<string, string> = null
-            try {
-                newFilters = JSON.parse(urlFilters)
-            } catch {
-                urlFilters && console.warn('Failed to parse filters on drilldown')
-                newFilters = {}
-            }
-            try {
-                newSorters = JSON.parse(urlSorters)
-            } catch {
-                urlSorters && console.warn('Failed to parse sorters on drilldown')
-                newSorters = {}
-            }
-            const bcToUpdate: Record<string, boolean> = {}
-            // If filter drilldown specifies new filters or explicitly says they are empty, drop previous filters
-            Object.keys(state.screen.filters).forEach(bcName => {
-                if (newFilters[bcName] === '' || newFilters[bcName]) {
-                    bcToUpdate[bcName] = true
-                    store.dispatch($do.bcRemoveAllFilters({ bcName }))
-                }
-            })
-            // Apply each new filter
-            Object.entries(newFilters).forEach(([ bcName, filterExpression ]) => {
-                const parsedFilters = parseFilters(filterExpression)
-                parsedFilters?.forEach(filter => {
-                    bcToUpdate[bcName] = true
-                    store.dispatch($do.bcAddFilter({ bcName, filter }))
-                })
-            })
-            // Apply each new sorter
-            Object.entries(newSorters).forEach(([ bcName, sortExpression ]) => {
-                const sorter = parseSorters(sortExpression)
-                store.dispatch($do.bcAddSorter({ bcName, sorter }))
-                bcToUpdate[bcName] = true
-            })
-            const prevState = state.router
-            const nextState = defaultParseLocation(parsePath(url))
-            const willUpdateAnyway = shallowCompare(prevState, nextState, ['params']).length > 0
-            // If screen or view is different all BC will update anyway so there is no need
-            // to manually set them for update
-            if (!willUpdateAnyway) {
-                Object.keys(bcToUpdate).forEach(bcName => {
-                    store.dispatch($do.bcForceUpdate({ bcName }))
-                })
-            }
-            historyObj.push(makeRelativeUrl(urlBase))
-            break
     }
     return Observable.empty()
 })
