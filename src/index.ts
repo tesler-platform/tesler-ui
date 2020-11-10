@@ -183,8 +183,13 @@ export {
 /**
  * Epics implementations
  */
-export {sendOperationEpicImpl} from './epics/view'
+export {processPostInvokeImpl} from './epics/screen/processPostInvoke'
+export {fileUploadConfirmImpl} from './epics/view/fileUploadConfirm'
+export {showFileUploadPopupImpl} from './epics/view/showFileUploadPopup'
 export {removeMultivalueTagImpl} from './epics/data/removeMultivalueTag'
+export {bcCancelCreateDataEpicImpl} from './epics/data/bcCancelCreateDataEpic'
+export {bcNewDataEpicImpl} from './epics/data/bcNewDataEpic'
+export {drillDownImpl} from './epics/router/drilldown'
 
 /**
  * Autosave middleware utils
