@@ -1,3 +1,15 @@
+# Version 1.24.0 (November 11, 2020)
+
+## Features
+
+* `icon` and `showOnlyIcon` properties are added to interface `OperationGroup` ([#507](https://github.com/tesler-platform/tesler-ui/issues/495))
+* `calleeWidgetName` property is added to `PopupData` interface ([#507](https://github.com/tesler-platform/tesler-ui/issues/495))
+* console helper `scrollToItem` for automation testing of `<TreeVirtualized />` components ([#506](https://github.com/tesler-platform/tesler-ui/issues/495))
+
+## Fixes
+
+* `bcNewDataEpic` should proccess postinvokes after dispatching `changeDataItem`, not before, otherwise pending changes might end up containing changes for BC that is no longer present ([#505](https://github.com/tesler-platform/tesler-ui/pull/505))
+
 # Version 1.23.2 (November 3, 2020)
 
 ## Fixes
