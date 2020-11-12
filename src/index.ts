@@ -184,6 +184,12 @@ export {
  * Epics implementations
  */
 export {processPostInvokeImpl} from './epics/screen/processPostInvoke'
+export {apiErrorImpl} from './epics/screen/apiError'
+export {httpError401Impl} from './epics/screen/httpError401'
+export {httpError409Impl} from './epics/screen/httpError409'
+export {httpError418Impl} from './epics/screen/httpError418'
+export {httpError500Impl} from './epics/screen/httpError500'
+export {httpErrorDefaultImpl} from './epics/screen/httpErrorDefault'
 export {fileUploadConfirmImpl} from './epics/view/fileUploadConfirm'
 export {showFileUploadPopupImpl} from './epics/view/showFileUploadPopup'
 export {sendOperationEpicImpl} from './epics/view/sendOperation'

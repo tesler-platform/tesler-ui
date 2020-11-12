@@ -3,6 +3,8 @@ import {Observable} from 'rxjs/Observable'
 import {OperationPostInvokeConfirmType, OperationPreInvokeType} from '../interfaces/operation'
 import {axiosInstance} from '../Provider'
 import {processPostInvoke} from './screen/processPostInvoke'
+import {apiError} from './screen/apiError'
+import {httpError401} from './screen/httpError401'
 
 const downloadFile: Epic = (action$, store) => action$.ofType(types.downloadFile)
 .mergeMap((action) => {
@@ -65,7 +67,9 @@ export const screenEpics = {
     processPostInvoke,
     downloadFile,
     downloadFileByUrl,
-    processPostInvokeConfirm
+    processPostInvokeConfirm,
+    apiError,
+    httpError401
 }
 
 export default screenEpics
