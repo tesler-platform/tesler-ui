@@ -4,10 +4,6 @@ import qs from 'query-string'
 import {axiosInstance, getStoreInstance} from '../Provider'
 import {TeslerResponse} from '../interfaces/objectMap'
 import {$do} from '../actions/actions'
-import {OperationError} from '../interfaces/operation'
-import {BusinessError, ApplicationErrorType, SystemError} from '../interfaces/view'
-import {openButtonWarningNotification} from './notifications'
-import {historyObj} from '../reducers/router'
 
 export interface ApiCallContext {
     widgetName: string
@@ -55,70 +51,7 @@ function redirectOccurred(value: AxiosResponse<TeslerResponse>) {
  * @param callContext
  */
 function onErrorHook(error: AxiosError, callContext?: ApiCallContext) {
-    if (error.response) {
-        switch (error.response.status) {
-            case 401 : {
-                getStoreInstance().dispatch($do.logoutDone(null))
-                historyObj.push('/')
-                break
-            }
-            case 418 : {
-                const typedError = error.response.data as OperationError
-                if (typedError.error.popup) {
-                    const businessError: BusinessError = {
-                        type: ApplicationErrorType.BusinessError,
-                        message: typedError.error.popup[0]
-                    }
-                    getStoreInstance().dispatch($do.showViewError({error: businessError}))
-                    if (typedError.error.postActions?.[0]) {
-                        const widget = getStoreInstance().getState().view.widgets.find(item => item.name === callContext.widgetName)
-                        const bcName = widget?.type
-                        getStoreInstance().dispatch($do.processPostInvoke({
-                            bcName,
-                            postInvoke: typedError.error.postActions[0],
-                            widgetName: widget.name
-                        }))
-                    }
-                }
-                break
-            }
-            case 409 : {
-                const notificationMessage = error.response.data.error?.popup?.[0] || ''
-                openButtonWarningNotification(
-                    notificationMessage,
-                    'OK',
-                    0,
-                    null,
-                    'action_edit_error'
-                )
-                break
-            }
-            case 500 : {
-                const systemError: SystemError = {
-                    type: ApplicationErrorType.SystemError,
-                    details: error.response.statusText,
-                    error: error
-                }
-                getStoreInstance().dispatch($do.showViewError({error: systemError}))
-                break
-            }
-            default : {
-                const businessError = {
-                    type: ApplicationErrorType.BusinessError,
-                    code: error.response.status,
-                    details: error.response.data
-                }
-                getStoreInstance().dispatch($do.showViewError({error: businessError}))
-            }
-        }
-    } else {
-        if (!axios.isCancel(error)) {
-            const networkError = {
-                type: ApplicationErrorType.NetworkError,
-            }
-            getStoreInstance().dispatch($do.showViewError({error: networkError}))
-        }
-    }
+    getStoreInstance().dispatch($do.apiError({ error, callContext }))
     throw error
 }
 
