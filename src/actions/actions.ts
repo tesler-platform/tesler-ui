@@ -36,6 +36,8 @@ import {
     OperationPreInvoke
 } from '../interfaces/operation'
 import {BcFilter, BcSorter} from '../interfaces/filters'
+import {AxiosError} from 'axios'
+import {ApiCallContext} from '../utils/api'
 
 const z = null as any
 
@@ -992,6 +994,38 @@ export class ActionPayloadTypes {
          * Ids of uploaded files
          */
         fileIds: string[]
+    } = z
+
+    /**
+     * An error occured during API request
+     */
+    apiError: {
+        /**
+         * Axios error object
+         */
+        error: AxiosError,
+        /**
+         * Request context
+         */
+        callContext: ApiCallContext
+    } = z
+
+    /**
+     * Fires for specific HTTP status code
+     */
+    httpError: {
+        /**
+         * Status code for failed request caught by `onErrorHook`
+         */
+        statusCode: number,
+        /**
+         * Axios error object
+         */
+        error: AxiosError,
+        /**
+         * Request context
+         */
+        callContext: ApiCallContext
     } = z
 
     /**
