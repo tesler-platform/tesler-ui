@@ -1,4 +1,4 @@
-import {types, Epic, $do, AnyAction, ActionsMap} from '../actions/actions'
+import {types, Epic, $do, AnyAction} from '../actions/actions'
 import {Observable} from 'rxjs/Observable'
 import * as api from '../api/api'
 import {buildBcUrl} from '../utils/strings'
@@ -17,89 +17,9 @@ import {parseBcCursors} from '../utils/history'
 import {WidgetTypes} from '../interfaces/widget'
 import {MultivalueSingleValue, PendingDataItem} from '../interfaces/data'
 import {matchOperationRole} from '../utils/operations'
-import {Store as AppState} from '../interfaces/store'
-import {Store} from 'redux'
 import {fileUploadConfirm} from './view/fileUploadConfirm'
 import {showFileUploadPopup} from './view/showFileUploadPopup'
-
-/**
- * Default implementation of `sendOperation` handler
- *
- * @param action
- * @param store
- */
-export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store: Store<AppState, AnyAction>) {
-    const state = store.getState()
-    const screenName = state.screen.screenName
-    const {bcName, operationType, widgetName} = action.payload
-    // TODO: Remove conformOperation n 2.0.0
-    const confirm = action.payload.confirmOperation?.type || action.payload.confirm
-    const bcUrl = buildBcUrl(bcName, true)
-    const bc = state.screen.bo.bc[bcName]
-    const rowMeta = bcUrl && state.view.rowMeta[bcName]?.[bcUrl]
-    const fields = rowMeta?.fields
-    const cursor = bc.cursor
-    const record = state.data[bcName]?.find(item => item.id === bc.cursor)
-    const pendingRecordChange = state.view.pendingDataChanges[bcName]?.[bc.cursor]
-    for (const key in pendingRecordChange) {
-        if (fields.find(item => item.key === key && item.disabled)) {
-            delete pendingRecordChange[key]
-        }
-    }
-    const data = record && { ...pendingRecordChange, vstamp: record.vstamp }
-    const defaultSaveOperation = state.view.widgets
-        ?.find(item => item.name === widgetName)?.options?.actionGroups
-        ?.defaultSave === action.payload.operationType && action.payload?.onSuccessAction?.type === types.changeLocation
-    const params = confirm
-        ? { _action: operationType, _confirm: confirm }
-        : { _action: operationType }
-    const context = { widgetName: action.payload.widgetName }
-    return api.customAction(screenName, bcUrl, data, context, params)
-    .mergeMap(response => {
-        const postInvoke = response.postActions[0]
-        // TODO: Remove in 2.0.0 in favor of postInvokeConfirm (is this todo needed?)
-        const preInvoke = response.preInvoke
-        // defaultSaveOperation mean that executed custom autosave and postAction will be ignored
-        // drop pendingChanges and onSuccessAction execute instead
-        return defaultSaveOperation
-        ? action?.payload?.onSuccessAction
-            ? Observable.concat(
-                Observable.of($do.bcCancelPendingChanges({bcNames: [bcName]})),
-                Observable.of(action.payload.onSuccessAction))
-            : Observable.empty<never>()
-        : Observable.concat(
-            Observable.of($do.sendOperationSuccess({ bcName, cursor })),
-            Observable.of($do.bcForceUpdate({ bcName })),
-            ...postOperationRoutine(widgetName, postInvoke, preInvoke, operationType, bcName),
-        )
-    })
-    .catch((e: AxiosError) => {
-        console.error(e)
-        let viewError: string = null
-        let entityError: OperationErrorEntity = null
-        const operationError = e.response?.data as OperationError
-        if (e.response?.data === Object(e.response?.data)) {
-            entityError = operationError?.error?.entity
-            viewError = operationError?.error?.popup?.[0]
-        }
-        return Observable.of($do.sendOperationFail({ bcName, bcUrl, viewError, entityError }))
-    })
-}
-
-/**
- * Handle any `sendOperation` action which is not part of built-in operations types
- *
- * Request will be send to `custom-action/${screenName}/${bcUrl}?_action=${action.payload.type}` endpoint,
- * with pending changes of the widget as requst body.
- *
- * Fires sendOperationSuccess, bcForceUpdate and postOperationRoutine
- *
- * @param action$ Payload includes operation type and widget that initiated operation
- * @param store
- */
-const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperation)
-.filter(action => matchOperationRole('none', action.payload, store.getState()))
-.mergeMap((action) => sendOperationEpicImpl(action, store))
+import {sendOperation} from './view/sendOperation'
 
 const sendOperationAssociate: Epic = (action$, store) => action$.ofType(types.sendOperation)
 .filter(action => matchOperationRole(OperationTypeCrud.associate, action.payload, store.getState()))

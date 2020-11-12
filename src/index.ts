@@ -186,6 +186,7 @@ export {
 export {processPostInvokeImpl} from './epics/screen/processPostInvoke'
 export {fileUploadConfirmImpl} from './epics/view/fileUploadConfirm'
 export {showFileUploadPopupImpl} from './epics/view/showFileUploadPopup'
+export {sendOperationEpicImpl} from './epics/view/sendOperation'
 export {removeMultivalueTagImpl} from './epics/data/removeMultivalueTag'
 export {bcCancelCreateDataEpicImpl} from './epics/data/bcCancelCreateDataEpic'
 export {bcNewDataEpicImpl} from './epics/data/bcNewDataEpic'
