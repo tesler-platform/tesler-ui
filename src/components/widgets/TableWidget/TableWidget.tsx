@@ -151,7 +151,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
             // Should compare hovered record id with event target id, because function is called twice, when cursor enters table
             if ((!props.disableDots && !floatMenuRef.current)
                 || !tableContainerRef.current
-                || floatMenuHoveredRecord.current === recordId) {
+                || (floatMenuHoveredRecord.current === recordId && data.length > 1)) {
                 return
             }
 
@@ -159,9 +159,14 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
             const tableRowRect = target.getBoundingClientRect()
 
             const floatMenuTopValue = `${tableRowRect.top - tableContainerRect.top + 17}px`
-            expectedFloatMenuTopValue.current = floatMenuTopValue
 
+            if (data.length === 1 && floatMenuTopValue === floatMenuRef.current.style.top) {
+                return
+            }
+
+            expectedFloatMenuTopValue.current = floatMenuTopValue
             floatMenuHoveredRecord.current = recordId
+
             if (!floatMenuIsOpened.current && floatMenuRef.current) {
                 floatMenuRef.current.style.top = floatMenuTopValue
             }
