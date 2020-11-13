@@ -72,7 +72,7 @@ export function getColumnWidth(
 
     if (!currentColumnShift && nextColumnShift) {
         // 250px as base width all columns
-        return`${(width || 250) + indentLevel * 20}px`
+        return `${(width || 250) + indentLevel * 20}px`
     }
 
     return width?.toString() + 'px' || null

@@ -179,7 +179,9 @@ module.exports = {
         "react/prop-types": "off",
 
         "react-hooks/rules-of-hooks": "off",
-        "react-hooks/exhaustive-deps": "off"
+        "react-hooks/exhaustive-deps": "off",
+        "keyword-spacing": "error",
+        "curly": "error"
     },
     "settings": {
         "react": {

@@ -109,7 +109,7 @@ function bcFilterMatchedAncestors(dataItem: FullHierarchyDataItem, dataItems: Fu
         do {
             result.push(current.id)
             current = dataItems.find(item => item.id === current.parentId)
-        } while(current?.parentId)
+        } while (current?.parentId)
     }
     return result
 }
