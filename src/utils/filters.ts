@@ -128,14 +128,14 @@ export function parseSorters(sorters: string) {
  */
 export function getFilterType(fieldType: FieldType) {
     switch (fieldType) {
-        case(FieldType.dictionary): {
+        case (FieldType.dictionary): {
             return FilterType.equalsOneOf
         }
-        case(FieldType.checkbox): {
+        case (FieldType.checkbox): {
             return FilterType.specified
         }
-        case(FieldType.input):
-        case(FieldType.text): {
+        case (FieldType.input):
+        case (FieldType.text): {
             return FilterType.contains
         }
         default:
