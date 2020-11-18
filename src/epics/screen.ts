@@ -5,6 +5,10 @@ import {axiosInstance} from '../Provider'
 import {processPostInvoke} from './screen/processPostInvoke'
 import {apiError} from './screen/apiError'
 import {httpError401} from './screen/httpError401'
+import {httpError409} from './screen/httpError409'
+import {httpError418} from './screen/httpError418'
+import {httpError500} from './screen/httpError500'
+import {httpErrorDefault} from './screen/httpErrorDefault'
 
 const downloadFile: Epic = (action$, store) => action$.ofType(types.downloadFile)
 .mergeMap((action) => {
@@ -69,7 +73,11 @@ export const screenEpics = {
     downloadFileByUrl,
     processPostInvokeConfirm,
     apiError,
-    httpError401
+    httpError401,
+    httpError409,
+    httpError418,
+    httpError500,
+    httpErrorDefault
 }
 
 export default screenEpics
