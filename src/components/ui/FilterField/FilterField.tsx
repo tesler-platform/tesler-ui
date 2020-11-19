@@ -55,6 +55,7 @@ export const ColumnFilterControl: React.FC<ColumnFilterControlProps> = (props) =
                 }}
             />
         }
+        case FieldType.dateTime:
         case (FieldType.date): {
             return <DatePicker
                 autoFocus
