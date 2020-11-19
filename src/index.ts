@@ -37,7 +37,7 @@ import {
 import {buildBcUrl} from './utils/strings'
 import {combineReducers} from './utils/redux'
 import {buildUrl, parseBcCursors} from './utils/history'
-import {getFilters} from './utils/filters'
+import {getFilters, getSorters, parseFilters, parseSorters} from './utils/filters'
 import {matchOperationRole, flattenOperations} from './utils/operations'
 import {isViewNavigationItem, isViewNavigationCategory, isViewNavigationGroup} from './interfaces/navigation'
 import {isWidgetFieldBlock, TableLikeWidgetTypes} from './interfaces/widget'
@@ -129,6 +129,9 @@ export {
     // Stable
     matchOperationRole,
     getFilters,
+    getSorters,
+    parseFilters,
+    parseSorters,
     TableLikeWidgetTypes,
     // Unstable
     buildBcUrl,
