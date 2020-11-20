@@ -70,7 +70,7 @@ const bcFetchRowMetaRequest: Epic = (action$, store) => action$.ofType(types.bcF
     )
     const cancelByParentBc = cancelRequestEpic(
         action$,
-        [types.bcSelectRecord],
+        [types.bcSelectRecord, types.bcChangePage],
         canceler.cancel,
         $do.bcFetchRowMetaFail({ bcName }),
         (filteredAction) => {
@@ -184,7 +184,7 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
     )
     const cancelByParentBc = cancelRequestEpic(
         action$,
-        [types.bcSelectRecord],
+        [types.bcSelectRecord, types.bcChangePage],
         canceler.cancel,
         $do.bcFetchDataFail({ bcName, bcUrl, depth: depthLevel }),
         (filteredAction) => {
