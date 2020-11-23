@@ -25,6 +25,7 @@ export {default as View} from './View/View'
 export {default as Widget} from './Widget/Widget'
 export {default as Field} from './Field/Field'
 export {default as ModalInvoke} from './ModalInvoke/ModalInvoke'
+export {default as PickListField} from './PickListField/PickListField'
 // Busines-widgets
 export {default as FormWidget} from './widgets/FormWidget/FormWidget'
 export {default as TableWidget} from './widgets/TableWidget/TableWidget'
