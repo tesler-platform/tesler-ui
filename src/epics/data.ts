@@ -475,8 +475,9 @@ const saveAssociationsPassive: Epic = (action$, store) => action$.ofType(types.s
         associateFieldKey = action.payload.associateFieldKey
     } = state.view.popupData
     const cursor = state.screen.bo.bc[calleeBCName].cursor
-    const recordPrevData = state.data[calleeBCName]
-    .find(dataStateRecord => dataStateRecord.id === cursor)[associateFieldKey] as MultivalueSingleValue[]
+    const recordPrevData = (state.data[calleeBCName]
+    .find(dataStateRecord => dataStateRecord.id === cursor)[associateFieldKey]
+    ?? []) as MultivalueSingleValue[]
     const newValues: AssociatedItem[] = []
 
     action.payload.bcNames.forEach(pendingBc => {
