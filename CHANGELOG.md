@@ -1,3 +1,17 @@
+# Version 1.25.0 (December, 2, 2020)
+
+## Features
+
+* Handling for http errors now can be customized through `apiError` (to override entire ajax onError handler) and `httpError` (to override handler only for specific http status code) ([#512](https://github.com/tesler-platform/tesler-ui/pull/512))
+* Helpers `getSorters`, `parseFilters`, `parseSorters` now exported ([#519](https://github.com/tesler-platform/tesler-ui/pull/519))
+
+## Fixes
+
+* `<TableWidget />` now forces floating menu top position recalculation when table data have one row ([#514](https://github.com/tesler-platform/tesler-ui/pull/514))
+* 1.24.0 erroneously missing `sendOperationEpicImpl` export ([#511](https://github.com/tesler-platform/tesler-ui/pull/511))
+* Use date picker component when searching by `dateTime` column ([#518](https://github.com/tesler-platform/tesler-ui/pull/518))
+* `saveAssociationsPassive` epic will crash on null values; export `<PickListField />` ([#520](https://github.com/tesler-platform/tesler-ui/pull/520))
+
 # Version 1.24.0 (November 11, 2020)
 
 ## Features
