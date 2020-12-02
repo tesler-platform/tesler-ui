@@ -22,7 +22,7 @@ export interface FileUploadOwnProps {
     fileSource: string,
     readOnly?: boolean,
     disabled?: boolean,
-    metaError: string,
+    metaError?: string,
     snapshotKey?: string,
     snapshotFileIdKey?: string
 }

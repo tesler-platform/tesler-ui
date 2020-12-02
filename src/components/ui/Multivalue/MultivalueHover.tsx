@@ -5,22 +5,27 @@ import styles from './MultivalueHover.less'
 import cn from 'classnames'
 import SearchHighlight from '../SearchHightlight/SearchHightlight'
 import {escapedSrc} from '../../../utils/strings'
+import {useWidgetHighlightFilter} from '../../../hooks/useWidgetFilter'
+import {BaseFieldProps} from '../../Field/Field'
 
-export interface MultivalueHoverProps {
+export interface MultivalueHoverProps extends BaseFieldProps {
     data: MultivalueSingleValue[],
     displayedValue: DataValue,
     onDrillDown?: () => void,
-    className?: string,
-    filterValue?: string
+    className?: string
 }
 
 const Multivalue: React.FunctionComponent<MultivalueHoverProps> = (props) => {
+    const filterKey = useWidgetHighlightFilter(props.widgetName, props.meta?.key)?.value?.toString()
+    const filterValue = props.data
+        ?.find(bcDataItem => filterKey?.split(',')?.includes(bcDataItem.id))
+        ?.value.toString()
     const displayedItem = (props.displayedValue !== undefined && props.displayedValue !== null)
         ? <p className={cn(styles.displayedValue, props.className)} onClick={props.onDrillDown}>
-            {props.filterValue
+            {filterValue
                 ? <SearchHighlight
                     source={(props.displayedValue || '').toString()}
-                    search={escapedSrc(props.filterValue)}
+                    search={escapedSrc(filterValue)}
                     match={formatString => <b>{formatString}</b>}/>
                 : props.displayedValue}
         </p>
