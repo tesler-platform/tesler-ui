@@ -13,8 +13,8 @@ export interface MultivalueFieldOwnProps {
     defaultValue: MultivalueSingleValue[],
     widgetFieldMeta: MultivalueFieldMeta,
     bcName: string,
-    disabled: boolean,
-    metaError: string,
+    disabled?: boolean,
+    metaError?: string,
     placeholder?: string
 }
 

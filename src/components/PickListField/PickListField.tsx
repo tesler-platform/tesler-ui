@@ -4,26 +4,20 @@ import {$do} from '../../actions/actions'
 import {connect} from 'react-redux'
 import {PickMap} from '../../interfaces/data'
 import ReadOnlyField from '../ui/ReadOnlyField/ReadOnlyField'
-import {ChangeDataItemPayload} from '../Field/Field'
+import {ChangeDataItemPayload, BaseFieldProps} from '../Field/Field'
 import {Store} from '../../interfaces/store'
 import {buildBcUrl} from '../../utils/strings'
 
-interface IPickListWidgetInputOwnProps {
+interface IPickListWidgetInputOwnProps extends BaseFieldProps {
     parentBCName: string,
     bcName: string,
-    cursor: string,
     pickMap: PickMap,
     value?: string,
-    disabled?: boolean,
-    readOnly?: boolean,
-    onChange: (payload: ChangeDataItemPayload) => void,
-    className?: string,
-    onDrillDown?: () => void,
-    backgroundColor?: string,
     placeholder?: string
 }
 
 interface IPickListWidgetInputProps extends IPickListWidgetInputOwnProps {
+    onChange: (payload: ChangeDataItemPayload) => void,
     onClick: (bcName: string, pickMap: PickMap) => void,
     popupRowMetaDone: boolean
 }
@@ -31,6 +25,8 @@ interface IPickListWidgetInputProps extends IPickListWidgetInputOwnProps {
 const PickListField: React.FunctionComponent<IPickListWidgetInputProps> = (props) => {
     if (props.readOnly) {
         return <ReadOnlyField
+            widgetName={props.widgetName}
+            meta={props.meta}
             className={props.className}
             backgroundColor={props.backgroundColor}
             onDrillDown={props.onDrillDown}
@@ -69,7 +65,7 @@ const PickListField: React.FunctionComponent<IPickListWidgetInputProps> = (props
     />
 }
 
-function mapStateToProps(store: Store,ownProps: IPickListWidgetInputOwnProps) {
+function mapStateToProps(store: Store, ownProps: IPickListWidgetInputOwnProps) {
     const popupBcName = ownProps?.bcName
     const bcUrl = buildBcUrl(popupBcName, true)
     const popupRowMetaDone = !!store.view.rowMeta[popupBcName]?.[bcUrl]?.fields

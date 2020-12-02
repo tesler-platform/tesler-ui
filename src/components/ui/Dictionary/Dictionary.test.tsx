@@ -1,7 +1,9 @@
 import {mount, shallow} from 'enzyme'
 import Dictionary, {DictionaryProps, getIconByParams} from './Dictionary'
 import * as React from 'react'
-import {MultivalueSingleValue} from 'interfaces/data'
+import {MultivalueSingleValue} from '../../../interfaces/data'
+import {FieldType} from '../../../interfaces/view'
+import {BaseFieldProps} from '../../Field/Field'
 
 const defValues = [
     {value: 'German'},
@@ -25,6 +27,7 @@ const defFieldName = 'languageList'
 
 describe('Dictionary test in default mode', () => {
     const props: DictionaryProps = {
+        ...baseFieldProps,
         value: 'Spanish',
         fieldName: defFieldName,
         values:  defValues
@@ -128,6 +131,7 @@ describe('Dictionary test in default mode', () => {
 
 describe('Dictionary test in multiple mode', () => {
     const props: DictionaryProps = {
+        ...baseFieldProps,
         value: [{value: 'Spanish', id: 'Spanish'}, {value: 'German', id: 'German'}],
         multiple: true,
         fieldName: defFieldName,
@@ -215,3 +219,12 @@ describe('getIconByParams test', () => {
         expect(wrapper.find('Icon').findWhere(i => i.props().style.color === 'red').length).toEqual(1)
     })
 })
+
+const baseFieldProps: BaseFieldProps = {
+    widgetName: 'widget-example',
+    cursor: null,
+    meta: {
+        type: FieldType.dictionary,
+        key: 'field-example'
+    }
+}

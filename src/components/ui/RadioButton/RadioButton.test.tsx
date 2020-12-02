@@ -1,6 +1,8 @@
 import React from 'react'
 import {mount} from 'enzyme'
 import RadioButton from './RadioButton'
+import {FieldType} from '../../../interfaces/view'
+import {BaseFieldProps} from '../../Field/Field'
 
 describe('RadioButton component test', () => {
     const values = [
@@ -12,6 +14,7 @@ describe('RadioButton component test', () => {
     it('component should render 3 values', () => {
         const wrapper = mount(
             <RadioButton
+                {...baseFieldProps}
                 value={'testRadio-2'}
                 values={values}
             />
@@ -30,6 +33,7 @@ describe('RadioButton component test', () => {
         })
         const wrapper = mount(
             <RadioButton
+                {...baseFieldProps}
                 values={values}
                 onChange={onChange}
             />
@@ -46,6 +50,7 @@ describe('RadioButton component test', () => {
     it('values is null or undefined', () => {
         const wrapper = mount(
             <RadioButton
+                {...baseFieldProps}
                 values={null}
             />
         )
@@ -53,3 +58,12 @@ describe('RadioButton component test', () => {
         expect(wrapper.find('input[type="radio"]').length).toBe(0)
     })
 })
+
+const baseFieldProps: BaseFieldProps = {
+    widgetName: 'widget-example',
+    cursor: null,
+    meta: {
+        type: FieldType.radio,
+        key: 'field-example'
+    }
+}
