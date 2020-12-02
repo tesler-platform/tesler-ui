@@ -2,8 +2,20 @@ import React from 'react'
 import styles from './ReadOnlyField.less'
 import cn from 'classnames'
 import ActionLink from '../ActionLink/ActionLink'
+import {WidgetFieldBase} from '../../../interfaces/widget'
+import {useWidgetHighlightFilter} from '../../../hooks/useWidgetFilter'
+import SearchHighlight from '../SearchHightlight/SearchHightlight'
+import {escapedSrc} from '../../../utils/strings'
 
 export interface ReadOnlyFieldProps {
+    /**
+     * TODO: Will be mandatory in 2.0.0
+     */
+    widgetName?: string,
+    /**
+     * TODO: Will be mandatory in 2.0.0
+     */
+    meta?: WidgetFieldBase,
     backgroundColor?: string,
     className?: string,
     onDrillDown?: () => void,
@@ -11,19 +23,27 @@ export interface ReadOnlyFieldProps {
 }
 
 const ReadOnlyField: React.FunctionComponent<ReadOnlyFieldProps> = (props) => {
+    const filter = useWidgetHighlightFilter(props.widgetName, props.meta.key)
+    const displayedValue = filter
+        ? <SearchHighlight
+            source={(props.children || '').toString()}
+            search={escapedSrc(filter.value.toString())}
+            match={formatString => <b>{formatString}</b>}
+        />
+        : props.children
     return <span
         className={cn(
             styles.readOnlyField,
             {[styles.coloredField]: props.backgroundColor},
             props.className
         )}
-        style={props.backgroundColor ? {backgroundColor: props.backgroundColor} : null}
+        style={props.backgroundColor ? { backgroundColor: props.backgroundColor } : null}
     >
-        {(props.onDrillDown)
+        {props.onDrillDown
             ? <ActionLink onClick={props.onDrillDown}>
-                {props.children}
+                {displayedValue}
             </ActionLink>
-            : props.children
+            : displayedValue
         }
     </span>
 }

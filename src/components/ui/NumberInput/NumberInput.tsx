@@ -5,25 +5,23 @@ import {
 import {NumberTypes, fractionsRound, NumberInputFormat} from '../../../components/ui/NumberInput/formaters'
 import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
 import {InputProps} from 'antd/es/input'
+import {BaseFieldProps} from '../../Field/Field'
 
-export interface NumberInputProps {
-    readOnly?: boolean,
-    disabled?: boolean,
-    backgroundColor?: string,
+export interface NumberInputProps extends BaseFieldProps {
     onChange?: (value: number) => void,
     value: number,
     nullable?: boolean,
     digits?: number,
     type: NumberTypes,
     maxInput?: number,
-    className?: string,
-    onDrillDown?: () => void,
     forceFocus?: boolean
 }
 
 const NumberInput: React.FunctionComponent<NumberInputProps> = (props) => {
     if (props.readOnly) {
         return <ReadOnlyField
+            widgetName={props.widgetName}
+            meta={props.meta}
             className={props.className}
             backgroundColor={props.backgroundColor}
             onDrillDown={props.onDrillDown}

@@ -3,26 +3,19 @@ import {Icon, Select as AntdSelect} from 'antd'
 import Select, {SelectProps} from '../Select/Select'
 import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
 import {MultivalueSingleValue} from '../../../interfaces/data'
-import SearchHighlight from '../SearchHightlight/SearchHightlight'
-import {escapedSrc} from '../../../utils/strings'
+import {BaseFieldProps} from '../../Field/Field'
 
-export interface DictionaryProps {
+export interface DictionaryProps extends BaseFieldProps {
     value?: MultivalueSingleValue[] | string | null,
     onChange?: (value: MultivalueSingleValue[] | string) => void,
     values: Array<{value: string, icon?: string}>,
-    readOnly?: boolean,
-    disabled?: boolean,
     fieldName: string,
     placeholder?: string,
     style?: React.CSSProperties,
     metaIcon?: JSX.Element,
     valueIcon?: string,
     popupContainer?: HTMLElement,
-    className?: string,
-    backgroundColor?: string,
-    onDrillDown?: () => void,
-    multiple?: boolean,
-    filterValue?: string
+    multiple?: boolean
 }
 
 const Dictionary: React.FunctionComponent<DictionaryProps> = (props) => {
@@ -32,16 +25,13 @@ const Dictionary: React.FunctionComponent<DictionaryProps> = (props) => {
             readOnlyValue = (readOnlyValue as MultivalueSingleValue[]).map(i => i.value).join((', '))
         }
         return <ReadOnlyField
+            widgetName={props.widgetName}
+            meta={props.meta}
             className={props.className}
             backgroundColor={props.backgroundColor}
             onDrillDown={props.onDrillDown}
         >
-            {props.filterValue
-                ? <SearchHighlight
-                    source={(readOnlyValue || '').toString()}
-                    search={escapedSrc(props.filterValue)}
-                    match={formatString => <b>{formatString}</b>}/>
-                : readOnlyValue}
+            {readOnlyValue}
         </ReadOnlyField>
     }
 

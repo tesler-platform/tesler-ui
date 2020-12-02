@@ -5,12 +5,9 @@ import {DatePickerProps} from 'antd/es/date-picker/interface'
 import * as styles from './DatePickerField.less'
 import cn from 'classnames'
 import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
-import SearchHighlight from '../SearchHightlight/SearchHightlight'
-import {escapedSrc} from '../../../utils/strings'
+import {BaseFieldProps} from '../../Field/Field'
 
-export interface IDatePickerFieldProps {
-    readOnly?: boolean,
-    disabled?: boolean,
+export interface IDatePickerFieldProps extends BaseFieldProps {
     value?: string | null,
     onChange?: (date: string | null) => void,
     showToday?: boolean,
@@ -20,12 +17,9 @@ export interface IDatePickerFieldProps {
     showTime?: boolean,
     monthYear?: boolean,
     showSeconds?: boolean,
-    backgroundColor?: string | null,
-    className?: string,
     resetForceFocus?: () => void,
     dateFormatter?: (date: moment.Moment) => string,
     calendarContainer?: HTMLElement,
-    onDrillDown?: () => void,
     filterValue?: string
 }
 
@@ -48,16 +42,13 @@ const DatePickerField: React.FunctionComponent<IDatePickerFieldProps> = (props) 
     if (props.readOnly) {
         const datePickerFormat = DatePickerFieldFormat(value, showTime, showSeconds, monthYear)
         return <ReadOnlyField
+            widgetName={props.widgetName}
+            meta={props.meta}
             className={props.className}
             backgroundColor={props.backgroundColor}
             onDrillDown={props.onDrillDown}
         >
-            {props.filterValue
-                ? <SearchHighlight
-                    source={(datePickerFormat || '').toString()}
-                    search={escapedSrc(datePickerFormat || '')}
-                    match={formatString => <b>{formatString}</b>}/>
-                : datePickerFormat}
+            {datePickerFormat}
         </ReadOnlyField>
     }
 

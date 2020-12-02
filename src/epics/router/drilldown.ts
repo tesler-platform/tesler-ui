@@ -81,9 +81,11 @@ export function drillDownImpl(
                     store.dispatch($do.bcRemoveAllFilters({ bcName }))
                 }
             })
+            const nextState = defaultParseLocation(parsePath(url))
+            const viewName = nextState.viewName
             // Apply each new filter
             Object.entries(newFilters).forEach(([ bcName, filterExpression ]) => {
-                const parsedFilters = parseFilters(filterExpression)
+                const parsedFilters = parseFilters(filterExpression).map(item => ({ ...item, viewName }))
                 parsedFilters?.forEach(filter => {
                     bcToUpdate[bcName] = true
                     store.dispatch($do.bcAddFilter({ bcName, filter }))
@@ -96,7 +98,6 @@ export function drillDownImpl(
                 bcToUpdate[bcName] = true
             })
             const prevState = state.router
-            const nextState = defaultParseLocation(parsePath(url))
             const willUpdateAnyway = shallowCompare(prevState, nextState, ['params']).length > 0
             // If screen or view is different all BC will update anyway so there is no need
             // to manually set them for update

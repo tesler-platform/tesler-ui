@@ -1,7 +1,7 @@
 import React from 'react'
 import {DataItem, PickMap} from '../../interfaces/data'
 import ReadOnlyField from '../ui/ReadOnlyField/ReadOnlyField'
-import {ChangeDataItemPayload} from '../Field/Field'
+import {ChangeDataItemPayload, BaseFieldProps} from '../Field/Field'
 import Select from '../ui/Select/Select'
 import {$do} from '../../index'
 import {connect} from 'react-redux'
@@ -13,19 +13,13 @@ import {useDebounce} from '../../hooks/useDebounce'
 import cn from 'classnames'
 import {useTranslation} from 'react-i18next'
 
-interface InlinePickListOwnProps {
+interface InlinePickListOwnProps extends BaseFieldProps {
     fieldName: string,
     searchSpec: string,
     bcName: string,
     popupBcName: string,
-    cursor: string,
     pickMap: PickMap,
-    disabled?: boolean,
-    readonly?: boolean,
     value?: string,
-    className?: string,
-    onDrillDown?: () => void,
-    backgroundColor?: string,
     placeholder?:  string
 }
 
@@ -39,8 +33,10 @@ interface InlinePickListProps extends InlinePickListOwnProps {
 const InlinePickList: React.FunctionComponent<InlinePickListProps> = (props) => {
     const {t} = useTranslation()
 
-    if (props.readonly) {
+    if (props.readOnly) {
         return <ReadOnlyField
+            widgetName={props.widgetName}
+            meta={props.meta}
             className={props.className}
             backgroundColor={props.backgroundColor}
             onDrillDown={props.onDrillDown}

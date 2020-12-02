@@ -7,13 +7,13 @@ import {Store} from '../../interfaces/store'
 import {DataItem, DataValue, MultivalueSingleValue, PendingDataItem} from '../../interfaces/data'
 import {FieldType, PendingValidationFails, PendingValidationFailsFormat} from '../../interfaces/view'
 import {RowMetaField} from '../../interfaces/rowMeta'
-import {WidgetField, WidgetTypes} from '../../interfaces/widget'
+import {WidgetField, WidgetTypes, WidgetFieldBase} from '../../interfaces/widget'
 import DatePickerField from '../ui/DatePickerField/DatePickerField'
 import NumberInput from '../../components/ui/NumberInput/NumberInput'
 import {NumberTypes} from '../../components/ui/NumberInput/formaters'
 import TextArea from '../../components/ui/TextArea/TextArea'
 import Dictionary from '../../components/ui/Dictionary/Dictionary'
-import {buildBcUrl, escapedSrc} from '../../utils/strings'
+import {buildBcUrl} from '../../utils/strings'
 import MultivalueField from '../Multivalue/MultivalueField'
 import MultiField from '../ui/MultiField/MultiField'
 import ReadOnlyField from '../ui/ReadOnlyField/ReadOnlyField'
@@ -29,7 +29,6 @@ import styles from './Field.less'
 import {CustomizationContext} from '../../components/View/View'
 import {InteractiveInput} from '../../components/ui/InteractiveInput/InteractiveInput'
 import HistoryField from '../../components/ui/HistoryField/HistoryField'
-import SearchHighlight from '../ui/SearchHightlight/SearchHightlight'
 import {TooltipPlacement} from 'antd/es/tooltip'
 
 interface FieldOwnProps {
@@ -56,9 +55,33 @@ interface FieldProps extends FieldOwnProps {
     rowFieldMeta: RowMetaField,
     metaError: string,
     showErrorPopup: boolean,
-    filterValue: string,
     onChange: (payload: ChangeDataItemPayload) => void,
     onDrillDown: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void
+}
+
+/**
+ * Basic set of properties passed to every field type, including custom fields
+ */
+export interface BaseFieldProps {
+    /**
+     * Id of currently selected data record
+     */
+    cursor?: string,
+    /**
+     * Widget name
+     */
+    widgetName?: string,
+    /**
+     * Field description in widget meta
+     */
+    meta?: WidgetFieldBase,
+    className?: string,
+    metaError?: string,
+    disabled?: boolean,
+    placeholder?: string,
+    readOnly?: boolean,
+    backgroundColor?: string,
+    onDrillDown?: () => void
 }
 
 export interface ChangeDataItemPayload {
@@ -134,7 +157,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
         }
     }, [localValue, handleChange])
 
-    const commonProps: any = {
+    const commonProps: BaseFieldProps = {
         cursor: props.cursor,
         widgetName: props.widgetName,
         meta: props.widgetFieldMeta,
@@ -144,8 +167,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
         placeholder,
         readOnly: props.readonly,
         backgroundColor: bgColor,
-        onDrillDown: handleDrilldown,
-        filterValue: props.filterValue
+        onDrillDown: handleDrilldown
     }
     const commonInputProps: any = {
         cursor: props.cursor,
@@ -157,8 +179,8 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
     }
 
     Object.keys(commonProps).forEach(key => {
-        if (commonProps[key] === undefined) {
-            delete commonProps[key]
+        if ((commonProps as Record<string, any>)[key] === undefined) {
+            delete (commonProps as Record<string, any>)[key]
         }
     })
 
@@ -188,7 +210,6 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 value={(value || '').toString()}
                 showTime={props.widgetFieldMeta.type === FieldType.dateTime}
                 showSeconds={props.widgetFieldMeta.type === FieldType.dateTimeWithSeconds}
-                filterValue={props.filterValue}
             />
             break
         case FieldType.number:
@@ -232,7 +253,6 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 fieldName={props.widgetFieldMeta.key}
                 onChange={handleChange}
                 multiple={props.widgetFieldMeta.multiple}
-                filterValue={props.filterValue}
             />
             break
         case FieldType.text:
@@ -242,7 +262,6 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 defaultValue={value as any}
                 onChange={handleChange}
                 className={cn({[readOnlyFieldStyles.error]: props.metaError})}
-                filterValue={props.filterValue}
             />
             break
         case FieldType.multifield:
@@ -261,8 +280,9 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
                 {...commonProps}
                 widgetName={props.widgetName}
                 defaultValue={
-                    Array.isArray(value) && value.length > 0 ?
-                        value : emptyMultivalue
+                    Array.isArray(value) && value.length > 0
+                    ? value as MultivalueSingleValue[]
+                    : emptyMultivalue
                 }
                 widgetFieldMeta={props.widgetFieldMeta}
                 bcName={props.bcName}
@@ -354,20 +374,13 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
             />
             break
         default:
-            resultField = (props.readonly)
-                ? <ReadOnlyField
-                    {...commonProps}
-                >
-                    {props.filterValue
-                        ? <SearchHighlight
-                            source={(value || '').toString()}
-                            search={escapedSrc(props.filterValue)}
-                            match={formatString => <b>{formatString}</b>}/>
-                        : value}
+            resultField = props.readonly
+                ? <ReadOnlyField {...commonProps}>
+                    {value}
                 </ReadOnlyField>
                 : <InteractiveInput
                     suffixClassName={props.suffixClassName}
-                    suffix={handleDrilldown && <Icon type="link"/>}
+                    suffix={handleDrilldown && <Icon type="link" />}
                     onSuffixClick={handleDrilldown}
                 >
                     <Input
@@ -424,20 +437,14 @@ function mapStateToProps(store: Store, ownProps: FieldOwnProps) {
     const pendingValue = store.view.pendingDataChanges[ownProps.bcName]
     ?.[ownProps.cursor]
     ?.[ownProps.widgetFieldMeta.key]
-    const viewName = store.view.name
     const widget = store.view.widgets.find(item => item.name === ownProps.widgetName)
     const showErrorPopup = widget?.type !== WidgetTypes.Form && !ownProps.disableHoverError
-    const filterValue = store.screen.filters[ownProps.bcName]
-        ?.filter(filterItem => filterItem.widgetName === widget.name && filterItem.viewName === viewName)
-        ?.find(filter => filter.fieldName === ownProps.widgetFieldMeta.key)
-        ?.value.toString()
     return {
         data: ownProps.data || store.data[ownProps.bcName]?.find(item => item.id === ownProps.cursor),
         pendingValue,
         rowFieldMeta,
         metaError,
-        showErrorPopup,
-        filterValue
+        showErrorPopup
     }
 }
 

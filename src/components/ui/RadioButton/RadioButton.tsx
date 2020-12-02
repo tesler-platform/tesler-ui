@@ -3,17 +3,13 @@ import {Radio} from 'antd'
 import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
 import {RadioChangeEvent} from 'antd/es/radio'
 import {getIconByParams} from '../Dictionary/Dictionary'
+import {BaseFieldProps} from '../../../components/Field/Field'
 
-export interface RadioButtonProps {
+export interface RadioButtonProps extends BaseFieldProps {
     value?: string | null,
     onChange?: (value: string) => void,
     values: Array<{ value: string, icon?: string }>,
-    readOnly?: boolean,
-    disabled?: boolean,
-    style?: React.CSSProperties,
-    className?: string,
-    backgroundColor?: string,
-    onDrillDown?: () => void
+    style?: React.CSSProperties
 }
 
 const RadioButton: React.FunctionComponent<RadioButtonProps> = (props) => {
@@ -21,6 +17,8 @@ const RadioButton: React.FunctionComponent<RadioButtonProps> = (props) => {
         const readOnlyValue = props.value ?? ''
 
         return <ReadOnlyField
+            widgetName={props.widgetName}
+            meta={props.meta}
             className={props.className}
             backgroundColor={props.backgroundColor}
             onDrillDown={props.onDrillDown}
