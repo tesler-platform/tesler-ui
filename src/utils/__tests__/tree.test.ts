@@ -17,7 +17,16 @@
 
 import {assignTreeLinks, getDescendants, buildSearchResultTree, presort} from '../tree'
 
+const consoleMock = jest.fn()
+
+jest.spyOn(console, 'warn').mockImplementation(consoleMock)
+
 describe('assignTreeLinks', () => {
+
+    afterEach(() => {
+        jest.clearAllMocks()
+    })
+
     const sample = getAssignTreeLinksSample()
     const result = assignTreeLinks(sample)
 
@@ -30,6 +39,7 @@ describe('assignTreeLinks', () => {
             .find(item => item.id === '221').children[0].id
         ).toBe('2211')
     })
+
     it('assigns parent', () => {
         let parent = result.find(item => item.id === '2211').parent
         const parents: string[] = []
@@ -38,6 +48,15 @@ describe('assignTreeLinks', () => {
             parent = parent.parent
         }
         expect(parents).toEqual(expect.arrayContaining(['221', '22', '2']))
+    })
+
+    it('excludes orphans and throws console warning', () => {
+        const orphan = { id: 'orphan', level: 2, parentId: 'missing-parent' }
+        const sampleWithOrphan = [ ...sample, orphan ]
+        const resultWithoutOrphan = assignTreeLinks(sampleWithOrphan)
+        expect(resultWithoutOrphan.length).toBe(result.length)
+        expect(consoleMock).toBeCalledWith(expect.stringContaining(`[id] = ${orphan.id}`))
+        expect(consoleMock).toBeCalledWith(expect.stringContaining(`[parentId] = ${orphan.parentId}`))
     })
 })
 
