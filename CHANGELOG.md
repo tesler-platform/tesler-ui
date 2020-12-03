@@ -1,4 +1,10 @@
-# Version 1.25.0 (December, 2, 2020)
+# Version 1.25.1 (December 3, 2020)
+
+## Fixes
+
+* `assignTreeLinks` now throws warning and excludes orphaned hierarchy records instead of crashing the entire app ([#524](https://github.com/tesler-platform/tesler-ui/issues/524))
+
+# Version 1.25.0 (December 2, 2020)
 
 ## Features
 
@@ -16,9 +22,9 @@
 
 ## Features
 
-* `icon` and `showOnlyIcon` properties are added to interface `OperationGroup` ([#507](https://github.com/tesler-platform/tesler-ui/issues/495))
-* `calleeWidgetName` property is added to `PopupData` interface ([#507](https://github.com/tesler-platform/tesler-ui/issues/495))
-* console helper `scrollToItem` for automation testing of `<TreeVirtualized />` components ([#506](https://github.com/tesler-platform/tesler-ui/issues/495))
+* `icon` and `showOnlyIcon` properties are added to interface `OperationGroup` ([#507](https://github.com/tesler-platform/tesler-ui/issues/507))
+* `calleeWidgetName` property is added to `PopupData` interface ([#507](https://github.com/tesler-platform/tesler-ui/issues/507))
+* console helper `scrollToItem` for automation testing of `<TreeVirtualized />` components ([#506](https://github.com/tesler-platform/tesler-ui/issues/506))
 
 ## Fixes
 
