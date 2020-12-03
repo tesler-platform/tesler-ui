@@ -29,20 +29,31 @@ import {DataNode, TreeNodeBidirectional, TreeNodeDescending} from '../interfaces
  *
  * `parentId`: '0' considered a root pseudo-node
  *
+ * Orphaned records will be excluded from result and throw a console warning.
+ *
  * @param flat Flat array representation of tree structure
  * @returns New array
  */
 export function assignTreeLinks<T extends DataNode>(flat: T[]) {
     const result = flat.map(item => ({ ...item })) as Array<T & TreeNodeBidirectional>
     const map: Record<string, number> = {}
+    const orphans: string[] = []
     result.forEach(item => {
         if (!item.parentId || item.parentId === '0') {
             return
         }
         let parentIndex = map[item.parentId]
-        if (!parentIndex) {
+        if (typeof parentIndex !== 'number') {
             parentIndex = flat.findIndex(el => el.id === item.parentId)
             map[item.parentId] = parentIndex
+        }
+        if (parentIndex === -1) {
+            orphans.push(item.parentId)
+            console.warn(
+                `Record with [id] = ${item.id} has [parentId] = ${item.parentId}, but no matching`
+                + ' parent record exist. Check the service for this BC.'
+            )
+            return
         }
         item.parent = result[parentIndex]
         if (!result[parentIndex].children) {
@@ -51,6 +62,9 @@ export function assignTreeLinks<T extends DataNode>(flat: T[]) {
             result[parentIndex].children.push(item)
         }
     })
+    if (orphans.length) {
+        return result.filter(item => !orphans.includes(item.parentId))
+    }
     return result
 }
 
