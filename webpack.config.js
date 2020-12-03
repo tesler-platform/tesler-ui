@@ -100,25 +100,25 @@ module.exports = (env, options) => {
                     include: [path.resolve(__dirname, 'src')],
                     exclude: [/(\.test.tsx?$)/, path.resolve(__dirname, 'src', 'tests')],
                     use: {
-                        loader: 'ts-loader',
+                        loader: 'babel-loader',
                         options: {
-                            getCustomTransformers: function() {
-                                return {
-                                    before: [
-                                        tsImportPluginFactory({
-                                            libraryName: 'antd',
-                                            libraryDirectory: 'es',
-                                            style: false
-                                        })
-                                    ]
-                                }
-                            },
-                            happyPackMode: false,
-                            experimentalWatchApi: false,
-                            compilerOptions: {
-                                sourceMap: true,
-                                // transpileOnly: true,
-                            }
+                            // getCustomTransformers: function() {
+                            //     return {
+                            //         before: [
+                            //             tsImportPluginFactory({
+                            //                 libraryName: 'antd',
+                            //                 libraryDirectory: 'es',
+                            //                 style: false
+                            //             })
+                            //         ]
+                            //     }
+                            // },
+                            // happyPackMode: false,
+                            // experimentalWatchApi: false,
+                            // compilerOptions: {
+                            //     sourceMap: true,
+                            //     // transpileOnly: true,
+                            // }
                         }
                     }
                 },
@@ -160,10 +160,10 @@ module.exports = (env, options) => {
                     include: es2015modules,
                     use: [
                         {
-                            loader: 'ts-loader',
-                            options: {
-                                transpileOnly: true
-                            }
+                            loader: 'babel-loader',
+                            // options: {
+                            //     transpileOnly: true
+                            // }
                         }
                     ]
                 },

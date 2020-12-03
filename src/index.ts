@@ -27,8 +27,8 @@ import Provider, {
     getBuildLocationInstance,
     getLocaleProviderInstance
 } from './Provider'
-import {$do, types, ActionPayloadTypes, AnyAction, needSaveAction} from './actions/actions'
-import {Action, uActionTypesMap, uActionsMap, AnyOfMap, createActionCreators, createActionTypes} from './actions/actions-utils'
+import {$do, types, ActionPayloadTypes, AnyAction as AnyActionType, needSaveAction} from './actions/actions'
+import {Action as IAction, uActionTypesMap as TuActionTypesMap, uActionsMap as TuActionsMap, AnyOfMap as TAnyOfMap, createActionCreators, createActionTypes} from './actions/actions-utils'
 import {historyObj, changeLocation} from './reducers/router'
 import {
     axiosForApi,
@@ -143,6 +143,11 @@ export {
  *
  * TODO: Check how much we can remove in 2.0.0 with introduction of @tesler-ui/cra-template-typescript
  */
+export type AnyAction = AnyActionType
+export interface Action<K, P> extends IAction<K, P> {}
+export type uActionTypesMap<A> = TuActionTypesMap<A>
+export type uActionsMap<A> = TuActionsMap<A>
+export type AnyOfMap<A> = TAnyOfMap<A>
 export {
     // Stable
     types as coreActions,
@@ -150,11 +155,6 @@ export {
     needSaveAction,
     // Unstable
     ActionPayloadTypes,
-    AnyAction,
-    Action,
-    uActionTypesMap,
-    uActionsMap,
-    AnyOfMap,
     createActionCreators,
     createActionTypes
 }

@@ -1,8 +1,8 @@
 import {shallow} from 'enzyme'
 import * as React from 'react'
 import InfoCell, {ValueCellProps} from '../InfoCell'
-import {WidgetTypes} from 'interfaces/widget'
-import {FieldType} from 'interfaces/view'
+import {WidgetTypes} from '../../../../../interfaces/widget'
+import {FieldType} from '../../../../../interfaces/view'
 
 describe('InfoCell test', () => {
 

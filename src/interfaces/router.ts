@@ -7,7 +7,7 @@ export interface Route {
     bcPath?: string
 }
 
-export const enum RouteType {
+export enum RouteType {
     screen = 'screen',
     default = 'default',
     router = 'router',
@@ -19,7 +19,7 @@ export const enum RouteType {
  * Типы переходов по ссылкам внутри приложения, адреса которых задает бэк
  *
  */
-export const enum DrillDownType {
+export enum DrillDownType {
     /**
      * Переход на внутреннюю сущность, т.е. подставляется в часть после хэша роутера: "#/${inner}"
      */

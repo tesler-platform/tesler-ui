@@ -4,7 +4,7 @@ import {FunctionComponent} from 'react'
 import {PickMap, DataValue} from './data'
 import {OperationType, OperationInclusionDescriptor} from './operation'
 
-export const enum WidgetTypes {
+export enum WidgetTypes {
     Info = 'Info',
     Form = 'Form',
     List = 'List',
@@ -403,7 +403,7 @@ export type WidgetMetaAny = WidgetFormMeta | WidgetTableMeta | WidgetTextMeta | 
 /**
  * Description of possible positioning options
  */
-export const enum PositionTypes {
+export enum PositionTypes {
     Top = 'Top',
     Bottom = 'Bottom',
     TopAndBottom = 'TopAndBottom'
@@ -502,7 +502,7 @@ export function isWidgetFieldBlock(item: any): item is WidgetFieldBlock<any> {
 /**
  * Type of pagination, either page numbers or "Load More" button
  */
-export const enum PaginationMode {
+export enum PaginationMode {
     page = 'page',
     loadMore = 'loadMore'
 }

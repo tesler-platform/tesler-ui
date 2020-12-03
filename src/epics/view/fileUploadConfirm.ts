@@ -22,7 +22,7 @@ import {Store as CoreStore} from '../../interfaces/store'
 import { buildBcUrl } from '../../utils/strings'
 import {customAction} from '../../api/api'
 import {postOperationRoutine} from '../view'
-import { OperationTypeCrud } from 'interfaces/operation'
+import { OperationTypeCrud } from '../../interfaces/operation'
 
 /**
  * It sends customAction request for `file-upload-save` endpoint with `bulkIds` data

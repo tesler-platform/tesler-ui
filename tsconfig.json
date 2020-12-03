@@ -18,6 +18,7 @@
         },
         "sourceMap": true,
         "declaration": true,
+        "isolatedModules": true,
         "noImplicitReturns": true,
         "lib": [
             "dom",

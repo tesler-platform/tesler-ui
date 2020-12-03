@@ -21,7 +21,7 @@ export interface PendingValidationFails {
  * Describes format of `pendingValidationFails`
  * TODO remove in 2.0.0
  */
-export const enum PendingValidationFailsFormat {
+export enum PendingValidationFailsFormat {
     old = 'old',
     target = 'target'
 }
@@ -137,7 +137,7 @@ export interface PopupData {
     isFilter?: boolean
 }
 
-export const enum FieldType {
+export enum FieldType {
     number = 'number',
     input = 'input',
     monthYear = 'monthYear',
@@ -176,7 +176,7 @@ export const enum FieldType {
 
 export type ApplicationError = BusinessError | SystemError | ApplicationErrorBase
 
-export const enum ApplicationErrorType {
+export enum ApplicationErrorType {
     BusinessError,
     SystemError,
     NetworkError

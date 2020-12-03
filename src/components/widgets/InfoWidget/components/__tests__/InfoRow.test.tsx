@@ -1,8 +1,8 @@
 import {shallow} from 'enzyme'
 import * as React from 'react'
 import InfoRow, {InfoRowProps} from '../InfoRow'
-import {WidgetTypes} from 'interfaces/widget'
-import {FieldType} from 'interfaces/view'
+import {WidgetTypes} from '../../../../../interfaces/widget'
+import {FieldType} from '../../../../../interfaces/view'
 
 describe('InfoRow test', () => {
     const props: InfoRowProps = {

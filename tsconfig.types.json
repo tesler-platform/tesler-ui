@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "declarationMap": true
+  },
+  "exclude": ["**/*.test.ts(x)"]
+}
