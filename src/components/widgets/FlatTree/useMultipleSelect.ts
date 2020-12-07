@@ -44,7 +44,7 @@ export function useMultipleSelect(
         if (!selected && hierarchyGroupDeselection || selected && hierarchyGroupSelection) {
             dispatch($do.changeDescendantsAssociationsFull({
                 bcName,
-                parentId: record.parentId,
+                parentId: record.id,
                 depth: record.level + 1,
                 assocValueKey,
                 selected
