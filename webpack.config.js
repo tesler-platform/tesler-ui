@@ -4,6 +4,7 @@ const tsImportPluginFactory = require('ts-import-plugin')
 const rxjsExternals = require('webpack-rxjs-externals')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 /* Dependencies from package.json that ship in ES2015 module format */
 const es2015modules = [
@@ -22,6 +23,8 @@ const es2015modules = [
 // }
 
 module.exports = (env, options) => {
+    const isProduction = options.mode === 'production'
+    const isDev = !isProduction
     env = env || {}
     return  {
         entry: ['./src/index.ts'],
@@ -99,28 +102,51 @@ module.exports = (env, options) => {
                     test: /\.tsx?$/,
                     include: [path.resolve(__dirname, 'src')],
                     exclude: [/(\.test.tsx?$)/, path.resolve(__dirname, 'src', 'tests')],
-                    use: {
-                        loader: 'babel-loader',
-                        options: {
-                            // getCustomTransformers: function() {
-                            //     return {
-                            //         before: [
-                            //             tsImportPluginFactory({
-                            //                 libraryName: 'antd',
-                            //                 libraryDirectory: 'es',
-                            //                 style: false
-                            //             })
-                            //         ]
-                            //     }
-                            // },
-                            // happyPackMode: false,
-                            // experimentalWatchApi: false,
-                            // compilerOptions: {
-                            //     sourceMap: true,
-                            //     // transpileOnly: true,
-                            // }
+                    use: [
+                        {
+                            loader: 'babel-loader',
+                            options: {
+                                // getCustomTransformers: function() {
+                                //     return {
+                                //         before: [
+                                //             tsImportPluginFactory({
+                                //                 libraryName: 'antd',
+                                //                 libraryDirectory: 'es',
+                                //                 style: false
+                                //             })
+                                //         ]
+                                //     }
+                                // },
+                                // happyPackMode: false,
+                                // experimentalWatchApi: false,
+                                // compilerOptions: {
+                                //     sourceMap: true,
+                                //     // transpileOnly: true,
+                                // }
+                            }
+                        },
+                        {
+                            loader: '@linaria/webpack-loader',
+                            options: {
+                                sourceMap: isDev
+                            },
                         }
-                    }
+                    ]
+                },
+                {
+                    test: /\.css$/,
+                    use: [
+                        {
+                            loader: MiniCssExtractPlugin.loader,
+                            // options: {
+                            //     hmr: isDev,
+                            // },
+                        },
+                        {
+                            loader: 'css-loader',
+                            options: { sourceMap: isDev },
+                        },
+                    ],
                 },
                 {
                     test: /\.less$/,
@@ -128,7 +154,8 @@ module.exports = (env, options) => {
                         path.resolve(__dirname, 'src')
                     ],
                     use: [
-                        { loader: 'style-loader' },
+                        // { loader: 'style-loader' },
+                        {loader: MiniCssExtractPlugin.loader},
                         { loader: 'css-loader', options: {
                             modules: true,
                             localIdentName: '[name]__[local]___[hash:base64:5]'
@@ -171,6 +198,7 @@ module.exports = (env, options) => {
         },
         plugins: [
             // new CleanWebpackPlugin(),
+            new MiniCssExtractPlugin({ filename: 'styles.css' }),
             new CopyWebpackPlugin([
                 { from: 'package.json' },
                 { from: 'README.md' },

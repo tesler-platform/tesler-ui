@@ -9,7 +9,7 @@
   "scripts": {
     "build:types": "tsc -p ./tsconfig.types.json",
     "build": "yarn build:types && webpack --mode=production",
-    "start": "yarn build:types && webpack --watch",
+    "start": "webpack --watch",
     "start:progress": "yarn start --progress --profile",
     "build:stats": "webpack --env production --json > stats.json",
     "test": "jest",
@@ -26,6 +26,7 @@
     "@babel/preset-env": "^7.12.7",
     "@babel/preset-react": "^7.12.7",
     "@babel/preset-typescript": "^7.12.7",
+    "@linaria/webpack-loader": "^3.0.0-beta.0",
     "@types/classnames": "2.2.6",
     "@types/diff": "4.0.2",
     "@types/enzyme": "3.10.3",
@@ -64,6 +65,7 @@
     "jest": "24.9.0",
     "less": "3.8.1",
     "less-loader": "4.1.0",
+    "mini-css-extract-plugin": "^1.3.1",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-redux": "7.2.1",
@@ -84,6 +86,10 @@
     "webpack-rxjs-externals": "1.1.0"
   },
   "dependencies": {
+    "@linaria/babel": "^3.0.0-beta.0",
+    "@linaria/core": "^3.0.0-beta.0",
+    "@linaria/react": "^3.0.0-beta.0",
+    "@linaria/shaker": "^3.0.0-beta.0",
     "classnames": "2.2.6",
     "core-js": "3.1.4",
     "diff": "4.0.2",

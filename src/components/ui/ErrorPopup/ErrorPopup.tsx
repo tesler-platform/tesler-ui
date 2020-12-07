@@ -4,6 +4,7 @@ import {useTranslation} from 'react-i18next'
 import {ApplicationError, SystemError, BusinessError, ApplicationErrorType} from '../../../interfaces/view'
 import cn from 'classnames'
 import styles from './ErrorPopup.less'
+import {css} from '@linaria/core'
 
 export interface ErrorPopupOwnProps {
     className?: string,
@@ -12,6 +13,18 @@ export interface ErrorPopupOwnProps {
     onClose?: () => void
 }
 
+const headerUpper = css`
+text-transform: uppercase;
+color: red;
+`
+
+const aa = css`
+:global {
+    .ant-modal-content {
+        border-radius: 0;
+    }
+}
+`
 export const ErrorPopup: FunctionComponent<ErrorPopupOwnProps> = (props) => {
     const errorRef = React.useRef(null)
     const systemError = props.error as SystemError
@@ -27,13 +40,13 @@ export const ErrorPopup: FunctionComponent<ErrorPopupOwnProps> = (props) => {
     const {t} = useTranslation()
     const title = <header className={styles.header}>
         <Icon className={styles.icon} type="exclamation-circle-o" />
-        <span className={styles.title}>
+        <span className={headerUpper}>
             {props.title || t('Error')}
         </span>
     </header>
 
     return <Modal
-        className={cn(styles.container, props.className)}
+        className={cn(styles.container, props.className, aa)}
         title={title}
         visible
         centered
