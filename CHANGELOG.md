@@ -1,3 +1,9 @@
+# Version 1.25.2 (December 7, 2020)
+
+## Fixes
+
+* `useMultipleSelect` hook sends parent id of the selected record instead of self id, which leads to not working widget options `hierarchyGroupSelection` and `hierarchyGroupDeselection` for flat tree widgets
+
 # Version 1.25.1 (December 3, 2020)
 
 ## Fixes
