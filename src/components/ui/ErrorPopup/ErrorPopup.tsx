@@ -4,6 +4,10 @@ import { useTranslation } from 'react-i18next'
 import { ApplicationError, SystemError, BusinessError, ApplicationErrorType } from '../../../interfaces/view'
 import cn from 'classnames'
 import styles from './ErrorPopup.less'
+import { Dispatch } from 'redux'
+import { $do } from '../../../actions/actions'
+import { connect } from 'react-redux'
+import { Store } from '../../../interfaces/store'
 
 export interface ErrorPopupOwnProps {
     className?: string
@@ -12,7 +16,12 @@ export interface ErrorPopupOwnProps {
     onClose?: () => void
 }
 
-export const ErrorPopup: FunctionComponent<ErrorPopupOwnProps> = props => {
+interface ErrorPopupProps extends ErrorPopupOwnProps {
+    exportState: () => void
+    exportStateEnabled: boolean
+}
+
+export const ErrorPopup: FunctionComponent<ErrorPopupProps> = props => {
     const errorRef = React.useRef(null)
     const systemError = props.error as SystemError
     const businessError = props.error as BusinessError
@@ -28,6 +37,10 @@ export const ErrorPopup: FunctionComponent<ErrorPopupOwnProps> = props => {
             <span className={styles.title}>{props.title || t('Error')}</span>
         </header>
     )
+
+    const isExportInfoShown =
+        props.exportStateEnabled &&
+        (props.error.type === ApplicationErrorType.SystemError || props.error.type === ApplicationErrorType.NetworkError)
 
     return (
         <Modal
@@ -68,15 +81,31 @@ export const ErrorPopup: FunctionComponent<ErrorPopupOwnProps> = props => {
                         </Collapse>
                     </Form.Item>
                 )}
+                {isExportInfoShown && (
+                    <Button onClick={() => props.exportState()} type="link">
+                        {t('Save Info For Developers')}
+                    </Button>
+                )}
             </Form>
             {props.children}
         </Modal>
     )
 }
 
+function mapStateToProps(state: Store) {
+    return {
+        exportStateEnabled: state.session.exportStateEnabled
+    }
+}
+function mapDispatchToProps(dispatch: Dispatch) {
+    return {
+        exportState: () => dispatch($do.exportState(null))
+    }
+}
+
 /**
  * @category Components
  */
-const MemoizedErrorPopup = React.memo(ErrorPopup)
+const MemoizedErrorPopup = connect(mapStateToProps, mapDispatchToProps)(ErrorPopup)
 
 export default MemoizedErrorPopup

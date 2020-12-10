@@ -17,7 +17,7 @@ import { CustomMiddlewares } from '../interfaces/customMiddlewares'
  * @param storeCreator
  */
 function withLogger(storeCreator: StoreCreator): StoreCreator {
-    return (window as any).devToolsExtension ? (window as any).devToolsExtension()(storeCreator) : storeCreator
+    return (window as any).__REDUX_DEVTOOLS_EXTENSION__ ? (window as any).__REDUX_DEVTOOLS_EXTENSION__()(storeCreator) : storeCreator
 }
 
 /**
