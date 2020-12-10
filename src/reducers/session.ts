@@ -19,6 +19,7 @@ import { AnyAction, types } from '../actions/actions'
 import { Session } from '../interfaces/session'
 
 export const initialState: Session = {
+    exportStateEnabled: false,
     active: false,
     loginSpin: false,
     errorMsg: null,

@@ -1134,6 +1134,11 @@ export class ActionPayloadTypes {
     } = z
 
     /**
+     * Download state to device
+     */
+    exportState: null = z
+
+    /**
      * TODO
      */
     emptyAction: null = z

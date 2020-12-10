@@ -33,6 +33,7 @@
         "There is no connection to the server": "Отсутствует связь с сервером",
         "Load more": "Загрузить еще",
         "Enter value": "Введите значение",
+        "Save Info For Developers": "Сохранить информацию для разработчиков",
         "Screen is missing or unavailable for your role": "Экран \"{{screenName}}\" отсутствует или недоступен для вашей роли",
         "View is missing or unavailable for your role": "Панель \"{{viewName}}\" отсутствует или недоступна для вашей роли"
     }

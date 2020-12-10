@@ -31,6 +31,7 @@
         "Required fields are missing": "Required fields are missing",
         "This field is mandatory": "This field is mandatory",
         "Enter value": "Enter value",
+        "Save Info For Developers": "Save Info For Developers",
         "Screen is missing or unavailable for your role": "Screen {{screenName}} is missing or unavailable for your role",
         "View is missing or unavailable for your role": "View {{viewName}} is missing or unavailable for your role"
     }
