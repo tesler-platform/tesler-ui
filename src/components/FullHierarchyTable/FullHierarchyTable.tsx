@@ -223,7 +223,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                     key: item.key,
                     dataIndex: item.key,
                     width: getColumnWidth(item.key, depthLevel, fields, props.rowMetaFields, maxDepth, item.width),
-                    render: (text: string, dataItem: AssociatedItem) => {
+                    render: (text: string, dataItem: (AssociatedItem & {disableDrillDown?: boolean})) => {
                         if (item.type === FieldType.multivalue) {
                             return <MultivalueHover
                                 data={(dataItem[item.key] || emptyMultivalue) as MultivalueSingleValue[]}
@@ -242,6 +242,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                                 widgetName={props.meta.name}
                                 widgetFieldMeta={item}
                                 readonly
+                                disableDrillDown={item.drillDown && dataItem?.disableDrillDown}
                             />
                         </div>
                     }
