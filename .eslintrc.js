@@ -11,7 +11,8 @@ module.exports = {
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
         'prettier',
-        'prettier/@typescript-eslint'
+        'prettier/@typescript-eslint',
+        'prettier/react'
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -30,6 +31,7 @@ module.exports = {
         'file-progress'
     ],
     "rules": {
+        "prettier/prettier": "error",
         "@typescript-eslint/adjacent-overload-signatures": "error",
         "file-progress/activate": 1,
         "@typescript-eslint/array-type": [
@@ -46,19 +48,19 @@ module.exports = {
                 "accessibility": "no-public"
             }
         ],
-        "@typescript-eslint/member-delimiter-style": [
-            "error",
-            {
-                "multiline": {
-                    "delimiter": "comma",
-                    "requireLast": false
-                },
-                "singleline": {
-                    "delimiter": "comma",
-                    "requireLast": false
-                }
-            }
-        ],
+        // "@typescript-eslint/member-delimiter-style": [
+        //     "error",
+        //     {
+        //         "multiline": {
+        //             "delimiter": "comma",
+        //             "requireLast": false
+        //         },
+        //         "singleline": {
+        //             "delimiter": "comma",
+        //             "requireLast": false
+        //         }
+        //     }
+        // ],
         "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/naming-convention": "off",
         "@typescript-eslint/no-empty-function": "error",
