@@ -41,6 +41,7 @@ export interface RowMetaResponse extends TeslerResponse {
  * @param forceActive - любое изменение этого поля пользователем должно инициировать запрос новой меты записи
  * @param drillDown - адрес, по которому поле позволяет осуществить переход
  * @param drillDownType - как будет обработан переход по адресу в браузере
+ * @param drillDownKey - ключ для получения адреса из данных
  * @param values TODO:
  * @param filterValues TODO:
  * @param filterable - можно ли фильтровать записи по этому полю
