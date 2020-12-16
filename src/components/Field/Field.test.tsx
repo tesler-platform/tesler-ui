@@ -85,6 +85,15 @@ describe('Readonly field drilldown', () => {
     })
 
     it('behaviour can be supressed', () => {
+        store.getState().view.widgets = [{
+            name: 'name',
+            type: WidgetTypes.List,
+            title: '',
+            bcName: testBcName,
+            position: 1,
+            gridWidth: 2,
+            fields: [fieldMeta],
+        }]
         const wrapper = mount(
             <Provider store={store}>
                 <Field
@@ -315,7 +324,7 @@ describe('Readonly field drilldown', () => {
             [fieldMeta.key]: 'error'
         }
         store.getState().view.widgets = [{
-            name: 'test',
+            name: 'name',
             type: WidgetTypes.List,
             title: '',
             bcName: testBcName,
