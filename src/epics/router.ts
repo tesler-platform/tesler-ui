@@ -25,6 +25,7 @@ import {DrillDownType, RouteType} from '../interfaces/router'
 import {notification} from 'antd'
 import i18n from 'i18next'
 import {drillDown} from './router/drilldown'
+import {WidgetFieldBase} from '../interfaces/widget'
 
 /**
  * Epic of changing the current route
@@ -191,14 +192,18 @@ const userDrillDown: Epic = (action$, store) => action$.ofType(types.userDrillDo
     .mergeMap(rowMeta => {
         const drillDownField = rowMeta.fields.find(field => field.key === fieldKey)
         const route = state.router
-        return drillDownField?.drillDown || drillDownField?.drillDown !== route.path
+        const drillDownKey = (state.view.widgets
+            .find(widget => widget.bcName === bcName)?.fields
+            .find((field: WidgetFieldBase) => field.key === fieldKey) as WidgetFieldBase)?.drillDownKey
+        const customDrillDownUrl = state.data?.[bcName]?.find(record => record.id === cursor)?.[drillDownKey] as string
+        return customDrillDownUrl || drillDownField?.drillDown || drillDownField?.drillDown !== route.path
             ? Observable.concat(
                 (drillDownField.drillDownType !== DrillDownType.inner)
                     ? Observable.of($do.bcFetchRowMetaSuccess({bcName, rowMeta, bcUrl, cursor}))
                     : Observable.empty<never>(),
                 Observable.of($do.userDrillDownSuccess({bcName, bcUrl, cursor})),
                 Observable.of($do.drillDown({
-                    url: drillDownField.drillDown,
+                    url: customDrillDownUrl || drillDownField.drillDown,
                     drillDownType: drillDownField.drillDownType as DrillDownType,
                     route
                 }))

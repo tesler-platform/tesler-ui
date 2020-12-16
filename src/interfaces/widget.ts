@@ -1,4 +1,4 @@
-import {FieldType} from '../interfaces/view'
+import {FieldType} from './view'
 import {ConnectedComponent} from 'react-redux'
 import {FunctionComponent} from 'react'
 import {PickMap, DataValue} from './data'
@@ -73,7 +73,8 @@ export interface WidgetFieldBase {
     /**
      * Shift value of different hierarchy level
      */
-    hierarchyShift?: boolean
+    hierarchyShift?: boolean,
+    drillDownKey?: string
 }
 
 export interface WidgetListFieldBase extends WidgetFieldBase {

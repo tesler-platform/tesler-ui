@@ -10,7 +10,7 @@ import {RowMetaField} from '../../interfaces/rowMeta'
 import {WidgetField, WidgetTypes, WidgetFieldBase} from '../../interfaces/widget'
 import DatePickerField from '../ui/DatePickerField/DatePickerField'
 import NumberInput from '../../components/ui/NumberInput/NumberInput'
-import {NumberTypes} from '../../components/ui/NumberInput/formaters'
+import {NumberTypes} from '../ui/NumberInput/formaters'
 import TextArea from '../../components/ui/TextArea/TextArea'
 import Dictionary from '../../components/ui/Dictionary/Dictionary'
 import {buildBcUrl} from '../../utils/strings'
@@ -26,10 +26,11 @@ import readOnlyFieldStyles from '../../components/ui/ReadOnlyField/ReadOnlyField
 import CheckboxPicker from '../../components/ui/CheckboxPicker/CheckboxPicker'
 import RadioButton from '../../components/ui/RadioButton/RadioButton'
 import styles from './Field.less'
-import {CustomizationContext} from '../../components/View/View'
-import {InteractiveInput} from '../../components/ui/InteractiveInput/InteractiveInput'
+import {CustomizationContext} from '../View/View'
+import {InteractiveInput} from '../ui/InteractiveInput/InteractiveInput'
 import HistoryField from '../../components/ui/HistoryField/HistoryField'
 import {TooltipPlacement} from 'antd/es/tooltip'
+import {useDrillDownUrl} from '../../hooks/useDrillDownUrl'
 
 interface FieldOwnProps {
     widgetFieldMeta: WidgetField,
@@ -114,6 +115,7 @@ const emptyFieldMeta = [] as any
 export const Field: FunctionComponent<FieldProps> = (props) => {
     const [localValue, setLocalValue] = React.useState(null)
     let resultField: React.ReactChild = null
+    const drillDownUrl = useDrillDownUrl(props.widgetName, props.widgetFieldMeta, props.cursor)
 
     const value = ('forcedValue' in props)
         ? props.forcedValue
@@ -141,13 +143,13 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
 
     const handleDrilldown = React.useMemo(
         () => {
-            return (!props.disableDrillDown && props.widgetFieldMeta.drillDown)
+            return (!props.disableDrillDown && drillDownUrl)
                 ? () => {
                     props.onDrillDown(props.widgetName, props.data?.id, props.bcName, props.widgetFieldMeta.key)
                 }
                 : null
         },
-        [props.disableDrillDown, props.widgetFieldMeta.drillDown, props.widgetName, props.data?.id, props.bcName,
+        [props.disableDrillDown, drillDownUrl, props.widgetName, props.data?.id, props.bcName,
             props.widgetFieldMeta.key]
     )
 
