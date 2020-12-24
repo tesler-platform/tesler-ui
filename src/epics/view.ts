@@ -217,7 +217,7 @@ const showAssocPopup: Epic = (action$, store) => action$.ofType(types.showViewPo
         })
 
         const calleeData = state.data[calleeBCName]?.find((dataRecord) => dataRecord.id === calleeCursor)
-        const assocIds = (calleeData?.[assocFieldKey] as MultivalueSingleValue[]).map((recordId) => recordId.id)
+        const assocIds = (calleeData?.[assocFieldKey] as MultivalueSingleValue[])?.map((recordId) => recordId.id)
         const assocPendingIds = assocFieldChanges.map((recordId) => recordId.id)
         if (assocIds) {
             assocIds.forEach((recordId) => {
