@@ -11,11 +11,11 @@ import {buildBcUrl} from '../utils/strings'
  * drilldown link, for example if object is removed.
  */
 export function useDrillDownUrl(widgetName: string, fieldMeta: WidgetFieldBase, cursor: string): string | null {
-    if (!fieldMeta.drillDown && !fieldMeta.drillDownKey) {
-        return null
-    }
     const drillDownLink = useSelector((store: Store) => {
         const widgetMeta = store.view.widgets.find((widget) => widget.name === widgetName)
+        if (!widgetMeta) {
+            return null
+        }
         const record = store.data[widgetMeta.bcName]?.find(dataItem => dataItem.id === cursor)
         const bcUrl = buildBcUrl(widgetMeta.bcName, true)
         const rowMeta = bcUrl && store.view.rowMeta[widgetMeta.bcName]?.[bcUrl]

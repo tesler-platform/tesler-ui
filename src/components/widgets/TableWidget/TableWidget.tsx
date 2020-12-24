@@ -161,7 +161,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = (props) => {
             const floatMenuTopValue = `${tableRowRect.top - tableContainerRect.top + 17}px`
             floatMenuHoveredRecord.current = recordId
 
-            if (data?.length === 1 && floatMenuTopValue === floatMenuRef.current.style.top) {
+            if (!disableDots && data?.length === 1 && floatMenuTopValue === floatMenuRef.current.style.top) {
                 return
             }
 
