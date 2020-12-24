@@ -1,3 +1,14 @@
+# Version 1.26.0 (December 24, 2020)
+
+## Features
+
+* Drilldown links can now be set via `drillDownKey` property from field description in widget meta; when set, the value of this property will be used as a name of the record field that contains an url, allowing to set drilldows urls per row rather than via row field meta ([#535](https://github.com/tesler-platform/tesler-ui/pull/535))
+* `<ErrorPopup />` now supports multiline text ([#529](https://github.com/tesler-platform/tesler-ui/pull/529))
+
+## Fixes
+
+* `showAssocPopup` epic will crash when Tesler API returns null instead of empty array, which it will for SQL BC ([#537](https://github.com/tesler-platform/tesler-ui/pull/537))
+
 # Version 1.25.2 (December 7, 2020)
 
 ## Fixes
