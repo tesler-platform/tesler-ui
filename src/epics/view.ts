@@ -15,11 +15,11 @@ import {changeLocation} from '../reducers/router'
 import {AxiosError} from 'axios'
 import {parseBcCursors} from '../utils/history'
 import {WidgetTypes} from '../interfaces/widget'
-import {MultivalueSingleValue, PendingDataItem} from '../interfaces/data'
 import {matchOperationRole} from '../utils/operations'
 import {fileUploadConfirm} from './view/fileUploadConfirm'
 import {showFileUploadPopup} from './view/showFileUploadPopup'
 import {sendOperation} from './view/sendOperation'
+import {showAssocPopup} from './view/showAssocPopup'
 
 const sendOperationAssociate: Epic = (action$, store) => action$.ofType(types.sendOperation)
 .filter(action => matchOperationRole(OperationTypeCrud.associate, action.payload, store.getState()))
@@ -187,54 +187,6 @@ const showAllTableRecordsInit: Epic = (action$, store) => action$.ofType(types.s
     changeLocation(url)
 
     return Observable.concat(...resultObservables)
-})
-
-const showAssocPopup: Epic = (action$, store) => action$.ofType(types.showViewPopup)
-.filter(action => !!(action.payload.calleeBCName && action.payload.associateFieldKey))
-.mergeMap((action) => {
-    const {bcName, calleeBCName} = action.payload
-
-    const state = store.getState()
-
-    const assocWidget = state.view.widgets.find((widget) => widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup)
-    if (assocWidget?.options && !assocWidget.options?.hierarchyFull) {
-        return Observable.empty<never>()
-    }
-
-    const calleeCursor = state.screen.bo.bc[calleeBCName]?.cursor
-    const calleePendingChanges = calleeCursor && state.view.pendingDataChanges[calleeBCName]?.[calleeCursor]
-    const assocFieldKey = action.payload.associateFieldKey
-    const assocFieldChanges = (calleePendingChanges?.[assocFieldKey] as MultivalueSingleValue[])
-    const popupInitPendingChanges: Record<string, PendingDataItem> = {}
-
-    if (assocFieldChanges) {
-        assocFieldChanges.forEach((record) => {
-            popupInitPendingChanges[record.id] = {
-                id: record.id,
-                _associate: true,
-                _value: record.value
-            }
-        })
-
-        const calleeData = state.data[calleeBCName]?.find((dataRecord) => dataRecord.id === calleeCursor)
-        const assocIds = (calleeData?.[assocFieldKey] as MultivalueSingleValue[])?.map((recordId) => recordId.id)
-        const assocPendingIds = assocFieldChanges.map((recordId) => recordId.id)
-        if (assocIds) {
-            assocIds.forEach((recordId) => {
-                if (!assocPendingIds.includes(recordId)) {
-                    popupInitPendingChanges[recordId] = {
-                        id: recordId,
-                        _associate: false
-                    }
-                }
-            })
-        }
-    }
-    return Observable.of($do.changeDataItems({
-        bcName,
-        cursors: Object.keys(popupInitPendingChanges),
-        dataItems: Object.values(popupInitPendingChanges)
-    }))
 })
 
 /**
