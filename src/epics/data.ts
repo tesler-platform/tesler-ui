@@ -22,6 +22,7 @@ import {removeMultivalueTag} from './data/removeMultivalueTag'
 import {cancelRequestActionTypes, cancelRequestEpic} from '../utils/cancelRequestEpic'
 import {bcCancelCreateDataEpic} from './data/bcCancelCreateDataEpic'
 import {bcNewDataEpic} from './data/bcNewDataEpic'
+import {bcFetchRowMetaRequest} from './data/bcFetchRowMetaRequest'
 
 const maxDepthLevel = 10
 
@@ -52,41 +53,6 @@ const selectView: Epic = (action$, store) => action$.ofType(types.selectView)
         return $do.bcFetchDataRequest({ widgetName: widget.name, bcName })
     })
     return result
-})
-
-const bcFetchRowMetaRequest: Epic = (action$, store) => action$.ofType(types.bcFetchRowMeta)
-.mergeMap((action) => {
-    const state = store.getState()
-    const screenName = state.screen.screenName
-    const bcName = action.payload.bcName
-    const cursor = state.screen.bo.bc[bcName].cursor
-    const bcUrl = buildBcUrl(bcName, true)
-    const canceler = api.createCanceler()
-    const cancelFlow = cancelRequestEpic(
-        action$,
-        cancelRequestActionTypes,
-        canceler.cancel,
-        $do.bcFetchRowMetaFail({ bcName })
-    )
-    const cancelByParentBc = cancelRequestEpic(
-        action$,
-        [types.bcSelectRecord],
-        canceler.cancel,
-        $do.bcFetchRowMetaFail({ bcName }),
-        (filteredAction) => {
-            const actionBc = filteredAction.payload.bcName
-            return state.screen.bo.bc[bcName].parentName === actionBc
-        }
-    )
-    const normalFlow = api.fetchRowMeta(screenName, bcUrl, undefined, canceler.cancelToken)
-    .map(rowMeta => {
-        return $do.bcFetchRowMetaSuccess({ bcName, rowMeta, bcUrl, cursor })
-    })
-    .catch(error => {
-        console.error(error)
-        return Observable.of($do.bcFetchRowMetaFail({ bcName }))
-    })
-    return Observable.race(cancelFlow, cancelByParentBc, normalFlow)
 })
 
 /**
