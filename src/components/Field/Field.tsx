@@ -115,7 +115,7 @@ const emptyFieldMeta = [] as any
 export const Field: FunctionComponent<FieldProps> = (props) => {
     const [localValue, setLocalValue] = React.useState(null)
     let resultField: React.ReactChild = null
-    const drillDownUrl = useDrillDownUrl(props.widgetName, props.widgetFieldMeta, props.cursor)
+    const drillDownUrl = useDrillDownUrl(props.bcName, props.widgetFieldMeta, props.cursor)
 
     const value = ('forcedValue' in props)
         ? props.forcedValue
@@ -169,7 +169,7 @@ export const Field: FunctionComponent<FieldProps> = (props) => {
         placeholder,
         readOnly: props.readonly,
         backgroundColor: bgColor,
-        onDrillDown: handleDrilldown
+        onDrillDown: handleDrilldown,
     }
     const commonInputProps: any = {
         cursor: props.cursor,
