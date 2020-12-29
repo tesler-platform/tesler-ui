@@ -4,21 +4,17 @@ import {WidgetFieldBase} from '../interfaces/widget'
 import {buildBcUrl} from '../utils/strings'
 
 /**
- * @param widgetName - widget name passed to field
+ * @param bcName - bcName passed to field
  * @param cursor - field ID
  * @param fieldMeta - widget field meta
  * @description Allows to override drilldown url from field data by drillDownKey. Checking order allows to disable
  * drilldown link, for example if object is removed.
  */
-export function useDrillDownUrl(widgetName: string, fieldMeta: WidgetFieldBase, cursor: string): string | null {
+export function useDrillDownUrl(bcName: string, fieldMeta: WidgetFieldBase, cursor: string): string | null {
     const drillDownLink = useSelector((store: Store) => {
-        const widgetMeta = store.view.widgets.find((widget) => widget.name === widgetName)
-        if (!widgetMeta) {
-            return null
-        }
-        const record = store.data[widgetMeta.bcName]?.find(dataItem => dataItem.id === cursor)
-        const bcUrl = buildBcUrl(widgetMeta.bcName, true)
-        const rowMeta = bcUrl && store.view.rowMeta[widgetMeta.bcName]?.[bcUrl]
+        const record = store.data[bcName]?.find(dataItem => dataItem.id === cursor)
+        const bcUrl = buildBcUrl(bcName, true)
+        const rowMeta = bcUrl && store.view.rowMeta[bcName]?.[bcUrl]
         if (!rowMeta || !rowMeta.fields) {
             return null
         }
