@@ -199,6 +199,7 @@ export {sendOperationEpicImpl} from './epics/view/sendOperation'
 export {removeMultivalueTagImpl} from './epics/data/removeMultivalueTag'
 export {bcCancelCreateDataEpicImpl} from './epics/data/bcCancelCreateDataEpic'
 export {bcNewDataEpicImpl} from './epics/data/bcNewDataEpic'
+export {bcFetchRowMetaRequestImpl} from './epics/data/bcFetchRowMetaRequest'
 export {drillDownImpl} from './epics/router/drilldown'
 
 /**
