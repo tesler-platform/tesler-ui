@@ -6,7 +6,6 @@ import {WidgetFieldBase} from '../../../interfaces/widget'
 import {useWidgetHighlightFilter} from '../../../hooks/useWidgetFilter'
 import SearchHighlight from '../SearchHightlight/SearchHightlight'
 import {escapedSrc} from '../../../utils/strings'
-import {useDrillDownUrl} from '../../../hooks/useDrillDownUrl'
 
 export interface ReadOnlyFieldProps {
     /**
@@ -26,7 +25,6 @@ export interface ReadOnlyFieldProps {
 
 const ReadOnlyField: React.FunctionComponent<ReadOnlyFieldProps> = (props) => {
     const filter = useWidgetHighlightFilter(props.widgetName, props.meta.key)
-    const drillDownUrl = useDrillDownUrl(props.widgetName, props.meta, props.cursor)
     const displayedValue = filter
         ? <SearchHighlight
             source={(props.children || '').toString()}
@@ -42,8 +40,7 @@ const ReadOnlyField: React.FunctionComponent<ReadOnlyFieldProps> = (props) => {
         )}
         style={props.backgroundColor ? { backgroundColor: props.backgroundColor } : null}
     >
-        {props.onDrillDown && drillDownUrl
-            ? <ActionLink onClick={props.onDrillDown}>
+        {props.onDrillDown ? <ActionLink onClick={props.onDrillDown}>
                 {displayedValue}
             </ActionLink>
             : displayedValue
