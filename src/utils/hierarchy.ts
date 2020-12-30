@@ -16,7 +16,7 @@
  */
 
 import { RowMetaField } from '../interfaces/rowMeta'
-import { WidgetField } from '../interfaces/widget'
+import { WidgetListField } from '../interfaces/widget'
 import { FieldType } from '../interfaces/view'
 
 /**
@@ -36,7 +36,7 @@ import { FieldType } from '../interfaces/view'
 export function getColumnWidth(
     columnName: string,
     depthLevel: number,
-    fields: WidgetField[],
+    fields: WidgetListField[],
     rowMetaFields: RowMetaField[],
     maxDepth: number,
     width?: number
@@ -56,14 +56,21 @@ export function getColumnWidth(
     const columnKey = showedFields?.indexOf(currentField)
     const currentColumnShift = currentField?.hierarchyShift
     const nextColumnShift = showedFields[columnKey + 1]?.hierarchyShift
+    // Ability to set last column width if one of previous columns have width = 0
+    const notFixedWidthColumn = showedFields?.find(item => item.width === 0)
     const isLast = columnKey === showedFields?.length - 1
+
+    // this column should take all available width
+    if (width === 0) {
+        return null
+    }
 
     if (columnName === '_indentColumn') {
         // 60px as base width _identColumn
         return nextColumnShift ? `${(width || 60) + indentLevel * 20}px` : `${(width || 60) + (maxDepth > 3 ? 3 : maxDepth) * 20}px`
     }
 
-    if (isLast) {
+    if (isLast && !notFixedWidthColumn) {
         return null
     }
 
