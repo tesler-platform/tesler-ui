@@ -87,8 +87,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
     const loading = props.loading
     const depthLevel = props.depth || 1
     const levelValues = props.data?.map(item => item.level)
-    const maxDepth = (levelValues && Math.max(...levelValues)) || 1
-    console.warn(props.data)
+    const maxDepth = (levelValues && levelValues?.length && Math.max(...levelValues)) || 1
     const textFilters = React.useMemo(
         () => props.bcFilters?.filter(filter => [FilterType.contains, FilterType.equals].includes(filter.type)),
         [props.bcFilters]
