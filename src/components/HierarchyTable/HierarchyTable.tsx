@@ -217,7 +217,9 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
     const columns: Array<ColumnProps<DataItem>> = React.useMemo(() => {
         return [
             indentColumn,
-            ...fields.map((item: WidgetListField) => ({
+            ...fields
+            .filter(item => !item.hidden && item.type !== FieldType.hidden)
+            .map((item: WidgetListField) => ({
                 title: item.title,
                 key: item.key,
                 dataIndex: item.key,
