@@ -1,3 +1,12 @@
+# Version 1.26.1 (December 30, 2020)
+
+## Fixes
+
+* `bcFetchRowMetaRequest` epic implementation should be importable ([#540](https://github.com/tesler-platform/tesler-ui/pull/540))
+* `useDrillDownUrl` hook should use `bcName` instead of `widgetName`, as some widgets (hierarchies) can have drilldown links to different business components ([#541](https://github.com/tesler-platform/tesler-ui/pull/541))
+* `hierarchyDisableRoot` flag is not respected by `<HierarchyTable />` ([#542](https://github.com/tesler-platform/tesler-ui/pull/542))
+* `hidden` flag and field type are not respected by `<HierarchyTable />` ([#543](https://github.com/tesler-platform/tesler-ui/pull/542))
+
 # Version 1.26.0 (December 24, 2020)
 
 ## Features
