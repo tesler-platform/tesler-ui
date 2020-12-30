@@ -91,7 +91,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = (props) =>
     const selectedRecords = useAssocRecords(props.data, props.pendingChanges, isRadio)
 
     const rowSelection: TableRowSelection<DataItem> = React.useMemo(() => {
-        if (props.selectable) {
+        if (props.selectable && !(indentLevel === 0 && hierarchyDisableRoot)) {
             return {
                 type: 'checkbox',
                 selectedRowKeys: selectedRecords.map(item => item.id),
