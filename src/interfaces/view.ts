@@ -70,18 +70,61 @@ export interface ViewState extends ViewMetaResponse {
     }
 }
 
+/**
+ * View description returned by Tesler API
+ */
 export interface ViewMetaResponse {
-    id: number,
+    /**
+     * @deprecated Deprecated in favor of `name`
+     */
+    id?: number,
+    /**
+     * Name of the view as specified in *.view.json file
+     */
     name: string,
+    /**
+     * Displayed title
+     */
     title?: string,
+    /**
+     * Specifies which layout template to use for the view
+     *
+     *Not used in Tesler UI Core, but can used by client application
+     */
     template?: string,
+    /**
+     * @deprecated Used for dynamic view layouts (configurable from user side), which are no longer implemented
+     */
     customizable?: boolean,
+    /**
+     * @deprecated Not used
+     */
     editable?: boolean,
+    /**
+     * Url for the view (usually in form of `${screen.name}/${view.name}`)
+     */
     url: string,
+    /**
+     * Widgets present on the view
+     */
     widgets: WidgetMeta[],
-    columns: number | null,
-    rowHeight: number | null,
-    readOnly: boolean,
+    /**
+     * @deprecated Used for dynamic view layouts (configurable from user side), which are no longer implemented
+     */
+    columns?: number | null,
+    /**
+     * @deprecated Used for dynamic view layouts (configurable from user side), which are no longer implemented
+     */
+    rowHeight?: number | null,
+    /**
+     * Not used in Tesler UI Core, but can be used by client application
+     */
+    readOnly?: boolean,
+    /**
+     * Not used in Tesler UI Core
+     *
+     * TODO: Need description
+     */
     ignoreHistory?: boolean
 }
 
