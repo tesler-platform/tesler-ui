@@ -7,7 +7,7 @@ import {Store} from '../interfaces/store'
 import {OperationTypeCrud, AssociatedItem, OperationErrorEntity, OperationError} from '../interfaces/operation'
 import {DataItem, MultivalueSingleValue} from '../interfaces/data'
 import {ObjectMap} from '../interfaces/objectMap'
-import {WidgetMeta, WidgetTableHierarchy, WidgetTableMeta, WidgetTypes} from '../interfaces/widget'
+import {WidgetTableHierarchy, WidgetTableMeta, WidgetTypes} from '../interfaces/widget'
 import * as api from '../api/api'
 import {buildBcUrl} from '../utils/strings'
 import {store as storeInstance} from '../Provider'
@@ -23,37 +23,9 @@ import {cancelRequestActionTypes, cancelRequestEpic} from '../utils/cancelReques
 import {bcCancelCreateDataEpic} from './data/bcCancelCreateDataEpic'
 import {bcNewDataEpic} from './data/bcNewDataEpic'
 import {bcFetchRowMetaRequest} from './data/bcFetchRowMetaRequest'
+import {selectView} from './data/selectView'
 
 const maxDepthLevel = 10
-
-const selectView: Epic = (action$, store) => action$.ofType(types.selectView)
-.mergeMap((action) => {
-    const state = store.getState()
-    const bcToLoad: ObjectMap<WidgetMeta> = {}
-    state.view.widgets
-        .forEach(widget => {
-            if (widget.bcName) {
-                let bcName = widget.bcName
-                let parentName = state.screen.bo.bc[widget.bcName].parentName
-                while (parentName) {
-                    bcName = parentName
-                    parentName = state.screen.bo.bc[parentName].parentName
-                }
-
-                if (!bcToLoad[bcName]) {
-                    bcToLoad[bcName] = widget
-                }
-            }
-        })
-
-    const result = Object.entries(bcToLoad).map(([bcName, widget]) => {
-        // TODO: Если получится разобраться с RxJS, то здесь можно бросать
-        // конкат от двух Observable - первый на загрузку данных, второй на загрузку меты, отложенный
-        // до появления экшна успеха загрузки данных с указанными бк и виджетом
-        return $do.bcFetchDataRequest({ widgetName: widget.name, bcName })
-    })
-    return result
-})
 
 /**
  * Loads BC's data.
