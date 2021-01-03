@@ -6,11 +6,9 @@ import {Observable} from 'rxjs/Observable'
 import {Store} from '../interfaces/store'
 import {OperationTypeCrud, AssociatedItem, OperationErrorEntity, OperationError} from '../interfaces/operation'
 import {DataItem, MultivalueSingleValue} from '../interfaces/data'
-import {ObjectMap} from '../interfaces/objectMap'
 import {WidgetTableHierarchy, WidgetTableMeta, WidgetTypes} from '../interfaces/widget'
 import * as api from '../api/api'
 import {buildBcUrl} from '../utils/strings'
-import {store as storeInstance} from '../Provider'
 import {openButtonWarningNotification} from '../utils/notifications'
 import {getFilters, getSorters} from '../utils/filters'
 import {AxiosError} from 'axios'
@@ -24,6 +22,7 @@ import {bcCancelCreateDataEpic} from './data/bcCancelCreateDataEpic'
 import {bcNewDataEpic} from './data/bcNewDataEpic'
 import {bcFetchRowMetaRequest} from './data/bcFetchRowMetaRequest'
 import {selectView} from './data/selectView'
+import {requestBcChildren} from '../utils/bc'
 
 const maxDepthLevel = 10
 
@@ -148,7 +147,7 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
                         ignorePageLimit: true
                     }))
                     : Observable.empty<never>()
-                : Object.entries(requestBcChildren(bcName))
+                : Object.entries(requestBcChildren(bcName, state.view.widgets, state.screen.bo.bc))
                     .map(entry => {
                         const [childBcName, widgetNames] = entry
                         return $do.bcFetchDataRequest({
@@ -238,7 +237,9 @@ const bcLoadMore: Epic = (action$, store) => action$.ofType(types.bcLoadMore)
 const bcSelectRecord: Epic = (action$, store) => action$.ofType(types.bcSelectRecord)
 .mergeMap((action) => {
     const {bcName, cursor} = action.payload
-    const fetchChildrenBcData = Object.entries(requestBcChildren(bcName))
+    const widgets = store.getState().view.widgets
+    const bcMap = store.getState().screen.bo.bc
+    const fetchChildrenBcData = Object.entries(requestBcChildren(bcName, widgets, bcMap))
         .map(entry => {
             const [childBcName, widgetNames] = entry
             return $do.bcFetchDataRequest({
@@ -346,7 +347,7 @@ const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperat
         }
     }
 
-    const fetchChildrenBcData = Object.entries(requestBcChildren(bcName))
+    const fetchChildrenBcData = Object.entries(requestBcChildren(bcName, state.view.widgets, state.screen.bo.bc))
     .map(entry => {
         const [childBcName, widgetNames] = entry
         return $do.bcFetchDataRequest({ bcName: childBcName, widgetName: widgetNames[0] })
@@ -815,68 +816,6 @@ const changeAssociationFull: Epic = (action$, store) => action$.ofType(types.cha
     return Observable.concat(...result)
 })
 
-/**
- * Returns a dictionary of children business components for current iew
- * Key - name of child business component
- * Value - an array of widget ids which use this business component
- *
- * @param bcName Parent business component name
- */
-function requestBcChildren(bcName: string) {
-    const state = storeInstance.getState()
-    const widgets = state.view.widgets
-    const bcMap = state.screen.bo.bc
-
-    // Build a dictionary with children for requested BC and widgets that need this BC
-    const childrenBcMap: ObjectMap<string[]> = {}
-    widgets.forEach((widget) => {
-        if (widget.bcName) {
-            const widgetBcList: string[] = []
-
-            widgetBcList.push(widget.bcName)
-            let parentName = bcMap[widget.bcName]?.parentName
-            while (parentName) {
-                widgetBcList.push(parentName)
-                parentName = bcMap[parentName]?.parentName
-            }
-
-            widgetBcList.some((expectedBcName) => {
-                if (bcMap[expectedBcName].parentName === bcName) {
-                    if (!childrenBcMap[expectedBcName]) {
-                        childrenBcMap[expectedBcName] = []
-                    }
-                    childrenBcMap[expectedBcName].push(widget.name)
-                    return true
-                }
-
-                return false
-            })
-        }
-    })
-
-    // If widgets supports hierarchy, try to find children though it
-    // TODO: need description and split to separate methods?
-    const hierarchyWidget = state.view.widgets.find(item => {
-        const hierarchy = item.options?.hierarchy
-        const nestedBc = hierarchy?.map(nestedItem => nestedItem.bcName)
-        return hierarchy && (item.bcName === bcName || nestedBc.includes(bcName))
-    }) as WidgetTableMeta
-    if (hierarchyWidget) {
-        const nestedBcNames = hierarchyWidget.options?.hierarchy.map(nestedItem => nestedItem.bcName)
-        const childHierarchyBcIndex = nestedBcNames.findIndex(item => item === bcName)
-        const childHierarchyBcName = childHierarchyBcIndex !== -1
-            ? nestedBcNames[childHierarchyBcIndex + 1]
-            : hierarchyWidget.options?.hierarchy[0].bcName
-        if (!childHierarchyBcName) {
-            return childrenBcMap
-        }
-        if (!childrenBcMap[childHierarchyBcName]) {
-            childrenBcMap[childHierarchyBcName] = []
-        }
-        childrenBcMap[childHierarchyBcName].push(hierarchyWidget.name)
-    }
-    return childrenBcMap
-}
 
 export const dataEpics = {
     bcFetchRowMetaRequest,
