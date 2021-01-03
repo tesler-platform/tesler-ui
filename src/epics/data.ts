@@ -22,7 +22,7 @@ import {bcCancelCreateDataEpic} from './data/bcCancelCreateDataEpic'
 import {bcNewDataEpic} from './data/bcNewDataEpic'
 import {bcFetchRowMetaRequest} from './data/bcFetchRowMetaRequest'
 import {selectView} from './data/selectView'
-import {requestBcChildren} from '../utils/bc'
+import {getBcChildren} from '../utils/bc'
 
 const maxDepthLevel = 10
 
@@ -147,7 +147,7 @@ const bcFetchDataEpic: Epic = (action$, store) => action$.ofType(
                         ignorePageLimit: true
                     }))
                     : Observable.empty<never>()
-                : Object.entries(requestBcChildren(bcName, state.view.widgets, state.screen.bo.bc))
+                : Object.entries(getBcChildren(bcName, state.view.widgets, state.screen.bo.bc))
                     .map(entry => {
                         const [childBcName, widgetNames] = entry
                         return $do.bcFetchDataRequest({
@@ -239,7 +239,7 @@ const bcSelectRecord: Epic = (action$, store) => action$.ofType(types.bcSelectRe
     const {bcName, cursor} = action.payload
     const widgets = store.getState().view.widgets
     const bcMap = store.getState().screen.bo.bc
-    const fetchChildrenBcData = Object.entries(requestBcChildren(bcName, widgets, bcMap))
+    const fetchChildrenBcData = Object.entries(getBcChildren(bcName, widgets, bcMap))
         .map(entry => {
             const [childBcName, widgetNames] = entry
             return $do.bcFetchDataRequest({
@@ -347,7 +347,7 @@ const bcSaveDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperat
         }
     }
 
-    const fetchChildrenBcData = Object.entries(requestBcChildren(bcName, state.view.widgets, state.screen.bo.bc))
+    const fetchChildrenBcData = Object.entries(getBcChildren(bcName, state.view.widgets, state.screen.bo.bc))
     .map(entry => {
         const [childBcName, widgetNames] = entry
         return $do.bcFetchDataRequest({ bcName: childBcName, widgetName: widgetNames[0] })
