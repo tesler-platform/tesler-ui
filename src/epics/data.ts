@@ -3,15 +3,12 @@
  */
 import { $do, AnyAction, Epic, types } from '../actions/actions'
 import { Observable } from 'rxjs/Observable'
-import { OperationTypeCrud, AssociatedItem, OperationErrorEntity, OperationError } from '../interfaces/operation'
+import { OperationTypeCrud, AssociatedItem } from '../interfaces/operation'
 import { DataItem, MultivalueSingleValue } from '../interfaces/data'
 import { WidgetTableHierarchy, WidgetTableMeta } from '../interfaces/widget'
 import * as api from '../api/api'
 import { buildBcUrl } from '../utils/strings'
-import { openButtonWarningNotification } from '../utils/notifications'
 import { getFilters, getSorters } from '../utils/filters'
-import { AxiosError } from 'axios'
-import i18n from 'i18next'
 import { matchOperationRole } from '../utils/operations'
 import { PendingValidationFailsFormat } from '../interfaces/view'
 import { removeMultivalueTag } from './data/removeMultivalueTag'
@@ -23,6 +20,7 @@ import { selectView } from './data/selectView'
 import { getBcChildren } from '../utils/bc'
 import { bcSelectDepthRecord } from './data/bcSelectDepthRecord'
 import { bcFetchDataEpic } from './data/bcFetchData'
+import { bcSaveDataEpic } from './data/bcSaveData'
 
 /**
  *
@@ -157,90 +155,6 @@ export const bcDeleteDataEpic: Epic = (action$, store) =>
                 .catch((error: any) => {
                     console.log(error)
                     return Observable.of($do.bcDeleteDataFail({ bcName }))
-                })
-        })
-
-/**
- *
- * @param action$
- * @param store
- * @category Epics
- */
-export const bcSaveDataEpic: Epic = (action$, store) =>
-    action$
-        .ofType(types.sendOperation)
-        .filter(action => matchOperationRole(OperationTypeCrud.save, action.payload, store.getState()))
-        .mergeMap(action => {
-            const state = store.getState()
-            const bcName = action.payload.bcName
-            const bcUrl = buildBcUrl(bcName, true)
-            const widgetName = action.payload.widgetName
-            const cursor = state.screen.bo.bc[bcName].cursor
-            const dataItem = state.data[bcName].find(item => item.id === cursor)
-            const pendingChanges = state.view.pendingDataChanges[bcName]?.[cursor]
-            const rowMeta = bcUrl && state.view.rowMeta[bcName]?.[bcUrl]
-            const options = state.view.widgets.find(widget => widget.name === widgetName)?.options
-
-            // there is no row meta when parent bc custom operation's postaction triggers autosave, because custom operation call bcForceUpdate
-            if (rowMeta) {
-                const fields = rowMeta.fields
-                for (const key in pendingChanges) {
-                    if (fields.find(item => item.key === key && item.disabled)) {
-                        delete pendingChanges[key]
-                    }
-                }
-            }
-
-            const fetchChildrenBcData = Object.entries(getBcChildren(bcName, state.view.widgets, state.screen.bo.bc)).map(entry => {
-                const [childBcName, widgetNames] = entry
-                return $do.bcFetchDataRequest({ bcName: childBcName, widgetName: widgetNames[0] })
-            })
-
-            const context = { widgetName: action.payload.widgetName }
-            return api
-                .saveBcData(state.screen.screenName, bcUrl, { ...pendingChanges, vstamp: dataItem.vstamp }, context)
-                .mergeMap(data => {
-                    const postInvoke = data.postActions[0]
-                    const responseDataItem = data.record
-                    return Observable.concat(
-                        Observable.of($do.bcSaveDataSuccess({ bcName, cursor, dataItem: responseDataItem })),
-                        Observable.of($do.bcFetchRowMeta({ widgetName, bcName })),
-                        Observable.of(...fetchChildrenBcData),
-                        postInvoke
-                            ? Observable.of(
-                                  $do.processPostInvoke({
-                                      bcName,
-                                      widgetName,
-                                      postInvoke,
-                                      cursor: responseDataItem.id
-                                  })
-                              )
-                            : Observable.empty<never>(),
-                        action.payload.onSuccessAction ? Observable.of(action.payload.onSuccessAction) : Observable.empty<never>()
-                    )
-                })
-                .catch((e: AxiosError) => {
-                    console.log(e)
-                    // Protection against widget blocking while autosaving
-                    if (action.payload.onSuccessAction && !options?.disableNotification) {
-                        openButtonWarningNotification(
-                            i18n.t('There are pending changes. Please save them or cancel.'),
-                            i18n.t('Cancel changes'),
-                            0,
-                            () => {
-                                store.dispatch($do.bcCancelPendingChanges({ bcNames: [bcName] }))
-                            },
-                            'data_autosave_undo'
-                        )
-                    }
-                    let viewError: string = null
-                    let entityError: OperationErrorEntity = null
-                    const operationError = e.response?.data as OperationError
-                    if (e.response?.data === Object(e.response?.data)) {
-                        entityError = operationError?.error?.entity
-                        viewError = operationError?.error?.popup?.[0]
-                    }
-                    return Observable.of($do.bcSaveDataFail({ bcName, bcUrl, viewError, entityError }))
                 })
         })
 
