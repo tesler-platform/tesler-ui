@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-import {requestBcChildren} from '../bc'
+import {getBcChildren} from '../bc'
 import {WidgetTypes, WidgetTableMeta} from '../../interfaces/widget'
 
 describe('requestBcChildren', () => {
     it('returns all direct children for specified bc and all descendant widgets', () => {
-        expect(requestBcChildren('bcExample-1', widgets, bcMap))
+        expect(getBcChildren('bcExample-1', widgets, bcMap))
         .toEqual(expect.objectContaining({
             'bcExample-1-1': [
                 'widget-example-1-1-1',
@@ -36,11 +36,15 @@ describe('requestBcChildren', () => {
     })
 
     it('handles hierarchy widgets', () => {
-        expect(requestBcChildren('bcHierarchy-1', [getHierarchyWidget()], bcHierarchyMap))
+        expect(getBcChildren(
+            'bcHierarchy-1',
+            [getHierarchyWidget(), { ...getHierarchyWidget(), bcName: 'bcHierarchy-0' }],
+            bcHierarchyMap
+        ))
         .toEqual(expect.objectContaining({
             'bcHierarchy-2': ['widget-hierarchy']
         }))
-        expect(requestBcChildren('bcHierarchy-2', [getHierarchyWidget()], bcHierarchyMap))
+        expect(getBcChildren('bcHierarchy-2', [getHierarchyWidget()], bcHierarchyMap))
         .toEqual(expect.objectContaining({
             'bcHierarchy-3': ['widget-hierarchy']
         }))
@@ -48,7 +52,7 @@ describe('requestBcChildren', () => {
     })
 
     it('handles weird case when first level of hierarchy does not specifies bc', () => {
-        expect(requestBcChildren('bcHierarchy-1', [getHierarchyWidget(true)], bcHierarchyMap))
+        expect(getBcChildren('bcHierarchy-1', [getHierarchyWidget(true)], bcHierarchyMap))
         .toEqual({})
     })
 
@@ -66,7 +70,7 @@ describe('requestBcChildren', () => {
                 url: 'bcHierarchy-2/:id'
             }
         }
-        expect(requestBcChildren('bcHierarchy-1', sameWidgets, sameMap))
+        expect(getBcChildren('bcHierarchy-1', sameWidgets, sameMap))
         .toEqual(expect.objectContaining({
             'bcHierarchy-2': ['widget-example-same', 'widget-hierarchy']
         }))
@@ -179,6 +183,11 @@ const bcMap = {
 }
 
 const bcHierarchyMap = {
+    'bcHierarchy-0': {
+        ...bcExample,
+        name: 'bcHierarchy-0',
+        url: 'bcHierarchy-0/:id'
+    },
     'bcHierarchy-1': {
         ...bcExample,
         name: 'bcHierarchy-1',
