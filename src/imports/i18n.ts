@@ -1,7 +1,7 @@
 import i18n from 'i18next'
 import {initReactI18next} from 'react-i18next'
 import {Resource} from 'i18next'
-import getResources from '../assets/i18n'
+import {getTextAssets} from '../assets/i18n'
 
 /**
  * TODO
@@ -13,7 +13,7 @@ export function initLocale(lang: string, customDictionary: Resource) {
     i18n
     .use(initReactI18next)
     .init({
-        resources: getResources(customDictionary),
+        resources: getTextAssets(customDictionary),
         lng: lang,
         keySeparator: false,
         interpolation: {
