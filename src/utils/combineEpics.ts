@@ -1,6 +1,6 @@
 /*
  * TESLER-UI
- * Copyright (C) 2018-2020 Tesler Contributors
+ * Copyright (C) 2018-2021 Tesler Contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import CustomEpics, {RootEpicSlices, CustomEpicDescriptor, AnyEpic} from '../int
 
 /**
  * Combine customEpics configuration with core epics.
- * If customEpics have a slice with name matching corresponding core slice, each epic in this slice will be handled:
+ * If customEpics have a slice with a name matching corresponding core slice, each epic in this slice will be handled:
  * - if epic is set to null, core epic will be disabled
  * - if epic is set to some implementation, this implementation will be used instead of core one
  * Epics in slice without matching core epics (and slices without matching core slices) will be handled
@@ -48,10 +48,8 @@ export const combineEpics = (customEpics: CustomEpics) => {
                 return
             }
             // Assigned custom implementation means it'll override the core implementation
-            if (customImplementation) {
-                resultSliceEpics.push(customImplementation)
-                return
-            }
+            resultSliceEpics.push(customImplementation)
+            return
         })
         if (customEpics[coreSlice]) {
             Object.entries(customEpics[coreSlice]).forEach((entry) => {
