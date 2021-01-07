@@ -33,7 +33,6 @@ import {WidgetMeta} from '../../interfaces/widget'
  */
 export const selectView: Epic = (action$, store) => action$.ofType(types.selectView)
 .mergeMap(action => {
-    console
     return selectViewImpl(action, store)
 })
 
