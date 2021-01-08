@@ -26,6 +26,7 @@ import {notification} from 'antd'
 import i18n from 'i18next'
 import {drillDown} from './router/drilldown'
 import {WidgetFieldBase} from '../interfaces/widget'
+import {selectViewFail} from './router/selectViewFail'
 
 /**
  * Epic of changing the current route
@@ -239,20 +240,6 @@ const selectScreenFail: Epic = (action$) => action$.ofType(types.selectScreenFai
 .mergeMap(action => {
     notification.error({
         message: i18n.t('Screen is missing or unavailable for your role', { screenName: action.payload.screenName }),
-        duration: 15
-    })
-    return Observable.empty()
-})
-
-/**
- * Throws a error popup when attempting to navigate to the view which is missing for current session
- *
- * @param action$ selectViewFail
- */
-const selectViewFail: Epic = (action$) => action$.ofType(types.selectViewFail)
-.mergeMap(action => {
-    notification.error({
-        message: i18n.t('View is missing or unavailable for your role', { viewName: action.payload.viewName }),
         duration: 15
     })
     return Observable.empty()
