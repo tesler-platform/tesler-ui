@@ -22,10 +22,9 @@ import {ObjectMap} from '../interfaces/objectMap'
 import {parseBcCursors} from '../utils/history'
 import {buildBcUrl} from '../utils/strings'
 import {DrillDownType, RouteType} from '../interfaces/router'
-import {notification} from 'antd'
-import i18n from 'i18next'
 import {drillDown} from './router/drilldown'
 import {WidgetFieldBase} from '../interfaces/widget'
+import {selectScreenFail} from './router/selectScreenFail'
 import {selectViewFail} from './router/selectViewFail'
 
 /**
@@ -229,20 +228,6 @@ const handleRouter: Epic = (action$, store) => action$.ofType(types.handleRouter
         console.error(error)
         return Observable.empty()
     })
-})
-
-/**
- * Throws a error popup when attempting to navigate to the screen which is missing for current session
- *
- * @param action$ selectScreenFail
- */
-const selectScreenFail: Epic = (action$) => action$.ofType(types.selectScreenFail)
-.mergeMap(action => {
-    notification.error({
-        message: i18n.t('Screen is missing or unavailable for your role', { screenName: action.payload.screenName }),
-        duration: 15
-    })
-    return Observable.empty()
 })
 
 export const routerEpics = {
