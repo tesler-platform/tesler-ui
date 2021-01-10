@@ -18,8 +18,6 @@
 import {$do, AnyAction, Epic, types} from '../actions/actions'
 import {Observable} from 'rxjs/Observable'
 import * as api from '../api/api'
-import {ObjectMap} from '../interfaces/objectMap'
-import {parseBcCursors} from '../utils/history'
 import {buildBcUrl} from '../utils/strings'
 import {DrillDownType, RouteType} from '../interfaces/router'
 import {drillDown} from './router/drilldown'
@@ -28,6 +26,7 @@ import {selectScreenFail} from './router/selectScreenFail'
 import {selectViewFail} from './router/selectViewFail'
 import {changeLocation} from './router/changeLocation'
 import {changeScreen} from './router/selectScreen'
+import {changeView} from './router/selectView'
 
 /**
  * Fires `selectScreen` or `selectScreenFail` to set requested in url screen as active
@@ -53,24 +52,6 @@ const loginDone: Epic = (action$, store) => action$.ofType(types.loginDone)
     return nextScreen
         ? Observable.of<AnyAction>($do.selectScreen({ screen: nextScreen }))
         : Observable.of<AnyAction>($do.selectScreenFail({ screenName: nextScreenName }))
-})
-
-const changeView: Epic = (action$, store) => action$.ofType(types.selectView)
-.switchMap(action => {
-    const state = store.getState()
-    const nextCursors = parseBcCursors(state.router.bcPath) || {}
-    const cursorsDiffMap: ObjectMap<string> = {}
-    Object.entries(nextCursors).forEach(entry => {
-        const [ bcName, cursor ] = entry
-        const bc = state.screen.bo.bc[bcName]
-        if (!bc || bc?.cursor !== cursor) {
-            cursorsDiffMap[bcName] = cursor
-        }
-    })
-    if (Object.keys(cursorsDiffMap).length) {
-        return Observable.of($do.bcChangeCursors({ cursorsMap: cursorsDiffMap }))
-    }
-    return Observable.empty()
 })
 
 const userDrillDown: Epic = (action$, store) => action$.ofType(types.userDrillDown)
