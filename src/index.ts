@@ -203,6 +203,7 @@ export {bcNewDataEpicImpl} from './epics/data/bcNewDataEpic'
 export {bcFetchRowMetaRequestImpl} from './epics/data/bcFetchRowMetaRequest'
 export {selectViewImpl} from './epics/data/selectView'
 export {drillDownImpl} from './epics/router/drilldown'
+export {selectScreenImpl} from './epics/router/selectScreen'
 export {selectViewFailImpl} from './epics/router/selectViewFail'
 
 /**
