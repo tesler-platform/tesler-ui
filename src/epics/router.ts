@@ -27,6 +27,7 @@ import {WidgetFieldBase} from '../interfaces/widget'
 import {selectScreenFail} from './router/selectScreenFail'
 import {selectViewFail} from './router/selectViewFail'
 import {changeLocation} from './router/changeLocation'
+import {changeScreen} from './router/selectScreen'
 
 /**
  * Fires `selectScreen` or `selectScreenFail` to set requested in url screen as active
@@ -52,21 +53,6 @@ const loginDone: Epic = (action$, store) => action$.ofType(types.loginDone)
     return nextScreen
         ? Observable.of<AnyAction>($do.selectScreen({ screen: nextScreen }))
         : Observable.of<AnyAction>($do.selectScreenFail({ screenName: nextScreenName }))
-})
-
-const changeScreen: Epic = (action$, store) => action$.ofType(types.selectScreen)
-.switchMap(action => {
-    const state = store.getState()
-    const nextViewName = state.router.viewName
-    const requestedView = state.screen.views.find(item => item.name === nextViewName)
-    const defaultView = !nextViewName && state.screen.primaryView && state.screen.views
-    .find(item => item.name === state.screen.primaryView)
-    const nextView = requestedView
-        || defaultView
-        || state.screen.views[0]
-    return nextView
-        ? Observable.of<AnyAction>($do.selectView(nextView))
-        : Observable.of<AnyAction>($do.selectViewFail({ viewName: nextViewName }))
 })
 
 const changeView: Epic = (action$, store) => action$.ofType(types.selectView)
