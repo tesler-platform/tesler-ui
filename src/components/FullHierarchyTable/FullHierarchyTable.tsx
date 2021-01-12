@@ -197,16 +197,18 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
     }
 
     // Hierarchy levels are indented by empty columns with calculated width
-    const indentColumn = {
-        title: '',
-        key: '_indentColumn',
-        dataIndex: null as string,
-        className: cn(styles.selectColumn, styles[`padding${depthLevel - 1}`]),
-        width: getColumnWidth('_indentColumn', depthLevel, fields, props.rowMetaFields, maxDepth),
-        render: (text: string, dataItem: AssociatedItem): React.ReactNode => {
-            return null
+    const indentColumn = React.useMemo(() => {
+        return {
+            title: '',
+            key: '_indentColumn',
+            dataIndex: null as string,
+            className: cn(styles.selectColumn, styles[`padding${depthLevel - 1}`]),
+            width: getColumnWidth('_indentColumn', depthLevel, fields, props.rowMetaFields, maxDepth),
+            render: (text: string, dataItem: AssociatedItem): React.ReactNode => {
+                return null
+            }
         }
-    }
+    }, [depthLevel, fields, props.rowMetaFields, maxDepth])
 
     const columns: Array<ColumnProps<DataItem>> = React.useMemo(() => {
         return [
@@ -249,7 +251,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                     }
                 }))
         ]
-    }, [depthLevel, fields, props.meta.name, textFilters])
+    }, [depthLevel, fields, props.meta.name, textFilters, indentColumn])
 
     const handleRow = React.useCallback((record: ChildrenAwaredHierarchyItem, index: number) => {
         if (hierarchyDisableRoot && depthLevel === 1) {
