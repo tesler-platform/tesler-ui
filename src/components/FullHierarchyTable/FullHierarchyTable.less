@@ -8,9 +8,11 @@
 }
 
 .table {
-    table-layout: fixed;
-
     :global {
+        .ant-table-body > table {
+            table-layout: fixed;
+        }
+
         .ant-table .ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-column-has-filters {
             .ant-table-filter-icon.ant-table-filter-open {
                 background: #fbfeff;
