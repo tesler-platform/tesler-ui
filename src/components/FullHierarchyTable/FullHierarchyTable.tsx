@@ -62,6 +62,8 @@ export interface FullHierarchyDataItem extends AssociatedItem {
 
 export type FullHierarchyTableAllProps = FullHierarchyTableOwnProps & FullHierarchyTableProps & FullHierarchyTableDispatchProps
 
+type ChildrenAwaredHierarchyItem = FullHierarchyDataItem & { noChildren: boolean }
+
 const emptyData: FullHierarchyDataItem[] = []
 const emptyMultivalue: MultivalueSingleValue[] = []
 const components = { filter: FullHierarchyFilter }
@@ -84,7 +86,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
     const depthLevel = props.depth || 1
     const levelValues = props.data?.map(item => item.level)
     const maxDepth = levelValues && Math.max(...levelValues) || 1
-
+    console.warn(props.data)
     const textFilters = React.useMemo(() => props.bcFilters?.filter(filter =>
             [FilterType.contains, FilterType.equals].includes(filter.type)),
         [props.bcFilters]
@@ -125,7 +127,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
         hierarchyDisableParent
     } = props.meta.options ?? {}
 
-    const tableRecords = React.useMemo(
+    const tableRecords = React.useMemo<ChildrenAwaredHierarchyItem[]>(
         () => {
             return data?.filter((dataItem) => {
                 return dataItem.level === depthLevel && (dataItem.level === 1 || dataItem.parentId === props.parentId)
@@ -249,6 +251,16 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
         ]
     }, [depthLevel, fields, props.meta.name, textFilters])
 
+    const handleRow = React.useCallback((record: ChildrenAwaredHierarchyItem, index: number) => {
+        if (hierarchyDisableRoot && depthLevel === 1) {
+            return undefined
+        }
+        if (hierarchyDisableParent && !record.noChildren) {
+            return undefined
+        }
+        return props.onRow?.(record, index)
+    }, [props.onRow, hierarchyDisableRoot, hierarchyDisableParent, depthLevel])
+
     return loading
         ? <Skeleton loading paragraph={{rows: 5}}/>
         : <div className={styles.container}>
@@ -268,9 +280,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                 expandIconAsCell={false}
                 expandIconColumnIndex={(props.selectable) ? 1 : 0}
                 loading={loading}
-                onRow={!(hierarchyDisableRoot && depthLevel === 1)
-                && !(hierarchyDisableParent && !tableRecords.find(item => item.noChildren))
-                && props.onRow}
+                onRow={handleRow}
                 getPopupContainer={(trigger: HTMLElement) => trigger.parentNode.parentNode as HTMLElement}
             />
         </div>
