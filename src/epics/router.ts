@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import {$do, AnyAction, Epic, types} from '../actions/actions'
+import {$do, Epic, types} from '../actions/actions'
 import {Observable} from 'rxjs/Observable'
 import * as api from '../api/api'
 import {buildBcUrl} from '../utils/strings'
-import {DrillDownType, RouteType} from '../interfaces/router'
+import {DrillDownType} from '../interfaces/router'
 import {drillDown} from './router/drilldown'
 import {WidgetFieldBase} from '../interfaces/widget'
 import {selectScreenFail} from './router/selectScreenFail'
@@ -27,32 +27,7 @@ import {selectViewFail} from './router/selectViewFail'
 import {changeLocation} from './router/changeLocation'
 import {changeScreen} from './router/selectScreen'
 import {changeView} from './router/selectView'
-
-/**
- * Fires `selectScreen` or `selectScreenFail` to set requested in url screen as active
- * after succesful login.
- *
- * For server-side router fires `handleRouter` instead.
- *
- * @param action$ loginDone
- */
-const loginDone: Epic = (action$, store) => action$.ofType(types.loginDone)
-.switchMap(action => {
-    const state = store.getState()
-
-    if (state.router.type === RouteType.router) {
-        return Observable.of($do.handleRouter(state.router))
-    }
-
-    const nextScreenName = state.router.screenName
-    const nextScreen = state.session.screens.find(item => nextScreenName
-            ? item.name === nextScreenName
-            : item.defaultScreen
-        ) || state.session.screens[0]
-    return nextScreen
-        ? Observable.of<AnyAction>($do.selectScreen({ screen: nextScreen }))
-        : Observable.of<AnyAction>($do.selectScreenFail({ screenName: nextScreenName }))
-})
+import {loginDone} from './router/loginDone'
 
 const userDrillDown: Epic = (action$, store) => action$.ofType(types.userDrillDown)
 .map(action => {
