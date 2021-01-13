@@ -397,7 +397,7 @@ return <ul>
 * `changeLocation` action should respect default screen when type is `RouteType.default` ([#186](https://github.com/tesler-platform/tesler-ui/issues/186)).
 * `<TableWidget />` should use respect `readOnly` flag from widgets meta ([#189](https://github.com/tesler-platform/tesler-ui/issues/189)).
 * `<TextArea />` should not be recreated on every value change ([#191](https://github.com/tesler-platform/tesler-ui/issues/191)). 
-
+* When clearing the value of a required input field, the old value is returned after the cursor moves to another field ([#150](https://github.com/tesler-platform/tesler-ui/issues/150)).
 
 # Version 1.10.0 (April 6, 2020)
 
