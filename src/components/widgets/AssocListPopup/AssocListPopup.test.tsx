@@ -1,14 +1,14 @@
 import React from 'react'
-import {AssocListPopup, IAssocListActions, IAssocListProps} from './AssocListPopup'
-import {WidgetTypes} from 'interfaces/widget'
-import {FieldType} from 'interfaces/view'
-import {Provider} from 'react-redux'
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {mockStore} from '../../../tests/mockStore'
+import { AssocListPopup, IAssocListActions, IAssocListProps } from './AssocListPopup'
+import { WidgetTypes } from 'interfaces/widget'
+import { FieldType } from 'interfaces/view'
+import { Provider } from 'react-redux'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { mockStore } from '../../../tests/mockStore'
 import * as redux from 'react-redux'
-import {mount} from 'enzyme'
-import {Modal} from 'antd'
+import { mount } from 'enzyme'
+import { Modal } from 'antd'
 
 describe('AssocListPopup test', () => {
     let store: Store<CoreStore> = null
@@ -73,8 +73,9 @@ describe('AssocListPopup test', () => {
     it('should render default title, table and footer', () => {
         const wrapper = mount(
             <Provider store={store}>
-                <AssocListPopup {...defProps} {...actionProps}/>
-            </Provider>)
+                <AssocListPopup {...defProps} {...actionProps} />
+            </Provider>
+        )
         expect(wrapper.find(AssocListPopup).props().widget.title).toEqual(defProps.widget.title)
         expect(wrapper.find(AssocListPopup).props().footer).toEqual(undefined)
         expect(wrapper.find('Connect(AssocTable)').length).toEqual(1)
@@ -97,7 +98,8 @@ describe('AssocListPopup test', () => {
                         footer: customFooter
                     }}
                 />
-            </Provider>)
+            </Provider>
+        )
         expect(wrapper.find(AssocListPopup).children().props().title).toEqual(customTitle)
         expect(wrapper.find(Modal).props().footer).toEqual(customFooter)
         expect(wrapper.find('p').children().text()).toBe(customTableText)

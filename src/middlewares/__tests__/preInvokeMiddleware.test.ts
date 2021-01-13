@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import {Store} from 'redux'
-import {createPreInvokeMiddleware} from '../preInvokeMiddleware'
-import {mockStore} from '../../tests/mockStore'
-import {$do, types} from '../../actions/actions'
-import {Store as CoreStore} from '../../interfaces/store'
-import {OperationTypeCrud, Operation, OperationPreInvoke, OperationPreInvokeType} from '../../interfaces/operation'
-import {WidgetTypes} from '../../interfaces/widget'
-import {RowMeta} from '../../interfaces/rowMeta'
+import { Store } from 'redux'
+import { createPreInvokeMiddleware } from '../preInvokeMiddleware'
+import { mockStore } from '../../tests/mockStore'
+import { $do, types } from '../../actions/actions'
+import { Store as CoreStore } from '../../interfaces/store'
+import { OperationTypeCrud, Operation, OperationPreInvoke, OperationPreInvokeType } from '../../interfaces/operation'
+import { WidgetTypes } from '../../interfaces/widget'
+import { RowMeta } from '../../interfaces/rowMeta'
 
 describe('requiredFieldsMiddleware', () => {
     let store: Store<CoreStore>
@@ -37,7 +37,7 @@ describe('requiredFieldsMiddleware', () => {
         store.getState().screen.bo.bc = bc
         store.getState().view.rowMeta = {
             bcExample: {
-                'bcExample/1': rowMeta,
+                'bcExample/1': rowMeta
             }
         }
         store.getState().view.widgets = [widget]
@@ -55,15 +55,17 @@ describe('requiredFieldsMiddleware', () => {
             operationType: 'associate',
             widgetName: 'widget-example'
         })
-        expect(middleware(next)(action)).toEqual(expect.objectContaining({
-            type: types.processPreInvoke,
-            payload: {
-                bcName: 'bcExample',
-                operationType: 'associate',
-                widgetName: 'widget-example',
-                preInvoke
-            }
-        }))
+        expect(middleware(next)(action)).toEqual(
+            expect.objectContaining({
+                type: types.processPreInvoke,
+                payload: {
+                    bcName: 'bcExample',
+                    operationType: 'associate',
+                    widgetName: 'widget-example',
+                    preInvoke
+                }
+            })
+        )
     })
 
     it('returns original action when action has no preinvoke or payload contains `confirm` ', () => {
@@ -77,7 +79,7 @@ describe('requiredFieldsMiddleware', () => {
         const action = $do.sendOperation({
             bcName: 'bcExample',
             operationType: 'associate',
-            widgetName: 'widget-example',
+            widgetName: 'widget-example'
         })
         store.getState().view.rowMeta.bcExample['bcExample/1'] = {
             ...rowMeta,
@@ -94,15 +96,17 @@ describe('requiredFieldsMiddleware', () => {
             operationType: 'associate',
             widgetName: 'widget-example'
         })
-        expect(middleware(next)(action)).toEqual(expect.objectContaining({
-            type: types.processPreInvoke,
-            payload: {
-                bcName: 'bcExample',
-                operationType: 'associate',
-                widgetName: 'widget-example',
-                preInvoke
-            }
-        }))
+        expect(middleware(next)(action)).toEqual(
+            expect.objectContaining({
+                type: types.processPreInvoke,
+                payload: {
+                    bcName: 'bcExample',
+                    operationType: 'associate',
+                    widgetName: 'widget-example',
+                    preInvoke
+                }
+            })
+        )
     })
 
     it('does not break when bc, widget, rowmeta or action are missing', () => {
@@ -142,18 +146,21 @@ const preInvoke: OperationPreInvoke = {
 }
 
 const rowMetaAction: Operation = {
-    type: OperationTypeCrud.associate, text: 'text',
+    type: OperationTypeCrud.associate,
+    text: 'text',
     scope: 'associate',
     preInvoke
 }
 
 const rowMeta: RowMeta = {
     actions: [rowMetaAction],
-    fields: [{
-        key: 'test',
-        currentValue: null,
-        required: true
-    }]
+    fields: [
+        {
+            key: 'test',
+            currentValue: null,
+            required: true
+        }
+    ]
 }
 
 const widget = {
@@ -174,5 +181,3 @@ const bc = {
         url: 'bcExample'
     }
 }
-
-

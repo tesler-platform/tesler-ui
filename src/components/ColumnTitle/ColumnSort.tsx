@@ -1,34 +1,34 @@
-import React, {FunctionComponent} from 'react'
-import {connect} from 'react-redux'
-import {Dispatch} from 'redux'
-import {Icon} from 'antd'
-import {$do} from '../../actions/actions'
-import {Store} from '../../interfaces/store'
-import {BcSorter} from '../../interfaces/filters'
+import React, { FunctionComponent } from 'react'
+import { connect } from 'react-redux'
+import { Dispatch } from 'redux'
+import { Icon } from 'antd'
+import { $do } from '../../actions/actions'
+import { Store } from '../../interfaces/store'
+import { BcSorter } from '../../interfaces/filters'
 import cn from 'classnames'
 import styles from './ColumnSort.less'
 
 export interface ColumnSortOwnProps {
-    className?: string,
-    widgetName: string,
+    className?: string
+    widgetName: string
     fieldKey: string
 }
 
 export interface ColumnSortProps extends ColumnSortOwnProps {
-    sorter: BcSorter,
+    sorter: BcSorter
     /**
      * @deprecated TODO: Remove in 2.0.0 in favor of widget name
      */
-    bcName: string,
+    bcName: string
     /**
      * @deprecated TODO: Remove in 2.0.0, get page directly from the store
      */
-    page: number,
-    infinitePagination: boolean,
+    page: number
+    infinitePagination: boolean
     onSort: (bcName: string, sorter: BcSorter, page: number, widgetName: string, infinitePagination: boolean) => void
 }
 
-export const ColumnSort: FunctionComponent<ColumnSortProps> = (props) => {
+export const ColumnSort: FunctionComponent<ColumnSortProps> = props => {
     if (!props.bcName) {
         return null
     }
@@ -40,18 +40,12 @@ export const ColumnSort: FunctionComponent<ColumnSortProps> = (props) => {
     const handleSort = () => {
         const sorter: BcSorter = {
             fieldName: props.fieldKey,
-            direction: !props.sorter
-                ? 'desc'
-                : props.sorter.direction === 'asc' ? 'desc' : 'asc'
+            direction: !props.sorter ? 'desc' : props.sorter.direction === 'asc' ? 'desc' : 'asc'
         }
         props.onSort(props.bcName, sorter, props.page, props.widgetName, props.infinitePagination)
     }
 
-    return <Icon
-        className={cn(styles.icon, props.className, { [styles.forceShow]: props.sorter } )}
-        type={icon}
-        onClick={handleSort}
-    />
+    return <Icon className={cn(styles.icon, props.className, { [styles.forceShow]: props.sorter })} type={icon} onClick={handleSort} />
 }
 
 function mapStateToProps(store: Store, ownProps: ColumnSortOwnProps) {
@@ -71,18 +65,22 @@ function mapStateToProps(store: Store, ownProps: ColumnSortOwnProps) {
 function mapDispatchToProps(dispatch: Dispatch) {
     return {
         onSort: (bcName: string, sorter: BcSorter, page: number, widgetName: string, infinitePagination: boolean) => {
-            dispatch($do.bcAddSorter({bcName, sorter}))
+            dispatch($do.bcAddSorter({ bcName, sorter }))
             infinitePagination
-                ? dispatch($do.bcFetchDataPages({
-                    bcName: bcName,
-                    widgetName: widgetName,
-                    from: 1,
-                    to: page
-                }))
-                : dispatch($do.bcForceUpdate({
-                    bcName: bcName,
-                    widgetName: widgetName
-                }))
+                ? dispatch(
+                      $do.bcFetchDataPages({
+                          bcName: bcName,
+                          widgetName: widgetName,
+                          from: 1,
+                          to: page
+                      })
+                  )
+                : dispatch(
+                      $do.bcForceUpdate({
+                          bcName: bcName,
+                          widgetName: widgetName
+                      })
+                  )
         }
     }
 }

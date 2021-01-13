@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import {HierarchySearchCache} from './hierarchySearchCache'
-import {FilterType} from '../../../interfaces/filters'
+import { HierarchySearchCache } from './hierarchySearchCache'
+import { FilterType } from '../../../interfaces/filters'
 
 describe('hierarchySearchTest', () => {
     it('memoizes results', () => {

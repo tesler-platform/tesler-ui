@@ -24,7 +24,7 @@ import {
     NavigationLevel,
     NavigationTab
 } from '../interfaces/navigation'
-import {breadthFirstSearch} from './breadthFirst'
+import { breadthFirstSearch } from './breadthFirst'
 
 const emptyArray: NavigationTab[] = []
 
@@ -52,24 +52,24 @@ export function getViewTabs(
         result = navigation
     } else {
         navigation
-        .filter((item: ViewNavigationGroup) => item.child)
-        .some((item: ViewNavigationGroup) => {
-            // Group with `activeView` as a direct child or just matching view
-            const searchCondition = (node: ViewNavigationGroup | ViewNavigationItem) => {
-                if (isViewNavigationGroup(node)) {
-                    const hasDirectMatch = node.child.some((child: ViewNavigationItem) => child.viewName === activeView)
-                    return hasDirectMatch
+            .filter((item: ViewNavigationGroup) => item.child)
+            .some((item: ViewNavigationGroup) => {
+                // Group with `activeView` as a direct child or just matching view
+                const searchCondition = (node: ViewNavigationGroup | ViewNavigationItem) => {
+                    if (isViewNavigationGroup(node)) {
+                        const hasDirectMatch = node.child.some((child: ViewNavigationItem) => child.viewName === activeView)
+                        return hasDirectMatch
+                    }
+                    return node.viewName === activeView
                 }
-                return node.viewName === activeView
-            }
-            const searchResult = breadthFirstSearch(item, searchCondition)
-            // Also the depth should match
-            const match = searchResult?.node && searchResult?.depth === Math.max(level - 1, 1)
-            if (match) {
-                result = searchResult.node?.child
-            }
-            return match
-        })
+                const searchResult = breadthFirstSearch(item, searchCondition)
+                // Also the depth should match
+                const match = searchResult?.node && searchResult?.depth === Math.max(level - 1, 1)
+                if (match) {
+                    result = searchResult.node?.child
+                }
+                return match
+            })
     }
     // Set titles for groups
     return result?.map(item => {
@@ -94,9 +94,7 @@ export function getReferencedView(navigationItem: Readonly<Exclude<MenuItem, Vie
     }
     // Search condition: defaultView or first available
     const predicate = (node: ViewNavigationItem) => {
-        return navigationItem.defaultView
-            ? node.viewName === navigationItem.defaultView
-            : !!node.viewName
+        return navigationItem.defaultView ? node.viewName === navigationItem.defaultView : !!node.viewName
     }
     const result = breadthFirstSearch(navigationItem, predicate)?.node as ViewNavigationItem
     return result?.viewName

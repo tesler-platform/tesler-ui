@@ -1,8 +1,8 @@
-import {$do, AnyAction, types} from '../actions/actions'
-import {createHashHistory, parsePath} from 'history'
-import {Route, RouteType} from '../interfaces/router'
-import {shallowCompare} from '../utils/redux'
-import {parseLocation, store} from '../Provider'
+import { $do, AnyAction, types } from '../actions/actions'
+import { createHashHistory, parsePath } from 'history'
+import { Route, RouteType } from '../interfaces/router'
+import { shallowCompare } from '../utils/redux'
+import { parseLocation, store } from '../Provider'
 
 /* Global instance */
 export const historyObj = createHashHistory()
@@ -30,7 +30,7 @@ export function initHistory() {
     })
 }
 
-const initialState: Route = {type: RouteType.default, path: '/', params: null, screenName: null}
+const initialState: Route = { type: RouteType.default, path: '/', params: null, screenName: null }
 
 /**
  * Router reducer
@@ -41,7 +41,7 @@ const initialState: Route = {type: RouteType.default, path: '/', params: null, s
  * @param action Redux action
  * @param store Store instance for read-only access of different branches of Redux store
  */
-export function router(state: Route = initialState, action: AnyAction ): Route {
+export function router(state: Route = initialState, action: AnyAction): Route {
     switch (action.type) {
         case types.loginDone:
             return parseLocation(historyObj.location)

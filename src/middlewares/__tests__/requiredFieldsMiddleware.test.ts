@@ -1,12 +1,12 @@
-import {createRequiredFieldsMiddleware, hasPendingValidationFails} from '../requiredFieldsMiddleware'
-import {mockStore} from '../../tests/mockStore'
-import {PendingValidationFailsFormat} from '../../interfaces/view'
-import {$do, types} from '../../actions/actions'
-import {Store as CoreStore} from '../../interfaces/store'
-import {Store} from 'redux'
-import {OperationTypeCrud, Operation} from '../../interfaces/operation'
-import {WidgetTypes} from '../../interfaces/widget'
-import {RowMeta} from '../../interfaces/rowMeta'
+import { createRequiredFieldsMiddleware, hasPendingValidationFails } from '../requiredFieldsMiddleware'
+import { mockStore } from '../../tests/mockStore'
+import { PendingValidationFailsFormat } from '../../interfaces/view'
+import { $do, types } from '../../actions/actions'
+import { Store as CoreStore } from '../../interfaces/store'
+import { Store } from 'redux'
+import { OperationTypeCrud, Operation } from '../../interfaces/operation'
+import { WidgetTypes } from '../../interfaces/widget'
+import { RowMeta } from '../../interfaces/rowMeta'
 
 describe('requiredFieldsMiddleware', () => {
     let store: Store<CoreStore>
@@ -19,7 +19,7 @@ describe('requiredFieldsMiddleware', () => {
         store.getState().screen.bo.bc = bc
         store.getState().view.rowMeta = {
             bcExample: {
-                'bcExample': rowMeta,
+                bcExample: rowMeta,
                 'bcExample/1': rowMeta
             }
         }
@@ -55,19 +55,21 @@ describe('requiredFieldsMiddleware', () => {
             widgetName: 'widget-example'
         })
         middleware(() => action as any)(action)
-        expect(dispatch).toBeCalledWith(expect.objectContaining({
-            type: types.selectTableCellInit
-        }))
+        expect(dispatch).toBeCalledWith(
+            expect.objectContaining({
+                type: types.selectTableCellInit
+            })
+        )
     })
 })
 
 describe('hasPendingValidationFails target format test', () => {
     const initState = mockStore().getState()
     const bcName = Object.keys(initState.screen.bo.bc)[0]
-    it('1. should return `false`', () =>  {
+    it('1. should return `false`', () => {
         expect(hasPendingValidationFails(initState, bcName)).toBeFalsy()
     })
-    it('2. should return `false`', () =>  {
+    it('2. should return `false`', () => {
         const store = {
             ...initState,
             view: {
@@ -80,7 +82,7 @@ describe('hasPendingValidationFails target format test', () => {
         }
         expect(hasPendingValidationFails(store, bcName)).toBeFalsy()
     })
-    it('3. should return `false`', () =>  {
+    it('3. should return `false`', () => {
         const store = {
             ...initState,
             view: {
@@ -95,7 +97,7 @@ describe('hasPendingValidationFails target format test', () => {
         }
         expect(hasPendingValidationFails(store, bcName)).toBeFalsy()
     })
-    it('1. should return `true`', () =>  {
+    it('1. should return `true`', () => {
         const store = {
             ...initState,
             view: {
@@ -112,14 +114,14 @@ describe('hasPendingValidationFails target format test', () => {
         }
         expect(hasPendingValidationFails(store, bcName)).toBeTruthy()
     })
-    it('2. should return `true`', () =>  {
+    it('2. should return `true`', () => {
         const store = {
             ...initState,
             view: {
                 ...initState.view,
                 pendingValidationFailsFormat: PendingValidationFailsFormat.target,
                 pendingValidationFails: {
-                    'anotherBc': {},
+                    anotherBc: {},
                     [bcName]: {
                         '10001': {},
                         '1000': {
@@ -133,13 +135,13 @@ describe('hasPendingValidationFails target format test', () => {
     })
 })
 
-describe('hasPendingValidationFails old format test' , () => {
+describe('hasPendingValidationFails old format test', () => {
     const initState = mockStore().getState()
     const bcName = Object.keys(initState.screen.bo.bc)[0]
-    it('should return `false`', () =>  {
+    it('should return `false`', () => {
         expect(hasPendingValidationFails(initState, bcName)).toBeFalsy()
     })
-    it('should return `true`', () =>  {
+    it('should return `true`', () => {
         const store = {
             ...initState,
             view: {
@@ -157,11 +159,13 @@ const rowMetaAction: Operation = { type: OperationTypeCrud.associate, text: 'tex
 
 const rowMeta: RowMeta = {
     actions: [rowMetaAction],
-    fields: [{
-        key: 'test',
-        currentValue: null,
-        required: true
-    }]
+    fields: [
+        {
+            key: 'test',
+            currentValue: null,
+            required: true
+        }
+    ]
 }
 
 const widget = {

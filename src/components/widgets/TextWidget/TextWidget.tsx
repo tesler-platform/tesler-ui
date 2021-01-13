@@ -1,5 +1,5 @@
 import React from 'react'
-import {WidgetTextMeta} from 'interfaces/widget'
+import { WidgetTextMeta } from 'interfaces/widget'
 import styles from './TextWidget.less'
 import marked from 'marked'
 import parse from 'html-react-parser'
@@ -9,14 +9,14 @@ interface TextWidgetOwnProps {
     meta: WidgetTextMeta
 }
 
-const TextWidget: React.FunctionComponent<TextWidgetOwnProps> = (props) => {
+const TextWidget: React.FunctionComponent<TextWidgetOwnProps> = props => {
     const description = props.meta.description
     const htmlText = parse(marked(description))
-    return <ErrorBoundary msg={<p className={styles.errorMessage}>Unvalid text</p>}>
-        <div className={styles.textWidget}>
-            {htmlText}
-        </div>
-    </ErrorBoundary>
+    return (
+        <ErrorBoundary msg={<p className={styles.errorMessage}>Unvalid text</p>}>
+            <div className={styles.textWidget}>{htmlText}</div>
+        </ErrorBoundary>
+    )
 }
 
-export default (TextWidget)
+export default TextWidget

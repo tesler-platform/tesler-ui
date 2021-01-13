@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 
-import React, {ComponentType} from 'react'
-import {useDispatch, useSelector, shallowEqual} from 'react-redux'
-import {ListChildComponentProps} from 'react-window'
-import {WidgetTableMeta} from '../../../interfaces/widget'
-import {FlatTree} from './FlatTree'
+import React, { ComponentType } from 'react'
+import { useDispatch, useSelector, shallowEqual } from 'react-redux'
+import { ListChildComponentProps } from 'react-window'
+import { WidgetTableMeta } from '../../../interfaces/widget'
+import { FlatTree } from './FlatTree'
 import PickListPopup from '../PickListPopup/PickListPopup'
-import {Store} from '../../../interfaces/store'
-import {$do} from '../../../actions/actions'
-import {PopupFooter} from '../../../components/ui/Popup/PopupFooter'
-import {useSingleSelect} from './useSingleSelect'
-import {useMultipleSelect} from './useMultipleSelect'
+import { Store } from '../../../interfaces/store'
+import { $do } from '../../../actions/actions'
+import { PopupFooter } from '../../../components/ui/Popup/PopupFooter'
+import { useSingleSelect } from './useSingleSelect'
+import { useMultipleSelect } from './useMultipleSelect'
 
 /**
  * Properties for `FlatTreePopup` widget
@@ -34,7 +34,7 @@ export interface FlatTreePopupProps {
     /**
      * Widget configuration
      */
-    meta: WidgetTableMeta,
+    meta: WidgetTableMeta
     /**
      * Customization of items renderer
      */
@@ -49,14 +49,9 @@ export interface FlatTreePopupProps {
  *
  * @param props Widget props
  */
-export const FlatTreePopup: React.FC<FlatTreePopupProps> = (props) => {
-    const {
-        multiple,
-        hierarchyGroupSelection,
-        hierarchyGroupDeselection,
-        hierarchyRadioAll,
-        hierarchyRadio: hierarchyRootRadio
-    } = (props.meta.options ?? {})
+export const FlatTreePopup: React.FC<FlatTreePopupProps> = props => {
+    const { multiple, hierarchyGroupSelection, hierarchyGroupDeselection, hierarchyRadioAll, hierarchyRadio: hierarchyRootRadio } =
+        props.meta.options ?? {}
 
     const bcName = props.meta.bcName
     const dispatch = useDispatch()
@@ -97,26 +92,21 @@ export const FlatTreePopup: React.FC<FlatTreePopupProps> = (props) => {
     }, [bcName])
 
     const footer = React.useMemo(() => {
-        return multiple
-            ? <PopupFooter onAccept={handleConfirmMultiple} onCancel={handleCancelMultiple} />
-            : null
+        return multiple ? <PopupFooter onAccept={handleConfirmMultiple} onCancel={handleCancelMultiple} /> : null
     }, [multiple])
 
     const components = React.useMemo(() => {
         return {
-            table: <FlatTree meta={props.meta} multiple={multiple} onSelect={handleSelect}>
-                {props.children}
-            </FlatTree>,
+            table: (
+                <FlatTree meta={props.meta} multiple={multiple} onSelect={handleSelect}>
+                    {props.children}
+                </FlatTree>
+            ),
             footer
         }
     }, [props.meta, handleSelect])
 
-    return <PickListPopup
-        widget={props.meta}
-        components={components}
-        disableScroll
-    />
-
+    return <PickListPopup widget={props.meta} components={components} disableScroll />
 }
 
 export default React.memo(FlatTreePopup)

@@ -16,21 +16,20 @@
  */
 
 import React from 'react'
-import {mount} from 'enzyme'
-import {FilterPopup} from './FilterPopup'
-import {Store as CoreStore} from '../../interfaces/store'
-import {Store} from 'redux'
+import { mount } from 'enzyme'
+import { FilterPopup } from './FilterPopup'
+import { Store as CoreStore } from '../../interfaces/store'
+import { Store } from 'redux'
 import * as redux from 'react-redux'
-import {Provider} from 'react-redux'
-import {mockStore} from '../../tests/mockStore'
-import {WidgetListField, WidgetMeta, WidgetTypes} from '../../interfaces/widget'
-import {FieldType} from '../../interfaces/view'
-import {Button, Form} from 'antd'
-import {$do} from '../../actions/actions'
-import {getFilterType} from '../../utils/filters'
+import { Provider } from 'react-redux'
+import { mockStore } from '../../tests/mockStore'
+import { WidgetListField, WidgetMeta, WidgetTypes } from '../../interfaces/widget'
+import { FieldType } from '../../interfaces/view'
+import { Button, Form } from 'antd'
+import { $do } from '../../actions/actions'
+import { getFilterType } from '../../utils/filters'
 
 describe('`<FilterPopup />`', () => {
-
     const useDispatch = jest.fn()
     jest.spyOn(redux, 'useDispatch').mockImplementation(() => {
         return useDispatch
@@ -52,11 +51,7 @@ describe('`<FilterPopup />`', () => {
     it('renders two buttons and content', () => {
         const wrapper = mount(
             <Provider store={store}>
-                <FilterPopup
-                    widgetName="widget-example"
-                    fieldKey="field-example"
-                    value="empty"
-                >
+                <FilterPopup widgetName="widget-example" fieldKey="field-example" value="empty">
                     <Content />
                 </FilterPopup>
             </Provider>
@@ -69,11 +64,7 @@ describe('`<FilterPopup />`', () => {
     it('returns null for missing widget or field', () => {
         const missingWidget = mount(
             <Provider store={store}>
-                <FilterPopup
-                    widgetName="widget-missing"
-                    fieldKey="field-example"
-                    value="empty"
-                >
+                <FilterPopup widgetName="widget-missing" fieldKey="field-example" value="empty">
                     <Content />
                 </FilterPopup>
             </Provider>
@@ -81,11 +72,7 @@ describe('`<FilterPopup />`', () => {
         expect(missingWidget.find(FilterPopup).isEmptyRender()).toBe(true)
         const missingField = mount(
             <Provider store={store}>
-                <FilterPopup
-                    widgetName="widget-example"
-                    fieldKey="field-missing"
-                    value="empty"
-                >
+                <FilterPopup widgetName="widget-example" fieldKey="field-missing" value="empty">
                     <Content />
                 </FilterPopup>
             </Provider>
@@ -97,26 +84,21 @@ describe('`<FilterPopup />`', () => {
         const onApply = jest.fn()
         const wrapper = mount(
             <Provider store={store}>
-                <FilterPopup
-                    widgetName="widget-example"
-                    fieldKey="field-example"
-                    value="someValue"
-                    onApply={onApply}
-                >
+                <FilterPopup widgetName="widget-example" fieldKey="field-example" value="someValue" onApply={onApply}>
                     <Content />
                 </FilterPopup>
             </Provider>
         )
         wrapper.find(Form).simulate('submit')
         expect(useDispatch.mock.calls[0][0]).toEqual(
-            expect.objectContaining($do.bcAddFilter({
-                bcName: 'bcExample',
-                filter: expect.objectContaining(presetFilter)
-            }))
+            expect.objectContaining(
+                $do.bcAddFilter({
+                    bcName: 'bcExample',
+                    filter: expect.objectContaining(presetFilter)
+                })
+            )
         )
-        expect(useDispatch.mock.calls[1][0]).toEqual(
-            expect.objectContaining($do.bcForceUpdate({ bcName: 'bcExample' }))
-        )
+        expect(useDispatch.mock.calls[1][0]).toEqual(expect.objectContaining($do.bcForceUpdate({ bcName: 'bcExample' })))
         expect(onApply).toBeCalled()
     })
 
@@ -125,26 +107,21 @@ describe('`<FilterPopup />`', () => {
         const onApply = jest.fn()
         const wrapper = mount(
             <Provider store={store}>
-                <FilterPopup
-                    widgetName="widget-example"
-                    fieldKey="field-example"
-                    value={null}
-                    onApply={onApply}
-                >
+                <FilterPopup widgetName="widget-example" fieldKey="field-example" value={null} onApply={onApply}>
                     <Content />
                 </FilterPopup>
             </Provider>
         )
         wrapper.find(Form).simulate('submit')
         expect(useDispatch.mock.calls[0][0]).toEqual(
-            expect.objectContaining($do.bcRemoveFilter({
-                bcName: 'bcExample',
-                filter: presetFilter
-            }))
+            expect.objectContaining(
+                $do.bcRemoveFilter({
+                    bcName: 'bcExample',
+                    filter: presetFilter
+                })
+            )
         )
-        expect(useDispatch.mock.calls[1][0]).toEqual(
-            expect.objectContaining($do.bcForceUpdate({ bcName: 'bcExample' }))
-        )
+        expect(useDispatch.mock.calls[1][0]).toEqual(expect.objectContaining($do.bcForceUpdate({ bcName: 'bcExample' })))
         expect(onApply).toBeCalled()
     })
 
@@ -153,26 +130,21 @@ describe('`<FilterPopup />`', () => {
         const onCancel = jest.fn()
         const wrapper = mount(
             <Provider store={store}>
-                <FilterPopup
-                    widgetName="widget-example"
-                    fieldKey="field-example"
-                    value="someValue"
-                    onCancel={onCancel}
-                >
+                <FilterPopup widgetName="widget-example" fieldKey="field-example" value="someValue" onCancel={onCancel}>
                     <Content />
                 </FilterPopup>
             </Provider>
         )
         wrapper.findWhere(item => item.type() === Button && item.props().htmlType !== 'submit').simulate('click')
         expect(useDispatch.mock.calls[0][0]).toEqual(
-            expect.objectContaining($do.bcRemoveFilter({
-                bcName: 'bcExample',
-                filter: expect.objectContaining(presetFilter)
-            }))
+            expect.objectContaining(
+                $do.bcRemoveFilter({
+                    bcName: 'bcExample',
+                    filter: expect.objectContaining(presetFilter)
+                })
+            )
         )
-        expect(useDispatch.mock.calls[1][0]).toEqual(
-            expect.objectContaining($do.bcForceUpdate({ bcName: 'bcExample' }))
-        )
+        expect(useDispatch.mock.calls[1][0]).toEqual(expect.objectContaining($do.bcForceUpdate({ bcName: 'bcExample' })))
         expect(onCancel).toBeCalled()
     })
 
@@ -181,12 +153,7 @@ describe('`<FilterPopup />`', () => {
         const onCancel = jest.fn()
         const wrapper = mount(
             <Provider store={store}>
-                <FilterPopup
-                    widgetName="widget-example"
-                    fieldKey="field-example"
-                    value={null}
-                    onCancel={onCancel}
-                >
+                <FilterPopup widgetName="widget-example" fieldKey="field-example" value={null} onCancel={onCancel}>
                     <Content />
                 </FilterPopup>
             </Provider>
@@ -200,11 +167,7 @@ describe('`<FilterPopup />`', () => {
         store.getState().screen.filters.bcExample = [presetFilter]
         const wrapper = mount(
             <Provider store={store}>
-                <FilterPopup
-                    widgetName="widget-example"
-                    fieldKey="field-example"
-                    value={null}
-                >
+                <FilterPopup widgetName="widget-example" fieldKey="field-example" value={null}>
                     <Content />
                 </FilterPopup>
             </Provider>

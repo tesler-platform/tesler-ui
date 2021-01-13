@@ -16,16 +16,16 @@
  */
 
 import React from 'react'
-import {ListChildComponentProps} from 'react-window'
-import {Icon, Checkbox} from 'antd'
-import {TreeNodeBidirectional} from '../../../interfaces/tree'
+import { ListChildComponentProps } from 'react-window'
+import { Icon, Checkbox } from 'antd'
+import { TreeNodeBidirectional } from '../../../interfaces/tree'
 import SearchHightlight from '../SearchHightlight/SearchHightlight'
-import {escapedSrc} from '../../../utils/strings'
+import { escapedSrc } from '../../../utils/strings'
 import styles from './TreeVirtualizedNode.less'
-import {BcFilter} from '../../../interfaces/filters'
-import {useSelector} from 'react-redux'
-import {Store } from '../../../interfaces/store'
-import {WidgetListField} from '../../../interfaces/widget'
+import { BcFilter } from '../../../interfaces/filters'
+import { useSelector } from 'react-redux'
+import { Store } from '../../../interfaces/store'
+import { WidgetListField } from '../../../interfaces/widget'
 
 /**
  * Properties for `TreeVirtualizedNode` component
@@ -36,33 +36,33 @@ export interface TreeVirtualizedNodeData<T> {
     /**
      * All items that can be displayed as nodes
      */
-    items: Array<T & TreeNodeBidirectional>,
+    items: Array<T & TreeNodeBidirectional>
     /**
      * Fields of the item that should be displayed as columns
      */
-    fields: WidgetListField[],
+    fields: WidgetListField[]
     /**
      * An array of ids of expanded nodes
      */
-    expandedItems: string[],
+    expandedItems: string[]
     /**
      * Allow selecting multiple items
      */
-    multiple?: boolean,
+    multiple?: boolean
     /**
      * Fields with values matching this expression will be highlighted;
      *
      * @see {@link src/utils/strings.ts#escapedSrc} for details how search expression is escaped
      */
-    filters?: BcFilter[],
+    filters?: BcFilter[]
     /**
      * Custom renderer for matching values
      */
-    searchHighlighter?: (value: string) => React.ReactNode,
+    searchHighlighter?: (value: string) => React.ReactNode
     /**
      * Fires when expanding/collapsing node
      */
-    onToggle: (id: string) => void,
+    onToggle: (id: string) => void
     /**
      * Fires when selectin a node
      */
@@ -91,57 +91,45 @@ export function TreeVirtualizedNode<T extends TreeNodeBidirectional>(props: Tree
     const pendingSelected = useSelector((store: Store) => {
         return Object.values(store.view.pendingDataChanges)?.[0]
     })
-    const checked = pendingSelected?.[item.id] === undefined
-        ? (item as any)._associate
-        : pendingSelected?.[item.id]._associate
-    return <div className={styles.row} style={props.style}>
-        { data.multiple &&
-            <div className={styles.controls}>
-                <Checkbox
-                    checked={checked}
-                    onChange={() => data.onSelect(item, !checked)}
-                />
-            </div>
-        }
-        <div className={styles.controls}>
-            { item.children?.length &&
-                <button
-                    className={styles.button}
-                    onClick={() => data.onToggle(item.id)}
-                >
-                    <Icon
-                        className={styles.icon}
-                        type={expanded ? 'minus-square' : 'plus-square'}
-                    />
-                </button>
-            }
-        </div>
-        { data.fields?.map((field: WidgetListField) => {
-            const filter = data.filters?.find(f => f.fieldName === field.key)
-            const source = String((item as any)[field.key] ?? '')
-            const content = filter
-                ? <SearchHightlight
-                    source={source}
-                    search={escapedSrc(filter.value as string)}
-                    match={data.searchHighlighter}
-                />
-                : source
-            const onClick = data.multiple
-                ? () => (data.onSelect as (d: T, selected: boolean) => void)?.(item, !checked)
-                : () => (data.onSelect as (d: T) => void)?.(item)
-            return <div
-                key={field.key}
-                className={styles.column}
-                style={field.width ? { minWidth: field.width, maxWidth: field.width } : undefined}
-                onClick={onClick}
-            >
-                <div className={styles.content}>
-                    { content }
+    const checked = pendingSelected?.[item.id] === undefined ? (item as any)._associate : pendingSelected?.[item.id]._associate
+    return (
+        <div className={styles.row} style={props.style}>
+            {data.multiple && (
+                <div className={styles.controls}>
+                    <Checkbox checked={checked} onChange={() => data.onSelect(item, !checked)} />
                 </div>
+            )}
+            <div className={styles.controls}>
+                {item.children?.length && (
+                    <button className={styles.button} onClick={() => data.onToggle(item.id)}>
+                        <Icon className={styles.icon} type={expanded ? 'minus-square' : 'plus-square'} />
+                    </button>
+                )}
             </div>
-        })}
-
-    </div>
+            {data.fields?.map((field: WidgetListField) => {
+                const filter = data.filters?.find(f => f.fieldName === field.key)
+                const source = String((item as any)[field.key] ?? '')
+                const content = filter ? (
+                    <SearchHightlight source={source} search={escapedSrc(filter.value as string)} match={data.searchHighlighter} />
+                ) : (
+                    source
+                )
+                const onClick = data.multiple
+                    ? () => (data.onSelect as (d: T, selected: boolean) => void)?.(item, !checked)
+                    : () => (data.onSelect as (d: T) => void)?.(item)
+                return (
+                    <div
+                        key={field.key}
+                        className={styles.column}
+                        style={field.width ? { minWidth: field.width, maxWidth: field.width } : undefined}
+                        onClick={onClick}
+                    >
+                        <div className={styles.content}>{content}</div>
+                    </div>
+                )
+            })}
+        </div>
+    )
 }
 
 export default React.memo(TreeVirtualizedNode)

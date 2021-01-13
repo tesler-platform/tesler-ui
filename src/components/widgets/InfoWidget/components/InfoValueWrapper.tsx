@@ -1,20 +1,20 @@
 import cn from 'classnames'
-import React, {ReactNode} from 'react'
+import React, { ReactNode } from 'react'
 import styles from './InfoValueWrapper.less'
-import {Col} from 'antd'
-import {LayoutCol, LayoutRow} from '../../../../interfaces/widget'
+import { Col } from 'antd'
+import { LayoutCol, LayoutRow } from '../../../../interfaces/widget'
 
 interface ValueWrapperProps {
-    row: LayoutRow,
-    col: LayoutCol,
+    row: LayoutRow
+    col: LayoutCol
     children?: ReactNode
 }
 export const InfoValueWrapper: React.FunctionComponent<ValueWrapperProps> = props => {
-    return <Col span={props.col.span}>
-        <div className={cn(styles.fieldArea, {[styles.columnDirection]: props.row.cols.length > 1})}>
-            {props.children}
-        </div>
-    </Col>
+    return (
+        <Col span={props.col.span}>
+            <div className={cn(styles.fieldArea, { [styles.columnDirection]: props.row.cols.length > 1 })}>{props.children}</div>
+        </Col>
+    )
 }
 
 InfoValueWrapper.displayName = 'InfoValueWrapper'

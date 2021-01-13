@@ -1,6 +1,6 @@
-import {TeslerResponse} from './objectMap'
-import {Operation, OperationGroup, OperationPostInvokeAny} from './operation'
-import {DataValue} from './data'
+import { TeslerResponse } from './objectMap'
+import { Operation, OperationGroup, OperationPostInvokeAny } from './operation'
+import { DataValue } from './data'
 
 /**
  * Мета записи, содержит информацию:
@@ -12,8 +12,8 @@ import {DataValue} from './data'
  * TODO: По смыслу тут должно быть название DataItemMeta
  */
 export interface RowMeta {
-    actions: Array<Operation | OperationGroup>,
-    fields: RowMetaField[],
+    actions: Array<Operation | OperationGroup>
+    fields: RowMetaField[]
     errors?: Record<string, string>
     // TODO: В Досье это по ошибке в интерфейсе ответа бэка, хотя заполняется локально
     // conflicts?: ObjectMap<TDataValue> Переделать в Досье и убрать отсюда
@@ -21,7 +21,7 @@ export interface RowMeta {
 
 export interface RowMetaResponse extends TeslerResponse {
     data: {
-        row: RowMeta,
+        row: RowMeta
         postActions?: OperationPostInvokeAny[]
     }
 }
@@ -47,38 +47,39 @@ export interface RowMetaResponse extends TeslerResponse {
  * @param filterable - можно ли фильтровать записи по этому полю
  */
 export interface RowMetaField {
-    key: string,
-    defaultValue?: DataValue,
-    currentValue: DataValue,
-    disabled?: boolean,
-    placeholder?: string,
-    ephemeral?: boolean, // TODO: Актуально еще? Вроде сейчас всегда запись целиком должна отправляться
-    hidden?: boolean, // TODO: Работа с ABAP
-    required?: boolean,
-    forceActive?: boolean,
+    key: string
+    defaultValue?: DataValue
+    currentValue: DataValue
+    disabled?: boolean
+    placeholder?: string
+    ephemeral?: boolean // TODO: Актуально еще? Вроде сейчас всегда запись целиком должна отправляться
+    hidden?: boolean // TODO: Работа с ABAP
+    required?: boolean
+    forceActive?: boolean
     /**
      * @deprecated
      * Флаг, определяющий надо ли устанавливать значение переданное в forceValue
      * TODO: В Досье не используется, проверить на бэке и удалить
      */
-    setForced?: boolean,
-    drillDown?: string, // TODO: Переименовать чтоб было понятно что это url
+    setForced?: boolean
+    drillDown?: string // TODO: Переименовать чтоб было понятно что это url
     // TODO: Не DrillDownType потому что может получаться из ключа drillDownTypeKey,
     // значение которого ищется в слабо типизированном DataItem [fieldName: string]?
     // Сделать здесь енум, а по месту использования - приведение
-    drillDownType?: string,
+    drillDownType?: string
     /**
      * @deprecated
      * TODO: В Досье не используется, проверить на бэке и удалить
      */
     // dictionaryName?: string,
     values?: Array<{
-        value: string,
+        value: string
         // настройки (иконка-направление(ANT) цвет) для иконки соответствующей значению
         icon: string
-    }>,
-    filterValues?: Array<{ // словари для LOV'ов
+    }>
+    filterValues?: Array<{
+        // словари для LOV'ов
         value: string
-    }>,
+    }>
     filterable?: boolean
 }

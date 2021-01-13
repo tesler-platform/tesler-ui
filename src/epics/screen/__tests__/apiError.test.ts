@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-import {$do} from '../../../actions/actions'
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {mockStore} from '../../../tests/mockStore'
-import {ActionsObservable} from 'redux-observable'
-import {testEpic } from '../../../tests/testEpic'
-import {apiError} from '../apiError'
-import axios, {AxiosError} from 'axios'
-import {ApplicationErrorType} from '../../../interfaces/view'
-import {knownHttpErrors} from '../apiError'
+import { $do } from '../../../actions/actions'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { mockStore } from '../../../tests/mockStore'
+import { ActionsObservable } from 'redux-observable'
+import { testEpic } from '../../../tests/testEpic'
+import { apiError } from '../apiError'
+import axios, { AxiosError } from 'axios'
+import { ApplicationErrorType } from '../../../interfaces/view'
+import { knownHttpErrors } from '../apiError'
 
 const dispatch = jest.fn()
 jest.spyOn(axios, 'isCancel').mockImplementation((e: AxiosError) => {
@@ -48,12 +48,16 @@ describe('apiError', () => {
                 callContext
             })
             const epic = apiError(ActionsObservable.of(action), store)
-            testEpic(epic, (result) => {
-                expect(result[0]).toEqual(expect.objectContaining($do.httpError({
-                    statusCode: error.response.status,
-                    error,
-                    callContext
-                })))
+            testEpic(epic, result => {
+                expect(result[0]).toEqual(
+                    expect.objectContaining(
+                        $do.httpError({
+                            statusCode: error.response.status,
+                            error,
+                            callContext
+                        })
+                    )
+                )
             })
         })
         const unknownStatusError = getAxiosError(999)
@@ -62,12 +66,16 @@ describe('apiError', () => {
             callContext: { widgetName: 'widget-example' }
         })
         const unknownStatusEpic = apiError(ActionsObservable.of(unkownStatusAction), store)
-        testEpic(unknownStatusEpic, (result) => {
-            expect(result[0]).toEqual(expect.objectContaining($do.httpError({
-                statusCode: 999,
-                error: unknownStatusError,
-                callContext
-            })))
+        testEpic(unknownStatusEpic, result => {
+            expect(result[0]).toEqual(
+                expect.objectContaining(
+                    $do.httpError({
+                        statusCode: 999,
+                        error: unknownStatusError,
+                        callContext
+                    })
+                )
+            )
         })
     })
 
@@ -79,12 +87,16 @@ describe('apiError', () => {
             callContext: { widgetName: 'widget-example' }
         })
         const epic = apiError(ActionsObservable.of(action), store)
-        testEpic(epic, (result) => {
-            expect(result[0]).toEqual(expect.objectContaining($do.showViewError({
-                error: {
-                    type: ApplicationErrorType.NetworkError
-                }
-            })))
+        testEpic(epic, result => {
+            expect(result[0]).toEqual(
+                expect.objectContaining(
+                    $do.showViewError({
+                        error: {
+                            type: ApplicationErrorType.NetworkError
+                        }
+                    })
+                )
+            )
         })
     })
 
@@ -97,7 +109,7 @@ describe('apiError', () => {
             callContext: { widgetName: 'widget-example' }
         })
         const epic = apiError(ActionsObservable.of(action), store)
-        testEpic(epic, (result) => {
+        testEpic(epic, result => {
             expect(result.length).toBe(0)
         })
     })
@@ -110,9 +122,7 @@ function getAxiosError(status: number): AxiosError {
         name: 'test',
         message: 'test',
         response: {
-            data: {
-
-            },
+            data: {},
             status,
             statusText: 'error',
             headers: null,

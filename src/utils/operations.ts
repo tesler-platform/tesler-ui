@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import {Operation, isOperationGroup, OperationGroup, OperationTypeCrud, coreOperations} from '../interfaces/operation'
-import {buildBcUrl} from './strings'
-import {Store} from '../interfaces/store'
-import {ActionPayloadTypes} from '../actions/actions'
+import { Operation, isOperationGroup, OperationGroup, OperationTypeCrud, coreOperations } from '../interfaces/operation'
+import { buildBcUrl } from './strings'
+import { Store } from '../interfaces/store'
+import { ActionPayloadTypes } from '../actions/actions'
 
 /**
  * Extract operations from all operations groups and return them as an array of flat operations

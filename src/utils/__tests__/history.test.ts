@@ -1,4 +1,4 @@
-import {makeRelativeUrl, parseBcCursors} from '../history'
+import { makeRelativeUrl, parseBcCursors } from '../history'
 
 test('makeRelativeUrl', () => {
     expect(makeRelativeUrl('screen/counterparty/view/generaltasksform')).toBe('/screen/counterparty/view/generaltasksform')

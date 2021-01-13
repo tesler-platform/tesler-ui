@@ -15,17 +15,16 @@
  * limitations under the License.
  */
 
-import {testEpic} from '../../../tests/testEpic'
-import {$do} from '../../../actions/actions'
-import {ActionsObservable} from 'redux-observable'
-import {mockStore } from '../../../tests/mockStore'
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {changeScreen} from '../selectScreen'
-import {ViewMetaResponse} from '../../../interfaces/view'
+import { testEpic } from '../../../tests/testEpic'
+import { $do } from '../../../actions/actions'
+import { ActionsObservable } from 'redux-observable'
+import { mockStore } from '../../../tests/mockStore'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { changeScreen } from '../selectScreen'
+import { ViewMetaResponse } from '../../../interfaces/view'
 
 describe('selectScreen', () => {
-
     let store: Store<CoreStore> = null
     const action = $do.selectScreen(null)
 
@@ -43,7 +42,7 @@ describe('selectScreen', () => {
     it('select view specified by route when available', () => {
         store.getState().router.viewName = 'view-next'
         const epic = changeScreen(ActionsObservable.of(action), store)
-        testEpic(epic, (res) => {
+        testEpic(epic, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectView(requestedView)))
         })
@@ -51,13 +50,13 @@ describe('selectScreen', () => {
 
     it('selects primary view or first available if route does not specify view', () => {
         const unspecifiedView = changeScreen(ActionsObservable.of(action), store)
-        testEpic(unspecifiedView, (res) => {
+        testEpic(unspecifiedView, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectView(defaultView)))
         })
         store.getState().screen.views = [requestedView]
         const firstAvailable = changeScreen(ActionsObservable.of(action), store)
-        testEpic(firstAvailable, (res) => {
+        testEpic(firstAvailable, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectView(requestedView)))
         })
@@ -67,13 +66,12 @@ describe('selectScreen', () => {
         store.getState().router.viewName = 'view-next'
         store.getState().screen.views = []
         const epic = changeScreen(ActionsObservable.of(action), store)
-        testEpic(epic, (res) => {
+        testEpic(epic, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectViewFail({ viewName: 'view-next' })))
         })
     })
 })
-
 
 const requestedView: ViewMetaResponse = {
     name: 'view-next',

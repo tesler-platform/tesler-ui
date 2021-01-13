@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import {ActionsMap, $do, AnyAction, types, Epic} from '../../actions/actions'
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../interfaces/store'
-import {WidgetMeta} from '../../interfaces/widget'
+import { ActionsMap, $do, AnyAction, types, Epic } from '../../actions/actions'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../interfaces/store'
+import { WidgetMeta } from '../../interfaces/widget'
 
 /**
  * Schedules data fetch for every widget on the view
@@ -31,10 +31,10 @@ import {WidgetMeta} from '../../interfaces/widget'
  * @param action `selectView` action
  * @param store Store instance
  */
-export const selectView: Epic = (action$, store) => action$.ofType(types.selectView)
-.mergeMap(action => {
-    return selectViewImpl(action, store)
-})
+export const selectView: Epic = (action$, store) =>
+    action$.ofType(types.selectView).mergeMap(action => {
+        return selectViewImpl(action, store)
+    })
 
 /**
  * Default implementation for `selectView` epic.

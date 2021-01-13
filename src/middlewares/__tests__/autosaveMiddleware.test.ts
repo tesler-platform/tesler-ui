@@ -1,9 +1,9 @@
-import {createAutoSaveMiddleware} from '../autosaveMiddleware'
+import { createAutoSaveMiddleware } from '../autosaveMiddleware'
 import * as mockStore from './__mocks__/store.json'
 import * as mockStore1 from './__mocks__/store1.json'
-import {OperationTypeCrud} from '../../interfaces/operation'
-import {AnyAction} from 'redux'
-import {Store} from '../../interfaces/store'
+import { OperationTypeCrud } from '../../interfaces/operation'
+import { AnyAction } from 'redux'
+import { Store } from '../../interfaces/store'
 
 const bcName = 'exBc'
 
@@ -21,11 +21,11 @@ describe('saveFormMiddleware', () => {
         payload: {
             bcName: '1EventRoot1Response',
             operationType: OperationTypeCrud.cancelCreate,
-            widgetName: 'RERRRCF',
+            widgetName: 'RERRRCF'
         }
     }
-    const doGetState = () => mockStore as unknown as Store
-    const doGetState1 = () => mockStore1 as unknown as Store
+    const doGetState = () => (mockStore as unknown) as Store
+    const doGetState1 = () => (mockStore1 as unknown) as Store
     const doNext = <A = AnyAction>(action: A) => action
     const autosaveMiddleware = createAutoSaveMiddleware()
     it('should transform action', () => {
@@ -36,7 +36,7 @@ describe('saveFormMiddleware', () => {
         const middleware = autosaveMiddleware({ getState: doGetState1, dispatch: null })
         expect(middleware(doNext)(initAction2)).toEqual(initAction2)
     })
-    it('shouldn\'t transform action bcChangePage inside popup', () => {
+    it("shouldn't transform action bcChangePage inside popup", () => {
         const changePageStore = {
             ...mockStore1,
             view: {
@@ -46,7 +46,7 @@ describe('saveFormMiddleware', () => {
                 }
             }
         }
-        const doGetStateChangePage = () => changePageStore as unknown as Store
+        const doGetStateChangePage = () => (changePageStore as unknown) as Store
         const middleware = autosaveMiddleware({ getState: doGetStateChangePage, dispatch: null })
         const bcChangePageAction = {
             type: 'bcChangePage',
@@ -74,33 +74,30 @@ describe('saveFormMiddleware', () => {
             title: 'AAA',
             fields: [
                 {
-                    'title': 'Номер',
-                    'key': '1Event1ResponseName',
-                    'drillDown': true,
-                    'type': 'input'
+                    title: 'Номер',
+                    key: '1Event1ResponseName',
+                    drillDown: true,
+                    type: 'input'
                 },
                 {
-                    'title': 'Описание',
-                    'key': '1Event1ResponseDescription',
-                    'type': 'text'
+                    title: 'Описание',
+                    key: '1Event1ResponseDescription',
+                    type: 'text'
                 },
                 {
-                    'title': 'Статус',
-                    'key': 'reasonResponseCd',
-                    'type': 'dictionary'
+                    title: 'Статус',
+                    key: 'reasonResponseCd',
+                    type: 'dictionary'
                 },
                 {
-                    'title': 'Обоснование',
-                    'key': 'reasonResponseDesc',
-                    'type': 'text'
+                    title: 'Обоснование',
+                    key: 'reasonResponseDesc',
+                    type: 'text'
                 }
             ],
             options: {
                 actionGroups: {
-                    'exclude': [
-                        'save',
-                        'associate'
-                    ]
+                    exclude: ['save', 'associate']
                 }
             },
             pivotFields: null,
@@ -151,7 +148,7 @@ describe('saveFormMiddleware', () => {
                 }
             }
         }
-        const doGetRestBcStore = () => restBcStore as unknown as Store
+        const doGetRestBcStore = () => (restBcStore as unknown) as Store
         const args = { getState: doGetRestBcStore, dispatch: jest.fn() }
         const middleware = autosaveMiddleware(args)
         const spy = jest.spyOn(args, 'dispatch')
@@ -175,7 +172,7 @@ describe('saveFormMiddleware', () => {
                 }
             }
         }
-        const getTestStore = () => testStore as unknown as Store
+        const getTestStore = () => (testStore as unknown) as Store
         const middleware = autosaveMiddleware({ getState: getTestStore, dispatch: null })
         expect(middleware(doNext)(initAction2)).toEqual(initAction2)
     })

@@ -1,16 +1,14 @@
-import {AnyAction, types} from '../actions/actions'
-import {ScreenState} from '../interfaces/screen'
-import {BcMeta, BcMetaState} from '../interfaces/bc'
-import {OperationTypeCrud} from '../interfaces/operation'
-import {parseFilters, parseSorters} from '../utils/filters'
-import {BcFilter, BcSorter} from '../interfaces/filters'
+import { AnyAction, types } from '../actions/actions'
+import { ScreenState } from '../interfaces/screen'
+import { BcMeta, BcMetaState } from '../interfaces/bc'
+import { OperationTypeCrud } from '../interfaces/operation'
+import { parseFilters, parseSorters } from '../utils/filters'
+import { BcFilter, BcSorter } from '../interfaces/filters'
 
 const initialState: ScreenState = {
     screenName: null,
     bo: { activeBcName: null, bc: {} },
-    cachedBc: {
-
-    },
+    cachedBc: {},
     views: [],
     primaryView: '',
     filters: {},
@@ -51,7 +49,7 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                 views: action.payload.screen.meta.views,
                 bo: { activeBcName: null, bc: bcDictionary },
                 sorters: { ...state.sorters, ...bcSorters },
-                filters: { ...state.filters, ...bcFilters}
+                filters: { ...state.filters, ...bcFilters }
             }
         }
         case types.selectScreenFail: {
@@ -59,24 +57,27 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
         }
         case types.bcFetchDataRequest: {
             const depth = action.payload.depth
-            return { ...state,
-                bo: { ...state.bo,
-                    bc: { ...state.bo.bc,
+            return {
+                ...state,
+                bo: {
+                    ...state.bo,
+                    bc: {
+                        ...state.bo.bc,
                         [action.payload.bcName]: {
                             ...state.bo.bc[action.payload.bcName],
-                            ...(depth && depth > 1)
+                            ...(depth && depth > 1
                                 ? {
-                                    depthBc: {
-                                        ...state.bo.bc[action.payload.bcName].depthBc,
-                                        [depth]: {
-                                            ...(state.bo.bc[action.payload.bcName].depthBc || {})[depth],
-                                            loading: true
-                                        }
-                                    }
-                                }
+                                      depthBc: {
+                                          ...state.bo.bc[action.payload.bcName].depthBc,
+                                          [depth]: {
+                                              ...(state.bo.bc[action.payload.bcName].depthBc || {})[depth],
+                                              loading: true
+                                          }
+                                      }
+                                  }
                                 : {
-                                    loading: true
-                                }
+                                      loading: true
+                                  })
                         }
                     }
                 }
@@ -85,8 +86,10 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
         case types.bcLoadMore: {
             return {
                 ...state,
-                bo: { ...state.bo,
-                    bc: { ...state.bo.bc,
+                bo: {
+                    ...state.bo,
+                    bc: {
+                        ...state.bo.bc,
                         [action.payload.bcName]: {
                             ...state.bo.bc[action.payload.bcName],
                             page: state.bo.bc[action.payload.bcName].page + 1,
@@ -98,13 +101,12 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
         }
         case types.selectView: {
             const newBcs: Record<string, BcMetaState> = {}
-            Array
-                .from(
-                    new Set(action.payload.widgets.map(widget => widget.bcName)) // БК которые есть на вьюхе
-                )
+            Array.from(
+                new Set(action.payload.widgets.map(widget => widget.bcName)) // БК которые есть на вьюхе
+            )
                 .filter(bcName => state.bo.bc[bcName])
-                .forEach((bcName) => {
-                    newBcs[bcName] = {...state.bo.bc[bcName], page: 1, loading: true}
+                .forEach(bcName => {
+                    newBcs[bcName] = { ...state.bo.bc[bcName], page: 1, loading: true }
                 })
             return {
                 ...state,
@@ -119,25 +121,28 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
         }
         case types.bcFetchDataSuccess: {
             const depth = action.payload.depth
-            return { ...state,
-                bo: { ...state.bo,
-                    bc: { ...state.bo.bc,
+            return {
+                ...state,
+                bo: {
+                    ...state.bo,
+                    bc: {
+                        ...state.bo.bc,
                         [action.payload.bcName]: {
                             ...state.bo.bc[action.payload.bcName],
-                            ...(depth && depth > 1)
+                            ...(depth && depth > 1
                                 ? {
-                                    depthBc: {
-                                        ...state.bo.bc[action.payload.bcName].depthBc,
-                                        [depth]: {
-                                            ...(state.bo.bc[action.payload.bcName].depthBc || {})[depth],
-                                            loading: false
-                                        }
-                                    }
-                                }
+                                      depthBc: {
+                                          ...state.bo.bc[action.payload.bcName].depthBc,
+                                          [depth]: {
+                                              ...(state.bo.bc[action.payload.bcName].depthBc || {})[depth],
+                                              loading: false
+                                          }
+                                      }
+                                  }
                                 : {
-                                    hasNext: action.payload.hasNext,
-                                    loading: false
-                                }
+                                      hasNext: action.payload.hasNext,
+                                      loading: false
+                                  })
                         }
                     }
                 },
@@ -149,7 +154,7 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
         }
         case types.bcFetchDataFail: {
             const depth = action.payload.depth
-            if (Object.values(state.bo.bc).some((bc) => bc.name === action.payload.bcName)) {
+            if (Object.values(state.bo.bc).some(bc => bc.name === action.payload.bcName)) {
                 return {
                     ...state,
                     bo: {
@@ -158,19 +163,19 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                             ...state.bo.bc,
                             [action.payload.bcName]: {
                                 ...state.bo.bc[action.payload.bcName],
-                                ...(depth && depth > 1)
+                                ...(depth && depth > 1
                                     ? {
-                                        depthBc: {
-                                            ...state.bo.bc[action.payload.bcName].depthBc,
-                                            [depth]: {
-                                                ...(state.bo.bc[action.payload.bcName].depthBc || {})[depth],
-                                                loading: false
-                                            }
-                                        }
-                                    }
+                                          depthBc: {
+                                              ...state.bo.bc[action.payload.bcName].depthBc,
+                                              [depth]: {
+                                                  ...(state.bo.bc[action.payload.bcName].depthBc || {})[depth],
+                                                  loading: false
+                                              }
+                                          }
+                                      }
                                     : {
-                                        loading: false
-                                    }
+                                          loading: false
+                                      })
                             }
                         }
                     },
@@ -180,75 +185,85 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                     }
                 }
             } else {
-                return {...state}
+                return { ...state }
             }
         }
         case types.sendOperation: {
-            return (operationsHandledLocally.includes(action.payload.operationType))
+            return operationsHandledLocally.includes(action.payload.operationType)
                 ? state
                 : {
-                    ...state,
-                    bo: { ...state.bo,
-                        bc: {...state.bo.bc,
-                            [action.payload.bcName]: {
-                                ...state.bo.bc[action.payload.bcName],
-                                loading: true
-                            }
-                        }
-                    },
-                }
+                      ...state,
+                      bo: {
+                          ...state.bo,
+                          bc: {
+                              ...state.bo.bc,
+                              [action.payload.bcName]: {
+                                  ...state.bo.bc[action.payload.bcName],
+                                  loading: true
+                              }
+                          }
+                      }
+                  }
         }
         case types.sendOperationSuccess: {
             return {
                 ...state,
-                bo: { ...state.bo,
-                    bc: {...state.bo.bc,
+                bo: {
+                    ...state.bo,
+                    bc: {
+                        ...state.bo.bc,
                         [action.payload.bcName]: {
                             ...state.bo.bc[action.payload.bcName],
                             loading: false
                         }
                     }
-                },
+                }
             }
         }
         case types.bcDeleteDataFail:
         case types.sendOperationFail: {
             return {
                 ...state,
-                bo: { ...state.bo,
-                    bc: {...state.bo.bc,
+                bo: {
+                    ...state.bo,
+                    bc: {
+                        ...state.bo.bc,
                         [action.payload.bcName]: {
                             ...state.bo.bc[action.payload.bcName],
                             loading: false
                         }
                     }
-                },
+                }
             }
         }
         case types.bcSaveDataSuccess: {
             return {
                 ...state,
-                bo: { ...state.bo,
-                    bc: {...state.bo.bc,
+                bo: {
+                    ...state.bo,
+                    bc: {
+                        ...state.bo.bc,
                         [action.payload.bcName]: {
                             ...state.bo.bc[action.payload.bcName],
                             loading: false
                         }
                     }
-                },
+                }
             }
         }
         case types.bcSaveDataFail: {
             return {
                 ...state,
-                bo: { ...state.bo,
-                    bc: {...state.bo.bc,
+                bo: {
+                    ...state.bo,
+                    bc: {
+                        ...state.bo.bc,
                         [action.payload.bcName]: {
                             ...state.bo.bc[action.payload.bcName],
                             loading: false
                         }
                     }
-                },
+                }
             }
         }
         case types.bcNewDataSuccess: {
@@ -256,7 +271,8 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                 ...state,
                 bo: {
                     ...state.bo,
-                    bc: {...state.bo.bc,
+                    bc: {
+                        ...state.bo.bc,
                         [action.payload.bcName]: {
                             ...state.bo.bc[action.payload.bcName],
                             loading: false,
@@ -308,19 +324,19 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                         ...state.bo.bc,
                         [bcName]: {
                             ...prevBc,
-                            ...(depth === 1)
+                            ...(depth === 1
                                 ? {
-                                    cursor: action.payload.cursor
-                                }
+                                      cursor: action.payload.cursor
+                                  }
                                 : {
-                                    depthBc: {
-                                        ...prevBc.depthBc,
-                                        [depth]: {
-                                            ...(prevBc.depthBc || {})[depth],
-                                            cursor: action.payload.cursor
-                                        }
-                                    }
-                                }
+                                      depthBc: {
+                                          ...prevBc.depthBc,
+                                          [depth]: {
+                                              ...(prevBc.depthBc || {})[depth],
+                                              cursor: action.payload.cursor
+                                          }
+                                      }
+                                  })
                         }
                     }
                 }
@@ -364,11 +380,8 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
             const prevFilters = state.filters[bcName] || []
             const prevFilter = prevFilters.find(item => item.fieldName === filter.fieldName && item.type === filter.type)
             const newFilters = prevFilter
-                ? prevFilters.map(item => item === prevFilter
-                    ? { ...prevFilter, value: filter.value }
-                    : item
-                )
-                : [ ...prevFilters, filter ]
+                ? prevFilters.map(item => (item === prevFilter ? { ...prevFilter, value: filter.value } : item))
+                : [...prevFilters, filter]
             return {
                 ...state,
                 bo: {
@@ -433,9 +446,7 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                 ...state,
                 sorters: {
                     ...state.sorters,
-                    [action.payload.bcName]: Array.isArray(action.payload.sorter)
-                        ? action.payload.sorter
-                        : [action.payload.sorter]
+                    [action.payload.bcName]: Array.isArray(action.payload.sorter) ? action.payload.sorter : [action.payload.sorter]
                 }
             }
         }

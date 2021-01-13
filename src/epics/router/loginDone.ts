@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import {Observable} from 'rxjs'
-import {Store} from 'redux'
-import {Epic, types, AnyAction, ActionsMap, $do} from '../../actions/actions'
-import {Store as CoreStore} from '../../interfaces/store'
-import {RouteType} from '../../interfaces/router'
+import { Observable } from 'rxjs'
+import { Store } from 'redux'
+import { Epic, types, AnyAction, ActionsMap, $do } from '../../actions/actions'
+import { Store as CoreStore } from '../../interfaces/store'
+import { RouteType } from '../../interfaces/router'
 
 /**
  * Fires `selectScreen` or `selectScreenFail` to set requested in url screen as active
@@ -29,10 +29,10 @@ import {RouteType} from '../../interfaces/router'
  *
  * @param action$ loginDone
  */
-export const loginDone: Epic = (action$, store) => action$.ofType(types.loginDone)
-.switchMap(action => {
-    return loginDoneImpl(action, store)
-})
+export const loginDone: Epic = (action$, store) =>
+    action$.ofType(types.loginDone).switchMap(action => {
+        return loginDoneImpl(action, store)
+    })
 
 export function loginDoneImpl(action: ActionsMap['loginDone'], store: Store<CoreStore>) {
     const state = store.getState()
@@ -42,10 +42,8 @@ export function loginDoneImpl(action: ActionsMap['loginDone'], store: Store<Core
     }
 
     const nextScreenName = state.router.screenName
-    const nextScreen = state.session.screens.find(item => nextScreenName
-            ? item.name === nextScreenName
-            : item.defaultScreen
-        ) || state.session.screens[0]
+    const nextScreen =
+        state.session.screens.find(item => (nextScreenName ? item.name === nextScreenName : item.defaultScreen)) || state.session.screens[0]
     return nextScreen
         ? Observable.of<AnyAction>($do.selectScreen({ screen: nextScreen }))
         : Observable.of<AnyAction>($do.selectScreenFail({ screenName: nextScreenName }))

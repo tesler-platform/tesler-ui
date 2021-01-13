@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import {Observable} from 'rxjs'
-import {Store} from 'redux'
-import {Epic, types, AnyAction, ActionsMap} from '../../actions/actions'
-import {Store as CoreStore} from '../../interfaces/store'
-import {notification} from 'antd'
+import { Observable } from 'rxjs'
+import { Store } from 'redux'
+import { Epic, types, AnyAction, ActionsMap } from '../../actions/actions'
+import { Store as CoreStore } from '../../interfaces/store'
+import { notification } from 'antd'
 import i18n from 'i18next'
 
 /**
@@ -27,15 +27,12 @@ import i18n from 'i18next'
  *
  * @param action$ selectViewFail
  */
-export const selectScreenFail: Epic = (action$, store) => action$.ofType(types.selectScreenFail)
-.mergeMap(action => {
-    return selectScreenFailImpl(action, store)
-})
+export const selectScreenFail: Epic = (action$, store) =>
+    action$.ofType(types.selectScreenFail).mergeMap(action => {
+        return selectScreenFailImpl(action, store)
+    })
 
-export function selectScreenFailImpl(
-    action: ActionsMap['selectScreenFail'],
-    store: Store<CoreStore, AnyAction>
-): Observable<AnyAction> {
+export function selectScreenFailImpl(action: ActionsMap['selectScreenFail'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     notification.error({
         message: i18n.t('Screen is missing or unavailable for your role', { screenName: action.payload.screenName }),
         duration: 15

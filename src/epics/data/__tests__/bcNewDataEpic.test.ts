@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-import {bcNewDataEpic} from '../bcNewDataEpic'
-import {$do} from '../../../actions/actions'
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {mockStore} from '../../../tests/mockStore'
+import { bcNewDataEpic } from '../bcNewDataEpic'
+import { $do } from '../../../actions/actions'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { mockStore } from '../../../tests/mockStore'
 import * as api from '../../../api/api'
-import {newBcData} from '../../../api/api'
-import {Observable} from 'rxjs'
-import {ActionsObservable} from 'redux-observable'
-import {testEpic} from '../../../tests/testEpic'
-import {OperationTypeCrud, OperationPostInvokeRefreshBc, OperationPostInvokeType} from '../../../interfaces/operation'
-import {RowMeta} from '../../../interfaces/rowMeta'
+import { newBcData } from '../../../api/api'
+import { Observable } from 'rxjs'
+import { ActionsObservable } from 'redux-observable'
+import { testEpic } from '../../../tests/testEpic'
+import { OperationTypeCrud, OperationPostInvokeRefreshBc, OperationPostInvokeType } from '../../../interfaces/operation'
+import { RowMeta } from '../../../interfaces/rowMeta'
 
 const newBcDataApiMock = jest.fn().mockImplementation((...args: Parameters<typeof newBcData>) => {
     const [screenName] = args
@@ -79,48 +79,56 @@ describe('`bcNewDataEpic`', () => {
 
     it('puts new record in the store and sets BC cursor', () => {
         const epic = bcNewDataEpic(ActionsObservable.of(action), store)
-        testEpic(epic, (result) => {
+        testEpic(epic, result => {
             expect(result.length).toBe(3)
-            expect(result[0]).toEqual(expect.objectContaining(
-                $do.bcNewDataSuccess({
-                    bcName: 'bcExample',
-                    dataItem: { id: '19248', vstamp: -1 },
-                    bcUrl: 'bcExample',
-                })
-            ))
-            expect(result[1]).toEqual(expect.objectContaining(
-                $do.bcFetchRowMetaSuccess({
-                    bcName: 'bcExample',
-                    bcUrl: 'bcExample/19248',
-                    rowMeta,
-                    cursor: '19248'
-                })
-            ))
-            expect(result[2]).toEqual(expect.objectContaining(
-                $do.changeDataItem({
-                    bcName: 'bcExample',
-                    cursor: '19248',
-                    dataItem: {
-                        id: '19248'
-                    }
-                })
-            ))
+            expect(result[0]).toEqual(
+                expect.objectContaining(
+                    $do.bcNewDataSuccess({
+                        bcName: 'bcExample',
+                        dataItem: { id: '19248', vstamp: -1 },
+                        bcUrl: 'bcExample'
+                    })
+                )
+            )
+            expect(result[1]).toEqual(
+                expect.objectContaining(
+                    $do.bcFetchRowMetaSuccess({
+                        bcName: 'bcExample',
+                        bcUrl: 'bcExample/19248',
+                        rowMeta,
+                        cursor: '19248'
+                    })
+                )
+            )
+            expect(result[2]).toEqual(
+                expect.objectContaining(
+                    $do.changeDataItem({
+                        bcName: 'bcExample',
+                        cursor: '19248',
+                        dataItem: {
+                            id: '19248'
+                        }
+                    })
+                )
+            )
         })
     })
 
     it('process post invoke', () => {
         store.getState().screen.screenName = 'withPostInvoke'
         const epic = bcNewDataEpic(ActionsObservable.of(action), store)
-        testEpic(epic, (result) => {
+        testEpic(epic, result => {
             expect(result.length).toBe(4)
-            expect(result[3]).toEqual(expect.objectContaining(
-                $do.processPostInvoke({
-                    bcName: 'bcExample',
-                    postInvoke,
-                    cursor: '19248',
-                    widgetName: 'widget-example'
-                })
-            ))
+            expect(result[3]).toEqual(
+                expect.objectContaining(
+                    $do.processPostInvoke({
+                        bcName: 'bcExample',
+                        postInvoke,
+                        cursor: '19248',
+                        widgetName: 'widget-example'
+                    })
+                )
+            )
         })
     })
 
@@ -132,11 +140,9 @@ describe('`bcNewDataEpic`', () => {
             operationType: OperationTypeCrud.create
         })
         const epic = bcNewDataEpic(ActionsObservable.of(brokenAction), store)
-        testEpic(epic, (result) => {
+        testEpic(epic, result => {
             expect(consoleMock).toBeCalledWith('test request crash')
-            expect(result[0]).toEqual(expect.objectContaining(
-                $do.bcNewDataFail({ bcName: 'bcExample' })
-            ))
+            expect(result[0]).toEqual(expect.objectContaining($do.bcNewDataFail({ bcName: 'bcExample' })))
         })
     })
 })
@@ -156,8 +162,10 @@ const postInvoke: OperationPostInvokeRefreshBc = {
 
 const rowMeta: RowMeta = {
     actions: [],
-    fields: [{
-        key: 'id',
-        currentValue: '19248'
-    }]
+    fields: [
+        {
+            key: 'id',
+            currentValue: '19248'
+        }
+    ]
 }

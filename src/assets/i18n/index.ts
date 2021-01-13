@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Resource} from 'i18next'
+import { Resource } from 'i18next'
 import ru from './ru.json'
 import en from './en.json'
 
@@ -53,7 +53,7 @@ export function getTextAssets(customDictionary: Resource): TextAssets {
         return result
     }
     Object.keys(customDictionary).forEach(code => {
-        const core = (defaultResources[code]?.translation || {})
+        const core = defaultResources[code]?.translation || {}
         const custom = customDictionary[code].translation as Record<string, string>
         result[code] = {
             translation: {

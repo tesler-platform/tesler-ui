@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {useSelector, shallowEqual} from 'react-redux'
-import {Store} from '../interfaces/store'
-import {getViewTabs} from '../utils/viewTabs'
-import {ViewMetaResponse} from '../interfaces/view'
-import {MenuItem, ViewNavigationCategory, NavigationLevel} from '../interfaces/navigation'
+import { useSelector, shallowEqual } from 'react-redux'
+import { Store } from '../interfaces/store'
+import { getViewTabs } from '../utils/viewTabs'
+import { ViewMetaResponse } from '../interfaces/view'
+import { MenuItem, ViewNavigationCategory, NavigationLevel } from '../interfaces/navigation'
 
 interface UseViewTabsState {
-    activeView: string,
-    views: ViewMetaResponse[],
+    activeView: string
+    views: ViewMetaResponse[]
     navigation: Array<Exclude<MenuItem, ViewNavigationCategory>>
 }
 

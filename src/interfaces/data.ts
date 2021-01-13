@@ -1,11 +1,11 @@
-import {OperationPostInvokeAny, OperationPreInvoke} from './operation'
-import {DrillDownType} from './router'
+import { OperationPostInvokeAny, OperationPreInvoke } from './operation'
+import { DrillDownType } from './router'
 
 /**
  * API's response on Business Component's data request
  */
 export interface BcDataResponse {
-    data: DataItem[],
+    data: DataItem[]
     hasNext: boolean
 }
 
@@ -17,11 +17,11 @@ export interface DataItem {
     /**
      * Record's identificator
      */
-    id: string,
+    id: string
     /**
      * Version of last record's edit
      */
-    vstamp: number,
+    vstamp: number
     /**
      * User fields
      */
@@ -61,14 +61,14 @@ export interface DataItemResponse {
         /**
          * Saved record
          */
-        record: DataItem,
+        record: DataItem
         /**
          * Actions which have to do after saving
          */
-        postActions?: OperationPostInvokeAny[],
+        postActions?: OperationPostInvokeAny[]
         /*
-        * @deprecated TODO: Remove in 2.0.0 in favor of postInvokeConfirm (is this todo needed?)
-        */
+         * @deprecated TODO: Remove in 2.0.0 in favor of postInvokeConfirm (is this todo needed?)
+         */
         preInvoke?: OperationPreInvoke
     }
 }
@@ -86,11 +86,11 @@ export interface MultivalueSingleValue {
     /**
      * Record's identificator
      */
-    id: string,
+    id: string
     /**
      * Showed value
      */
-    value: string,
+    value: string
     options?: MultivalueSingleValueOptions
 }
 
@@ -101,13 +101,13 @@ export interface MultivalueSingleValueOptions {
     /**
      * Hint for value
      */
-    hint?: string,
+    hint?: string
     /**
      * Type of Icon
      */
-    icon?: string,
-    drillDown?: string,
-    drillDownType?: DrillDownType,
+    icon?: string
+    drillDown?: string
+    drillDownType?: DrillDownType
     snapshotState?: RecordSnapshotState
 }
 

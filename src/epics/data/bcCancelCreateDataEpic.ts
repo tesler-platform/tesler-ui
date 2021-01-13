@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import {Observable} from 'rxjs'
-import {Store} from 'redux'
-import {Epic, types, $do, AnyAction, ActionsMap} from '../../actions/actions'
-import {Store as CoreStore} from '../../interfaces/store'
-import {buildBcUrl} from '../../utils/strings'
-import {customAction} from '../../api/api'
-import {matchOperationRole} from '../../utils/operations'
-import {OperationTypeCrud} from '../../interfaces/operation'
+import { Observable } from 'rxjs'
+import { Store } from 'redux'
+import { Epic, types, $do, AnyAction, ActionsMap } from '../../actions/actions'
+import { Store as CoreStore } from '../../interfaces/store'
+import { buildBcUrl } from '../../utils/strings'
+import { customAction } from '../../api/api'
+import { matchOperationRole } from '../../utils/operations'
+import { OperationTypeCrud } from '../../interfaces/operation'
 
 /**
  * Sends `cancel-create` custom operation with record's pending changes and vstamp;
@@ -33,11 +33,13 @@ import {OperationTypeCrud} from '../../interfaces/operation'
  * @param store Store instance
  */
 
-export const bcCancelCreateDataEpic: Epic = (action$, store) => action$.ofType(types.sendOperation)
-.filter(action => matchOperationRole(OperationTypeCrud.cancelCreate, action.payload, store.getState()))
-.mergeMap((action) => {
-    return bcCancelCreateDataEpicImpl(action, store)
-})
+export const bcCancelCreateDataEpic: Epic = (action$, store) =>
+    action$
+        .ofType(types.sendOperation)
+        .filter(action => matchOperationRole(OperationTypeCrud.cancelCreate, action.payload, store.getState()))
+        .mergeMap(action => {
+            return bcCancelCreateDataEpicImpl(action, store)
+        })
 
 /**
  * Default implementation for `bcCancelCreateDataEpic` epic
@@ -65,18 +67,18 @@ export function bcCancelCreateDataEpicImpl(action: ActionsMap['sendOperation'], 
     const params = { _action: action.payload.operationType }
     const cursorsMap: Record<string, string> = { [action.payload.bcName]: null }
     return customAction(screenName, bcUrl, data, context, params)
-    .mergeMap(response => {
-        const postInvoke = response.postActions[0]
-        return Observable.concat(
-            Observable.of($do.sendOperationSuccess({ bcName, cursor })),
-            Observable.of($do.bcChangeCursors({ cursorsMap })),
-            postInvoke
-                ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName: context.widgetName }))
-                : Observable.empty<never>()
-        )
-    })
-    .catch((error: any) => {
-        console.error(error)
-        return Observable.of($do.bcDeleteDataFail({ bcName }))
-    })
+        .mergeMap(response => {
+            const postInvoke = response.postActions[0]
+            return Observable.concat(
+                Observable.of($do.sendOperationSuccess({ bcName, cursor })),
+                Observable.of($do.bcChangeCursors({ cursorsMap })),
+                postInvoke
+                    ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName: context.widgetName }))
+                    : Observable.empty<never>()
+            )
+        })
+        .catch((error: any) => {
+            console.error(error)
+            return Observable.of($do.bcDeleteDataFail({ bcName }))
+        })
 }

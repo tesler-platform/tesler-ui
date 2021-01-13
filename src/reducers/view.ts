@@ -1,12 +1,12 @@
-import {AnyAction, types} from '../actions/actions'
-import {PendingValidationFails, PendingValidationFailsFormat, ViewState} from '../interfaces/view'
-import {PendingDataItem} from '../interfaces/data'
-import {Store} from '../interfaces/store'
-import {OperationTypeCrud} from '../interfaces/operation'
-import {buildBcUrl} from '../utils/strings'
+import { AnyAction, types } from '../actions/actions'
+import { PendingValidationFails, PendingValidationFailsFormat, ViewState } from '../interfaces/view'
+import { PendingDataItem } from '../interfaces/data'
+import { Store } from '../interfaces/store'
+import { OperationTypeCrud } from '../interfaces/operation'
+import { buildBcUrl } from '../utils/strings'
 import i18n from 'i18next'
 
-const initialState: ViewState  = {
+const initialState: ViewState = {
     id: null,
     name: null,
     url: null,
@@ -16,7 +16,7 @@ const initialState: ViewState  = {
     rowHeight: null,
     rowMeta: {},
     metaInProgress: {},
-    popupData: {bcName: null},
+    popupData: { bcName: null },
     pendingDataChanges: {},
     infiniteWidgets: [],
     pendingValidationFailsFormat: PendingValidationFailsFormat.old,
@@ -111,8 +111,7 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
             const bcName = action.payload.bcName
             const errors: Record<string, string> = {}
             if (action.payload.entityError) {
-                Object.entries(action.payload.entityError.fields)
-                .forEach(([fieldName, violation]) => {
+                Object.entries(action.payload.entityError.fields).forEach(([fieldName, violation]) => {
                     errors[fieldName] = violation
                 })
             }
@@ -131,33 +130,33 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
             }
         }
         case types.forceActiveRmUpdate: {
-            const {bcName, bcUrl, currentRecordData, rowMeta, cursor} = action.payload
+            const { bcName, bcUrl, currentRecordData, rowMeta, cursor } = action.payload
             const handledForceActive: PendingDataItem = {}
             const rowMetaForcedValues: PendingDataItem = {}
             const newPendingChangesDiff: PendingDataItem = {}
             const forceActiveFieldKeys: string[] = []
 
             // приведем значения переданные в forcedValue в вид дельты изменений
-            rowMeta.fields.forEach((field) => {
+            rowMeta.fields.forEach(field => {
                 rowMetaForcedValues[field.key] = field.currentValue
                 if (field.forceActive) {
                     forceActiveFieldKeys.push(field.key)
                 }
             })
 
-            const consolidatedFrontData: PendingDataItem = {...currentRecordData, ...state.pendingDataChanges[bcName][cursor]}
+            const consolidatedFrontData: PendingDataItem = { ...currentRecordData, ...state.pendingDataChanges[bcName][cursor] }
             // вычислим "разницу" между консолид.данными и полученными forcedValue's в пользу последних
-            Object.keys(consolidatedFrontData).forEach((key) => {
+            Object.keys(consolidatedFrontData).forEach(key => {
                 if (rowMetaForcedValues[key] !== undefined && consolidatedFrontData[key] !== rowMetaForcedValues[key]) {
                     newPendingChangesDiff[key] = rowMetaForcedValues[key]
                 }
             })
 
             // консолидация полученной разницы с актуальной дельтой
-            const newPendingDataChanges = {...state.pendingDataChanges[bcName][cursor], ...newPendingChangesDiff}
+            const newPendingDataChanges = { ...state.pendingDataChanges[bcName][cursor], ...newPendingChangesDiff }
 
             // отразим в списке обработанных forceActive полей - те что содержатся в новой дельте
-            forceActiveFieldKeys.forEach((key) => {
+            forceActiveFieldKeys.forEach(key => {
                 if (newPendingDataChanges[key] !== undefined) {
                     handledForceActive[key] = newPendingDataChanges[key]
                 }
@@ -203,12 +202,13 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
             const isTargetFormatPVF = state.pendingValidationFailsFormat === PendingValidationFailsFormat.target
             Object.keys(nextPending).forEach(fieldKey => {
                 const required = rowMeta?.fields.find(item => item.required && item.key === fieldKey)
-                const isEmpty = nextPending[fieldKey] === null
-                    || nextPending[fieldKey] === undefined
-                    || nextPending[fieldKey] === ''
-                    || (Array.isArray(nextPending[fieldKey]) && Object.keys(nextPending[fieldKey]).length === 0)
+                const isEmpty =
+                    nextPending[fieldKey] === null ||
+                    nextPending[fieldKey] === undefined ||
+                    nextPending[fieldKey] === '' ||
+                    (Array.isArray(nextPending[fieldKey]) && Object.keys(nextPending[fieldKey]).length === 0)
                 if (required && isEmpty) {
-                    nextValidationFails[fieldKey] = i18n.t('This field is mandatory') as string
+                    nextValidationFails[fieldKey] = i18n.t('This field is mandatory')
                 }
             })
             return {
@@ -222,12 +222,12 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                 },
                 pendingValidationFails: isTargetFormatPVF
                     ? {
-                        ...state.pendingValidationFails as PendingValidationFails,
-                        [actionBcName]: {
-                            ...state.pendingValidationFails[actionBcName] as {[cursor: string]: Record<string, string>},
-                            [action.payload.cursor]: nextValidationFails
-                        }
-                    }
+                          ...(state.pendingValidationFails as PendingValidationFails),
+                          [actionBcName]: {
+                              ...(state.pendingValidationFails[actionBcName] as { [cursor: string]: Record<string, string> }),
+                              [action.payload.cursor]: nextValidationFails
+                          }
+                      }
                     : nextValidationFails
             }
         }
@@ -247,14 +247,13 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
         case types.dropAllAssociations: {
             const pendingDataChanges = { ...state.pendingDataChanges }
             action.payload.bcNames.forEach(bcName => {
-                const pendingBcChanges: Record<string, PendingDataItem> = {};
-                (store.data[bcName] || [])
-                .filter(item => item._associate)
-                .forEach(item => {
-                    pendingBcChanges[item.id] = { id: item.id, _associate: false }
-                })
-                Object.keys(pendingDataChanges[bcName] || {})
-                .forEach((itemId) => {
+                const pendingBcChanges: Record<string, PendingDataItem> = {}
+                ;(store.data[bcName] || [])
+                    .filter(item => item._associate)
+                    .forEach(item => {
+                        pendingBcChanges[item.id] = { id: item.id, _associate: false }
+                    })
+                Object.keys(pendingDataChanges[bcName] || {}).forEach(itemId => {
                     pendingBcChanges[itemId] = { id: itemId, _associate: false }
                 })
                 pendingDataChanges[bcName] = pendingBcChanges
@@ -275,7 +274,7 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
         case types.dropAllAssociationsSameBc: {
             const pendingDataChanges = { ...state.pendingDataChanges }
 
-            Object.entries({...store.depthData, 1: store.data}).map(([depthLevelKey, depthLevelData]) => {
+            Object.entries({ ...store.depthData, 1: store.data }).map(([depthLevelKey, depthLevelData]) => {
                 const depthLevel = Number(depthLevelKey)
                 const pendingBcChanges: Record<string, PendingDataItem> = {}
                 if (depthLevel >= action.payload.depthFrom && depthLevelData[action.payload.bcName]) {
@@ -294,31 +293,30 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                 pendingDataChanges,
                 pendingValidationFails: isTargetFormatPVF
                     ? {
-                        ...state.pendingValidationFails as PendingValidationFails,
-                        [action.payload.bcName]: {}
-                    }
+                          ...(state.pendingValidationFails as PendingValidationFails),
+                          [action.payload.bcName]: {}
+                      }
                     : initialState.pendingValidationFails
             }
         }
         case types.dropAllAssociationsFull: {
             const bcName = action.payload.bcName
-            const pendingDataChanges = {...state.pendingDataChanges}
+            const pendingDataChanges = { ...state.pendingDataChanges }
             const dropDesc = action.payload.dropDescendants
 
-            const pendingBcChanges: Record<string, PendingDataItem> = {};
-            (store.data[bcName] || [])
+            const pendingBcChanges: Record<string, PendingDataItem> = {}
+            ;(store.data[bcName] || [])
                 .filter(item => item._associate)
                 .forEach(item => {
-                    if (dropDesc && item.level === action.payload.depth || item.level >= action.payload.depth) {
+                    if ((dropDesc && item.level === action.payload.depth) || item.level >= action.payload.depth) {
                         pendingBcChanges[item.id] = { ...item, _associate: false }
                     }
                 })
-            Object.entries(pendingDataChanges[bcName] || {})
-                .forEach(([itemId, item]) => {
-                    if (dropDesc && item.level === action.payload.depth || item.level >= action.payload.depth) {
-                        pendingBcChanges[itemId] = { ...item, _associate: false }
-                    }
-                })
+            Object.entries(pendingDataChanges[bcName] || {}).forEach(([itemId, item]) => {
+                if ((dropDesc && item.level === action.payload.depth) || item.level >= action.payload.depth) {
+                    pendingBcChanges[itemId] = { ...item, _associate: false }
+                }
+            })
             pendingDataChanges[bcName] = pendingBcChanges
             const isTargetFormatPVF = state.pendingValidationFailsFormat === PendingValidationFailsFormat.target
 
@@ -327,11 +325,10 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                 pendingDataChanges,
                 pendingValidationFails: isTargetFormatPVF
                     ? {
-                        ...state.pendingValidationFails as PendingValidationFails,
-                        [action.payload.bcName]: {}
-                    }
+                          ...(state.pendingValidationFails as PendingValidationFails),
+                          [action.payload.bcName]: {}
+                      }
                     : initialState.pendingValidationFails
-
             }
         }
         case types.sendOperationSuccess:
@@ -349,12 +346,12 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                 },
                 pendingValidationFails: isTargetFormatPVF
                     ? {
-                        ...state.pendingValidationFails as PendingValidationFails,
-                        [action.payload.bcName]: {
-                            ...state.pendingValidationFails[action.payload.bcName] as {[cursor: string]: Record<string, string>},
-                            [action.payload.cursor]: {}
-                        }
-                    }
+                          ...(state.pendingValidationFails as PendingValidationFails),
+                          [action.payload.bcName]: {
+                              ...(state.pendingValidationFails[action.payload.bcName] as { [cursor: string]: Record<string, string> }),
+                              [action.payload.cursor]: {}
+                          }
+                      }
                     : initialState.pendingValidationFails,
                 handledForceActive: {
                     ...state.handledForceActive,
@@ -413,7 +410,7 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                     assocValueKey: assocValueKey ?? widgetValueKey,
                     active,
                     isFilter
-                },
+                }
             }
         }
         case types.showFileUploadPopup: {
@@ -428,11 +425,11 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
             }
         }
         case types.viewPutPickMap:
-            return {...state, pickMap: action.payload.map}
+            return { ...state, pickMap: action.payload.map }
         case types.viewClearPickMap:
-            return {...state, pickMap: null}
+            return { ...state, pickMap: null }
         case types.closeViewPopup:
-            return {...state, popupData: {bcName: null}}
+            return { ...state, popupData: { bcName: null } }
         case types.selectTableCell:
             return {
                 ...state,
@@ -471,7 +468,7 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
             return { ...state, error: action.payload.error }
         }
         case types.operationConfirmation: {
-            return { ...state, modalInvoke: action.payload}
+            return { ...state, modalInvoke: action.payload }
         }
         case types.closeConfirmModal: {
             return { ...state, modalInvoke: null }

@@ -15,28 +15,25 @@
  * limitations under the License.
  */
 
-import {Observable} from 'rxjs'
-import {Store} from 'redux'
-import {Epic, types, $do, AnyAction, ActionsMap} from '../../actions/actions'
-import {Store as CoreStore} from '../../interfaces/store'
-import {DrillDownType} from '../../interfaces/router'
+import { Observable } from 'rxjs'
+import { Store } from 'redux'
+import { Epic, types, $do, AnyAction, ActionsMap } from '../../actions/actions'
+import { Store as CoreStore } from '../../interfaces/store'
+import { DrillDownType } from '../../interfaces/router'
 import qs from 'query-string'
-import {parseFilters, parseSorters} from '../../utils/filters'
-import {defaultParseLocation} from '../../Provider'
-import {shallowCompare} from '../../utils/redux'
-import {historyObj} from '../../reducers/router'
-import {parsePath} from 'history'
-import {makeRelativeUrl} from '../../utils/history'
+import { parseFilters, parseSorters } from '../../utils/filters'
+import { defaultParseLocation } from '../../Provider'
+import { shallowCompare } from '../../utils/redux'
+import { historyObj } from '../../reducers/router'
+import { parsePath } from 'history'
+import { makeRelativeUrl } from '../../utils/history'
 
-export const drillDown: Epic = (action$, store) => action$.ofType(types.drillDown)
-.switchMap(action => {
-    return drillDownImpl(action, store)
-})
+export const drillDown: Epic = (action$, store) =>
+    action$.ofType(types.drillDown).switchMap(action => {
+        return drillDownImpl(action, store)
+    })
 
-export function drillDownImpl(
-    action: ActionsMap['drillDown'],
-    store: Store<CoreStore, AnyAction>
-): Observable<AnyAction> {
+export function drillDownImpl(action: ActionsMap['drillDown'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     const state = store.getState()
     const url = action.payload.url
     switch (action.payload.drillDownType) {
@@ -84,7 +81,7 @@ export function drillDownImpl(
             const nextState = defaultParseLocation(parsePath(url))
             const viewName = nextState.viewName
             // Apply each new filter
-            Object.entries(newFilters).forEach(([ bcName, filterExpression ]) => {
+            Object.entries(newFilters).forEach(([bcName, filterExpression]) => {
                 const parsedFilters = parseFilters(filterExpression).map(item => ({ ...item, viewName }))
                 parsedFilters?.forEach(filter => {
                     bcToUpdate[bcName] = true
@@ -92,7 +89,7 @@ export function drillDownImpl(
                 })
             })
             // Apply each new sorter
-            Object.entries(newSorters).forEach(([ bcName, sortExpression ]) => {
+            Object.entries(newSorters).forEach(([bcName, sortExpression]) => {
                 const sorter = parseSorters(sortExpression)
                 store.dispatch($do.bcAddSorter({ bcName, sorter }))
                 bcToUpdate[bcName] = true

@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import {applyParams, applyRawParams, axiosDelete, axiosGet, axiosPost, axiosPut, ApiCallContext} from '../utils/api'
-import {buildUrl} from '../utils/history'
-import {ObjectMap} from '../interfaces/objectMap'
-import {BcDataResponse, DataItem, DataItemResponse, PendingDataItem} from '../interfaces/data'
-import {RowMetaResponse} from '../interfaces/rowMeta'
-import {AssociatedItem} from '../interfaces/operation'
-import {Observable} from 'rxjs/Observable'
-import axios, {CancelToken} from 'axios'
+import { applyParams, applyRawParams, axiosDelete, axiosGet, axiosPost, axiosPut, ApiCallContext } from '../utils/api'
+import { buildUrl } from '../utils/history'
+import { ObjectMap } from '../interfaces/objectMap'
+import { BcDataResponse, DataItem, DataItemResponse, PendingDataItem } from '../interfaces/data'
+import { RowMetaResponse } from '../interfaces/rowMeta'
+import { AssociatedItem } from '../interfaces/operation'
+import { Observable } from 'rxjs/Observable'
+import axios, { CancelToken } from 'axios'
 
 type GetParamsMap = ObjectMap<string | number>
 
@@ -32,7 +32,7 @@ type GetParamsMap = ObjectMap<string | number>
  * @param path
  * @param params
  */
-export function routerRequest(path: string, params: object) {
+export function routerRequest(path: string, params: Record<string, unknown>) {
     return axiosGet(applyRawParams(path, params))
 }
 
@@ -48,11 +48,11 @@ export function fetchBcData(screenName: string, bcUrl: string, params: GetParams
     const noLimit = params._limit === 0
     const queryStringObject = {
         ...params,
-        _page: !noLimit && (('_page' in params) ? params._page : 1),
-        _limit: !noLimit && (('_limit' in params) ? params._limit : 30)
+        _page: !noLimit && ('_page' in params ? params._page : 1),
+        _limit: !noLimit && ('_limit' in params ? params._limit : 30)
     }
     const url = applyParams(buildUrl`data/${screenName}/` + bcUrl, queryStringObject)
-    return axiosGet<BcDataResponse>(url, {cancelToken})
+    return axiosGet<BcDataResponse>(url, { cancelToken })
 }
 
 /**
@@ -65,18 +65,13 @@ export function fetchBcData(screenName: string, bcUrl: string, params: GetParams
 export function fetchBcDataAll(screenName: string, bcUrl: string, params: GetParamsMap = {}) {
     let currentPage = 1
 
-    return fetchBcData(screenName, bcUrl, {...params, _page: currentPage})
-        .expand((response) => {
-            return (response.hasNext)
-                ? fetchBcData(screenName, bcUrl, {...params, _page: ++currentPage})
-                : Observable.empty()
+    return fetchBcData(screenName, bcUrl, { ...params, _page: currentPage })
+        .expand(response => {
+            return response.hasNext ? fetchBcData(screenName, bcUrl, { ...params, _page: ++currentPage }) : Observable.empty()
         })
-        .reduce(
-            (items, nextResponse) => {
-                return [ ...items, ...nextResponse.data ]
-            },
-            [] as DataItem[]
-        )
+        .reduce((items, nextResponse) => {
+            return [...items, ...nextResponse.data]
+        }, [] as DataItem[])
 }
 
 /**
@@ -88,11 +83,8 @@ export function fetchBcDataAll(screenName: string, bcUrl: string, params: GetPar
  * @param cancelToken
  */
 export function fetchRowMeta(screenName: string, bcUrl: string, params?: GetParamsMap, cancelToken?: CancelToken) {
-    const url = applyParams(
-        buildUrl`row-meta/${screenName}/` + bcUrl,
-        params
-    )
-    return axiosGet<RowMetaResponse>(url, {cancelToken}).map(response => response.data.row)
+    const url = applyParams(buildUrl`row-meta/${screenName}/` + bcUrl, params)
+    return axiosGet<RowMetaResponse>(url, { cancelToken }).map(response => response.data.row)
 }
 
 /**
@@ -103,10 +95,7 @@ export function fetchRowMeta(screenName: string, bcUrl: string, params?: GetPara
  * @param params
  */
 export function newBcData(screenName: string, bcUrl: string, context: ApiCallContext, params?: GetParamsMap) {
-    const url = applyParams(
-        buildUrl`row-meta-new/${screenName}/` + bcUrl,
-        params
-    )
+    const url = applyParams(buildUrl`row-meta-new/${screenName}/` + bcUrl, params)
     return axiosGet<RowMetaResponse>(url, null, context).map(response => response.data)
 }
 
@@ -139,10 +128,7 @@ export function saveBcData(
  * @param params
  */
 export function deleteBcData(screenName: string, bcUrl: string, context: ApiCallContext, params?: GetParamsMap) {
-    const url = applyParams(
-        buildUrl`data/${screenName}/` + bcUrl,
-        params
-    )
+    const url = applyParams(buildUrl`data/${screenName}/` + bcUrl, params)
     return axiosDelete<DataItemResponse>(url, context).map(response => response.data)
 }
 
@@ -155,17 +141,8 @@ export function deleteBcData(screenName: string, bcUrl: string, context: ApiCall
  * @param context Call context
  * @param params
  */
-export function customAction(
-    screenName: string,
-    bcUrl: string,
-    data: Record<string, any>,
-    context: ApiCallContext,
-    params?: GetParamsMap
-) {
-    const url = applyParams(
-        buildUrl`custom-action/${screenName}/` + bcUrl,
-        params
-    )
+export function customAction(screenName: string, bcUrl: string, data: Record<string, any>, context: ApiCallContext, params?: GetParamsMap) {
+    const url = applyParams(buildUrl`custom-action/${screenName}/` + bcUrl, params)
     return axiosPost<DataItemResponse>(url, { data: data || {} }, null, context).map(response => response.data)
 }
 
@@ -182,20 +159,20 @@ export function customAction(
  * @param params
  */
 export function associate(
-    screenName: string, bcUrl: string, data: AssociatedItem[] | Record<string, AssociatedItem[]>, params?: GetParamsMap
+    screenName: string,
+    bcUrl: string,
+    data: AssociatedItem[] | Record<string, AssociatedItem[]>,
+    params?: GetParamsMap
 ) {
     // TODO: Why Tesler API sends underscored `_associate` but expects `associated` in return?
     const processedData = Array.isArray(data)
         ? data.map(item => ({
-            id: item.id,
-            vstamp: item.vstamp,
-            associated: item._associate,
-        }))
+              id: item.id,
+              vstamp: item.vstamp,
+              associated: item._associate
+          }))
         : data
-    const url = applyParams(
-        buildUrl`associate/${screenName}/` + bcUrl,
-        params
-    )
+    const url = applyParams(buildUrl`associate/${screenName}/` + bcUrl, params)
     return axiosPost<any>(url, processedData).map(response => response.data)
 }
 
@@ -209,7 +186,7 @@ export function associate(
  */
 export function getRmByForceActive(screenName: string, bcUrl: string, data: PendingDataItem & { vstamp: number }, params?: GetParamsMap) {
     const url = applyParams(buildUrl`row-meta/${screenName}/` + bcUrl, params)
-    return axiosPost<RowMetaResponse>(url, {data}).map((response) => response.data.row)
+    return axiosPost<RowMetaResponse>(url, { data }).map(response => response.data.row)
 }
 
 /**
@@ -217,7 +194,7 @@ export function getRmByForceActive(screenName: string, bcUrl: string, data: Pend
  */
 export function createCanceler() {
     let cancel: () => void
-    const cancelToken = new axios.CancelToken((c) => {
+    const cancelToken = new axios.CancelToken(c => {
         cancel = c
     })
     return {

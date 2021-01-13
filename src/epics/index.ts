@@ -1,9 +1,9 @@
-import {sessionEpics} from '../epics/session'
-import {routerEpics} from '../epics/router'
-import {screenEpics} from '../epics/screen'
-import {viewEpics} from '../epics/view'
-import {dataEpics} from '../epics/data'
-import {combineEpics, Epic} from 'redux-observable'
+import { sessionEpics } from '../epics/session'
+import { routerEpics } from '../epics/router'
+import { screenEpics } from '../epics/screen'
+import { viewEpics } from '../epics/view'
+import { dataEpics } from '../epics/data'
+import { combineEpics, Epic } from 'redux-observable'
 
 export const coreEpics = {
     routerEpics,

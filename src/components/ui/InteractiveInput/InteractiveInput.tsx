@@ -9,29 +9,28 @@
  * - сделать префиксы
  */
 
-import React, {FunctionComponent} from 'react'
+import React, { FunctionComponent } from 'react'
 import cn from 'classnames'
 import styles from './InteractiveInput.less'
 
 export interface InteractiveInputProps {
-    suffixClassName?: string,
-    suffix?: React.ReactNode,
-    children: React.ReactNode,
+    suffixClassName?: string
+    suffix?: React.ReactNode
+    children: React.ReactNode
     onSuffixClick?: () => void
 }
 
-export const InteractiveInput: FunctionComponent<InteractiveInputProps> = (props) => {
-    return <div className={styles.container}>
-        {props.children}
-        { props.suffix &&
-            <button
-                className={cn(styles.button, styles.suffix, props.suffixClassName)}
-                onClick={props.onSuffixClick}
-            >
-                {props.suffix}
-            </button>
-        }
-    </div>
+export const InteractiveInput: FunctionComponent<InteractiveInputProps> = props => {
+    return (
+        <div className={styles.container}>
+            {props.children}
+            {props.suffix && (
+                <button className={cn(styles.button, styles.suffix, props.suffixClassName)} onClick={props.onSuffixClick}>
+                    {props.suffix}
+                </button>
+            )}
+        </div>
+    )
 }
 
 export default React.memo(InteractiveInput)

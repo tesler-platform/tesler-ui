@@ -16,18 +16,18 @@
  */
 
 import React from 'react'
-import {FlatTree} from '../FlatTree'
-import {mount} from 'enzyme'
-import {Store} from 'redux'
-import {Provider} from 'react-redux'
-import {Store as CoreStore} from '../../../../interfaces/store'
-import {mockStore} from '../../../../tests/mockStore'
-import {WidgetTableMeta, WidgetTypes} from '../../../../interfaces/widget'
-import {FieldType} from '../../../../interfaces/view'
-import {TreeVirtualized, TreeVirtualizedProps} from '../../../ui/TreeVirtualized/TreeVirtualized'
-import {DataItemNode} from '../../../../interfaces/tree'
-import {RowMeta} from '../../../../interfaces/rowMeta'
-import {FilterType} from '../../../../interfaces/filters'
+import { FlatTree } from '../FlatTree'
+import { mount } from 'enzyme'
+import { Store } from 'redux'
+import { Provider } from 'react-redux'
+import { Store as CoreStore } from '../../../../interfaces/store'
+import { mockStore } from '../../../../tests/mockStore'
+import { WidgetTableMeta, WidgetTypes } from '../../../../interfaces/widget'
+import { FieldType } from '../../../../interfaces/view'
+import { TreeVirtualized, TreeVirtualizedProps } from '../../../ui/TreeVirtualized/TreeVirtualized'
+import { DataItemNode } from '../../../../interfaces/tree'
+import { RowMeta } from '../../../../interfaces/rowMeta'
+import { FilterType } from '../../../../interfaces/filters'
 
 describe('<FlatTree />', () => {
     let store: Store<CoreStore> = null
@@ -48,12 +48,7 @@ describe('<FlatTree />', () => {
     it('passes dimensions', () => {
         const wrapper = mount(
             <Provider store={store}>
-                <FlatTree
-                    meta={widget}
-                    width={640}
-                    height={480}
-                    itemSize={45}
-                />
+                <FlatTree meta={widget} width={640} height={480} itemSize={45} />
             </Provider>
         )
         expect(wrapper.find(TreeVirtualized).length).toBe(1)
@@ -66,9 +61,7 @@ describe('<FlatTree />', () => {
         store.getState().screen.filters.bcExample = [{ value: 'one', fieldName: 'name', type: FilterType.contains }]
         const wrapper = mount(
             <Provider store={store}>
-                <FlatTree
-                    meta={widget}
-                />
+                <FlatTree meta={widget} />
             </Provider>
         )
         expect(wrapper.find(TreeVirtualized).length).toBe(1)
@@ -81,18 +74,14 @@ describe('<FlatTree />', () => {
         store.getState().screen.bo.bc.bcExample.loading = true
         let wrapper = mount(
             <Provider store={store}>
-                <FlatTree
-                    meta={widget}
-                />
+                <FlatTree meta={widget} />
             </Provider>
         )
         expect((wrapper.find(TreeVirtualized).props() as TreeVirtualizedProps<DataItemNode>).items.length).toBe(0)
         store.getState().screen.bo.bc.bcExample.loading = false
         wrapper = mount(
             <Provider store={store}>
-                <FlatTree
-                    meta={widget}
-                />
+                <FlatTree meta={widget} />
             </Provider>
         )
         expect((wrapper.find(TreeVirtualized).props() as TreeVirtualizedProps<DataItemNode>).items.length).toBe(1)
@@ -106,11 +95,13 @@ describe('<FlatTree />', () => {
                     meta={{
                         ...widget,
                         bcName: 'missingBc',
-                        fields: [{
-                            key: 'missingField',
-                            title: 'Test Column',
-                            type: FieldType.hidden
-                        }]
+                        fields: [
+                            {
+                                key: 'missingField',
+                                title: 'Test Column',
+                                type: FieldType.hidden
+                            }
+                        ]
                     }}
                 />
             </Provider>
@@ -126,11 +117,13 @@ const widget: WidgetTableMeta = {
     bcName: 'bcExample',
     position: 1,
     gridWidth: null,
-    fields: [{
-        key: 'name',
-        title: 'Test Column',
-        type: FieldType.input
-    }]
+    fields: [
+        {
+            key: 'name',
+            title: 'Test Column',
+            type: FieldType.input
+        }
+    ]
 }
 
 const bcExample = {

@@ -1,7 +1,7 @@
-import {BcFilter, BcSorter, FilterType} from '../interfaces/filters'
-import {DataValue} from '../interfaces/data'
+import { BcFilter, BcSorter, FilterType } from '../interfaces/filters'
+import { DataValue } from '../interfaces/data'
 import qs from 'query-string'
-import {FieldType} from '../interfaces/view'
+import { FieldType } from '../interfaces/view'
 
 /**
  * Maps an input array of BcFilter objects into a dictionary of GET-request params
@@ -62,7 +62,7 @@ export function getSorters(sorters: BcSorter[]) {
 export function parseFilters(defaultFilters: string) {
     const result: BcFilter[] = []
     const urlParams = qs.parse(defaultFilters)
-    Object.keys(urlParams).forEach((param) => {
+    Object.keys(urlParams).forEach(param => {
         const [fieldName, type] = param.split('.')
         if (fieldName && type && urlParams[param]) {
             let value = urlParams[param]
@@ -104,14 +104,14 @@ export function parseSorters(sorters: string) {
     const result: BcSorter[] = []
     const dictionary = qs.parse(sorters)
     Object.entries(dictionary)
-    .map(([sort, fieldKey]) => {
-        const [ order, direction ] = sort.split('.').slice(1)
-        return { fieldName: fieldKey as string, order: Number.parseInt(order, 10), direction }
-    })
-    .sort((a, b) => a.order - b.order)
-    .forEach(item => {
-        result.push({ fieldName: item.fieldName, direction: item.direction as 'asc' | 'desc' })
-    })
+        .map(([sort, fieldKey]) => {
+            const [order, direction] = sort.split('.').slice(1)
+            return { fieldName: fieldKey as string, order: Number.parseInt(order, 10), direction }
+        })
+        .sort((a, b) => a.order - b.order)
+        .forEach(item => {
+            result.push({ fieldName: item.fieldName, direction: item.direction as 'asc' | 'desc' })
+        })
     return result
 }
 
@@ -128,14 +128,14 @@ export function parseSorters(sorters: string) {
  */
 export function getFilterType(fieldType: FieldType) {
     switch (fieldType) {
-        case (FieldType.dictionary): {
+        case FieldType.dictionary: {
             return FilterType.equalsOneOf
         }
-        case (FieldType.checkbox): {
+        case FieldType.checkbox: {
             return FilterType.specified
         }
-        case (FieldType.input):
-        case (FieldType.text): {
+        case FieldType.input:
+        case FieldType.text: {
             return FilterType.contains
         }
         default:
