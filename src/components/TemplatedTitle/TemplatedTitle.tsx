@@ -1,11 +1,11 @@
-import React, {FunctionComponent} from 'react'
-import {connect} from 'react-redux'
-import {Store} from '../../interfaces/store'
-import {getFieldTitle} from '../../utils/strings'
+import React, { FunctionComponent } from 'react'
+import { connect } from 'react-redux'
+import { Store } from '../../interfaces/store'
+import { getFieldTitle } from '../../utils/strings'
 
 interface TemplatedTitleOwnProps {
-    title: string,
-    widgetName: string,
+    title: string
+    widgetName: string
     container?: React.ComponentType<any>
 }
 
@@ -13,11 +13,11 @@ interface TemplatedTitleProps extends TemplatedTitleOwnProps {
     templatedTitle: string
 }
 
-export const TemplatedTitle: FunctionComponent<TemplatedTitleProps> = (props) => {
+export const TemplatedTitle: FunctionComponent<TemplatedTitleProps> = props => {
     if (!props.title) {
         return null
     }
-    const wrapper = props.container && <props.container title={props.templatedTitle}/>
+    const wrapper = props.container && <props.container title={props.templatedTitle} />
     return wrapper || <> {props.templatedTitle} </>
 }
 

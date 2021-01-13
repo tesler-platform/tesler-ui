@@ -1,6 +1,6 @@
-import {useMemo} from 'react'
-import {Operation, OperationGroup, isOperationGroup, OperationInclusionDescriptor} from '../interfaces/operation'
-import {WidgetMeta} from '../interfaces/widget'
+import { useMemo } from 'react'
+import { Operation, OperationGroup, isOperationGroup, OperationInclusionDescriptor } from '../interfaces/operation'
+import { WidgetMeta } from '../interfaces/widget'
 
 const emptyArray: Array<Operation | OperationGroup> = []
 
@@ -44,13 +44,13 @@ export function getIncludedOperations(
                         return shouldPickOperation(operation, null, exclude)
                     }
                     const nestedDescriptor = include.find(descriptor => getDescriptorValue(descriptor) === item.type)
-                    const excludeAll = nestedDescriptor && typeof nestedDescriptor === 'string'
-                        ? [ nestedDescriptor, ...(exclude || []) ]
-                        : [ ...((nestedDescriptor as any).exclude || []), ...(exclude || []) ]
-                    return nestedDescriptor && shouldPickOperation(
-                        operation,
-                        typeof nestedDescriptor !== 'string' && nestedDescriptor.include,
-                        excludeAll,
+                    const excludeAll =
+                        nestedDescriptor && typeof nestedDescriptor === 'string'
+                            ? [nestedDescriptor, ...(exclude || [])]
+                            : [...((nestedDescriptor as any).exclude || []), ...(exclude || [])]
+                    return (
+                        nestedDescriptor &&
+                        shouldPickOperation(operation, typeof nestedDescriptor !== 'string' && nestedDescriptor.include, excludeAll)
                     )
                 })
                 result.push({ ...item, actions: filtered })
@@ -83,8 +83,10 @@ export function shouldPickOperation(
         return include.some(descriptor => getDescriptorValue(descriptor) === item.type)
     }
     if (include && exclude) {
-        return include.some(descriptor => getDescriptorValue(descriptor) === item.type)
-            && exclude.every(descriptor => getDescriptorValue(descriptor) !== item.type)
+        return (
+            include.some(descriptor => getDescriptorValue(descriptor) === item.type) &&
+            exclude.every(descriptor => getDescriptorValue(descriptor) !== item.type)
+        )
     }
     return true
 }

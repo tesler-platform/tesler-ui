@@ -1,38 +1,40 @@
 import React from 'react'
-import {Icon, Select as AntdSelect} from 'antd'
-import Select, {SelectProps} from '../Select/Select'
+import { Icon, Select as AntdSelect } from 'antd'
+import Select, { SelectProps } from '../Select/Select'
 import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
-import {MultivalueSingleValue} from '../../../interfaces/data'
-import {BaseFieldProps} from '../../Field/Field'
+import { MultivalueSingleValue } from '../../../interfaces/data'
+import { BaseFieldProps } from '../../Field/Field'
 
 export interface DictionaryProps extends BaseFieldProps {
-    value?: MultivalueSingleValue[] | string | null,
-    onChange?: (value: MultivalueSingleValue[] | string) => void,
-    values: Array<{value: string, icon?: string}>,
-    fieldName: string,
-    placeholder?: string,
-    style?: React.CSSProperties,
-    metaIcon?: JSX.Element,
-    valueIcon?: string,
-    popupContainer?: HTMLElement,
+    value?: MultivalueSingleValue[] | string | null
+    onChange?: (value: MultivalueSingleValue[] | string) => void
+    values: Array<{ value: string; icon?: string }>
+    fieldName: string
+    placeholder?: string
+    style?: React.CSSProperties
+    metaIcon?: JSX.Element
+    valueIcon?: string
+    popupContainer?: HTMLElement
     multiple?: boolean
 }
 
-const Dictionary: React.FunctionComponent<DictionaryProps> = (props) => {
+const Dictionary: React.FunctionComponent<DictionaryProps> = props => {
     if (props.readOnly) {
         let readOnlyValue = props.value ?? ''
         if (props.multiple) {
-            readOnlyValue = (readOnlyValue as MultivalueSingleValue[]).map(i => i.value).join((', '))
+            readOnlyValue = (readOnlyValue as MultivalueSingleValue[]).map(i => i.value).join(', ')
         }
-        return <ReadOnlyField
-            widgetName={props.widgetName}
-            meta={props.meta}
-            className={props.className}
-            backgroundColor={props.backgroundColor}
-            onDrillDown={props.onDrillDown}
-        >
-            {readOnlyValue}
-        </ReadOnlyField>
+        return (
+            <ReadOnlyField
+                widgetName={props.widgetName}
+                meta={props.meta}
+                className={props.className}
+                backgroundColor={props.backgroundColor}
+                onDrillDown={props.onDrillDown}
+            >
+                {readOnlyValue}
+            </ReadOnlyField>
+        )
     }
 
     const selectRef = React.useRef<AntdSelect<string>>(null)
@@ -42,7 +44,7 @@ const Dictionary: React.FunctionComponent<DictionaryProps> = (props) => {
             if (props.multiple) {
                 props.onChange((v as string[]).map(item => ({ id: item, value: item })))
             } else {
-                props.onChange(v as string || '')
+                props.onChange((v as string) || '')
             }
         },
         [props.multiple, props.values, props.onChange]
@@ -68,36 +70,38 @@ const Dictionary: React.FunctionComponent<DictionaryProps> = (props) => {
         forwardedRef: selectRef
     }
 
-    const options = React.useMemo(
-        () => {
-            const noValues = !props.values?.length
-            const hasMultipleValue = noValues && props.multiple && props.value?.length
-            const hasSingleValue = noValues && !props.multiple && props.value
-            if (hasMultipleValue) {
-                return (props.value as MultivalueSingleValue[])?.map((item) => {
-                    return <Select.Option key={item.value} title={item.value}>
+    const options = React.useMemo(() => {
+        const noValues = !props.values?.length
+        const hasMultipleValue = noValues && props.multiple && props.value?.length
+        const hasSingleValue = noValues && !props.multiple && props.value
+        if (hasMultipleValue) {
+            return (props.value as MultivalueSingleValue[])?.map(item => {
+                return (
+                    <Select.Option key={item.value} title={item.value}>
                         {item.options?.icon && getIconByParams(item.options.icon)}
                         <span>{item.value}</span>
                     </Select.Option>
-                })
-            }
-            if (hasSingleValue) {
-                return <Select.Option key={props.value as string} title={props.value as string}>
+                )
+            })
+        }
+        if (hasSingleValue) {
+            return (
+                <Select.Option key={props.value as string} title={props.value as string}>
                     {props.metaIcon}
                     {props.valueIcon && getIconByParams(props.valueIcon)}
                     <span>{props.value}</span>
                 </Select.Option>
-            }
-            return props.values?.map((item) => {
-                return <Select.Option key={item.value} title={item.value}>
+            )
+        }
+        return props.values?.map(item => {
+            return (
+                <Select.Option key={item.value} title={item.value}>
                     {item.icon && getIconByParams(item.icon)}
                     <span>{item.value}</span>
                 </Select.Option>
-            })
-
-        },
-        [props.value, props.values, props.multiple, props.metaIcon, props.valueIcon]
-    )
+            )
+        })
+    }, [props.value, props.values, props.multiple, props.metaIcon, props.valueIcon])
 
     return <Select {...extendedProps}>{options}</Select>
 }
@@ -111,11 +115,7 @@ const Dictionary: React.FunctionComponent<DictionaryProps> = (props) => {
 export function getIconByParams(params: string, extraStyleClasses?: string) {
     if (params) {
         const [antIconType, cssColor] = params.split(' ')
-        return <Icon
-            type={antIconType}
-            style={{color: cssColor}}
-            className={extraStyleClasses}
-        />
+        return <Icon type={antIconType} style={{ color: cssColor }} className={extraStyleClasses} />
     }
     return null
 }

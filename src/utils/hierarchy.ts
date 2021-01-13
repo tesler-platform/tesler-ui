@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import {RowMetaField} from '../interfaces/rowMeta'
-import {WidgetField} from '../interfaces/widget'
-import {FieldType} from '../interfaces/view'
+import { RowMetaField } from '../interfaces/rowMeta'
+import { WidgetField } from '../interfaces/widget'
+import { FieldType } from '../interfaces/view'
 
 /**
  * Function of calculate hierarchy column width
@@ -41,11 +41,15 @@ export function getColumnWidth(
     maxDepth: number,
     width?: number
 ): string {
-
     const indentLevel = depthLevel - 1
     // exclude hidden fields
     const showedFields = fields
-        ?.filter(item => rowMetaFields?.filter(i => !item.hidden)?.map(i => item.key)?.includes(item.key))
+        ?.filter(item =>
+            rowMetaFields
+                ?.filter(i => !item.hidden)
+                ?.map(i => item.key)
+                ?.includes(item.key)
+        )
         ?.filter(item => item.type !== FieldType.hidden)
         ?.filter(item => !item.hidden)
     const currentField = showedFields?.find(item => item.key === columnName)
@@ -56,9 +60,7 @@ export function getColumnWidth(
 
     if (columnName === '_indentColumn') {
         // 60px as base width _identColumn
-        return nextColumnShift
-            ? `${(width || 60) + indentLevel * 20}px`
-            : `${(width || 60) + (maxDepth > 3 ? 3 : maxDepth) * 20}px`
+        return nextColumnShift ? `${(width || 60) + indentLevel * 20}px` : `${(width || 60) + (maxDepth > 3 ? 3 : maxDepth) * 20}px`
     }
 
     if (isLast) {

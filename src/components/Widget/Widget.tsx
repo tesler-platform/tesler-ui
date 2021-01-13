@@ -1,7 +1,7 @@
-import React, {FunctionComponent} from 'react'
-import {connect} from 'react-redux'
-import {Skeleton, Spin} from 'antd'
-import {Store} from '../../interfaces/store'
+import React, { FunctionComponent } from 'react'
+import { connect } from 'react-redux'
+import { Skeleton, Spin } from 'antd'
+import { Store } from '../../interfaces/store'
 import {
     WidgetTypes,
     WidgetShowCondition,
@@ -18,31 +18,31 @@ import InfoWidget from '../widgets/InfoWidget/InfoWidget'
 import styles from './Widget.less'
 import AssocListPopup from '../widgets/AssocListPopup/AssocListPopup'
 import PickListPopup from '../widgets/PickListPopup/PickListPopup'
-import {BcMetaState} from '../../interfaces/bc'
-import {ViewState} from '../../interfaces/view'
-import {DataState} from '../../interfaces/data'
-import {buildBcUrl} from '../../utils/strings'
+import { BcMetaState } from '../../interfaces/bc'
+import { ViewState } from '../../interfaces/view'
+import { DataState } from '../../interfaces/data'
+import { buildBcUrl } from '../../utils/strings'
 import FlatTreePopup from '../widgets/FlatTree/FlatTreePopup'
 import FlatTree from '../widgets/FlatTree/FlatTree'
 
 interface WidgetOwnProps {
-    meta: WidgetMeta | WidgetMetaAny,
-    card?: (props: any) => React.ReactElement<any>,
+    meta: WidgetMeta | WidgetMetaAny
+    card?: (props: any) => React.ReactElement<any>
     children?: React.ReactNode
 }
 
 interface WidgetProps extends WidgetOwnProps {
-    loading?: boolean,
-    parentCursor?: string,
-    customWidgets?: Record<string, CustomWidgetDescriptor>,
-    showWidget: boolean,
-    rowMetaExists: boolean,
+    loading?: boolean
+    parentCursor?: string
+    customWidgets?: Record<string, CustomWidgetDescriptor>
+    showWidget: boolean
+    rowMetaExists: boolean
     dataExists: boolean
 }
 
 const skeletonParams = { rows: 5 }
 
-export const Widget: FunctionComponent<WidgetProps> = (props) => {
+export const Widget: FunctionComponent<WidgetProps> = props => {
     if (!props.showWidget) {
         return null
     }
@@ -63,9 +63,7 @@ export const Widget: FunctionComponent<WidgetProps> = (props) => {
         if (customWidget.card) {
             const CustomCard = customWidget.card
 
-            return <CustomCard meta={props.meta}>
-                {chooseWidgetType(props.meta, props.customWidgets, props.children)}
-            </CustomCard>
+            return <CustomCard meta={props.meta}>{chooseWidgetType(props.meta, props.customWidgets, props.children)}</CustomCard>
         }
     }
 
@@ -74,24 +72,20 @@ export const Widget: FunctionComponent<WidgetProps> = (props) => {
 
     if (props.card) {
         const Card = props.card
-        return <Card meta={props.meta}>
-            { showSkeleton && <Skeleton loading paragraph={skeletonParams} /> }
-            { !showSkeleton &&
-                <Spin spinning={showSpinner}>
-                    {chooseWidgetType(props.meta, props.customWidgets, props.children)}
-                </Spin>
-            }
-        </Card>
+        return (
+            <Card meta={props.meta}>
+                {showSkeleton && <Skeleton loading paragraph={skeletonParams} />}
+                {!showSkeleton && <Spin spinning={showSpinner}>{chooseWidgetType(props.meta, props.customWidgets, props.children)}</Spin>}
+            </Card>
+        )
     }
-    return <div className={styles.container} data-widget-type={props.meta.type}>
-        <h2 className={styles.title}>{props.meta.title}</h2>
-        { showSkeleton && <Skeleton loading paragraph={skeletonParams} /> }
-        { !showSkeleton &&
-            <Spin spinning={showSpinner}>
-                {chooseWidgetType(props.meta, props.customWidgets, props.children)}
-            </Spin>
-        }
-    </div>
+    return (
+        <div className={styles.container} data-widget-type={props.meta.type}>
+            <h2 className={styles.title}>{props.meta.title}</h2>
+            {showSkeleton && <Skeleton loading paragraph={skeletonParams} />}
+            {!showSkeleton && <Spin spinning={showSpinner}>{chooseWidgetType(props.meta, props.customWidgets, props.children)}</Spin>}
+        </div>
+    )
 }
 
 /**
@@ -124,10 +118,7 @@ function chooseWidgetType(
     switch (knownWidgetMeta.type) {
         case WidgetTypes.List:
         case WidgetTypes.DataGrid:
-            return <TableWidget
-                meta={knownWidgetMeta}
-                showRowActions
-            />
+            return <TableWidget meta={knownWidgetMeta} showRowActions />
         case WidgetTypes.Form:
             return <FormWidget meta={knownWidgetMeta} />
         case WidgetTypes.Text:
@@ -137,7 +128,7 @@ function chooseWidgetType(
         case WidgetTypes.PickListPopup:
             return <PickListPopup widget={knownWidgetMeta} />
         case WidgetTypes.Info:
-            return <InfoWidget meta={knownWidgetMeta}/>
+            return <InfoWidget meta={knownWidgetMeta} />
         case WidgetTypes.FlatTree:
             return <FlatTree meta={knownWidgetMeta} />
         case WidgetTypes.FlatTreePopup:
@@ -186,9 +177,7 @@ function checkShowCondition(condition: WidgetShowCondition, bcMap: Record<string
     const record = cursor && data[bcName]?.find(item => item.id === cursor)
     const actualValue = record?.[params.fieldKey]
     const pendingValue = view.pendingDataChanges[bcName]?.[cursor]?.[params.fieldKey]
-    return (pendingValue !== undefined)
-        ? pendingValue === params.value
-        : actualValue === params.value
+    return pendingValue !== undefined ? pendingValue === params.value : actualValue === params.value
 }
 
 export default connect(mapStateToProps)(Widget)

@@ -19,7 +19,7 @@
  * This module contains utilities for tree-like structures
  */
 
-import {DataNode, TreeNodeBidirectional, TreeNodeDescending} from '../interfaces/tree'
+import { DataNode, TreeNodeBidirectional, TreeNodeDescending } from '../interfaces/tree'
 
 /**
  * Assigns for each element:
@@ -50,8 +50,8 @@ export function assignTreeLinks<T extends DataNode>(flat: T[]) {
         if (parentIndex === -1) {
             orphans.push(item.parentId)
             console.warn(
-                `Record with [id] = ${item.id} has [parentId] = ${item.parentId}, but no matching`
-                + ' parent record exist. Check the service for this BC.'
+                `Record with [id] = ${item.id} has [parentId] = ${item.parentId}, but no matching` +
+                    ' parent record exist. Check the service for this BC.'
             )
             return
         }

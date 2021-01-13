@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import {AssociatedItem} from '../../../interfaces/operation'
-import {BcFilter} from '../../../interfaces/filters'
+import { AssociatedItem } from '../../../interfaces/operation'
+import { BcFilter } from '../../../interfaces/filters'
 
 /**
  * Function to memoize
@@ -28,7 +28,6 @@ type SearchFunction = (...args: any[]) => Set<string>
  * (React hooks are instance-based and not applicable for recursion-based hierarchy)
  */
 export class HierarchySearchCache {
-
     /**
      * Stores memoized Set<string> results based on widget name, data and filters
      */
@@ -74,5 +73,4 @@ export class HierarchySearchCache {
     clear(widgetName: string) {
         delete this.cache[widgetName]
     }
-
 }

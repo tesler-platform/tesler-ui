@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import {WidgetMeta} from '../interfaces/widget'
-import {BcMetaState} from '../interfaces/bc'
+import { WidgetMeta } from '../interfaces/widget'
+import { BcMetaState } from '../interfaces/bc'
 
 /**
  * Find all widgets referencing or descendant from specified origin BC
@@ -26,38 +26,36 @@ import {BcMetaState} from '../interfaces/bc'
  * @param bcMap Business components dictionary
  * @returns A dictionary of business components and widgets
  */
-export function getBcChildren(
-    originBcName: string,
-    widgets: WidgetMeta[],
-    bcMap: Record<string, BcMetaState>
-) {
+export function getBcChildren(originBcName: string, widgets: WidgetMeta[], bcMap: Record<string, BcMetaState>) {
     // Build a dictionary with children for requested BC and widgets that need this BC
     const childrenBcMap: Record<string, string[]> = {}
     widgets
-    .filter(widget => widget.bcName)
-    .forEach(widget => {
-        const widgetBcList: string[] = []
-        // Find all BC ancestors for widget
-        widgetBcList.push(widget.bcName)
-        let parentName = bcMap[widget.bcName].parentName
-        while (parentName) {
-            widgetBcList.push(parentName)
-            parentName = bcMap[parentName].parentName
-        }
-        // Put all widgets referencing this BC ancestors in dictionary
-        widgetBcList
-        .filter(expectedBcName => bcMap[expectedBcName].parentName === originBcName)
-        .forEach(expectedBcName => {
-            childrenBcMap[expectedBcName] = [ ...(childrenBcMap[expectedBcName] || []), widget.name ]
+        .filter(widget => widget.bcName)
+        .forEach(widget => {
+            const widgetBcList: string[] = []
+            // Find all BC ancestors for widget
+            widgetBcList.push(widget.bcName)
+            let parentName = bcMap[widget.bcName].parentName
+            while (parentName) {
+                widgetBcList.push(parentName)
+                parentName = bcMap[parentName].parentName
+            }
+            // Put all widgets referencing this BC ancestors in dictionary
+            widgetBcList
+                .filter(expectedBcName => bcMap[expectedBcName].parentName === originBcName)
+                .forEach(expectedBcName => {
+                    childrenBcMap[expectedBcName] = [...(childrenBcMap[expectedBcName] || []), widget.name]
+                })
         })
-    })
     // If widget supports hierarchy, try to find origin BC in hierarchy options
-    widgets.filter(item => item.options?.hierarchy).forEach(widget => {
-        const [hierarchyBcName, hierarchyWidgetName] = getHierarchyChildBc(originBcName, widget)
-        if (hierarchyBcName) {
-            childrenBcMap[hierarchyBcName] = [ ...(childrenBcMap[hierarchyBcName] || []), hierarchyWidgetName ]
-        }
-    })
+    widgets
+        .filter(item => item.options?.hierarchy)
+        .forEach(widget => {
+            const [hierarchyBcName, hierarchyWidgetName] = getHierarchyChildBc(originBcName, widget)
+            if (hierarchyBcName) {
+                childrenBcMap[hierarchyBcName] = [...(childrenBcMap[hierarchyBcName] || []), hierarchyWidgetName]
+            }
+        })
 
     return childrenBcMap
 }

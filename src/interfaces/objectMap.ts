@@ -32,7 +32,7 @@ export const enum AppNotificationType {
 }
 
 export interface SystemNotification {
-    id: number,
-    type: AppNotificationType,
+    id: number
+    type: AppNotificationType
     message: string
 }

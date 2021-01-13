@@ -2,23 +2,24 @@
  * Handles validation of "required fields" for widget operations
  */
 
-import {AnyAction, Dispatch, Middleware, MiddlewareAPI} from 'redux'
-import {$do, ActionPayloadTypes, types} from '../actions/actions'
-import {Operation, OperationGroup} from '../interfaces/operation'
-import {Store as CoreStore} from '../interfaces/store'
-import {buildBcUrl} from '../utils/strings'
-import {openButtonWarningNotification} from '../utils/notifications'
+import { AnyAction, Dispatch, Middleware, MiddlewareAPI } from 'redux'
+import { $do, ActionPayloadTypes, types } from '../actions/actions'
+import { Operation, OperationGroup } from '../interfaces/operation'
+import { Store as CoreStore } from '../interfaces/store'
+import { buildBcUrl } from '../utils/strings'
+import { openButtonWarningNotification } from '../utils/notifications'
 import i18n from 'i18next'
-import {DataItem, PendingDataItem} from '../interfaces/data'
-import {RowMetaField} from '../interfaces/rowMeta'
-import {WidgetField, WidgetFieldBlock, isWidgetFieldBlock, TableLikeWidgetTypes, WidgetTableMeta} from '../interfaces/widget'
-import {flattenOperations} from '../utils/operations'
-import {PendingValidationFailsFormat} from '../interfaces/view'
+import { DataItem, PendingDataItem } from '../interfaces/data'
+import { RowMetaField } from '../interfaces/rowMeta'
+import { WidgetField, WidgetFieldBlock, isWidgetFieldBlock, TableLikeWidgetTypes, WidgetTableMeta } from '../interfaces/widget'
+import { flattenOperations } from '../utils/operations'
+import { PendingValidationFailsFormat } from '../interfaces/view'
 
-const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) => (next: Dispatch) =>
-(action: AnyAction) => {
+const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) => (next: Dispatch) => (
+    action: AnyAction
+) => {
     const state = getState()
-    const { bcName, operationType, widgetName } = (action.payload ?? {}) as unknown as ActionPayloadTypes['sendOperation']
+    const { bcName, operationType, widgetName } = ((action.payload ?? {}) as unknown) as ActionPayloadTypes['sendOperation']
     const cursor = state.screen.bo.bc[bcName]?.cursor
     if (action.type === types.sendOperation && cursor) {
         const bcUrl = buildBcUrl(bcName, true, getState())
@@ -34,31 +35,29 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
             // Form could be split into multiple widgets so we check all widget with the same BC as action initiator.
             // TODO: use visibleSameBcWidgets instead of state.view.widgets (i.e. widgets showCondition should be respected)
             state.view.widgets
-            .filter(item => item.bcName === widget.bcName)
-            .forEach(item => {
-                const itemFieldsCalc = item.fields
-                if (item.fields) {
-                    item.fields.forEach((block: object | WidgetFieldBlock<object>) => {
-                        if (isWidgetFieldBlock(block)) {
-                            block.fields.forEach((field: []) => itemFieldsCalc.push(field))
+                .filter(item => item.bcName === widget.bcName)
+                .forEach(item => {
+                    const itemFieldsCalc = item.fields
+                    if (item.fields) {
+                        item.fields.forEach((block: Record<string, unknown> | WidgetFieldBlock<unknown>) => {
+                            if (isWidgetFieldBlock(block)) {
+                                block.fields.forEach((field: []) => itemFieldsCalc.push(field))
+                            }
+                        })
+                    }
+                    itemFieldsCalc.forEach((widgetField: WidgetField) => {
+                        const matchingRowMeta = rowMeta.fields.find(rowMetaField => rowMetaField.key === widgetField.key)
+                        if (!fieldsToCheck[widgetField.key] && matchingRowMeta && !matchingRowMeta.hidden) {
+                            fieldsToCheck[widgetField.key] = matchingRowMeta
                         }
                     })
-                }
-                itemFieldsCalc.forEach((widgetField: WidgetField) => {
-                    const matchingRowMeta = rowMeta.fields.find(rowMetaField => rowMetaField.key === widgetField.key)
-                    if (!fieldsToCheck[widgetField.key] && matchingRowMeta && !matchingRowMeta.hidden) {
-                        fieldsToCheck[widgetField.key] = matchingRowMeta
-                    }
                 })
-            })
             const dataItem: PendingDataItem = getRequiredFieldsMissing(record, pendingValues, Object.values(fieldsToCheck))
             // For tables, try to autofocus on first missing field
             if (dataItem && TableLikeWidgetTypes.includes((widget as WidgetTableMeta)?.type)) {
                 dispatch($do.selectTableCellInit({ widgetName, rowId: cursor, fieldKey: Object.keys(dataItem)[0] }))
             }
-            return dataItem
-                ? next($do.changeDataItem({ bcName, cursor, dataItem }))
-                : next(action)
+            return dataItem ? next($do.changeDataItem({ bcName, cursor, dataItem })) : next(action)
         }
 
         // If operation is not validation-sensetive and validation failed, offer to drop pending changes
@@ -68,8 +67,8 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
                 i18n.t('Cancel changes'),
                 0,
                 () => {
-                    next(($do.bcCancelPendingChanges(null)))
-                    next(($do.clearValidationFails(null)))
+                    next($do.bcCancelPendingChanges(null))
+                    next($do.clearValidationFails(null))
                 },
                 'requiredFieldsMissing'
             )
@@ -140,13 +139,16 @@ export function createRequiredFieldsMiddleware() {
  */
 export function hasPendingValidationFails(store: CoreStore, bcName: string) {
     // TODO 2.0.0: remove this `if` block of code
-    if (store.view.pendingValidationFailsFormat !== PendingValidationFailsFormat.target &&
-        store.view.pendingValidationFails && Object.keys(store.view.pendingValidationFails).length) {
+    if (
+        store.view.pendingValidationFailsFormat !== PendingValidationFailsFormat.target &&
+        store.view.pendingValidationFails &&
+        Object.keys(store.view.pendingValidationFails).length
+    ) {
         return true
     }
     let checkResult = false
-    const bcPendingValidations = store.view.pendingValidationFails?.[bcName] as {[cursor: string]: Record<string, string>}
-    const cursorsList =  bcPendingValidations && Object.keys(bcPendingValidations)
+    const bcPendingValidations = store.view.pendingValidationFails?.[bcName] as { [cursor: string]: Record<string, string> }
+    const cursorsList = bcPendingValidations && Object.keys(bcPendingValidations)
     if (!cursorsList) {
         return false
     }

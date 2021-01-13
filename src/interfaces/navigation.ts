@@ -5,8 +5,8 @@
  */
 export interface ViewNavigationItem {
     // TODO: Should not be optional in 2.0.0
-    viewName?: string,
-    hidden?: boolean,
+    viewName?: string
+    hidden?: boolean
     /** TODO: remove in 2.0.0 */
     id?: string
 }
@@ -17,7 +17,7 @@ export interface ViewNavigationItem {
  * @param item to be identified as view
  */
 export function isViewNavigationItem(item: MenuItem): item is ViewNavigationItem {
-    return !!item && ('viewName' in item)
+    return !!item && 'viewName' in item
 }
 
 /**
@@ -29,7 +29,7 @@ export function isViewNavigationItem(item: MenuItem): item is ViewNavigationItem
  * TODO Deprecated. ViewNavigationCategory will be deleted in 2.0.0
  */
 export interface ViewNavigationCategory {
-    categoryName: string,
+    categoryName: string
     child: Array<ViewNavigationCategory | ViewNavigationItem>
 }
 
@@ -38,7 +38,7 @@ export interface ViewNavigationCategory {
  * TODO Deprecated. ViewNavigationCategory will be deleted in 2.0.0
  */
 export function isViewNavigationCategory(item: any): item is ViewNavigationCategory {
-    return !!item && ('categoryName' in item)
+    return !!item && 'categoryName' in item
 }
 
 /**
@@ -51,10 +51,10 @@ export function isViewNavigationCategory(item: any): item is ViewNavigationCateg
  */
 export interface ViewNavigationGroup {
     /** TODO identifier will be nullable and string-only in 2.0.0 */
-    id?: string | number,
-    title: string,
-    child: Array<ViewNavigationGroup | ViewNavigationItem>,
-    hidden?: boolean,
+    id?: string | number
+    title: string
+    child: Array<ViewNavigationGroup | ViewNavigationItem>
+    hidden?: boolean
     defaultView?: string
 }
 
@@ -65,7 +65,7 @@ export interface ViewNavigationGroup {
  */
 export function isViewNavigationGroup(item: MenuItem): item is ViewNavigationGroup {
     // TODO: remove 'categoryName' check in 2.0.0
-    return !!item && ('child' in item) && !('categoryName' in item)
+    return !!item && 'child' in item && !('categoryName' in item)
 }
 
 /**
@@ -88,7 +88,7 @@ export interface NavigationTab {
     /**
      * View name where navigation tab will redirect the user
      */
-    viewName: string,
+    viewName: string
     /**
      * Displayed title: either view name or a group name
      */

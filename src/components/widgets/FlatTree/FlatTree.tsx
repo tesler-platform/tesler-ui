@@ -16,18 +16,18 @@
  */
 
 import React, { ComponentType } from 'react'
-import {useSelector, shallowEqual} from 'react-redux'
-import {ListChildComponentProps} from 'react-window'
+import { useSelector, shallowEqual } from 'react-redux'
+import { ListChildComponentProps } from 'react-window'
 import TreeVirtualized from '../../ui/TreeVirtualized/TreeVirtualized'
-import {Store} from '../../../interfaces/store'
-import {WidgetTableMeta} from '../../../interfaces/widget'
-import {buildBcUrl} from '../../../utils/strings'
-import {DataItemNode, TreeAssociatedRecord} from '../../../interfaces/tree'
+import { Store } from '../../../interfaces/store'
+import { WidgetTableMeta } from '../../../interfaces/widget'
+import { buildBcUrl } from '../../../utils/strings'
+import { DataItemNode, TreeAssociatedRecord } from '../../../interfaces/tree'
 import ColumnTitle from '../../../components/ColumnTitle/ColumnTitle'
 import styles from './FlatTree.less'
-import {DataItem} from '../../../interfaces/data'
-import {Checkbox} from 'antd'
-import {FieldType} from '../../../interfaces/view'
+import { DataItem } from '../../../interfaces/data'
+import { Checkbox } from 'antd'
+import { FieldType } from '../../../interfaces/view'
 
 /**
  * Properties for `FlatTreePopup` widget
@@ -36,27 +36,27 @@ interface FlatTreeProps {
     /**
      * Widget configuration
      */
-    meta: WidgetTableMeta,
+    meta: WidgetTableMeta
     /**
      * Widget width, default is 808px
      */
-    width?: number,
+    width?: number
     /**
      * Widget height, default is 375px
      */
-    height?: number,
+    height?: number
     /**
      * Height of item in the list, default is 60px
      */
-    itemSize?: number,
+    itemSize?: number
     /**
      * Allow selecting multiple items
      */
-    multiple?: boolean,
+    multiple?: boolean
     /**
      * Customization of items renderer
      */
-    children?: ComponentType<ListChildComponentProps>,
+    children?: ComponentType<ListChildComponentProps>
     /**
      * Callback to fire when item is selected
      */
@@ -73,16 +73,15 @@ const emptyData: DataItemNode[] = []
  *
  * @param props Widget props
  */
-export const FlatTree: React.FC<FlatTreeProps> = (props) => {
-    const {
-        meta,
-        width = 808,
-        height = 375,
-        itemSize = 60
-    } = props
-    const fields = React.useMemo(() => meta.fields.filter(item => {
-        return item.type !== FieldType.hidden && !item.hidden
-    }), [meta.fields])
+export const FlatTree: React.FC<FlatTreeProps> = props => {
+    const { meta, width = 808, height = 375, itemSize = 60 } = props
+    const fields = React.useMemo(
+        () =>
+            meta.fields.filter(item => {
+                return item.type !== FieldType.hidden && !item.hidden
+            }),
+        [meta.fields]
+    )
 
     const { data, fieldsRowMeta } = useSelector((store: Store) => {
         const bc = store.screen.bo.bc[meta.bcName]
@@ -90,51 +89,47 @@ export const FlatTree: React.FC<FlatTreeProps> = (props) => {
         const rowMeta = store.view.rowMeta[meta.bcName]?.[bcUrl]
         const loading = bc?.loading || !rowMeta
         return {
-            data: loading
-                ? emptyData
-                : store.data[meta.bcName] as DataItemNode[],
+            data: loading ? emptyData : (store.data[meta.bcName] as DataItemNode[]),
             fieldsRowMeta: rowMeta?.fields
         }
     }, shallowEqual)
 
     const filters = useSelector((state: Store) => state.screen.filters[meta.bcName])
 
-    return <div>
-        <div className={styles.filters} style={{ width }}>
-            { props.multiple &&
-                <div className={styles.control}>
-                    <Checkbox disabled />
-                </div>
-            }
-            <div className={styles.control} />
-            { fields.map(field =>
-                <div
-                    key={field.key}
-                    className={styles.column}
-                    style={width ? { maxWidth: field.width } : undefined}
-                >
-                    <ColumnTitle
-                        key={field.key}
-                        widgetName={props.meta.name}
-                        widgetMeta={field}
-                        rowMeta={fieldsRowMeta?.find(item => item.key === field.key)}
-                    />
-                </div>
-            )}
+    return (
+        <div>
+            <div className={styles.filters} style={{ width }}>
+                {props.multiple && (
+                    <div className={styles.control}>
+                        <Checkbox disabled />
+                    </div>
+                )}
+                <div className={styles.control} />
+                {fields.map(field => (
+                    <div key={field.key} className={styles.column} style={width ? { maxWidth: field.width } : undefined}>
+                        <ColumnTitle
+                            key={field.key}
+                            widgetName={props.meta.name}
+                            widgetMeta={field}
+                            rowMeta={fieldsRowMeta?.find(item => item.key === field.key)}
+                        />
+                    </div>
+                ))}
+            </div>
+            <TreeVirtualized<DataItemNode>
+                items={data}
+                width={width}
+                height={height}
+                itemSize={itemSize}
+                fields={fields}
+                filters={filters}
+                multiple={props.multiple}
+                onSelect={props.onSelect}
+            >
+                {props.children}
+            </TreeVirtualized>
         </div>
-        <TreeVirtualized<DataItemNode>
-            items={data}
-            width={width}
-            height={height}
-            itemSize={itemSize}
-            fields={fields}
-            filters={filters}
-            multiple={props.multiple}
-            onSelect={props.onSelect}
-        >
-            {props.children}
-        </TreeVirtualized>
-    </div>
+    )
 }
 
 export default React.memo(FlatTree)

@@ -1,8 +1,8 @@
-import {Dispatch} from 'redux'
-import {connect} from 'react-redux'
-import {ColumnFilter, mapStateToProps} from '../ColumnTitle/ColumnFilter'
-import {$do} from '../../actions/actions'
-import {BcFilter} from '../../interfaces/filters'
+import { Dispatch } from 'redux'
+import { connect } from 'react-redux'
+import { ColumnFilter, mapStateToProps } from '../ColumnTitle/ColumnFilter'
+import { $do } from '../../actions/actions'
+import { BcFilter } from '../../interfaces/filters'
 
 function mapDispatchToProps(dispatch: Dispatch) {
     return {
@@ -12,7 +12,9 @@ function mapDispatchToProps(dispatch: Dispatch) {
         onCancel: (bcName: string, filter: BcFilter) => {
             dispatch($do.bcRemoveFilter({ bcName, filter }))
         },
-        onMultivalueAssocOpen: () => {dispatch($do.emptyAction(null))}
+        onMultivalueAssocOpen: () => {
+            dispatch($do.emptyAction(null))
+        }
     }
 }
 

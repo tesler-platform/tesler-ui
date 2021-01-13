@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {getTextAssets} from '../index'
+import { getTextAssets } from '../index'
 
 describe('getResources', () => {
     it('returns dictionary with built-in languages', () => {

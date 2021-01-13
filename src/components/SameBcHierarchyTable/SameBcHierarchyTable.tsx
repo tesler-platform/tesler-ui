@@ -1,39 +1,39 @@
 import React, { FunctionComponent } from 'react'
-import {Table, Icon} from 'antd'
-import {connect} from 'react-redux'
-import {Dispatch} from 'redux'
-import {$do} from '../../actions/actions'
-import {Store} from '../../interfaces/store'
+import { Table, Icon } from 'antd'
+import { connect } from 'react-redux'
+import { Dispatch } from 'redux'
+import { $do } from '../../actions/actions'
+import { Store } from '../../interfaces/store'
 import Field from '../../components/Field/Field'
 import MultivalueHover from '../../components/ui/Multivalue/MultivalueHover'
-import {WidgetTableMeta, WidgetListField} from '../../interfaces/widget'
-import {DataItem, MultivalueSingleValue, PendingDataItem } from '../../interfaces/data'
-import {ColumnProps, TableRowSelection, TableEventListeners} from 'antd/lib/table'
-import {Route } from '../../interfaces/router'
-import {FieldType } from '../../interfaces/view'
+import { WidgetTableMeta, WidgetListField } from '../../interfaces/widget'
+import { DataItem, MultivalueSingleValue, PendingDataItem } from '../../interfaces/data'
+import { ColumnProps, TableRowSelection, TableEventListeners } from 'antd/lib/table'
+import { Route } from '../../interfaces/router'
+import { FieldType } from '../../interfaces/view'
 import styles from './SameBcHierarchyTable.less'
-import {AssociatedItem} from '../../interfaces/operation'
-import {useAssocRecords} from '../../hooks/useAssocRecords'
+import { AssociatedItem } from '../../interfaces/operation'
+import { useAssocRecords } from '../../hooks/useAssocRecords'
 
 interface SameBcHierarchyTableOwnProps {
-    meta: WidgetTableMeta,
-    assocValueKey?: string,
-    depth?: number,
-    selectable?: boolean,
+    meta: WidgetTableMeta
+    assocValueKey?: string
+    depth?: number
+    selectable?: boolean
     onRow?: (record: DataItem, index: number) => TableEventListeners
 }
 
 export interface SameBcHierarchyTableProps extends SameBcHierarchyTableOwnProps {
-    data: AssociatedItem[],
-    cursor: string,
-    parentCursor: string,
-    route: Route,
-    loading: boolean,
-    pendingChanges: Record<string, PendingDataItem>,
-    onDeselectAll?: (bcName: string, depthFrom: number) => void,
-    onSelect?: (bcName: string, depth: number, dataItem: AssociatedItem, widgetName: string, assocValueKey: string) => void,
-    onSelectAll?: (bcName: string, depth: number, assocValueKey: string, selected: boolean) => void,
-    onDrillDown?: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void,
+    data: AssociatedItem[]
+    cursor: string
+    parentCursor: string
+    route: Route
+    loading: boolean
+    pendingChanges: Record<string, PendingDataItem>
+    onDeselectAll?: (bcName: string, depthFrom: number) => void
+    onSelect?: (bcName: string, depth: number, dataItem: AssociatedItem, widgetName: string, assocValueKey: string) => void
+    onSelectAll?: (bcName: string, depth: number, assocValueKey: string, selected: boolean) => void
+    onDrillDown?: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void
     onExpand: (bcName: string, depth: number, cursor: string) => void
 }
 
@@ -44,19 +44,21 @@ export const Exp: FunctionComponent = (props: any) => {
         return null
     }
     const type = props.expanded ? 'minus-square' : 'plus-square'
-    return <Icon
-        style={{ fontSize: '20px' }}
-        type={type}
-        onClick={(e) => {
-            props.onExpand(props.record, e)}
-        }
-    />
+    return (
+        <Icon
+            style={{ fontSize: '20px' }}
+            type={type}
+            onClick={e => {
+                props.onExpand(props.record, e)
+            }}
+        />
+    )
 }
 
 const emptyArray: string[] = []
 const emptyData: AssociatedItem[] = []
 
-export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> = (props) => {
+export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> = props => {
     const bcName = props.meta.bcName
 
     const hierarchyGroupSelection = props.meta.options?.hierarchyGroupSelection
@@ -108,7 +110,7 @@ export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> 
             setUserClosedRecords(userClosedRecords.filter(item => item !== dataItem.id))
             props.onExpand(bcName, depthLevel, dataItem.id)
         } else {
-            setUserClosedRecords([ ...userClosedRecords, dataItem.id ])
+            setUserClosedRecords([...userClosedRecords, dataItem.id])
         }
     }
 
@@ -117,14 +119,16 @@ export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> 
         if (record.id !== props.cursor) {
             return null
         }
-        return <ConnectedHierarchyTable
-            meta={props.meta}
-            selectable={props.selectable}
-            assocValueKey={props.assocValueKey}
-            onDrillDown={null}
-            depth={depthLevel + 1}
-            onRow={props.onRow}
-        />
+        return (
+            <ConnectedHierarchyTable
+                meta={props.meta}
+                selectable={props.selectable}
+                assocValueKey={props.assocValueKey}
+                onDrillDown={null}
+                depth={depthLevel + 1}
+                onRow={props.onRow}
+            />
+        )
     }
 
     const fields = props.meta.fields
@@ -149,19 +153,15 @@ export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> 
                 dataIndex: item.key,
                 render: (text: string, dataItem: any) => {
                     if (item.type === FieldType.multivalue) {
-                        return <MultivalueHover
-                            data={(dataItem[item.key] || emptyMultivalue) as MultivalueSingleValue[]}
-                            displayedValue={item.displayedKey && dataItem[item.displayedKey]}
-                        />
+                        return (
+                            <MultivalueHover
+                                data={(dataItem[item.key] || emptyMultivalue) as MultivalueSingleValue[]}
+                                displayedValue={item.displayedKey && dataItem[item.displayedKey]}
+                            />
+                        )
                     }
                     if (item.type === FieldType.multifield) {
-                        return <Field
-                            bcName={bcName}
-                            cursor={dataItem.id}
-                            widgetName={props.meta.name}
-                            widgetFieldMeta={item}
-                            readonly
-                        />
+                        return <Field bcName={bcName} cursor={dataItem.id} widgetName={props.meta.name} widgetFieldMeta={item} readonly />
                     }
                     return text
                 }
@@ -169,26 +169,28 @@ export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> 
         ]
     }, [indentLevel, fields])
 
-    return <div className={styles.container}>
-        <Table
-            className={styles.table}
-            rowSelection={rowSelection}
-            rowKey="id"
-            columns={columns}
-            pagination={false}
-            showHeader={depthLevel === 1}
-            expandIcon={hasNested ? Exp as any : undefined}
-            defaultExpandedRowKeys={[props.cursor]}
-            expandedRowKeys={expandedRowKeys}
-            onExpand={hasNested ? handleExpand : undefined}
-            dataSource={props.data}
-            expandedRowRender={hasNested ? nested : undefined}
-            expandIconAsCell={false}
-            expandIconColumnIndex={props.onRow ? 0 : 1}
-            loading={props.loading}
-            onRow={!(hierarchyDisableRoot && depthLevel === 1) && props.onRow}
-        />
-    </div>
+    return (
+        <div className={styles.container}>
+            <Table
+                className={styles.table}
+                rowSelection={rowSelection}
+                rowKey="id"
+                columns={columns}
+                pagination={false}
+                showHeader={depthLevel === 1}
+                expandIcon={hasNested ? (Exp as any) : undefined}
+                defaultExpandedRowKeys={[props.cursor]}
+                expandedRowKeys={expandedRowKeys}
+                onExpand={hasNested ? handleExpand : undefined}
+                dataSource={props.data}
+                expandedRowRender={hasNested ? nested : undefined}
+                expandIconAsCell={false}
+                expandIconColumnIndex={props.onRow ? 0 : 1}
+                loading={props.loading}
+                onRow={!(hierarchyDisableRoot && depthLevel === 1) && props.onRow}
+            />
+        </div>
+    )
 }
 
 function mapStateToProps(store: Store, ownProps: SameBcHierarchyTableOwnProps) {
@@ -196,14 +198,8 @@ function mapStateToProps(store: Store, ownProps: SameBcHierarchyTableOwnProps) {
     const bcMap = store.screen.bo.bc
     const bcName = ownProps.meta.bcName
     const rootBc = bcMap[bcName]
-    const currentBc = (depthLevel === 1)
-        ? rootBc
-        : rootBc.depthBc?.[ownProps.depth]
-    const parentBc = (depthLevel === 1)
-        ? null
-        : (depthLevel === 2)
-            ? rootBc
-            : rootBc.depthBc?.[ownProps.depth - 1]
+    const currentBc = depthLevel === 1 ? rootBc : rootBc.depthBc?.[ownProps.depth]
+    const parentBc = depthLevel === 1 ? null : depthLevel === 2 ? rootBc : rootBc.depthBc?.[ownProps.depth - 1]
 
     const loading = currentBc?.loading
 
@@ -211,11 +207,7 @@ function mapStateToProps(store: Store, ownProps: SameBcHierarchyTableOwnProps) {
     const parentCursor = parentBc?.cursor
     const pendingChanges = store.view.pendingDataChanges[bcName]
     return {
-        data: (loading)
-            ? emptyData
-            : (depthLevel === 1)
-                ? store.data[bcName]
-                : store.depthData[depthLevel]?.[bcName],
+        data: loading ? emptyData : depthLevel === 1 ? store.data[bcName] : store.depthData[depthLevel]?.[bcName],
         pendingChanges,
         cursor,
         parentCursor,

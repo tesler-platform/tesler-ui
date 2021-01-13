@@ -1,5 +1,5 @@
-import {DrillDownType} from './router'
-import {AppNotificationType} from './objectMap'
+import { DrillDownType } from './router'
+import { AppNotificationType } from './objectMap'
 import { DataItem } from './data'
 
 /**
@@ -53,43 +53,43 @@ export interface Operation {
     /**
      * Displayed name
      */
-    text: string,
+    text: string
     /**
      * String that uniquely identifies an operation on widget
      */
-    type: OperationType,
+    type: OperationType
     /**
      * A hint to decide where to display an operation which is related to the record or the whole widget
      */
-    scope: OperationScope,
+    scope: OperationScope
     /**
      * @deprecated TODO: Remove in 2.0.0, designation unknown
      */
-    action?: string,
+    action?: string
     /**
      * An icon (https://ant.design/components/icon) to display on operation button,
      */
-    icon?: string,
+    icon?: string
     /**
      * @deprecated TODO: Remove in 2.0.0 in favor of client-side custom parameters
      */
-    bcKey?: string,
+    bcKey?: string
     /**
      * Omit text value of operation in favor of icon
      */
-    showOnlyIcon?: boolean,
+    showOnlyIcon?: boolean
     /**
      * An operation that should be fired before initiating this operation
      */
-    preInvoke?: OperationPreInvoke,
+    preInvoke?: OperationPreInvoke
     /**
      * Validate the record for empty "required" fields before API call
      */
-    autoSaveBefore?: boolean,
+    autoSaveBefore?: boolean
     /**
      * ???
      */
-    confirmOperation?: OperationPreInvoke,
+    confirmOperation?: OperationPreInvoke
     /**
      * If custom operation needs to be processed as if it was a default crud operation,
      * this flag can be specified and will be used instead of real `type`
@@ -109,23 +109,23 @@ export interface OperationGroup {
     /**
      * Unique identifier for the operation group
      */
-    type?: string,
+    type?: string
     /**
      * Displayed name of a group
      */
-    text: string,
+    text: string
     /**
      * An icon (https://ant.design/components/icon) to display on operation button,
      */
-    icon?: string,
+    icon?: string
     /**
      * Omit text value of operation in favor of icon
      */
-    showOnlyIcon?: boolean,
+    showOnlyIcon?: boolean
     /**
      * List of group actions
      */
-    actions: Operation[],
+    actions: Operation[]
     /**
      * Number of showed actions in case list is covered
      */
@@ -139,7 +139,7 @@ export interface OperationPreInvoke {
     /**
      * A type of operation (Pop-up message. Other types are not supported)
      */
-    type: OperationPreInvokeType,
+    type: OperationPreInvokeType
     /**
      * A message shown to user before operation fires
      */
@@ -232,11 +232,11 @@ export interface OperationPostInvokeConfirm {
     /**
      * Type of postInvokeConfirm action
      */
-    type: OperationPostInvokeConfirmType | string,
+    type: OperationPostInvokeConfirmType | string
     /**
      * Title for modal
      */
-    message: string,
+    message: string
     /**
      * Additional text for modal
      */
@@ -250,11 +250,11 @@ export interface OperationModalInvokeConfirm {
     /**
      * Type of postInvokeConfirm action
      */
-    type: OperationPostInvokeConfirmType | OperationPreInvokeType | string,
+    type: OperationPostInvokeConfirmType | OperationPreInvokeType | string
     /**
      * Title for modal
      */
-    message: string,
+    message: string
     /**
      * Additional text for modal
      */
@@ -317,11 +317,11 @@ export interface OperationPostInvokeDrillDown extends OperationPostInvoke {
     /**
      * URL of transition
      */
-    url: string,
+    url: string
     /**
      * A type of transition
      */
-    drillDownType?: DrillDownType,
+    drillDownType?: DrillDownType
     /**
      * If transition performs to outer entity (POST call),
      * this param will be passed to request body
@@ -346,7 +346,7 @@ export interface OperationPostInvokeShowMessage extends OperationPostInvoke {
     /**
      * A type of a message
      */
-    messageType: AppNotificationType,
+    messageType: AppNotificationType
     /**
      * A text of a message
      */
@@ -356,9 +356,14 @@ export interface OperationPostInvokeShowMessage extends OperationPostInvoke {
 /**
  * A union of all action types which could be be fired after user's operation
  */
-export type OperationPostInvokeAny = OperationPostInvokeRefreshBc | OperationPostInvokeDownloadFile
-    | OperationPostInvokeDownloadFileByUrl | OperationPostInvokeDrillDown
-    | OperationPostInvokeOpenPickList | OperationPostInvokeShowMessage | OperationPostInvokeConfirm
+export type OperationPostInvokeAny =
+    | OperationPostInvokeRefreshBc
+    | OperationPostInvokeDownloadFile
+    | OperationPostInvokeDownloadFileByUrl
+    | OperationPostInvokeDrillDown
+    | OperationPostInvokeOpenPickList
+    | OperationPostInvokeShowMessage
+    | OperationPostInvokeConfirm
 
 /**
  * TODO: ???
@@ -374,32 +379,34 @@ export interface AssociatedItem extends DataItem {
  * - string (if you just need to include / exclude operation or groups)
  * - object, if this is group in which you want to selectively include or exclude the operation
  */
-export type OperationInclusionDescriptor = string | {
-    /**
-     * Type of transaction; a string that uniquely identifies the operation on the widget
-     */
-    type: OperationType,
-    /**
-     * List of included operations or groups operations
-     */
-    include?: OperationInclusionDescriptor[],
-    /**
-     * List of excluded operations or groups operations
-     */
-    exclude?: OperationType[]
-}
+export type OperationInclusionDescriptor =
+    | string
+    | {
+          /**
+           * Type of transaction; a string that uniquely identifies the operation on the widget
+           */
+          type: OperationType
+          /**
+           * List of included operations or groups operations
+           */
+          include?: OperationInclusionDescriptor[]
+          /**
+           * List of excluded operations or groups operations
+           */
+          exclude?: OperationType[]
+      }
 
 export interface OperationError {
-    success: false,
+    success: false
     error: {
-        entity?: OperationErrorEntity,
-        popup?: string[],
+        entity?: OperationErrorEntity
+        popup?: string[]
         postActions?: OperationPostInvokeAny[]
     }
 }
 
 export interface OperationErrorEntity {
-    bcName: string,
-    fields: Record<string, string>,
+    bcName: string
+    fields: Record<string, string>
     id: string
 }

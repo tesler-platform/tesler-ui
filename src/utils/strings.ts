@@ -1,7 +1,7 @@
-import {store as globalStore} from '../Provider'
-import {Store} from '../interfaces/store'
+import { store as globalStore } from '../Provider'
+import { Store } from '../interfaces/store'
 import moment from 'moment'
-import {DataItem} from '../interfaces/data'
+import { DataItem } from '../interfaces/data'
 
 /**
  * TODO
@@ -34,7 +34,7 @@ export function buildBcUrl(bcName: string, includeSelf = false, store?: Store) {
     if (!bc) {
         return null
     }
-    const url = [(bc.cursor && includeSelf) ? `${bc.name}/${bc.cursor}` : bc.name]
+    const url = [bc.cursor && includeSelf ? `${bc.name}/${bc.cursor}` : bc.name]
     let nextBc = bc
     while (nextBc.parentName) {
         nextBc = bcMap[nextBc.parentName]
@@ -65,14 +65,9 @@ const formatString = (templatedString: string, item: DataItem): string => {
     }
     return templatedString.replace(TAG_PLACEHOLDER, (token, varName) => {
         const [key, defaultValue] = varName.split(':')
-        const result = String(item?.[key]
-            || defaultValue
-            || ''
-        )
+        const result = String(item?.[key] || defaultValue || '')
         const date = moment(result, moment.ISO_8601)
-        return !date.isValid()
-            ? result
-            : date.format('DD.MM.YYYY')
+        return !date.isValid() ? result : date.format('DD.MM.YYYY')
     })
 }
 
@@ -108,9 +103,7 @@ export function getFieldTitle(title: string, dataItem?: DataItem) {
  * @param search An object in the fields of which tokens should be searched
  */
 export function splitIntoTokens(source: string, search: string | RegExp) {
-    const tokenizer = search instanceof RegExp
-        ? search
-        : escapedSrc(search)
+    const tokenizer = search instanceof RegExp ? search : escapedSrc(search)
     return source.split(tokenizer)
 }
 

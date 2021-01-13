@@ -19,29 +19,28 @@
  * Opens when column filter requested
  */
 
-import React, {FormEvent} from 'react'
-import {Form, Button} from 'antd'
+import React, { FormEvent } from 'react'
+import { Form, Button } from 'antd'
 import styles from './FilterPopup.less'
-import {BcFilter} from '../../interfaces/filters'
-import {getFilterType} from '../../utils/filters'
-import {useDispatch, useSelector} from 'react-redux'
-import {$do} from '../../actions/actions'
-import {Store} from '../../interfaces/store'
-import {WidgetField} from '../../interfaces/widget'
-import {DataValue} from '../../interfaces/data'
-import {useTranslation} from 'react-i18next'
+import { BcFilter } from '../../interfaces/filters'
+import { getFilterType } from '../../utils/filters'
+import { useDispatch, useSelector } from 'react-redux'
+import { $do } from '../../actions/actions'
+import { Store } from '../../interfaces/store'
+import { WidgetField } from '../../interfaces/widget'
+import { DataValue } from '../../interfaces/data'
+import { useTranslation } from 'react-i18next'
 
 export interface FilterPopupProps {
-    widgetName: string,
-    fieldKey: string,
-    value: DataValue | DataValue[],
-    children: React.ReactNode,
-    onApply?: () => void,
+    widgetName: string
+    fieldKey: string
+    value: DataValue | DataValue[]
+    children: React.ReactNode
+    onApply?: () => void
     onCancel?: () => void
 }
 
-export const FilterPopup: React.FC<FilterPopupProps> = (props) => {
-
+export const FilterPopup: React.FC<FilterPopupProps> = props => {
     const widget = useSelector((store: Store) => {
         return store.view.widgets.find(item => item.name === props.widgetName)
     })
@@ -53,7 +52,7 @@ export const FilterPopup: React.FC<FilterPopupProps> = (props) => {
     })
     const widgetMeta = (widget?.fields as WidgetField[])?.find(item => item.key === props.fieldKey)
     const dispatch = useDispatch()
-    const {t} = useTranslation()
+    const { t } = useTranslation()
     if (!widgetMeta) {
         return null
     }
@@ -68,7 +67,6 @@ export const FilterPopup: React.FC<FilterPopupProps> = (props) => {
         }
         if (!props.value) {
             dispatch($do.bcRemoveFilter({ bcName: widget.bcName, filter }))
-
         } else {
             dispatch($do.bcAddFilter({ bcName: widget.bcName, filter: newFilter }))
         }
@@ -90,17 +88,19 @@ export const FilterPopup: React.FC<FilterPopupProps> = (props) => {
         props.onCancel?.()
     }
 
-    return <Form onSubmit={handleApply} layout="vertical">
-        {props.children}
-        <div className={styles.operators}>
-            <Button className={styles.button} htmlType="submit">
-                {t('Apply')}
-            </Button>
-            <Button className={styles.button} onClick={handleCancel}>
-                {t('Clear')}
-            </Button>
-        </div>
-    </Form>
+    return (
+        <Form onSubmit={handleApply} layout="vertical">
+            {props.children}
+            <div className={styles.operators}>
+                <Button className={styles.button} htmlType="submit">
+                    {t('Apply')}
+                </Button>
+                <Button className={styles.button} onClick={handleCancel}>
+                    {t('Clear')}
+                </Button>
+            </div>
+        </Form>
+    )
 }
 
 export default React.memo(FilterPopup)

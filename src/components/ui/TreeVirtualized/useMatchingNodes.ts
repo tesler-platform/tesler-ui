@@ -16,7 +16,7 @@
  */
 
 import React from 'react'
-import {TreeNodeAscending} from '../../../interfaces/tree'
+import { TreeNodeAscending } from '../../../interfaces/tree'
 
 const initialExpanded: Record<string, boolean> = { '0': true }
 

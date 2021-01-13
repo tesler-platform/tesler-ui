@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
- /**
-  * This module includes types to support overriding redux-observable Epics that we use in Tesler UI by
-  * custom implementations from client application.
-  */
-import {Epic} from 'redux-observable'
+/**
+ * This module includes types to support overriding redux-observable Epics that we use in Tesler UI by
+ * custom implementations from client application.
+ */
+import { Epic } from 'redux-observable'
 import coreEpics from '../epics'
 
 /**
@@ -58,7 +58,8 @@ export type NewEpicDescriptor = { [epicName: string]: CustomEpicDescriptor }
  * Client configuration to specific root epic slice
  */
 export type CustomEpicSlice<Slice extends RootEpicSlices = any> =
-  Partial<Record<SliceEpicsNames<Slice>, CustomEpicDescriptor>> | NewEpicDescriptor
+    | Partial<Record<SliceEpicsNames<Slice>, CustomEpicDescriptor>>
+    | NewEpicDescriptor
 
 /**
  * A configuration for epics overriding and customization by client application.

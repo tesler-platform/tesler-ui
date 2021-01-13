@@ -16,15 +16,15 @@
  */
 
 import React from 'react'
-import {useMatchingNodes, getMatchingNodes} from '../useMatchingNodes'
-import {assignTreeLinks} from '../../../../utils/tree'
-import {mount} from 'enzyme'
+import { useMatchingNodes, getMatchingNodes } from '../useMatchingNodes'
+import { assignTreeLinks } from '../../../../utils/tree'
+import { mount } from 'enzyme'
 
 const sample = getTreeSample()
 type predicate = (item: typeof sample[0]) => boolean
-const searchExpression1: predicate = (item) => item.name.includes('Lucky')
-const searchExpression2: predicate = (item) => !!item.id
-const searchExpression3: predicate = (item) => item.name.includes('eleven')
+const searchExpression1: predicate = item => item.name.includes('Lucky')
+const searchExpression2: predicate = item => !!item.id
+const searchExpression3: predicate = item => item.name.includes('eleven')
 
 describe('getMatchingNodes', () => {
     it('finds matching nodes and their ancestors', () => {
@@ -46,13 +46,13 @@ describe('useMatchingNodes', () => {
         const Test = (props: { searchExpression: predicate }) => {
             const [, setExpandedNodes] = React.useState<string[]>([])
             const matchingNodes = useMatchingNodes(sample, props.searchExpression, setExpandedNodes)
-            return <ul>
-                { matchingNodes.map(item =>
-                    <li key={item}>
-                        {item}
-                    </li>
-                )}
-            </ul>
+            return (
+                <ul>
+                    {matchingNodes.map(item => (
+                        <li key={item}>{item}</li>
+                    ))}
+                </ul>
+            )
         }
         const wrapper = mount(<Test searchExpression={searchExpression1} />)
         expect(wrapper.find('li').length).toBe(2)
@@ -88,7 +88,7 @@ function getTreeSample() {
         { id: '21', name: 'nine', parentId: '2' },
         { id: '22', name: 'ten', parentId: '2' },
         { id: '221', name: 'eleven', parentId: '22' },
-        { id: '2211', name: 'Lucky Twelve', parentId: '221' },
+        { id: '2211', name: 'Lucky Twelve', parentId: '221' }
     ]
     return assignTreeLinks(tree)
 }

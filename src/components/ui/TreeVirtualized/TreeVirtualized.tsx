@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-import React, {RefCallback} from 'react'
-import {FixedSizeList, FixedSizeListProps, ListChildComponentProps, Align} from 'react-window'
+import React, { RefCallback } from 'react'
+import { FixedSizeList, FixedSizeListProps, ListChildComponentProps, Align } from 'react-window'
 import TreeVirtualizedNode from './TreeVirtualizedNode'
-import {DataNode, TreeNodeBidirectional} from '../../../interfaces/tree'
-import {assignTreeLinks, getDescendants, presort} from '../../../utils/tree'
-import {useSearchResult} from './useSearchResult'
-import {useMatchingNodes} from './useMatchingNodes'
-import {BcFilter, FilterType} from '../../../interfaces/filters'
-import {WidgetListField} from '../../../interfaces/widget'
+import { DataNode, TreeNodeBidirectional } from '../../../interfaces/tree'
+import { assignTreeLinks, getDescendants, presort } from '../../../utils/tree'
+import { useSearchResult } from './useSearchResult'
+import { useMatchingNodes } from './useMatchingNodes'
+import { BcFilter, FilterType } from '../../../interfaces/filters'
+import { WidgetListField } from '../../../interfaces/widget'
 
 /**
  * Properties for TreeVirtualized component
@@ -32,27 +32,27 @@ export interface TreeVirtualizedProps<T> extends Omit<FixedSizeListProps, 'itemC
     /**
      * Flat array of nodes
      */
-    items: T[],
+    items: T[]
     /**
      * Fields to display as tree node
      */
-    fields: WidgetListField[],
+    fields: WidgetListField[]
     /**
      * Allow selecting multiple items
      */
-    multiple?: boolean,
+    multiple?: boolean
     /**
      * Fired when node is selected
      */
-    onSelect?: ((item: T) => void) | ((item: T, selected: boolean) => void),
+    onSelect?: ((item: T) => void) | ((item: T, selected: boolean) => void)
     /**
      * Custom node render can be provided
      */
-    children?: React.ComponentType<ListChildComponentProps>,
+    children?: React.ComponentType<ListChildComponentProps>
     /**
      * Filters for the tree
      */
-    filters?: BcFilter[],
+    filters?: BcFilter[]
     /**
      * If true, casing of searchExpression will be respected
      */
@@ -100,16 +100,18 @@ export function TreeVirtualized<T extends DataNode>(props: TreeVirtualizedProps<
     /**
      * Search function for filtering nodes array
      */
-    const searchPredicate = React.useCallback((item) => {
-        return filters?.filter(filter => filter.type === FilterType.contains)
-        .every(filter => {
-            const src = String(item[filter.fieldName] ?? '')
-            const target = String(filter.value ?? '')
-            return props.matchCase
-                ? src.includes(target)
-                : src.toLowerCase().includes(target.toLowerCase())
-        })
-    }, [props.matchCase, filters])
+    const searchPredicate = React.useCallback(
+        item => {
+            return filters
+                ?.filter(filter => filter.type === FilterType.contains)
+                .every(filter => {
+                    const src = String(item[filter.fieldName] ?? '')
+                    const target = String(filter.value ?? '')
+                    return props.matchCase ? src.includes(target) : src.toLowerCase().includes(target.toLowerCase())
+                })
+        },
+        [props.matchCase, filters]
+    )
     /**
      * An array of ids for nodes matching the search expression, also updates expanded nodes on every search
      */
@@ -122,16 +124,19 @@ export function TreeVirtualized<T extends DataNode>(props: TreeVirtualizedProps<
     /**
      * Toggles expanded status for a node; on collapsing, all descendants are also collapsed
      */
-    const handleToggle = React.useCallback((id: string) => {
-        if (expandedNodes.includes(id)) {
-            const exclude = [id]
-            const index = flatTree.findIndex(item => item.id === id)
-            getDescendants(flatTree[index].children, exclude)
-            setExpandedNodes(expandedNodes.filter(item => !exclude.includes(item)))
-        } else {
-            setExpandedNodes([ ...expandedNodes, id ])
-        }
-    }, [expandedNodes, flatTree])
+    const handleToggle = React.useCallback(
+        (id: string) => {
+            if (expandedNodes.includes(id)) {
+                const exclude = [id]
+                const index = flatTree.findIndex(item => item.id === id)
+                getDescendants(flatTree[index].children, exclude)
+                setExpandedNodes(expandedNodes.filter(item => !exclude.includes(item)))
+            } else {
+                setExpandedNodes([...expandedNodes, id])
+            }
+        },
+        [expandedNodes, flatTree]
+    )
     /**
      * react-window memoized item descriptors
      */
@@ -150,24 +155,29 @@ export function TreeVirtualized<T extends DataNode>(props: TreeVirtualizedProps<
      * Console helpers for auto tests
      */
     const outerRef = React.useRef<TreeVirtualizedDomContainer>()
-    const autotestUtils: RefCallback<FixedSizeList> = React.useCallback((node) => {
-        if (node && outerRef.current) {
-            outerRef.current.scrollToItem = (value, column, align) => {
-                const rowIndex = resultItems.findIndex((item => (item as any)[column] === value))
-                node.scrollToItem(rowIndex, align)
+    const autotestUtils: RefCallback<FixedSizeList> = React.useCallback(
+        node => {
+            if (node && outerRef.current) {
+                outerRef.current.scrollToItem = (value, column, align) => {
+                    const rowIndex = resultItems.findIndex(item => (item as any)[column] === value)
+                    node.scrollToItem(rowIndex, align)
+                }
             }
-        }
-    }, [resultItems])
-    return <FixedSizeList
-        {...rest}
-        outerRef={outerRef}
-        ref={autotestUtils}
-        className="TreeVirtualized__container"
-        itemCount={memoizedData.items.length}
-        itemData={memoizedData}
-    >
-        {children || TreeVirtualizedNode}
-    </FixedSizeList>
+        },
+        [resultItems]
+    )
+    return (
+        <FixedSizeList
+            {...rest}
+            outerRef={outerRef}
+            ref={autotestUtils}
+            className="TreeVirtualized__container"
+            itemCount={memoizedData.items.length}
+            itemData={memoizedData}
+        >
+            {children || TreeVirtualizedNode}
+        </FixedSizeList>
+    )
 }
 
 export default React.memo(TreeVirtualized) as typeof TreeVirtualized

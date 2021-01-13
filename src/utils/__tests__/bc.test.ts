@@ -15,52 +15,40 @@
  * limitations under the License.
  */
 
-import {getBcChildren} from '../bc'
-import {WidgetTypes, WidgetTableMeta} from '../../interfaces/widget'
+import { getBcChildren } from '../bc'
+import { WidgetTypes, WidgetTableMeta } from '../../interfaces/widget'
 
 describe('requestBcChildren', () => {
     it('returns all direct children for specified bc and all descendant widgets', () => {
-        expect(getBcChildren('bcExample-1', widgets, bcMap))
-        .toEqual(expect.objectContaining({
-            'bcExample-1-1': [
-                'widget-example-1-1-1',
-                'widget-example-1-1-2',
-                'widget-example-1-1-3',
-                'widget-example-1-1',
-            ],
-            'bcExample-1-2': [
-                'widget-example-1-2-1',
-                'widget-example-1-2'
-            ]
-        }))
+        expect(getBcChildren('bcExample-1', widgets, bcMap)).toEqual(
+            expect.objectContaining({
+                'bcExample-1-1': ['widget-example-1-1-1', 'widget-example-1-1-2', 'widget-example-1-1-3', 'widget-example-1-1'],
+                'bcExample-1-2': ['widget-example-1-2-1', 'widget-example-1-2']
+            })
+        )
     })
 
     it('handles hierarchy widgets', () => {
-        expect(getBcChildren(
-            'bcHierarchy-1',
-            [getHierarchyWidget(), { ...getHierarchyWidget(), bcName: 'bcHierarchy-0' }],
-            bcHierarchyMap
-        ))
-        .toEqual(expect.objectContaining({
-            'bcHierarchy-2': ['widget-hierarchy']
-        }))
-        expect(getBcChildren('bcHierarchy-2', [getHierarchyWidget()], bcHierarchyMap))
-        .toEqual(expect.objectContaining({
-            'bcHierarchy-3': ['widget-hierarchy']
-        }))
-
+        expect(
+            getBcChildren('bcHierarchy-1', [getHierarchyWidget(), { ...getHierarchyWidget(), bcName: 'bcHierarchy-0' }], bcHierarchyMap)
+        ).toEqual(
+            expect.objectContaining({
+                'bcHierarchy-2': ['widget-hierarchy']
+            })
+        )
+        expect(getBcChildren('bcHierarchy-2', [getHierarchyWidget()], bcHierarchyMap)).toEqual(
+            expect.objectContaining({
+                'bcHierarchy-3': ['widget-hierarchy']
+            })
+        )
     })
 
     it('handles weird case when first level of hierarchy does not specifies bc', () => {
-        expect(getBcChildren('bcHierarchy-1', [getHierarchyWidget(true)], bcHierarchyMap))
-        .toEqual({})
+        expect(getBcChildren('bcHierarchy-1', [getHierarchyWidget(true)], bcHierarchyMap)).toEqual({})
     })
 
     it('handles case when hierarchy level references BC used by non-hierarchy widget', () => {
-        const sameWidgets = [
-            { ...getWidgetMeta(), name: 'widget-example-same', bcName: 'bcHierarchy-2' },
-            getHierarchyWidget()
-        ]
+        const sameWidgets = [{ ...getWidgetMeta(), name: 'widget-example-same', bcName: 'bcHierarchy-2' }, getHierarchyWidget()]
         const sameMap = {
             ...bcHierarchyMap,
             'bcHierarchy-2': {
@@ -70,12 +58,12 @@ describe('requestBcChildren', () => {
                 url: 'bcHierarchy-2/:id'
             }
         }
-        expect(getBcChildren('bcHierarchy-1', sameWidgets, sameMap))
-        .toEqual(expect.objectContaining({
-            'bcHierarchy-2': ['widget-example-same', 'widget-hierarchy']
-        }))
+        expect(getBcChildren('bcHierarchy-1', sameWidgets, sameMap)).toEqual(
+            expect.objectContaining({
+                'bcHierarchy-2': ['widget-example-same', 'widget-hierarchy']
+            })
+        )
     })
-
 })
 
 function getWidgetMeta(): WidgetTableMeta {

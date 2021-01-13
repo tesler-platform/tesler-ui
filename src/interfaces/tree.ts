@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import {DataItem} from './data'
-import {AssociatedItem} from './operation'
+import { DataItem } from './data'
+import { AssociatedItem } from './operation'
 
 export interface BaseDataNode {
     /**
@@ -36,7 +36,7 @@ export interface DataNode extends BaseDataNode {
     /**
      * String reference to a parent node
      */
-    parentId: string,
+    parentId: string
     /**
      * The depth of the node counting from the root of the tree
      */
@@ -75,7 +75,7 @@ export interface TreeNodeBidirectional extends DataNode {
     /**
      * Reference to the parent
      */
-    parent: TreeNodeBidirectional,
+    parent: TreeNodeBidirectional
     /**
      * An array of children
      */

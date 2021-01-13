@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-import {showAssocPopup} from '../showAssocPopup'
-import {Store} from 'redux'
-import {ActionsObservable} from 'redux-observable'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {mockStore} from '../../../tests/mockStore'
-import {WidgetTableMeta, WidgetTypes} from '../../../interfaces/widget'
-import {FieldType} from '../../../interfaces/view'
-import {$do} from '../../../actions/actions'
-import {testEpic} from '../../../tests/testEpic'
+import { showAssocPopup } from '../showAssocPopup'
+import { Store } from 'redux'
+import { ActionsObservable } from 'redux-observable'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { mockStore } from '../../../tests/mockStore'
+import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
+import { FieldType } from '../../../interfaces/view'
+import { $do } from '../../../actions/actions'
+import { testEpic } from '../../../tests/testEpic'
 
 describe('showAssocPopup', () => {
     let store: Store<CoreStore> = null
@@ -48,12 +48,12 @@ describe('showAssocPopup', () => {
     it('fires only for AssocListPopup', () => {
         const missingCalleeBcName = $do.showViewPopup({ bcName: bcExample.name })
         const missingCalleeBcNameEpic = showAssocPopup(ActionsObservable.of(missingCalleeBcName), store)
-        testEpic(missingCalleeBcNameEpic, (result) => {
+        testEpic(missingCalleeBcNameEpic, result => {
             expect(result).toHaveLength(0)
         })
         const missingAssociateFieldKey = $do.showViewPopup({ bcName: bcExample.name, calleeBCName: bcParent.name })
         const missingAssociateFieldKeyEpic = showAssocPopup(ActionsObservable.of(missingAssociateFieldKey), store)
-        testEpic(missingAssociateFieldKeyEpic, (result) => {
+        testEpic(missingAssociateFieldKeyEpic, result => {
             expect(result).toHaveLength(0)
         })
     })
@@ -71,7 +71,7 @@ describe('showAssocPopup', () => {
             associateFieldKey: 'name'
         })
         const notFullHierarchyEpic = showAssocPopup(ActionsObservable.of(notFullHierarchy), store)
-        testEpic(notFullHierarchyEpic, (result) => {
+        testEpic(notFullHierarchyEpic, result => {
             expect(result).toHaveLength(0)
         })
         const missingWidget = $do.showViewPopup({
@@ -80,7 +80,7 @@ describe('showAssocPopup', () => {
             associateFieldKey: 'name'
         })
         const missingWidgetEpic = showAssocPopup(ActionsObservable.of(missingWidget), store)
-        testEpic(missingWidgetEpic, (result) => {
+        testEpic(missingWidgetEpic, result => {
             expect(result).toHaveLength(0)
         })
     })
@@ -93,7 +93,7 @@ describe('showAssocPopup', () => {
             associateFieldKey: 'name'
         })
         const notFullHierarchyEpic = showAssocPopup(ActionsObservable.of(missingCursor), store)
-        testEpic(notFullHierarchyEpic, (result) => {
+        testEpic(notFullHierarchyEpic, result => {
             expect(result).toHaveLength(0)
         })
         const missingField = $do.showViewPopup({
@@ -102,7 +102,7 @@ describe('showAssocPopup', () => {
             associateFieldKey: 'missing'
         })
         const missingFieldEpic = showAssocPopup(ActionsObservable.of(missingField), store)
-        testEpic(missingFieldEpic, (result) => {
+        testEpic(missingFieldEpic, result => {
             expect(result).toHaveLength(0)
         })
         const missingBc = $do.showViewPopup({
@@ -111,7 +111,7 @@ describe('showAssocPopup', () => {
             associateFieldKey: 'name'
         })
         const missingBcEpic = showAssocPopup(ActionsObservable.of(missingBc), store)
-        testEpic(missingBcEpic, (result) => {
+        testEpic(missingBcEpic, result => {
             expect(result).toHaveLength(0)
         })
     })
@@ -128,7 +128,7 @@ describe('showAssocPopup', () => {
             associateFieldKey: 'name'
         })
         const epic = showAssocPopup(ActionsObservable.of(action), store)
-        testEpic(epic, (result) => {
+        testEpic(epic, result => {
             const expectedAction = $do.changeDataItems({
                 bcName: bcExample.name,
                 cursors: ['300', '400'],
@@ -156,7 +156,7 @@ describe('showAssocPopup', () => {
             associateFieldKey: 'name'
         })
         const epic = showAssocPopup(ActionsObservable.of(action), store)
-        testEpic(epic, (result) => {
+        testEpic(epic, result => {
             const expectedAction = $do.changeDataItems({
                 bcName: bcExample.name,
                 cursors: ['300', '400', '555'],
@@ -190,11 +190,13 @@ function getWidgetMeta(): WidgetTableMeta {
         bcName: 'bcExample',
         position: 1,
         gridWidth: null,
-        fields: [{
-            key: 'name',
-            title: 'Test Column',
-            type: FieldType.input
-        }],
+        fields: [
+            {
+                key: 'name',
+                title: 'Test Column',
+                type: FieldType.input
+            }
+        ],
         options: {
             hierarchyFull: true
         }
@@ -224,20 +226,29 @@ const bcExample = {
 function getPendingData() {
     return {
         [bcParent.name]: {
-           [bcParent.cursor]: {
-               id: bcParent.cursor,
-               name: [{ id: '300', value: 'XXX-1' }, { id: '400', value: 'XXX-2' }]
-           }
+            [bcParent.cursor]: {
+                id: bcParent.cursor,
+                name: [
+                    { id: '300', value: 'XXX-1' },
+                    { id: '400', value: 'XXX-2' }
+                ]
+            }
         }
     }
 }
 
 function getData() {
     return {
-        [bcParent.name]: [{
-            vstamp: 0,
-            id: bcParent.cursor,
-            name: [{ id: '300', value: 'XXX-99' }, { id: '400', value: 'XXX-2' }, { id: '555', value: 'XXX-3' }]
-        }]
+        [bcParent.name]: [
+            {
+                vstamp: 0,
+                id: bcParent.cursor,
+                name: [
+                    { id: '300', value: 'XXX-99' },
+                    { id: '400', value: 'XXX-2' },
+                    { id: '555', value: 'XXX-3' }
+                ]
+            }
+        ]
     }
 }

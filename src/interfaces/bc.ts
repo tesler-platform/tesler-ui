@@ -2,7 +2,7 @@
  * Interfaces for Business Component
  */
 
-import {FilterGroup} from './filters'
+import { FilterGroup } from './filters'
 
 /**
  * Meta data for Business Component
@@ -11,19 +11,19 @@ export interface BcMeta {
     /**
      * Name of Business Component
      */
-    name: string,
+    name: string
     /**
      * Name of parent Business Component
      */
-    parentName: string | null,
+    parentName: string | null
     /**
      * TODO: desc, example
      */
-    url: string,
+    url: string
     /**
      * Currently active record
      */
-    cursor: string | null,
+    cursor: string | null
     /**
      * String representation of default bc sorters
      *
@@ -34,11 +34,11 @@ export interface BcMeta {
      * @param direction "asc" or "desc"
      * i.e. "_sort.0.asc=firstName"
      */
-    defaultSort?: string,
+    defaultSort?: string
     /**
      * Predefined filters
      */
-    filterGroups?: FilterGroup[],
+    filterGroups?: FilterGroup[]
     /**
      * String representation of default bc filters
      *
@@ -52,14 +52,14 @@ export interface BcMeta {
 }
 
 export interface BcMetaState extends BcMeta {
-    loading?: boolean,
-    page?: number,
-    limit?: number,
-    hasNext?: boolean,
+    loading?: boolean
+    page?: number
+    limit?: number
+    hasNext?: boolean
     depthBc?: Record<
         number,
         {
-            loading?: boolean,
+            loading?: boolean
             cursor?: string
         }
     >

@@ -1,10 +1,10 @@
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../interfaces/store'
-import {mockStore} from '../../tests/mockStore'
-import {cancelRequestEpic} from '../cancelRequestEpic'
-import {$do, types} from '../../actions/actions'
-import {ActionsObservable} from 'redux-observable'
-import {testEpic} from '../../tests/testEpic'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../interfaces/store'
+import { mockStore } from '../../tests/mockStore'
+import { cancelRequestEpic } from '../cancelRequestEpic'
+import { $do, types } from '../../actions/actions'
+import { ActionsObservable } from 'redux-observable'
+import { testEpic } from '../../tests/testEpic'
 
 const bcExample = {
     name: 'bcExample',
@@ -29,16 +29,20 @@ describe('cancelRequestEpic test', () => {
             [types.logout],
             () => null,
             $do.bcFetchRowMetaFail({ bcName: bcExample.name }),
-            (item) => {return true}
+            item => {
+                return true
+            }
         )
         testEpic(epic, result => {
             expect(result.length).toEqual(1)
-            expect(result[0]).toEqual(expect.objectContaining({
-                type: types.bcFetchRowMetaFail,
-                payload: expect.objectContaining({
-                    bcName: bcExample.name
+            expect(result[0]).toEqual(
+                expect.objectContaining({
+                    type: types.bcFetchRowMetaFail,
+                    payload: expect.objectContaining({
+                        bcName: bcExample.name
+                    })
                 })
-            }))
+            )
         })
     })
     it('should return set epic', () => {
@@ -51,13 +55,14 @@ describe('cancelRequestEpic test', () => {
         )
         testEpic(epic, result => {
             expect(result.length).toEqual(1)
-            expect(result[0]).toEqual(expect.objectContaining({
-                type: types.bcFetchRowMetaFail,
-                payload: expect.objectContaining({
-                    bcName: bcExample.name
+            expect(result[0]).toEqual(
+                expect.objectContaining({
+                    type: types.bcFetchRowMetaFail,
+                    payload: expect.objectContaining({
+                        bcName: bcExample.name
+                    })
                 })
-            }))
+            )
         })
     })
 })
-

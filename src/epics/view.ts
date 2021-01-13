@@ -1,193 +1,194 @@
-import {types, Epic, $do, AnyAction} from '../actions/actions'
-import {Observable} from 'rxjs/Observable'
+import { types, Epic, $do, AnyAction } from '../actions/actions'
+import { Observable } from 'rxjs/Observable'
 import * as api from '../api/api'
-import {buildBcUrl} from '../utils/strings'
-import {OperationTypeCrud,
+import { buildBcUrl } from '../utils/strings'
+import {
+    OperationTypeCrud,
     OperationError,
     OperationErrorEntity,
     OperationModalInvokeConfirm,
     OperationPostInvokeConfirmType,
     OperationPostInvokeAny,
-     OperationPreInvoke
+    OperationPreInvoke
 } from '../interfaces/operation'
-import {buildLocation} from '../Provider'
-import {changeLocation} from '../reducers/router'
-import {AxiosError} from 'axios'
-import {parseBcCursors} from '../utils/history'
-import {WidgetTypes} from '../interfaces/widget'
-import {matchOperationRole} from '../utils/operations'
-import {fileUploadConfirm} from './view/fileUploadConfirm'
-import {showFileUploadPopup} from './view/showFileUploadPopup'
-import {sendOperation} from './view/sendOperation'
-import {showAssocPopup} from './view/showAssocPopup'
+import { buildLocation } from '../Provider'
+import { changeLocation } from '../reducers/router'
+import { AxiosError } from 'axios'
+import { parseBcCursors } from '../utils/history'
+import { WidgetTypes } from '../interfaces/widget'
+import { matchOperationRole } from '../utils/operations'
+import { fileUploadConfirm } from './view/fileUploadConfirm'
+import { showFileUploadPopup } from './view/showFileUploadPopup'
+import { sendOperation } from './view/sendOperation'
+import { showAssocPopup } from './view/showAssocPopup'
 
-const sendOperationAssociate: Epic = (action$, store) => action$.ofType(types.sendOperation)
-.filter(action => matchOperationRole(OperationTypeCrud.associate, action.payload, store.getState()))
-.map(action => {
-    return $do.showViewPopup({
-        // TODO: bcKey will not be optional in 2.0.0
-        bcName: action.payload.bcKey
-            ? `${action.payload.bcKey}`
-            : `${action.payload.bcName}Assoc`,
-        calleeBCName: action.payload.bcName,
-        active: true
-    })
-})
+const sendOperationAssociate: Epic = (action$, store) =>
+    action$
+        .ofType(types.sendOperation)
+        .filter(action => matchOperationRole(OperationTypeCrud.associate, action.payload, store.getState()))
+        .map(action => {
+            return $do.showViewPopup({
+                // TODO: bcKey will not be optional in 2.0.0
+                bcName: action.payload.bcKey ? `${action.payload.bcKey}` : `${action.payload.bcName}Assoc`,
+                calleeBCName: action.payload.bcName,
+                active: true
+            })
+        })
 
 /*
-*   Эпик, который отправляет запрос на роумету при изменении значения поля с признаком forceActive.
-*/
-const getRowMetaByForceActive: Epic = (action$, store) => action$.ofType(types.changeDataItem)
-.mergeMap((action) => {
-    const state = store.getState()
-    const initUrl = state.view.url
-    const {bcName, cursor, disableRetry} = action.payload
+ *   Эпик, который отправляет запрос на роумету при изменении значения поля с признаком forceActive.
+ */
+const getRowMetaByForceActive: Epic = (action$, store) =>
+    action$.ofType(types.changeDataItem).mergeMap(action => {
+        const state = store.getState()
+        const initUrl = state.view.url
+        const { bcName, cursor, disableRetry } = action.payload
 
-    const isBcHierarchy = state.view.widgets.some((widget) => {
-        return widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup
-            && (widget.options?.hierarchySameBc || widget.options?.hierarchyFull)
-    })
-    if (isBcHierarchy) {
-        return Observable.empty<never>()
-    }
-
-    const bcUrl = buildBcUrl(bcName, true)
-    const pendingChanges = state.view.pendingDataChanges[bcName][cursor]
-    const handledForceActive = state.view.handledForceActive[bcName]?.[cursor] || {}
-    const currentRecordData = state.data[bcName]?.find((record) => record.id === cursor)
-    const fieldsRowMeta = state.view.rowMeta[bcName]?.[bcUrl]?.fields
-    let changedFiledKey: string = null
-
-    // среди forceActive-полей в дельте ищем то которое изменилось по отношению к обработанным forceActive
-    // или не содержится в нем, устанавливаем флаг необходимости отправки запроса если такое поле найдено
-    const someForceActiveChanged = fieldsRowMeta
-        ?.filter((field) => field.forceActive && pendingChanges[field.key] !== undefined)
-        .some((field) => {
-            const result = pendingChanges[field.key] !== handledForceActive[field.key]
-            if (result) {
-                changedFiledKey = field.key
-            }
-            return result
+        const isBcHierarchy = state.view.widgets.some(widget => {
+            return (
+                widget.bcName === bcName &&
+                widget.type === WidgetTypes.AssocListPopup &&
+                (widget.options?.hierarchySameBc || widget.options?.hierarchyFull)
+            )
         })
-
-    if (someForceActiveChanged && !disableRetry) {
-        return api.getRmByForceActive(
-            state.screen.screenName,
-            bcUrl,
-            {...pendingChanges, vstamp: currentRecordData.vstamp}
-        )
-        .mergeMap((data) => {
-            return (store.getState().view.url === initUrl)
-                ? Observable.of($do.forceActiveRmUpdate({
-                    rowMeta: data,
-                    currentRecordData,
-                    bcName,
-                    bcUrl,
-                    cursor
-                }))
-                : Observable.empty<never>()
-        })
-        .catch((e: AxiosError) => {
-            console.error(e)
-            let viewError: string = null
-            let entityError: OperationErrorEntity = null
-            const operationError = e.response?.data as OperationError
-            if (e.response?.data === Object(e.response?.data)) {
-                entityError = operationError?.error?.entity
-                viewError = operationError?.error?.popup?.[0]
-            }
-            return (store.getState().view.url === initUrl)
-                ? Observable.concat(
-                    Observable.of($do.changeDataItem({
-                        bcName,
-                        cursor,
-                        dataItem: {[changedFiledKey]: currentRecordData[changedFiledKey]},
-                        disableRetry: true
-                    })),
-                    Observable.of($do.forceActiveChangeFail({bcName, bcUrl, viewError, entityError})))
-                : Observable.empty<never>()
-        })
-    }
-    return Observable.empty<never>()
-})
-
-/*
-*   Эпик, который очищает дельту по дочерним бк при смене курсора
-* TODO При реализации автосохранения потеряет смысл, можно будет удалить
-* Initial code of `clearPendingDataChangesAfterCursorChange` is deleted. TODO: refactor a rest part of epic
-*/
-const clearPendingDataChangesAfterCursorChange: Epic = (action$, store) => action$.ofType(types.bcChangeCursors)
-.mergeMap((action) => {
-    const state = store.getState()
-
-    /*
-    *  Если при загрузке view курсор проставился не во всех бк
-    * то дописать недостающие курсоры
-    */
-    const nextCursors = parseBcCursors(state.router.bcPath) || {}
-    const cursorsDiffMap: Record<string, string> = {}
-    Object.entries(nextCursors).forEach(entry => {
-        const [ bcName, cursor ] = entry
-        const bc = state.screen.bo.bc[bcName]
-        if (!bc || bc?.cursor !== cursor) {
-            cursorsDiffMap[bcName] = cursor
+        if (isBcHierarchy) {
+            return Observable.empty<never>()
         }
+
+        const bcUrl = buildBcUrl(bcName, true)
+        const pendingChanges = state.view.pendingDataChanges[bcName][cursor]
+        const handledForceActive = state.view.handledForceActive[bcName]?.[cursor] || {}
+        const currentRecordData = state.data[bcName]?.find(record => record.id === cursor)
+        const fieldsRowMeta = state.view.rowMeta[bcName]?.[bcUrl]?.fields
+        let changedFiledKey: string = null
+
+        // среди forceActive-полей в дельте ищем то которое изменилось по отношению к обработанным forceActive
+        // или не содержится в нем, устанавливаем флаг необходимости отправки запроса если такое поле найдено
+        const someForceActiveChanged = fieldsRowMeta
+            ?.filter(field => field.forceActive && pendingChanges[field.key] !== undefined)
+            .some(field => {
+                const result = pendingChanges[field.key] !== handledForceActive[field.key]
+                if (result) {
+                    changedFiledKey = field.key
+                }
+                return result
+            })
+
+        if (someForceActiveChanged && !disableRetry) {
+            return api
+                .getRmByForceActive(state.screen.screenName, bcUrl, { ...pendingChanges, vstamp: currentRecordData.vstamp })
+                .mergeMap(data => {
+                    return store.getState().view.url === initUrl
+                        ? Observable.of(
+                              $do.forceActiveRmUpdate({
+                                  rowMeta: data,
+                                  currentRecordData,
+                                  bcName,
+                                  bcUrl,
+                                  cursor
+                              })
+                          )
+                        : Observable.empty<never>()
+                })
+                .catch((e: AxiosError) => {
+                    console.error(e)
+                    let viewError: string = null
+                    let entityError: OperationErrorEntity = null
+                    const operationError = e.response?.data as OperationError
+                    if (e.response?.data === Object(e.response?.data)) {
+                        entityError = operationError?.error?.entity
+                        viewError = operationError?.error?.popup?.[0]
+                    }
+                    return store.getState().view.url === initUrl
+                        ? Observable.concat(
+                              Observable.of(
+                                  $do.changeDataItem({
+                                      bcName,
+                                      cursor,
+                                      dataItem: { [changedFiledKey]: currentRecordData[changedFiledKey] },
+                                      disableRetry: true
+                                  })
+                              ),
+                              Observable.of($do.forceActiveChangeFail({ bcName, bcUrl, viewError, entityError }))
+                          )
+                        : Observable.empty<never>()
+                })
+        }
+        return Observable.empty<never>()
     })
-    if (Object.keys(cursorsDiffMap).length) {
-        return Observable.of($do.bcChangeCursors({ cursorsMap: cursorsDiffMap }))
-    }
 
-    return Observable.empty<never>()
-})
+/*
+ *   Эпик, который очищает дельту по дочерним бк при смене курсора
+ * TODO При реализации автосохранения потеряет смысл, можно будет удалить
+ * Initial code of `clearPendingDataChangesAfterCursorChange` is deleted. TODO: refactor a rest part of epic
+ */
+const clearPendingDataChangesAfterCursorChange: Epic = (action$, store) =>
+    action$.ofType(types.bcChangeCursors).mergeMap(action => {
+        const state = store.getState()
 
-const selectTableCellInit: Epic = (action$, store) => action$.ofType(types.selectTableCellInit)
-.mergeMap((action) => {
-    const resultObservables: Array<Observable<AnyAction>> = []
-    const state = store.getState()
+        /*
+         *  Если при загрузке view курсор проставился не во всех бк
+         * то дописать недостающие курсоры
+         */
+        const nextCursors = parseBcCursors(state.router.bcPath) || {}
+        const cursorsDiffMap: Record<string, string> = {}
+        Object.entries(nextCursors).forEach(entry => {
+            const [bcName, cursor] = entry
+            const bc = state.screen.bo.bc[bcName]
+            if (!bc || bc?.cursor !== cursor) {
+                cursorsDiffMap[bcName] = cursor
+            }
+        })
+        if (Object.keys(cursorsDiffMap).length) {
+            return Observable.of($do.bcChangeCursors({ cursorsMap: cursorsDiffMap }))
+        }
 
-    const {rowId: nextRowId, fieldKey} = action.payload
+        return Observable.empty<never>()
+    })
 
-    const nextWidget = state.view.widgets.find(widget => widget.name === action.payload.widgetName)
-    const nextBcName = nextWidget.bcName
-    const nextBcCursor = state.screen.bo.bc[nextBcName]?.cursor
+const selectTableCellInit: Epic = (action$, store) =>
+    action$.ofType(types.selectTableCellInit).mergeMap(action => {
+        const resultObservables: Array<Observable<AnyAction>> = []
+        const state = store.getState()
 
-    const selectedCell = state.view.selectedCell
-    if (nextRowId !== nextBcCursor) {
-        resultObservables.push(Observable.of(
-            $do.bcSelectRecord({ bcName: nextBcName, cursor: nextRowId })
-        ))
-    }
+        const { rowId: nextRowId, fieldKey } = action.payload
 
-    if (!selectedCell || fieldKey !== selectedCell.fieldKey || nextRowId !== selectedCell.rowId
-        || nextWidget.name !== selectedCell.widgetName
-    ) {
-        resultObservables.push(Observable.of(
-            $do.selectTableCell({ widgetName: nextWidget.name, rowId: nextRowId, fieldKey })
-        ))
-    }
+        const nextWidget = state.view.widgets.find(widget => widget.name === action.payload.widgetName)
+        const nextBcName = nextWidget.bcName
+        const nextBcCursor = state.screen.bo.bc[nextBcName]?.cursor
 
-    return Observable.concat(...resultObservables)
-})
+        const selectedCell = state.view.selectedCell
+        if (nextRowId !== nextBcCursor) {
+            resultObservables.push(Observable.of($do.bcSelectRecord({ bcName: nextBcName, cursor: nextRowId })))
+        }
 
-const showAllTableRecordsInit: Epic = (action$, store) => action$.ofType(types.showAllTableRecordsInit)
-.mergeMap((action) => {
-    const resultObservables: Array<Observable<AnyAction>> = []
+        if (
+            !selectedCell ||
+            fieldKey !== selectedCell.fieldKey ||
+            nextRowId !== selectedCell.rowId ||
+            nextWidget.name !== selectedCell.widgetName
+        ) {
+            resultObservables.push(Observable.of($do.selectTableCell({ widgetName: nextWidget.name, rowId: nextRowId, fieldKey })))
+        }
 
-    const {bcName, cursor} = action.payload
-    const route = store.getState().router
-    resultObservables.push(Observable.of(
-        $do.bcChangeCursors({ cursorsMap: { [bcName]: null }})
-    ))
-    const bcPath = route.bcPath.slice(0, route.bcPath.indexOf(`${bcName}/${cursor}`))
-    const url = buildLocation({ ...route, bcPath })
+        return Observable.concat(...resultObservables)
+    })
 
-    resultObservables.push(Observable.of(
-        $do.bcForceUpdate({ bcName })
-    ))
-    changeLocation(url)
+const showAllTableRecordsInit: Epic = (action$, store) =>
+    action$.ofType(types.showAllTableRecordsInit).mergeMap(action => {
+        const resultObservables: Array<Observable<AnyAction>> = []
 
-    return Observable.concat(...resultObservables)
-})
+        const { bcName, cursor } = action.payload
+        const route = store.getState().router
+        resultObservables.push(Observable.of($do.bcChangeCursors({ cursorsMap: { [bcName]: null } })))
+        const bcPath = route.bcPath.slice(0, route.bcPath.indexOf(`${bcName}/${cursor}`))
+        const url = buildLocation({ ...route, bcPath })
+
+        resultObservables.push(Observable.of($do.bcForceUpdate({ bcName })))
+        changeLocation(url)
+
+        return Observable.concat(...resultObservables)
+    })
 
 /**
  * Returns an array of observables for handling post- and pre-invokes from any epics handling operations
@@ -211,20 +212,24 @@ export function postOperationRoutine(
         result.push($do.processPostInvoke({ bcName, postInvoke, widgetName }))
     }
     if (postInvokeConfirm) {
-        result.push($do.processPostInvokeConfirm({
-            bcName,
-            operationType,
-            widgetName,
-            postInvokeConfirm: postInvoke as OperationModalInvokeConfirm
-        }))
+        result.push(
+            $do.processPostInvokeConfirm({
+                bcName,
+                operationType,
+                widgetName,
+                postInvokeConfirm: postInvoke as OperationModalInvokeConfirm
+            })
+        )
     }
     if (preInvoke) {
-        result.push($do.processPreInvoke({
-            bcName,
-            operationType,
-            widgetName,
-            preInvoke,
-        }))
+        result.push(
+            $do.processPreInvoke({
+                bcName,
+                operationType,
+                widgetName,
+                preInvoke
+            })
+        )
     }
     return result.map(item => Observable.of(item))
 }

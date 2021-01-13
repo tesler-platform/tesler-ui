@@ -16,9 +16,9 @@
  */
 
 import React from 'react'
-import {TreeNodeBidirectional, TreeNodeCollapsable} from '../../../interfaces/tree'
-import {buildSearchResultTree} from '../../../utils/tree'
-import {breadthFirstSearch} from '../../../utils/breadthFirst'
+import { TreeNodeBidirectional, TreeNodeCollapsable } from '../../../interfaces/tree'
+import { buildSearchResultTree } from '../../../utils/tree'
+import { breadthFirstSearch } from '../../../utils/breadthFirst'
 
 /**
  * Returns a memoized array of matching nodes, their direct children and every ancestor node.
@@ -30,11 +30,7 @@ import {breadthFirstSearch} from '../../../utils/breadthFirst'
  * @param matchingNodes Ids of the searched nodes
  * @param expandedNodes Ids of the nodes that are expanded
  */
-export function useSearchResult<T extends TreeNodeBidirectional>(
-    nodes: T[],
-    matchingNodes: string[],
-    expandedNodes: string[]
-) {
+export function useSearchResult<T extends TreeNodeBidirectional>(nodes: T[], matchingNodes: string[], expandedNodes: string[]) {
     return React.useMemo(() => {
         return getSearchResult(nodes, matchingNodes, expandedNodes)
     }, [nodes, matchingNodes, expandedNodes])
@@ -66,9 +62,16 @@ export function getSearchResult<T extends TreeNodeBidirectional>(
         result = searchResultTree.map(item => {
             let _expanded = expandedNodes.includes(item.parentId)
             if (item.children) {
-                _expanded = _expanded && !!breadthFirstSearch(item, (data: T) => {
-                        return matchingNodes.includes(data.id)
-                    }, 0, 'children')
+                _expanded =
+                    _expanded &&
+                    !!breadthFirstSearch(
+                        item,
+                        (data: T) => {
+                            return matchingNodes.includes(data.id)
+                        },
+                        0,
+                        'children'
+                    )
             }
             return { ...item, _expanded }
         })

@@ -16,13 +16,13 @@
  */
 
 import React from 'react'
-import {PaginationMode} from '../../../interfaces/widget'
-import {Button} from 'antd'
-import {useDispatch, useSelector} from 'react-redux'
-import {useTranslation} from 'react-i18next'
-import {Store} from '../../../interfaces/store'
+import { PaginationMode } from '../../../interfaces/widget'
+import { Button } from 'antd'
+import { useDispatch, useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
+import { Store } from '../../../interfaces/store'
 import styles from './Pagination.less'
-import {$do} from '../../../actions/actions'
+import { $do } from '../../../actions/actions'
 
 /**
  * Pagination component properties
@@ -35,17 +35,17 @@ export interface PaginationOwnProps {
      *
      * @deprecated TODO: Remove in favor of widgetName in 2.0.0
      */
-    bcName?: string,
+    bcName?: string
     /**
      * Name of the widget showing pagination
      *
      * TODO: Will be mandatory in 2.0.0
      */
-    widgetName?: string,
+    widgetName?: string
     /**
      * Type of paginator (prev/next buttons, loadMore button, etc.)
      */
-    mode: PaginationMode,
+    mode: PaginationMode
     /**
      * Callback on page change
      */
@@ -56,9 +56,9 @@ export interface PaginationOwnProps {
  * @deprecated Connected internally
  */
 interface PaginationStateProps {
-    hasNext: boolean,
-    page: number,
-    loading: boolean,
+    hasNext: boolean
+    page: number
+    loading: boolean
     widgetName: string
 }
 
@@ -66,7 +66,7 @@ interface PaginationStateProps {
  * @deprecated Connected internally
  */
 interface PaginationDispatchProps {
-    changePage: (bcName: string, page: number) => void,
+    changePage: (bcName: string, page: number) => void
     loadMore: (bcName: string, widgetName: string) => void
 }
 
@@ -78,76 +78,56 @@ type PaginationAllProps = PaginationOwnProps & Partial<PaginationStateProps> & P
  *
  * Depending on the display mode, fires `bcLoadMore` or `bcChangePage` action
  */
-const Pagination: React.FunctionComponent<PaginationAllProps> = (props) => {
-
-    const bcName = props.bcName // TODO: get only from store in 2.0.0
-        || useSelector((store: Store) => store.view.widgets.find(item => item.name === props.widgetName)?.bcName)
+const Pagination: React.FunctionComponent<PaginationAllProps> = props => {
+    const bcName =
+        props.bcName || // TODO: get only from store in 2.0.0
+        useSelector((store: Store) => store.view.widgets.find(item => item.name === props.widgetName)?.bcName)
     const hasNext = useSelector((store: Store) => store.screen.bo.bc[bcName]?.hasNext)
     const page = useSelector((store: Store) => store.screen.bo.bc[bcName]?.page)
     const loading = useSelector((store: Store) => store.screen.bo.bc[bcName]?.loading)
     const dispatch = useDispatch()
 
-    const onLoadMore = React.useCallback(
-        () => {
-            dispatch($do.bcLoadMore({ bcName, widgetName: props.widgetName }))
-            props.onChangePage?.(page + 1)
-        },
-        [bcName, props.widgetName, page]
-    )
+    const onLoadMore = React.useCallback(() => {
+        dispatch($do.bcLoadMore({ bcName, widgetName: props.widgetName }))
+        props.onChangePage?.(page + 1)
+    }, [bcName, props.widgetName, page])
 
-    const onPrevPage = React.useCallback(
-        () => {
-            const newPage = page - 1
-            dispatch($do.bcChangePage({ bcName, page: newPage }))
-            if (props.onChangePage) {
-                props.onChangePage(newPage)
-            }
-        },
-        [bcName, page]
-    )
+    const onPrevPage = React.useCallback(() => {
+        const newPage = page - 1
+        dispatch($do.bcChangePage({ bcName, page: newPage }))
+        if (props.onChangePage) {
+            props.onChangePage(newPage)
+        }
+    }, [bcName, page])
 
-    const onNextPage = React.useCallback(
-        () => {
-            const newPage = page + 1
-            dispatch($do.bcChangePage({ bcName, page: newPage }))
-            if (props.onChangePage) {
-                props.onChangePage(newPage)
-            }
-        },
-        [bcName, page]
-    )
+    const onNextPage = React.useCallback(() => {
+        const newPage = page + 1
+        dispatch($do.bcChangePage({ bcName, page: newPage }))
+        if (props.onChangePage) {
+            props.onChangePage(newPage)
+        }
+    }, [bcName, page])
 
-    const {t} = useTranslation()
+    const { t } = useTranslation()
 
-    const isRequired = hasNext || props.mode === PaginationMode.page && page > 1
+    const isRequired = hasNext || (props.mode === PaginationMode.page && page > 1)
 
     if (!isRequired) {
         return null
     }
 
-    return props.mode === PaginationMode.page
-        ? <div className={styles.paginationContainer}>
-            <Button
-                className={styles.prevButton}
-                disabled={page < 2}
-                onClick={onPrevPage}
-                icon="left"
-            />
-            <Button
-                disabled={!hasNext}
-                onClick={onNextPage}
-                icon="right"
-            />
+    return props.mode === PaginationMode.page ? (
+        <div className={styles.paginationContainer}>
+            <Button className={styles.prevButton} disabled={page < 2} onClick={onPrevPage} icon="left" />
+            <Button disabled={!hasNext} onClick={onNextPage} icon="right" />
         </div>
-        : <div className={styles.paginationContainer}>
-            <Button
-                onClick={onLoadMore}
-                disabled={loading}
-                loading={loading}
-            >
+    ) : (
+        <div className={styles.paginationContainer}>
+            <Button onClick={onLoadMore} disabled={loading} loading={loading}>
                 {t('Load more')}
             </Button>
         </div>
+    )
 }
 
 export default React.memo(Pagination)

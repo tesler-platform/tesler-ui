@@ -16,7 +16,7 @@
  */
 
 export interface Action<K, P> {
-    type: K,
+    type: K
     payload: P
 }
 
@@ -42,7 +42,7 @@ export type uActionCreators<A> = {
 export function createActionCreators<A>(actionObj: A): uActionCreators<A> {
     const keys = Object.keys(actionObj)
     const creators = {} as any
-    keys.forEach((key) => {
+    keys.forEach(key => {
         creators[key] = (payload: any) => ({
             type: key,
             payload: payload
@@ -59,7 +59,7 @@ export function createActionCreators<A>(actionObj: A): uActionCreators<A> {
 export function createActionTypes<A>(actionObj: A): uActionTypesMap<A> {
     const keys = Object.keys(actionObj)
     const types = {} as any
-    keys.forEach((key) => {
+    keys.forEach(key => {
         types[key] = key
     })
     return types

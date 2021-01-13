@@ -15,16 +15,15 @@
  * limitations under the License.
  */
 
-import {testEpic} from '../../../tests/testEpic'
-import {$do} from '../../../actions/actions'
-import {ActionsObservable} from 'redux-observable'
-import {mockStore } from '../../../tests/mockStore'
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {changeView} from '../selectView'
+import { testEpic } from '../../../tests/testEpic'
+import { $do } from '../../../actions/actions'
+import { ActionsObservable } from 'redux-observable'
+import { mockStore } from '../../../tests/mockStore'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { changeView } from '../selectView'
 
 describe('selectView', () => {
-
     let store: Store<CoreStore> = null
     const action = $do.selectView(null)
 
@@ -41,22 +40,26 @@ describe('selectView', () => {
     it('fires `bcChangeCursors` if route cursors does not match the store', () => {
         store.getState().router.bcPath = 'bcParent/4/bcChild/5/bcNew/8'
         const epic = changeView(ActionsObservable.of(action), store)
-        testEpic(epic, (res) => {
+        testEpic(epic, res => {
             expect(res.length).toBe(1)
-            expect(res[0]).toEqual(expect.objectContaining($do.bcChangeCursors({
-                cursorsMap: {
-                    bcParent: '4',
-                    bcChild: '5',
-                    bcNew: '8'
-                }
-            })))
+            expect(res[0]).toEqual(
+                expect.objectContaining(
+                    $do.bcChangeCursors({
+                        cursorsMap: {
+                            bcParent: '4',
+                            bcChild: '5',
+                            bcNew: '8'
+                        }
+                    })
+                )
+            )
         })
     })
 
     it('fires nothing if route cursors match the store', () => {
         store.getState().router.bcPath = 'bcParent/1/bcChild/2'
         const epic = changeView(ActionsObservable.of(action), store)
-        testEpic(epic, (res) => {
+        testEpic(epic, res => {
             expect(res.length).toBe(0)
         })
     })
@@ -64,7 +67,7 @@ describe('selectView', () => {
     it('fires nothing if no cursors in route', () => {
         store.getState().router.bcPath = null
         const epic = changeView(ActionsObservable.of(action), store)
-        testEpic(epic, (res) => {
+        testEpic(epic, res => {
             expect(res.length).toBe(0)
         })
     })

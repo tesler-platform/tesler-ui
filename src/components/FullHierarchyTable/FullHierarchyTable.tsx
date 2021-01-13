@@ -1,37 +1,37 @@
-import React, {FunctionComponent} from 'react'
+import React, { FunctionComponent } from 'react'
 import styles from './FullHierarchyTable.less'
-import {WidgetListField, WidgetTableMeta} from '../../interfaces/widget'
-import {AssociatedItem} from '../../interfaces/operation'
-import {Store} from '../../interfaces/store'
-import {Dispatch} from 'redux'
-import {connect} from 'react-redux'
-import {Icon, Skeleton, Table} from 'antd'
-import {ColumnProps, TableRowSelection, TableEventListeners} from 'antd/lib/table'
-import {DataItem, MultivalueSingleValue, PendingDataItem} from '../../interfaces/data'
-import {FieldType} from '../../interfaces/view'
+import { WidgetListField, WidgetTableMeta } from '../../interfaces/widget'
+import { AssociatedItem } from '../../interfaces/operation'
+import { Store } from '../../interfaces/store'
+import { Dispatch } from 'redux'
+import { connect } from 'react-redux'
+import { Icon, Skeleton, Table } from 'antd'
+import { ColumnProps, TableRowSelection, TableEventListeners } from 'antd/lib/table'
+import { DataItem, MultivalueSingleValue, PendingDataItem } from '../../interfaces/data'
+import { FieldType } from '../../interfaces/view'
 import MultivalueHover from '../ui/Multivalue/MultivalueHover'
 import Field from '../Field/Field'
-import {useAssocRecords} from '../../hooks/useAssocRecords'
-import {$do} from '../../actions/actions'
-import {BcFilter, FilterType} from '../../interfaces/filters'
-import {buildBcUrl} from '../../utils/strings'
-import {RowMetaField} from '../../interfaces/rowMeta'
+import { useAssocRecords } from '../../hooks/useAssocRecords'
+import { $do } from '../../actions/actions'
+import { BcFilter, FilterType } from '../../interfaces/filters'
+import { buildBcUrl } from '../../utils/strings'
+import { RowMetaField } from '../../interfaces/rowMeta'
 import FullHierarchyFilter from './FullHierarchyFilter'
 import ColumnTitle from '../ColumnTitle/ColumnTitle'
 import cn from 'classnames'
-import {useHierarchyCache} from './utils/useHierarchyCache'
-import {useExpandedKeys} from './utils/useExpandedKeys'
-import {getColumnWidth} from '../../utils/hierarchy'
+import { useHierarchyCache } from './utils/useHierarchyCache'
+import { useExpandedKeys } from './utils/useExpandedKeys'
+import { getColumnWidth } from '../../utils/hierarchy'
 
 export interface FullHierarchyTableOwnProps {
-    meta: WidgetTableMeta,
-    nestedData?: FullHierarchyDataItem[],
-    assocValueKey?: string,
-    depth?: number,
-    parentId?: string,
-    selectable?: boolean,
-    expandedRowKeys?: string[],
-    onRow?: (record: DataItem, index: number) => TableEventListeners,
+    meta: WidgetTableMeta
+    nestedData?: FullHierarchyDataItem[]
+    assocValueKey?: string
+    depth?: number
+    parentId?: string
+    selectable?: boolean
+    expandedRowKeys?: string[]
+    onRow?: (record: DataItem, index: number) => TableEventListeners
     /**
      * @deprecated TODO: No longer in use, remove in 2.0.0,
      */
@@ -39,24 +39,24 @@ export interface FullHierarchyTableOwnProps {
 }
 
 interface FullHierarchyTableProps {
-    data: FullHierarchyDataItem[],
-    loading: boolean,
-    pendingChanges: Record<string, PendingDataItem>,
-    bcFilters: BcFilter[],
+    data: FullHierarchyDataItem[]
+    loading: boolean
+    pendingChanges: Record<string, PendingDataItem>
+    bcFilters: BcFilter[]
     rowMetaFields: RowMetaField[]
 }
 
 interface FullHierarchyTableDispatchProps {
-    onSelect: (bcName: string, depth: number, dataItem: AssociatedItem, widgetName: string, assocValueKey: string) => void,
-    onDeselectAll: (bcName: string, depthFrom: number) => void,
-    onSelectAll: (bcName: string, parentId: string, depth: number, assocValueKey: string, selected: boolean) => void,
-    onSelectFullTable?: (bcName: string, dataItems: AssociatedItem[], assocValueKey: string, selected: boolean) => void,
-    addFilter?: (bcName: string, filter: BcFilter) => void,
+    onSelect: (bcName: string, depth: number, dataItem: AssociatedItem, widgetName: string, assocValueKey: string) => void
+    onDeselectAll: (bcName: string, depthFrom: number) => void
+    onSelectAll: (bcName: string, parentId: string, depth: number, assocValueKey: string, selected: boolean) => void
+    onSelectFullTable?: (bcName: string, dataItems: AssociatedItem[], assocValueKey: string, selected: boolean) => void
+    addFilter?: (bcName: string, filter: BcFilter) => void
     removeFilter?: (bcName: string, filter: BcFilter) => void
 }
 
 export interface FullHierarchyDataItem extends AssociatedItem {
-    parentId: string,
+    parentId: string
     level: number
 }
 
@@ -72,23 +72,25 @@ const Exp: FunctionComponent = (props: any) => {
     if (!props.onExpand || props.record.noChildren) {
         return null
     }
-    return <Icon
-        style={{ fontSize: '20px' }}
-        type={props.expanded ? 'minus-square' : 'plus-square'}
-        onClick={e => props.onExpand(props.record, e)}
-    />
+    return (
+        <Icon
+            style={{ fontSize: '20px' }}
+            type={props.expanded ? 'minus-square' : 'plus-square'}
+            onClick={e => props.onExpand(props.record, e)}
+        />
+    )
 }
 
-export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllProps> = (props) => {
+export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllProps> = props => {
     const bcName = props.meta.bcName
     const fields = props.meta.fields
     const loading = props.loading
     const depthLevel = props.depth || 1
     const levelValues = props.data?.map(item => item.level)
-    const maxDepth = levelValues && Math.max(...levelValues) || 1
+    const maxDepth = (levelValues && Math.max(...levelValues)) || 1
     console.warn(props.data)
-    const textFilters = React.useMemo(() => props.bcFilters?.filter(filter =>
-            [FilterType.contains, FilterType.equals].includes(filter.type)),
+    const textFilters = React.useMemo(
+        () => props.bcFilters?.filter(filter => [FilterType.contains, FilterType.equals].includes(filter.type)),
         [props.bcFilters]
     )
     const [filteredData, searchedAncestorsKeys] = useHierarchyCache(
@@ -96,26 +98,25 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
         textFilters,
         props.data,
         props.depth,
-        props.meta.options?.hierarchyDisableDescendants)
+        props.meta.options?.hierarchyDisableDescendants
+    )
 
-    const data = (props?.nestedData?.length > 0 && depthLevel > 1)
-        ? props.nestedData
-        : props?.bcFilters?.length > 0
-            ? filteredData
-            : props.data
+    const data =
+        props?.nestedData?.length > 0 && depthLevel > 1 ? props.nestedData : props?.bcFilters?.length > 0 ? filteredData : props.data
 
     const selectedRecords = useAssocRecords(data, props.pendingChanges)
 
     const [expandedKeys, setExpandedKeys] = useExpandedKeys(
-        props.expandedRowKeys, selectedRecords, filteredData,
-        textFilters, searchedAncestorsKeys, props.meta.options?.hierarchyDisableDescendants
+        props.expandedRowKeys,
+        selectedRecords,
+        filteredData,
+        textFilters,
+        searchedAncestorsKeys,
+        props.meta.options?.hierarchyDisableDescendants
     )
 
     const handleExpand = (expanded: boolean, dataItem: DataItem) => {
-        setExpandedKeys(expanded
-            ? [ ...expandedKeys, dataItem.id ]
-            : [ ...expandedKeys ].filter(item => item !== dataItem.id)
-        )
+        setExpandedKeys(expanded ? [...expandedKeys, dataItem.id] : [...expandedKeys].filter(item => item !== dataItem.id))
     }
 
     const {
@@ -127,20 +128,18 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
         hierarchyDisableParent
     } = props.meta.options ?? {}
 
-    const tableRecords = React.useMemo<ChildrenAwaredHierarchyItem[]>(
-        () => {
-            return data?.filter((dataItem) => {
+    const tableRecords = React.useMemo<ChildrenAwaredHierarchyItem[]>(() => {
+        return data
+            ?.filter(dataItem => {
                 return dataItem.level === depthLevel && (dataItem.level === 1 || dataItem.parentId === props.parentId)
             })
-                .map((filteredItem) => {
-                    return {
-                        ...filteredItem,
-                        noChildren: !data.find((dataItem) => dataItem.parentId === filteredItem.id)
-                    }
-                })
-        },
-        [data, props.parentId, depthLevel]
-    )
+            .map(filteredItem => {
+                return {
+                    ...filteredItem,
+                    noChildren: !data.find(dataItem => dataItem.parentId === filteredItem.id)
+                }
+            })
+    }, [data, props.parentId, depthLevel])
 
     const rowSelection: TableRowSelection<DataItem> = React.useMemo(() => {
         if (props.selectable) {
@@ -155,13 +154,13 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                     const dataItem = {
                         ...record,
                         _associate: selected,
-                        _value: record[props.assocValueKey],
+                        _value: record[props.assocValueKey]
                     }
 
                     if (hierarchyRadioAll) {
                         props.onDeselectAll(bcName, depthLevel)
                     } else if (hierarchyRootRadio && depthLevel === 1 && selected) {
-                        const rootSelectedRecord = selectedRecords.find((item) => item.level === 1)
+                        const rootSelectedRecord = selectedRecords.find(item => item.level === 1)
                         if (rootSelectedRecord) {
                             props.onSelect(
                                 bcName,
@@ -173,7 +172,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                         }
                     }
 
-                    if (!selected && hierarchyGroupDeselection || selected && hierarchyGroupSelection) {
+                    if ((!selected && hierarchyGroupDeselection) || (selected && hierarchyGroupSelection)) {
                         props.onSelectAll(bcName, record.id, depthLevel + 1, props.assocValueKey, selected)
                     }
 
@@ -186,14 +185,16 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
 
     // Nested hierarchy level is drown by another table
     const nestedHierarchy = (record: DataItem, index: number, indent: number, expanded: boolean) => {
-        return <ConnectedFullHierarchyTable
-            meta={props.meta}
-            assocValueKey={props.assocValueKey}
-            depth={depthLevel + 1}
-            parentId={record.id}
-            selectable={props.selectable}
-            onRow={props.onRow}
-        />
+        return (
+            <ConnectedFullHierarchyTable
+                meta={props.meta}
+                assocValueKey={props.assocValueKey}
+                depth={depthLevel + 1}
+                parentId={record.id}
+                selectable={props.selectable}
+                onRow={props.onRow}
+            />
+        )
     }
 
     // Hierarchy levels are indented by empty columns with calculated width
@@ -216,56 +217,60 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
             ...fields
                 ?.filter((item: WidgetListField) => item.type !== FieldType.hidden && !item.hidden)
                 .map((item: WidgetListField) => ({
-                    title: <ColumnTitle
-                        widgetName={props.meta.name}
-                        widgetMeta={item}
-                        rowMeta={props.rowMetaFields?.find(rm => rm.key === item.key)}
-                        components={components}
-                    >
-                        {item.title}
-                    </ColumnTitle>,
+                    title: (
+                        <ColumnTitle
+                            widgetName={props.meta.name}
+                            widgetMeta={item}
+                            rowMeta={props.rowMetaFields?.find(rm => rm.key === item.key)}
+                            components={components}
+                        >
+                            {item.title}
+                        </ColumnTitle>
+                    ),
                     key: item.key,
                     dataIndex: item.key,
                     width: getColumnWidth(item.key, depthLevel, fields, props.rowMetaFields, maxDepth, item.width),
                     render: (text: string, dataItem: AssociatedItem) => {
                         if (item.type === FieldType.multivalue) {
-                            return <MultivalueHover
-                                data={(dataItem[item.key] || emptyMultivalue) as MultivalueSingleValue[]}
-                                displayedValue={item.displayedKey && dataItem[item.displayedKey]}
-                            />
+                            return (
+                                <MultivalueHover
+                                    data={(dataItem[item.key] || emptyMultivalue) as MultivalueSingleValue[]}
+                                    displayedValue={item.displayedKey && dataItem[item.displayedKey]}
+                                />
+                            )
                         }
 
                         /**
                          * Column width problems
                          * https://github.com/ant-design/ant-design/issues/13825
                          */
-                        return <div style={{wordWrap: 'break-word', wordBreak: 'break-word'}}>
-                            <Field
-                                bcName={bcName}
-                                cursor={dataItem.id}
-                                widgetName={props.meta.name}
-                                widgetFieldMeta={item}
-                                readonly
-                            />
-                        </div>
+                        return (
+                            <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
+                                <Field bcName={bcName} cursor={dataItem.id} widgetName={props.meta.name} widgetFieldMeta={item} readonly />
+                            </div>
+                        )
                     }
                 }))
         ]
     }, [depthLevel, fields, props.meta.name, textFilters, indentColumn])
 
-    const handleRow = React.useCallback((record: ChildrenAwaredHierarchyItem, index: number) => {
-        if (hierarchyDisableRoot && depthLevel === 1) {
-            return undefined
-        }
-        if (hierarchyDisableParent && !record.noChildren) {
-            return undefined
-        }
-        return props.onRow?.(record, index)
-    }, [props.onRow, hierarchyDisableRoot, hierarchyDisableParent, depthLevel])
+    const handleRow = React.useCallback(
+        (record: ChildrenAwaredHierarchyItem, index: number) => {
+            if (hierarchyDisableRoot && depthLevel === 1) {
+                return undefined
+            }
+            if (hierarchyDisableParent && !record.noChildren) {
+                return undefined
+            }
+            return props.onRow?.(record, index)
+        },
+        [props.onRow, hierarchyDisableRoot, hierarchyDisableParent, depthLevel]
+    )
 
-    return loading
-        ? <Skeleton loading paragraph={{rows: 5}}/>
-        : <div className={styles.container}>
+    return loading ? (
+        <Skeleton loading paragraph={{ rows: 5 }} />
+    ) : (
+        <div className={styles.container}>
             <Table
                 className={styles.table}
                 rowSelection={rowSelection}
@@ -280,12 +285,13 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                 dataSource={tableRecords}
                 expandedRowRender={nestedHierarchy}
                 expandIconAsCell={false}
-                expandIconColumnIndex={(props.selectable) ? 1 : 0}
+                expandIconColumnIndex={props.selectable ? 1 : 0}
                 loading={loading}
                 onRow={handleRow}
                 getPopupContainer={(trigger: HTMLElement) => trigger.parentNode.parentNode as HTMLElement}
             />
         </div>
+    )
 }
 
 function mapStateToProps(store: Store, ownProps: FullHierarchyTableOwnProps): FullHierarchyTableProps {
@@ -296,10 +302,10 @@ function mapStateToProps(store: Store, ownProps: FullHierarchyTableOwnProps): Fu
     const loading = bc?.loading || !rowMeta
     return {
         loading: loading,
-        data: (loading) ? emptyData : store.data[bcName] as FullHierarchyDataItem[],
+        data: loading ? emptyData : (store.data[bcName] as FullHierarchyDataItem[]),
         pendingChanges: store.view.pendingDataChanges[bcName],
         bcFilters: store.screen.filters[bcName],
-        rowMetaFields: store.view.rowMeta[bcName]?.[bcUrl]?.fields,
+        rowMetaFields: store.view.rowMeta[bcName]?.[bcUrl]?.fields
     }
 }
 
