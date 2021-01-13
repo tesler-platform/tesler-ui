@@ -1,3 +1,11 @@
+# Version 1.26.2 (January 13, 2020)
+
+## Fixes
+
+* Added ability to set width of last column, fixed -Infinitypx value of maxDepth ([#545](https://github.com/tesler-platform/tesler-ui/pull/545))
+* `<FullHierarchy />` applied `table-layout: fixed` style to `<div />` container instead of `<table />` itself, which caused inconsistency in separate inner table sizes ([#560](https://github.com/tesler-platform/tesler-ui/pull/560))
+* `hierarchyDisableParent` widget option in `<FullHierarchyTable />` erroneously checked `noChildren` flag only among items of current depth allowing nodes with children to be selected despite the widget flag ([#558](https://github.com/tesler-platform/tesler-ui/pull/558))
+
 # Version 1.26.1 (December 30, 2020)
 
 ## Fixes
