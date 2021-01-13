@@ -29,6 +29,12 @@ If you come up with a feature that looks more attractive as a library component 
 
 # Style guide
 
+Before commit launch prettier and eslint checks:
+
+```sh
+yarn lint --fix
+```
+
 ## Naming, documentation and folder structure
 
 * Test files should be named as <testedModule>.tests.ts or <TestedComponent>.tests.ts
@@ -45,22 +51,22 @@ If you come up with a feature that looks more attractive as a library component 
 
 ```tsx
 // Connected component template
-import React, {FunctionComponent} from 'react'
-import {Dispatch} from 'redux'
-import {connect} from 'react-redux'
+import React, { FunctionComponent } from 'react'
+import { Dispatch } from 'redux'
+import { connect } from 'react-redux'
 import cn from 'classnames'
-import {$do} from '../../actions/actions'
-import {Store} from '../../interfaces/store'
+import { $do } from '../../actions/actions'
+import { Store } from '../../interfaces/store'
 import styles from './Container.less'
 
 export interface ContainerOwnProps {
-    className?: string,
+    className?: string
     bcName: string
 }
 
 export interface ContainerProps extends ContainerOwnProps {
-    cursor: string,
-    onEmptyAction: () => void,
+    cursor: string
+    onEmptyAction: () => void
     onClick: (test: string) => void
 }
 

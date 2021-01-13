@@ -1,16 +1,16 @@
-import React, {FunctionComponent} from 'react'
-import {mount, shallow} from 'enzyme'
-import {Store} from 'redux'
-import {Provider} from 'react-redux'
-import {Skeleton} from 'antd'
-import {mockStore} from '../../tests/mockStore'
-import {WidgetField, WidgetTypes, PopupWidgetTypes} from '../../interfaces/widget'
-import {Store as CoreStore} from '../../interfaces/store'
-import {$do} from '../../actions/actions'
-import {BcMetaState} from '../../interfaces/bc'
+import React, { FunctionComponent } from 'react'
+import { mount, shallow } from 'enzyme'
+import { Store } from 'redux'
+import { Provider } from 'react-redux'
+import { Skeleton } from 'antd'
+import { mockStore } from '../../tests/mockStore'
+import { WidgetField, WidgetTypes, PopupWidgetTypes } from '../../interfaces/widget'
+import { Store as CoreStore } from '../../interfaces/store'
+import { $do } from '../../actions/actions'
+import { BcMetaState } from '../../interfaces/bc'
 import Form from '../widgets/FormWidget/FormWidget'
 import Table from '../widgets/TableWidget/TableWidget'
-import Widget, {Widget as SimpleWidget} from './Widget'
+import Widget, { Widget as SimpleWidget } from './Widget'
 import styles from './Widget.less'
 import AssocListPopup from '../widgets/AssocListPopup/AssocListPopup'
 import PickListPopup from '../widgets/PickListPopup/PickListPopup'
@@ -48,10 +48,7 @@ describe('Field with default card', () => {
     })
 
     it('renders custom card wrapper', () => {
-        const card: FunctionComponent = props =>
-            <article className="blueCard">
-                {props.children}
-            </article>
+        const card: FunctionComponent = props => <article className="blueCard">{props.children}</article>
         const wrapper = mount(
             <Provider store={store}>
                 <Widget meta={widgetMeta} card={card} />
@@ -64,7 +61,7 @@ describe('Field with default card', () => {
     })
 
     it('should render Info widget', () => {
-        const infoProps = {...widgetMeta}
+        const infoProps = { ...widgetMeta }
         infoProps.type = WidgetTypes.Info
         const wrapper = mount(
             <Provider store={store}>
@@ -122,7 +119,7 @@ describe('Uses info from widget descriptor', () => {
 
         const wrapper = mount(
             <Provider store={store}>
-                <Widget meta={widgetMeta} customWidgets={{[WidgetTypes.Form]: {component, card: null}}} />
+                <Widget meta={widgetMeta} customWidgets={{ [WidgetTypes.Form]: { component, card: null } }} />
             </Provider>
         )
         const widget = wrapper.find(Widget)
@@ -135,7 +132,7 @@ describe('Uses info from widget descriptor', () => {
 
         const wrapper = mount(
             <Provider store={store}>
-                <Widget meta={widgetMeta} customWidgets={{[WidgetTypes.Form]: {component}}} />
+                <Widget meta={widgetMeta} customWidgets={{ [WidgetTypes.Form]: { component } }} />
             </Provider>
         )
         const widget = wrapper.find(Widget)
@@ -144,15 +141,12 @@ describe('Uses info from widget descriptor', () => {
     })
 
     it('renders custom card and custom component', () => {
-        const card: FunctionComponent = props =>
-            <article className="blueCard">
-                {props.children}
-            </article>
+        const card: FunctionComponent = props => <article className="blueCard">{props.children}</article>
         const component: FunctionComponent = () => <div className="customComponent" />
 
         const wrapper = mount(
             <Provider store={store}>
-                <Widget meta={widgetMeta} customWidgets={{[WidgetTypes.Form]: {component, card}}} />
+                <Widget meta={widgetMeta} customWidgets={{ [WidgetTypes.Form]: { component, card } }} />
             </Provider>
         )
         const widget = wrapper.find(Widget)

@@ -15,19 +15,19 @@
  * limitations under the License.
  */
 
-import {Observable} from 'rxjs'
-import {Store, AnyAction} from 'redux'
-import {Epic, types, $do,  ActionsMap} from '../../actions/actions'
-import {Store as CoreStore} from '../../interfaces/store'
-import {buildBcUrl} from '../../utils/strings'
-import {createCanceler, fetchRowMeta} from '../../api/api'
-import {cancelRequestActionTypes, cancelRequestEpic} from '../../utils/cancelRequestEpic'
-import {ActionsObservable} from 'redux-observable'
+import { Observable } from 'rxjs'
+import { Store, AnyAction } from 'redux'
+import { Epic, types, $do, ActionsMap } from '../../actions/actions'
+import { Store as CoreStore } from '../../interfaces/store'
+import { buildBcUrl } from '../../utils/strings'
+import { createCanceler, fetchRowMeta } from '../../api/api'
+import { cancelRequestActionTypes, cancelRequestEpic } from '../../utils/cancelRequestEpic'
+import { ActionsObservable } from 'redux-observable'
 
-export const bcFetchRowMetaRequest: Epic = (action$, store) => action$.ofType(types.bcFetchRowMeta)
-.mergeMap((action) => {
-    return bcFetchRowMetaRequestImpl(action, store, action$)
-})
+export const bcFetchRowMetaRequest: Epic = (action$, store) =>
+    action$.ofType(types.bcFetchRowMeta).mergeMap(action => {
+        return bcFetchRowMetaRequestImpl(action, store, action$)
+    })
 
 export function bcFetchRowMetaRequestImpl(
     action: ActionsMap['bcFetchRowMeta'],
@@ -40,29 +40,24 @@ export function bcFetchRowMetaRequestImpl(
     const cursor = state.screen.bo.bc[bcName].cursor
     const bcUrl = buildBcUrl(bcName, true)
     const canceler = createCanceler()
-    const cancelFlow = cancelRequestEpic(
-        actionObservable,
-        cancelRequestActionTypes,
-        canceler.cancel,
-        $do.bcFetchRowMetaFail({ bcName })
-    )
+    const cancelFlow = cancelRequestEpic(actionObservable, cancelRequestActionTypes, canceler.cancel, $do.bcFetchRowMetaFail({ bcName }))
     const cancelByParentBc = cancelRequestEpic(
         actionObservable,
         [types.bcSelectRecord],
         canceler.cancel,
         $do.bcFetchRowMetaFail({ bcName }),
-        (filteredAction) => {
+        filteredAction => {
             const actionBc = filteredAction.payload.bcName
             return state.screen.bo.bc[bcName].parentName === actionBc
         }
     )
     const normalFlow = fetchRowMeta(screenName, bcUrl, undefined, canceler.cancelToken)
-    .map(rowMeta => {
-        return $do.bcFetchRowMetaSuccess({ bcName, rowMeta, bcUrl, cursor })
-    })
-    .catch(error => {
-        console.error(error)
-        return Observable.of($do.bcFetchRowMetaFail({ bcName }))
-    })
+        .map(rowMeta => {
+            return $do.bcFetchRowMetaSuccess({ bcName, rowMeta, bcUrl, cursor })
+        })
+        .catch(error => {
+            console.error(error)
+            return Observable.of($do.bcFetchRowMetaFail({ bcName }))
+        })
     return Observable.race(cancelFlow, cancelByParentBc, normalFlow)
 }

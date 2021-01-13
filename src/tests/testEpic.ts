@@ -21,8 +21,8 @@
  * TODO: Probably will not be needed after migration to redux-observable 1.* and RxJS 6.* with TestScheduler.run available
  */
 
-import {TestScheduler, Notification, Observable } from 'rxjs'
-import {AnyAction} from '../actions/actions'
+import { TestScheduler, Notification, Observable } from 'rxjs'
+import { AnyAction } from '../actions/actions'
 
 /**
  * Result frame of test scheduler
@@ -31,7 +31,7 @@ type TestSchedulerFrame = {
     /**
      * Probably an order
      */
-    frame: number,
+    frame: number
     /**
      * Scheduler notifaction;
      * important fields are:
@@ -47,23 +47,16 @@ type TestSchedulerFrame = {
  * @param epic Epic chain to test
  * @param callback Epic result callback
  */
-export function testEpic(
-    epic: Observable<AnyAction>,
-    callback: (result: AnyAction[]) => void
-) {
+export function testEpic(epic: Observable<AnyAction>, callback: (result: AnyAction[]) => void) {
     const testScheduler = new TestScheduler((actual: TestSchedulerFrame[]) => {
-        const nextActionNotifications = actual
-            .filter(item => item.notification.kind === 'N')
-            .map(item => item.notification.value)
+        const nextActionNotifications = actual.filter(item => item.notification.kind === 'N').map(item => item.notification.value)
         actual
-        .filter(item => item.notification.kind === 'E' )
-        .forEach(item => {
-            console.error(item.notification.error)
-        })
+            .filter(item => item.notification.kind === 'E')
+            .forEach(item => {
+                console.error(item.notification.error)
+            })
         callback(nextActionNotifications)
     })
-    testScheduler
-    .expectObservable(epic)
-    .toBe('a') // some `marble` testing stuff which we do not use
+    testScheduler.expectObservable(epic).toBe('a') // some `marble` testing stuff which we do not use
     testScheduler.flush()
 }

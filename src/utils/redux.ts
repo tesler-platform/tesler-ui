@@ -1,7 +1,7 @@
-import {Dispatch, ReducersMapObject, Reducer} from 'redux'
-import {MapDispatchToPropsFactory} from 'react-redux'
-import {CombinedReducersMapObject} from '../interfaces/store'
-import {AnyAction} from '../actions/actions'
+import { Dispatch, ReducersMapObject, Reducer } from 'redux'
+import { MapDispatchToPropsFactory } from 'react-redux'
+import { CombinedReducersMapObject } from '../interfaces/store'
+import { AnyAction } from '../actions/actions'
 
 /**
  * Combines a dictionary of reducers for different slices of the store into one
@@ -14,7 +14,7 @@ import {AnyAction} from '../actions/actions'
  * @param reducers A dictionary of reducers for different slices of the redux store
  */
 export function combineReducers<State>(
-    reducers: ReducersMapObject<State, AnyAction> | CombinedReducersMapObject<State, AnyAction> ,
+    reducers: ReducersMapObject<State, AnyAction> | CombinedReducersMapObject<State, AnyAction>
 ): Reducer<State, AnyAction> {
     const combination: Reducer<State, AnyAction> = (state = {} as State, action: AnyAction) => {
         const nextState = { ...state }
@@ -27,7 +27,7 @@ export function combineReducers<State>(
             const reducer = reducers[reducerName]
             const nextStateForKey = (reducer as any)(prevStateForKey, action, nextState) as State[Extract<keyof State, string>]
             nextState[reducerName] = nextStateForKey
-            hasChanged = hasChanged || (nextStateForKey !== prevStateForKey)
+            hasChanged = hasChanged || nextStateForKey !== prevStateForKey
         }
         return hasChanged ? nextState : state
     }
@@ -57,12 +57,12 @@ export function shallowCompare(prevProps: Record<string, any>, nextProps: Record
         return Object.keys(prevProps)
     }
     const newKeys = Object.keys(nextProps)
-    newKeys.forEach((key) => {
+    newKeys.forEach(key => {
         if (prevProps[key] !== nextProps[key] && !ignore.includes(key)) {
             diffProps.push(key)
         }
     })
-    Object.keys(prevProps).forEach((key) => {
+    Object.keys(prevProps).forEach(key => {
         if (!newKeys.includes(key)) {
             diffProps.push(key)
         }
@@ -74,7 +74,6 @@ export function shallowCompare(prevProps: Record<string, any>, nextProps: Record
  * TODO: JSDoc
  */
 class ActionsContext<T> {
-
     /**
      * TODO
      */

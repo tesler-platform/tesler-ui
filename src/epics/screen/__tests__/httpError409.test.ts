@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-import {$do} from '../../../actions/actions'
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {mockStore} from '../../../tests/mockStore'
-import {ActionsObservable} from 'redux-observable'
-import {testEpic } from '../../../tests/testEpic'
-import {httpError409} from '../httpError409'
+import { $do } from '../../../actions/actions'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { mockStore } from '../../../tests/mockStore'
+import { ActionsObservable } from 'redux-observable'
+import { testEpic } from '../../../tests/testEpic'
+import { httpError409 } from '../httpError409'
 import * as notifications from '../../../utils/notifications'
 import { AxiosError } from 'axios'
 
@@ -73,9 +73,7 @@ function getError() {
         name: 'test',
         message: 'test',
         response: {
-            data: {
-
-            },
+            data: {},
             status: 500,
             statusText: 'error',
             headers: null,

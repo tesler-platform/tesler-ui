@@ -1,9 +1,9 @@
 export interface Route {
-    type: RouteType,
-    path: string,
-    params: object,
-    screenName?: string,
-    viewName?: string,
+    type: RouteType
+    path: string
+    params: Record<string, unknown>
+    screenName?: string
+    viewName?: string
     bcPath?: string
 }
 
@@ -12,7 +12,7 @@ export const enum RouteType {
     default = 'default',
     router = 'router',
     invalid = 'invalid',
-    unknown = 'unknown',
+    unknown = 'unknown'
 }
 
 /**

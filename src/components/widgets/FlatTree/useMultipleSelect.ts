@@ -1,9 +1,9 @@
 import React from 'react'
-import {useDispatch, useSelector} from 'react-redux'
-import {$do} from '../../../actions/actions'
-import {TreeAssociatedRecord } from '../../../interfaces/tree'
-import {Store} from '../../../interfaces/store'
-import {useAssocRecords} from '../../../hooks/useAssocRecords'
+import { useDispatch, useSelector } from 'react-redux'
+import { $do } from '../../../actions/actions'
+import { TreeAssociatedRecord } from '../../../interfaces/tree'
+import { Store } from '../../../interfaces/store'
+import { useAssocRecords } from '../../../hooks/useAssocRecords'
 
 export function useMultipleSelect(
     bcName: string,
@@ -19,52 +19,61 @@ export function useMultipleSelect(
     const widget = useSelector((store: Store) => store.view.widgets.find(item => item.bcName === bcName))
     const dispatch = useDispatch()
 
-    return React.useCallback((record: TreeAssociatedRecord, selected: boolean) => {
-        const dataItem = {
-            ...record,
-            _associate: selected,
-            _value: record[assocValueKey],
-        }
+    return React.useCallback(
+        (record: TreeAssociatedRecord, selected: boolean) => {
+            const dataItem = {
+                ...record,
+                _associate: selected,
+                _value: record[assocValueKey]
+            }
 
-        if (hierarchyRadioAll) {
-            dispatch($do.dropAllAssociationsFull({ bcName, depth: record.level, dropDescendants: true }))
-        } else if (hierarchyRootRadio && record.level === 1 && selected) {
-            const rootSelectedRecord = selectedRecords.find((item) => item.level === 1)
-            if (rootSelectedRecord) {
-                dispatch($do.changeAssociationFull({
+            if (hierarchyRadioAll) {
+                dispatch($do.dropAllAssociationsFull({ bcName, depth: record.level, dropDescendants: true }))
+            } else if (hierarchyRootRadio && record.level === 1 && selected) {
+                const rootSelectedRecord = selectedRecords.find(item => item.level === 1)
+                if (rootSelectedRecord) {
+                    dispatch(
+                        $do.changeAssociationFull({
+                            bcName,
+                            depth: record.level,
+                            widgetName: widget?.name,
+                            dataItem: { ...rootSelectedRecord, _associate: false },
+                            assocValueKey
+                        })
+                    )
+                }
+            }
+
+            if ((!selected && hierarchyGroupDeselection) || (selected && hierarchyGroupSelection)) {
+                dispatch(
+                    $do.changeDescendantsAssociationsFull({
+                        bcName,
+                        parentId: record.id,
+                        depth: record.level + 1,
+                        assocValueKey,
+                        selected
+                    })
+                )
+            }
+            dispatch(
+                $do.changeAssociationFull({
                     bcName,
                     depth: record.level,
                     widgetName: widget?.name,
-                    dataItem: { ...rootSelectedRecord, _associate: false },
+                    dataItem,
                     assocValueKey
-                }))
-            }
-        }
-
-        if (!selected && hierarchyGroupDeselection || selected && hierarchyGroupSelection) {
-            dispatch($do.changeDescendantsAssociationsFull({
-                bcName,
-                parentId: record.id,
-                depth: record.level + 1,
-                assocValueKey,
-                selected
-            }))
-        }
-        dispatch($do.changeAssociationFull({
+                })
+            )
+        },
+        [
             bcName,
-            depth: record.level,
-            widgetName: widget?.name,
-            dataItem,
+            hierarchyGroupSelection,
+            hierarchyGroupDeselection,
+            hierarchyRadioAll,
+            hierarchyRootRadio,
+            selectedRecords,
+            widget,
             assocValueKey
-        }))
-    }, [
-        bcName,
-        hierarchyGroupSelection,
-        hierarchyGroupDeselection,
-        hierarchyRadioAll,
-        hierarchyRootRadio,
-        selectedRecords,
-        widget,
-        assocValueKey
-    ])
+        ]
+    )
 }

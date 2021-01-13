@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {MenuItem, ViewNavigationCategory, ViewNavigationGroup, isViewNavigationItem} from '../../interfaces/navigation'
-import {breadthFirstSearch} from '../breadthFirst'
+import { MenuItem, ViewNavigationCategory, ViewNavigationGroup, isViewNavigationItem } from '../../interfaces/navigation'
+import { breadthFirstSearch } from '../breadthFirst'
 import * as navigationSample from './__mocks__/navigation.json'
 
 const sample = navigationSample.menu

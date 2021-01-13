@@ -16,19 +16,19 @@
  */
 
 import React from 'react'
-import {Store} from 'redux'
-import {mount} from 'enzyme'
-import {Popover} from 'antd'
+import { Store } from 'redux'
+import { mount } from 'enzyme'
+import { Popover } from 'antd'
 import * as redux from 'react-redux'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {mockStore} from '../../../tests/mockStore'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { mockStore } from '../../../tests/mockStore'
 import ColumnFilter from '../ColumnFilter'
-import {FieldType} from '../../../interfaces/view'
-import {WidgetListField, WidgetMeta, WidgetTypes} from '../../../interfaces/widget'
-import {RowMetaField} from '../../../interfaces/rowMeta'
+import { FieldType } from '../../../interfaces/view'
+import { WidgetListField, WidgetMeta, WidgetTypes } from '../../../interfaces/widget'
+import { RowMetaField } from '../../../interfaces/rowMeta'
 import FilterPopup from '../../FilterPopup/FilterPopup'
-import {types as coreActions, $do} from '../../../actions/actions'
-import {FilterType, BcFilter} from '../../../interfaces/filters'
+import { types as coreActions, $do } from '../../../actions/actions'
+import { FilterType, BcFilter } from '../../../interfaces/filters'
 
 const useDispatch = jest.fn()
 jest.spyOn(redux, 'useDispatch').mockImplementation(() => {
@@ -43,24 +43,20 @@ describe('`<ColumnFilter />`', () => {
     })
 
     it('renders Popover with custom or default content', () => {
-        const content = <redux.Provider store={store}>
-            <ColumnFilter
-                widgetMeta={widgetFieldMeta}
-                widgetName="widget-name"
-                rowMeta={fieldRowMeta}
-            />)
-        </redux.Provider>
+        const content = (
+            <redux.Provider store={store}>
+                <ColumnFilter widgetMeta={widgetFieldMeta} widgetName="widget-name" rowMeta={fieldRowMeta} />)
+            </redux.Provider>
+        )
         expect(mount(content).find(Popover)).toHaveLength(1)
     })
 
     it('opens/closes popup when clicked', () => {
-        const content = <redux.Provider store={store}>
-            <ColumnFilter
-                widgetMeta={widgetFieldMeta}
-                widgetName="widget-name"
-                rowMeta={fieldRowMeta}
-            />)
-        </redux.Provider>
+        const content = (
+            <redux.Provider store={store}>
+                <ColumnFilter widgetMeta={widgetFieldMeta} widgetName="widget-name" rowMeta={fieldRowMeta} />)
+            </redux.Provider>
+        )
         const wrapper = mount(content)
         expect(wrapper.find(FilterPopup)).toHaveLength(0)
         // open
@@ -73,13 +69,11 @@ describe('`<ColumnFilter />`', () => {
     })
 
     it('closes popup on apply and cancel buttons', () => {
-        const content = <redux.Provider store={store}>
-            <ColumnFilter
-                widgetMeta={{ ...widgetFieldMeta, type: FieldType.date }}
-                widgetName="widget-name"
-                rowMeta={fieldRowMeta}
-            />)
-        </redux.Provider>
+        const content = (
+            <redux.Provider store={store}>
+                <ColumnFilter widgetMeta={{ ...widgetFieldMeta, type: FieldType.date }} widgetName="widget-name" rowMeta={fieldRowMeta} />)
+            </redux.Provider>
+        )
         const wrapper = mount(content)
         wrapper.find(Popover).childAt(0).simulate('click')
         expect(wrapper.find(Popover).props().visible).toBeTruthy()
@@ -94,14 +88,17 @@ describe('`<ColumnFilter />`', () => {
 
     it('supports custom popover', () => {
         const CustomPopup = () => <div>I'm a custom popup</div>
-        const content = <redux.Provider store={store}>
-            <ColumnFilter
-                widgetMeta={widgetFieldMeta}
-                widgetName="widget-name"
-                rowMeta={fieldRowMeta}
-                components={{ popup: <CustomPopup /> }}
-            />)
-        </redux.Provider>
+        const content = (
+            <redux.Provider store={store}>
+                <ColumnFilter
+                    widgetMeta={widgetFieldMeta}
+                    widgetName="widget-name"
+                    rowMeta={fieldRowMeta}
+                    components={{ popup: <CustomPopup /> }}
+                />
+                )
+            </redux.Provider>
+        )
         const wrapper = mount(content)
         expect(wrapper.find(FilterPopup)).toHaveLength(0)
         expect(wrapper.find(CustomPopup)).toHaveLength(0)
@@ -112,33 +109,33 @@ describe('`<ColumnFilter />`', () => {
     })
 
     it('multivalue fields dispatch `showViewPopup` action instead of showing popup', () => {
-        const content = <redux.Provider store={store}>
-            <ColumnFilter
-                widgetMeta={{ ...widgetFieldMeta, type: FieldType.multivalue }}
-                widgetName="widget-name"
-                rowMeta={fieldRowMeta}
-            />)
-        </redux.Provider>
+        const content = (
+            <redux.Provider store={store}>
+                <ColumnFilter
+                    widgetMeta={{ ...widgetFieldMeta, type: FieldType.multivalue }}
+                    widgetName="widget-name"
+                    rowMeta={fieldRowMeta}
+                />
+                )
+            </redux.Provider>
+        )
         const wrapper = mount(content)
         wrapper.find(Popover).childAt(0).simulate('click')
         expect(useDispatch).toHaveBeenCalledWith(expect.objectContaining({ type: coreActions.showViewPopup }))
     })
 
     it('updates value with filter change in store', () => {
-        const content = <redux.Provider store={store}>
-            <ColumnFilter
-                widgetMeta={widgetFieldMeta}
-                widgetName="widget-name"
-                rowMeta={fieldRowMeta}
-            />)
-        </redux.Provider>
+        const content = (
+            <redux.Provider store={store}>
+                <ColumnFilter widgetMeta={widgetFieldMeta} widgetName="widget-name" rowMeta={fieldRowMeta} />)
+            </redux.Provider>
+        )
         const wrapper = mount(content)
         store.dispatch($do.bcAddFilter({ bcName: 'bcExample', filter: presetFilter }))
         wrapper.update()
         wrapper.find(Popover).childAt(0).simulate('click')
         expect(wrapper.find(FilterPopup).props().value).toBe(presetFilter.value)
     })
-
 })
 
 const widgetFieldMeta: WidgetListField = {

@@ -1,14 +1,14 @@
 import React from 'react'
-import {Store} from 'redux'
-import {Provider} from 'react-redux'
+import { Store } from 'redux'
+import { Provider } from 'react-redux'
 import * as redux from 'react-redux'
-import {Button} from 'antd'
-import {mount, ReactWrapper} from 'enzyme'
+import { Button } from 'antd'
+import { mount, ReactWrapper } from 'enzyme'
 import Pagination from './Pagination'
-import {$do} from '../../../actions/actions'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {PaginationMode} from '../../../interfaces/widget'
-import {mockStore} from '../../../tests/mockStore'
+import { $do } from '../../../actions/actions'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { PaginationMode } from '../../../interfaces/widget'
+import { mockStore } from '../../../tests/mockStore'
 
 describe('`<Pagination />` page mode', () => {
     let store: Store<CoreStore> = null
@@ -69,26 +69,26 @@ describe('`<Pagination />` page mode', () => {
         store.getState().screen.bo.bc.bcExample = { ...bcExample, hasNext: true, page: 8 }
         const wrapper = mount(
             <Provider store={store}>
-                <Pagination
-                    bcName="bcExample"
-                    mode={PaginationMode.page}
-                    widgetName="widgetExample"
-                />
+                <Pagination bcName="bcExample" mode={PaginationMode.page} widgetName="widgetExample" />
             </Provider>
         )
         wrapper.findWhere(predicatePrevButton).simulate('click')
         expect(dispatch.mock.calls[0][0]).toEqual(
-            expect.objectContaining($do.bcChangePage({
-                bcName: 'bcExample',
-                page: 7
-            }))
+            expect.objectContaining(
+                $do.bcChangePage({
+                    bcName: 'bcExample',
+                    page: 7
+                })
+            )
         )
         wrapper.findWhere(predicateNextButton).simulate('click')
         expect(dispatch.mock.calls[1][0]).toEqual(
-            expect.objectContaining($do.bcChangePage({
-                bcName: 'bcExample',
-                page: 9
-            }))
+            expect.objectContaining(
+                $do.bcChangePage({
+                    bcName: 'bcExample',
+                    page: 9
+                })
+            )
         )
     })
 
@@ -97,12 +97,7 @@ describe('`<Pagination />` page mode', () => {
         const onChangePage = jest.fn()
         const wrapper = mount(
             <Provider store={store}>
-                <Pagination
-                    bcName="bcExample"
-                    mode={PaginationMode.page}
-                    widgetName="widgetExample"
-                    onChangePage={onChangePage}
-                />
+                <Pagination bcName="bcExample" mode={PaginationMode.page} widgetName="widgetExample" onChangePage={onChangePage} />
             </Provider>
         )
         wrapper.findWhere(predicatePrevButton).simulate('click')
@@ -203,10 +198,12 @@ describe('`<Pagination />` loadMore mode', () => {
         )
         wrapper.find(Button).simulate('click')
         expect(dispatch.mock.calls[0][0]).toEqual(
-            expect.objectContaining($do.bcLoadMore({
-                bcName: 'bcExample',
-                widgetName: 'widgetExample'
-            }))
+            expect.objectContaining(
+                $do.bcLoadMore({
+                    bcName: 'bcExample',
+                    widgetName: 'widgetExample'
+                })
+            )
         )
     })
 
@@ -215,25 +212,19 @@ describe('`<Pagination />` loadMore mode', () => {
         const onChangePage = jest.fn()
         const wrapper = mount(
             <Provider store={store}>
-                <Pagination
-                    bcName="bcExample"
-                    mode={PaginationMode.loadMore}
-                    widgetName="widgetExample"
-                    onChangePage={onChangePage}
-                />
+                <Pagination bcName="bcExample" mode={PaginationMode.loadMore} widgetName="widgetExample" onChangePage={onChangePage} />
             </Provider>
         )
         wrapper.find(Button).simulate('click')
         expect(onChangePage).toHaveBeenLastCalledWith(10)
     })
-
 })
 
-function predicatePrevButton(item: ReactWrapper<any, Readonly<{}>>) {
+function predicatePrevButton(item: ReactWrapper<any, Readonly<Record<string, unknown>>>) {
     return item.type() === Button && item.props().icon === 'left'
 }
 
-function predicateNextButton(item: ReactWrapper<any, Readonly<{}>>) {
+function predicateNextButton(item: ReactWrapper<any, Readonly<Record<string, unknown>>>) {
     return item.type() === Button && item.props().icon === 'right'
 }
 

@@ -1,46 +1,45 @@
 import React from 'react'
-import {connect} from 'react-redux'
-import {Store} from '../../interfaces/store'
-import {Dispatch} from 'redux'
-import {$do} from '../../actions/actions'
-import {applyParams, getFileUploadEndpoint} from '../../utils/api'
+import { connect } from 'react-redux'
+import { Store } from '../../interfaces/store'
+import { Dispatch } from 'redux'
+import { $do } from '../../actions/actions'
+import { applyParams, getFileUploadEndpoint } from '../../utils/api'
 import styles from './FileUpload.less'
-import {DataItem} from '../../interfaces/data'
-import {Icon, Upload} from 'antd'
-import {UploadFile} from 'antd/es/upload/interface'
+import { DataItem } from '../../interfaces/data'
+import { Icon, Upload } from 'antd'
+import { UploadFile } from 'antd/es/upload/interface'
 import cn from 'classnames'
-import {useTranslation} from 'react-i18next'
-import {ChangeDataItemPayload} from '../Field/Field'
+import { useTranslation } from 'react-i18next'
+import { ChangeDataItemPayload } from '../Field/Field'
 
 export interface FileUploadOwnProps {
-    fieldName: string,
-    bcName: string,
-    cursor: string,
-    fieldDataItem: DataItem,
-    fieldValue: string,
-    fileIdKey: string,
-    fileSource: string,
-    readOnly?: boolean,
-    disabled?: boolean,
-    metaError?: string,
-    snapshotKey?: string,
+    fieldName: string
+    bcName: string
+    cursor: string
+    fieldDataItem: DataItem
+    fieldValue: string
+    fileIdKey: string
+    fileSource: string
+    readOnly?: boolean
+    disabled?: boolean
+    metaError?: string
+    snapshotKey?: string
     snapshotFileIdKey?: string
 }
 
 export interface FileUploadProps {
-    fileIdDelta: string,
+    fileIdDelta: string
     fileNameDelta: string
 }
 
 export interface FileUploadActions {
-    onDeleteFile: (payload: ChangeDataItemPayload) => void,
-    onStartUpload: () => void,
-    onUploadFileDone: (payload: ChangeDataItemPayload) => void,
+    onDeleteFile: (payload: ChangeDataItemPayload) => void
+    onStartUpload: () => void
+    onUploadFileDone: (payload: ChangeDataItemPayload) => void
     onUploadFileFailed: () => void
 }
 
-const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps & FileUploadActions> = (props) => {
-
+const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps & FileUploadActions> = props => {
     const onUploadSuccess = React.useCallback(
         (response: any, file: UploadFile) => {
             props.onUploadFileDone({
@@ -49,25 +48,22 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
                 dataItem: {
                     [props.fileIdKey]: response.data.id,
                     [props.fieldName]: response.data.name
-                },
+                }
             })
         },
         [props.onUploadFileDone, props.bcName, props.cursor, props.fileIdKey, props.fieldName]
     )
 
-    const onFileDelete = React.useCallback(
-        () => {
-            props.onDeleteFile({
-                bcName: props.bcName,
-                cursor: props.cursor,
-                dataItem: {
-                    [props.fileIdKey]: null,
-                    [props.fieldName]: null
-                },
-            })
-        },
-        [props.onDeleteFile, props.bcName, props.cursor, props.fileIdKey, props.fieldName]
-    )
+    const onFileDelete = React.useCallback(() => {
+        props.onDeleteFile({
+            bcName: props.bcName,
+            cursor: props.cursor,
+            dataItem: {
+                [props.fileIdKey]: null,
+                [props.fieldName]: null
+            }
+        })
+    }, [props.onDeleteFile, props.bcName, props.cursor, props.fileIdKey, props.fieldName])
 
     const onUploadFailed = React.useCallback(
         (error: any, response: any, file: UploadFile) => {
@@ -76,20 +72,13 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
         [props.onUploadFileFailed]
     )
 
-    const {t} = useTranslation()
+    const { t } = useTranslation()
 
-    const {
-        fileIdDelta,
-        fileNameDelta,
-        fieldValue,
-        disabled
-    } = props
+    const { fileIdDelta, fileNameDelta, fieldValue, disabled } = props
 
     const downloadParams = {
         source: props.fileSource,
-        id: fileIdDelta || (
-            props.fileIdKey && props.fieldDataItem?.[props.fileIdKey]?.toString()
-        )
+        id: fileIdDelta || (props.fileIdKey && props.fieldDataItem?.[props.fileIdKey]?.toString())
     }
     const uploadParams = {
         source: props.fileSource
@@ -117,97 +106,93 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
             const diffFileName = props.fieldDataItem?.[props.snapshotKey]
 
             if ((diffDownloadParams.id || downloadParams.id) && diffDownloadParams.id !== downloadParams.id) {
-                return <div>
-                    {(diffDownloadParams.id)
-                        && <div>
-                            <span className={cn(styles.viewLink, styles.prevValue)}>
-                                <a href={diffDownloadUrl}>
-                                    <Icon type="file" /> <span>{diffFileName}</span>
-                                </a>
-                            </span>
-                        </div>
-                    }
-                    {(downloadParams.id)
-                        && <div>
-                            <span className={cn(styles.viewLink, styles.newValue)}>
-                                <a href={downloadUrl}>
-                                    <Icon type="file" /> <span>{fileName}</span>
-                                </a>
-                            </span>
-                        </div>
-                    }
-                </div>
+                return (
+                    <div>
+                        {diffDownloadParams.id && (
+                            <div>
+                                <span className={cn(styles.viewLink, styles.prevValue)}>
+                                    <a href={diffDownloadUrl}>
+                                        <Icon type="file" /> <span>{diffFileName}</span>
+                                    </a>
+                                </span>
+                            </div>
+                        )}
+                        {downloadParams.id && (
+                            <div>
+                                <span className={cn(styles.viewLink, styles.newValue)}>
+                                    <a href={downloadUrl}>
+                                        <Icon type="file" /> <span>{fileName}</span>
+                                    </a>
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                )
             }
         }
 
-        return <span className={styles.viewLink}>
-            {(downloadParams.id) &&
-                <a href={downloadUrl}>
-                    <Icon type="file" /> <span>{fileName}</span>
-                </a>
-            }
-        </span>
+        return (
+            <span className={styles.viewLink}>
+                {downloadParams.id && (
+                    <a href={downloadUrl}>
+                        <Icon type="file" /> <span>{fileName}</span>
+                    </a>
+                )}
+            </span>
+        )
     }
 
-    const controls: {[key: string]: React.ReactNode} = {
-        deleteButton:
+    const controls: { [key: string]: React.ReactNode } = {
+        deleteButton: (
             <div className={styles.deleteButton} onClick={onFileDelete} key="delete-btn">
                 <Icon type="delete" title={t('Delete')} />
-            </div>,
+            </div>
+        ),
 
-        uploadButton:
-            <Upload
-                {...uploadProps}
-                className={cn(
-                    styles.uploadButton,
-                    { [styles.error]: props.metaError }
-                )}
-                key="upload-btn"
-            >
-                <span title={t('select file')} className={styles.uploadButtonText}>...</span>
-            </Upload>,
+        uploadButton: (
+            <Upload {...uploadProps} className={cn(styles.uploadButton, { [styles.error]: props.metaError })} key="upload-btn">
+                <span title={t('select file')} className={styles.uploadButtonText}>
+                    ...
+                </span>
+            </Upload>
+        ),
 
-        uploadLink:
-            <Upload
-                {...uploadProps}
-                className={cn(
-                    styles.uploadLink,
-                    { [styles.error]: props.metaError }
-                )}
-                key="upload-lnk"
-            >
+        uploadLink: (
+            <Upload {...uploadProps} className={cn(styles.uploadLink, { [styles.error]: props.metaError })} key="upload-lnk">
                 <span className={styles.uploadLinkText} title={t('select file')}>
                     {t('select file')}
                 </span>
-            </Upload>,
+            </Upload>
+        ),
 
-        downloadLink:
+        downloadLink: (
             <div className={styles.downloadLink} title={`${t('Download')} ${fileName}`} key="download-lnk">
                 <a href={downloadUrl}>
                     <span className={styles.downloadLinkText}>{fileName}</span>
                 </a>
             </div>
+        )
     }
 
-    return <div
-        className={cn(
-            styles.fileUpload,
-            {
+    return (
+        <div
+            className={cn(styles.fileUpload, {
                 [styles.disabled]: disabled,
                 [styles.error]: props.metaError
-            }
-        )}
-    >
-        {disabled
-            ? <span className={styles.disabled}>{controls.downloadLink}</span>
-            : downloadParams.id
-                ? [controls.downloadLink, controls.uploadButton, controls.deleteButton]
-                : [controls.uploadLink, controls.uploadButton]
-        }
-    </div>
+            })}
+        >
+            {disabled ? (
+                <span className={styles.disabled}>{controls.downloadLink}</span>
+            ) : downloadParams.id ? (
+                [controls.downloadLink, controls.uploadButton, controls.deleteButton]
+            ) : (
+                [controls.uploadLink, controls.uploadButton]
+            )}
+        </div>
+    )
 }
 
-function mapStateToProps(state: Store, props: FileUploadOwnProps ) {
+function mapStateToProps(state: Store, props: FileUploadOwnProps) {
     const pendingData = state.view.pendingDataChanges[props.bcName]?.[props.cursor]
     return {
         fileIdDelta: !props.readOnly ? pendingData?.[props.fileIdKey] : null,

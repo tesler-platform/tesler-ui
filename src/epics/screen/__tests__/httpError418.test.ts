@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 
-import {$do} from '../../../actions/actions'
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {mockStore} from '../../../tests/mockStore'
-import {ActionsObservable} from 'redux-observable'
-import {testEpic } from '../../../tests/testEpic'
-import {httpError418} from '../httpError418'
-import {AxiosError} from 'axios'
-import {ApplicationErrorType, BusinessError} from '../../../interfaces/view'
-import {OperationError, OperationPostInvokeType} from '../../../interfaces/operation'
-import {WidgetTableMeta, WidgetTypes} from '../../../interfaces/widget'
+import { $do } from '../../../actions/actions'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { mockStore } from '../../../tests/mockStore'
+import { ActionsObservable } from 'redux-observable'
+import { testEpic } from '../../../tests/testEpic'
+import { httpError418 } from '../httpError418'
+import { AxiosError } from 'axios'
+import { ApplicationErrorType, BusinessError } from '../../../interfaces/view'
+import { OperationError, OperationPostInvokeType } from '../../../interfaces/operation'
+import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
 
 describe('httpError418', () => {
     let store: Store<CoreStore> = null
@@ -42,10 +42,14 @@ describe('httpError418', () => {
             callContext: { widgetName: 'widget-example' }
         })
         const epic = httpError418(ActionsObservable.of(action), store)
-        testEpic(epic, (result) => {
-            expect(result[0]).toEqual(expect.objectContaining($do.showViewError({
-                error: applicationError
-            })))
+        testEpic(epic, result => {
+            expect(result[0]).toEqual(
+                expect.objectContaining(
+                    $do.showViewError({
+                        error: applicationError
+                    })
+                )
+            )
         })
     })
 
@@ -62,12 +66,16 @@ describe('httpError418', () => {
             callContext: { widgetName: 'widget-example' }
         })
         const epic = httpError418(ActionsObservable.of(action), store)
-        testEpic(epic, (result) => {
-            expect(result[1]).toEqual(expect.objectContaining($do.processPostInvoke({
-                bcName: widget.bcName,
-                widgetName: widget.name,
-                postInvoke
-            })))
+        testEpic(epic, result => {
+            expect(result[1]).toEqual(
+                expect.objectContaining(
+                    $do.processPostInvoke({
+                        bcName: widget.bcName,
+                        widgetName: widget.name,
+                        postInvoke
+                    })
+                )
+            )
         })
     })
 
@@ -80,12 +88,11 @@ describe('httpError418', () => {
             callContext: { widgetName: 'widget-example' }
         })
         const epic = httpError418(ActionsObservable.of(action), store)
-        testEpic(epic, (result) => {
+        testEpic(epic, result => {
             expect(result.length).toBe(0)
         })
     })
 })
-
 
 function getAxiosError() {
     const result: AxiosError<OperationError> = {
@@ -121,5 +128,5 @@ const widget: WidgetTableMeta = {
     bcName: 'bcExample',
     position: 1,
     gridWidth: null,
-    fields: [],
+    fields: []
 }

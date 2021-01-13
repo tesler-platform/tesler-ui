@@ -16,9 +16,9 @@
  */
 
 import React from 'react'
-import {HierarchySearchCache} from '../../../components/FullHierarchyTable/utils/hierarchySearchCache'
-import {BcFilter} from '../../../interfaces/filters'
-import {FullHierarchyDataItem} from '../../../components/FullHierarchyTable/FullHierarchyTable'
+import { HierarchySearchCache } from '../../../components/FullHierarchyTable/utils/hierarchySearchCache'
+import { BcFilter } from '../../../interfaces/filters'
+import { FullHierarchyDataItem } from '../../../components/FullHierarchyTable/FullHierarchyTable'
 
 const ancestorsKeysCache = new HierarchySearchCache()
 const descendantsKeysCache = new HierarchySearchCache()
@@ -37,8 +37,8 @@ export function useHierarchyCache(
     filters: BcFilter[],
     data: FullHierarchyDataItem[],
     depthLevel: number,
-    hierarchyDisableDescendants?: boolean) {
-
+    hierarchyDisableDescendants?: boolean
+) {
     React.useEffect(() => {
         const clearSearchCache = () => {
             if (depthLevel === 1) {
@@ -49,27 +49,36 @@ export function useHierarchyCache(
         clearSearchCache()
         return clearSearchCache()
     }, [widgetName, data, depthLevel === 1])
-    const searchedAncestorsKeys: Set<string> = ancestorsKeysCache.getValue(() => {
-        const result: string[] = []
-        data.forEach(item => {
-            bcFilterMatchedAncestors(item, data, filters)
-                ?.forEach(key => result.push(key))
-        })
-        return new Set(result)
-    }, widgetName, data, filters)
-    const searchedDescendantsKeys: Set<string> = descendantsKeysCache.getValue(() => {
-        const result: string[] = []
-        data.forEach(item => {
-            bcFilterMatchedDescendants(item, data, filters)
-                ?.forEach(key => result.push(key))
-        })
-        return new Set(result)
-    }, widgetName, data, filters)
+    const searchedAncestorsKeys: Set<string> = ancestorsKeysCache.getValue(
+        () => {
+            const result: string[] = []
+            data.forEach(item => {
+                bcFilterMatchedAncestors(item, data, filters)?.forEach(key => result.push(key))
+            })
+            return new Set(result)
+        },
+        widgetName,
+        data,
+        filters
+    )
+    const searchedDescendantsKeys: Set<string> = descendantsKeysCache.getValue(
+        () => {
+            const result: string[] = []
+            data.forEach(item => {
+                bcFilterMatchedDescendants(item, data, filters)?.forEach(key => result.push(key))
+            })
+            return new Set(result)
+        },
+        widgetName,
+        data,
+        filters
+    )
 
     const filteredData = React.useMemo(() => {
         return filters?.length
-            ? data.filter(item => searchedAncestorsKeys.has(item.id)
-                || !hierarchyDisableDescendants && searchedDescendantsKeys.has(item.id))
+            ? data.filter(
+                  item => searchedAncestorsKeys.has(item.id) || (!hierarchyDisableDescendants && searchedDescendantsKeys.has(item.id))
+              )
             : data
     }, [searchedAncestorsKeys, searchedDescendantsKeys, data, filters])
     return [filteredData, searchedAncestorsKeys, searchedDescendantsKeys] as const

@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-import {$do} from '../../../actions/actions'
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {mockStore} from '../../../tests/mockStore'
-import {ActionsObservable} from 'redux-observable'
-import {testEpic } from '../../../tests/testEpic'
-import {httpError500} from '../httpError500'
-import {AxiosError} from 'axios'
-import {ApplicationError, ApplicationErrorType} from '../../../interfaces/view'
+import { $do } from '../../../actions/actions'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { mockStore } from '../../../tests/mockStore'
+import { ActionsObservable } from 'redux-observable'
+import { testEpic } from '../../../tests/testEpic'
+import { httpError500 } from '../httpError500'
+import { AxiosError } from 'axios'
+import { ApplicationError, ApplicationErrorType } from '../../../interfaces/view'
 
 describe('httpError500', () => {
     let store: Store<CoreStore> = null
@@ -39,10 +39,14 @@ describe('httpError500', () => {
             callContext: { widgetName: 'widget-example' }
         })
         const epic = httpError500(ActionsObservable.of(action), store)
-        testEpic(epic, (result) => {
-            expect(result[0]).toEqual(expect.objectContaining($do.showViewError({
-                error: applicationError
-            })))
+        testEpic(epic, result => {
+            expect(result[0]).toEqual(
+                expect.objectContaining(
+                    $do.showViewError({
+                        error: applicationError
+                    })
+                )
+            )
         })
     })
 })
@@ -53,9 +57,7 @@ const axiosError: AxiosError = {
     name: 'test',
     message: 'test',
     response: {
-        data: {
-
-        },
+        data: {},
         status: 500,
         statusText: 'error',
         headers: null,

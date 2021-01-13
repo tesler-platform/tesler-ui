@@ -16,24 +16,24 @@
  */
 
 import React from 'react'
-import {mount} from 'enzyme'
-import {TreeVirtualizedNode, TreeVirtualizedNodeData} from '../TreeVirtualizedNode'
-import {assignTreeLinks} from '../../../../utils/tree'
+import { mount } from 'enzyme'
+import { TreeVirtualizedNode, TreeVirtualizedNodeData } from '../TreeVirtualizedNode'
+import { assignTreeLinks } from '../../../../utils/tree'
 import styles from '../TreeVirtualizedNode.less'
-import {TreeNodeBidirectional} from '../../../../interfaces/tree'
-import {Icon} from 'antd'
+import { TreeNodeBidirectional } from '../../../../interfaces/tree'
+import { Icon } from 'antd'
 import SearchHightlight from '../../SearchHightlight/SearchHightlight'
-import {FilterType} from '../../../../interfaces/filters'
-import {FieldType} from '../../../../interfaces/view'
-import {Store as CoreStore} from '../../../../interfaces/store'
-import {Store} from 'redux'
-import {mockStore} from '../../../../tests/mockStore'
-import {Provider} from 'react-redux'
+import { FilterType } from '../../../../interfaces/filters'
+import { FieldType } from '../../../../interfaces/view'
+import { Store as CoreStore } from '../../../../interfaces/store'
+import { Store } from 'redux'
+import { mockStore } from '../../../../tests/mockStore'
+import { Provider } from 'react-redux'
 
 type TestDataItem = {
-    id: string,
-    name: string,
-    parent: TreeNodeBidirectional,
+    id: string
+    name: string
+    parent: TreeNodeBidirectional
     parentId: string
 }
 
@@ -52,32 +52,33 @@ describe('<TreeVirtualizedNode />', () => {
     }
 
     it('renders expand button for nodes with chilren', () => {
-        let wrapper = mount(<Provider store={store}>
-            <TreeVirtualizedNode index={0} style={null} data={itemData} />
-        </Provider>
+        let wrapper = mount(
+            <Provider store={store}>
+                <TreeVirtualizedNode index={0} style={null} data={itemData} />
+            </Provider>
         )
         expect(wrapper.find('button').find(Icon).props().type).toBe('plus-square')
-        wrapper = mount(<Provider store={store}>
-            <TreeVirtualizedNode index={0} style={null} data={{ ...itemData, expandedItems: ['1'] }} />
-        </Provider>
+        wrapper = mount(
+            <Provider store={store}>
+                <TreeVirtualizedNode index={0} style={null} data={{ ...itemData, expandedItems: ['1'] }} />
+            </Provider>
         )
         expect(wrapper.find('button').find(Icon).props().type).toBe('minus-square')
-        wrapper = mount(<Provider store={store}>
-            <TreeVirtualizedNode index={3} style={null} data={{ ...itemData, expandedItems: ['1'] }} />
-        </Provider>
+        wrapper = mount(
+            <Provider store={store}>
+                <TreeVirtualizedNode index={3} style={null} data={{ ...itemData, expandedItems: ['1'] }} />
+            </Provider>
         )
         expect(wrapper.find('button').length).toBe(0)
     })
 
     it('fires `onToggle` when expanding/collapsing node', () => {
         const onToggle = jest.fn()
-        const wrapper = mount(<Provider store={store}>
-            <TreeVirtualizedNode
-                index={0}
-                style={null}
-                data={{ ...itemData, onToggle }}
-            />
-        </Provider>)
+        const wrapper = mount(
+            <Provider store={store}>
+                <TreeVirtualizedNode index={0} style={null} data={{ ...itemData, onToggle }} />
+            </Provider>
+        )
         wrapper.find('button').simulate('click')
         expect(onToggle).toBeCalledWith('1')
     })
@@ -117,26 +118,28 @@ describe('<TreeVirtualizedNode />', () => {
 
     it('fires `onSelect` if possible when selecting a node', () => {
         const onSelect = jest.fn()
-        let wrapper = mount(<Provider store={store}>
-            <TreeVirtualizedNode index={2} style={null} data={itemData} />
-        </Provider>)
+        let wrapper = mount(
+            <Provider store={store}>
+                <TreeVirtualizedNode index={2} style={null} data={itemData} />
+            </Provider>
+        )
         wrapper.find(`.${styles.column}`).simulate('click')
         expect(onSelect).toBeCalledTimes(0)
-        wrapper = mount(<Provider store={store}>
-            <TreeVirtualizedNode index={2} style={null} data={{ ...itemData, onSelect }} />
-        </Provider>)
+        wrapper = mount(
+            <Provider store={store}>
+                <TreeVirtualizedNode index={2} style={null} data={{ ...itemData, onSelect }} />
+            </Provider>
+        )
         wrapper.find(`.${styles.column}`).simulate('click')
         expect(onSelect).toBeCalledWith(items[2])
     })
 
     it('renders no columns when fields not provided', () => {
-        const wrapper = mount(<Provider store={store}>
-            <TreeVirtualizedNode
-                index={0}
-                style={null}
-                data={{ ...itemData, fields: null }}
-            />
-        </Provider>)
+        const wrapper = mount(
+            <Provider store={store}>
+                <TreeVirtualizedNode index={0} style={null} data={{ ...itemData, fields: null }} />
+            </Provider>
+        )
         expect(wrapper.find(`.${styles.row}`).length).toBe(1)
         expect(wrapper.find(`.${styles.column}`).length).toBe(0)
     })
@@ -155,7 +158,7 @@ function getTreeSample() {
         { id: '21', name: 'nine', parentId: '2', level: 2 },
         { id: '22', name: 'ten', parentId: '2', level: 2 },
         { id: '221', name: 'eleven', parentId: '22', level: 3 },
-        { id: '2211', name: 'Lucky Twelve', parentId: '221', level: 4 },
+        { id: '2211', name: 'Lucky Twelve', parentId: '221', level: 4 }
     ]
     return assignTreeLinks(tree)
 }

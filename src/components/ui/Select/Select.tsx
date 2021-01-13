@@ -1,6 +1,6 @@
 import React from 'react'
-import {Select as AntdSelect} from 'antd'
-import {SelectProps as AntdSelectProps, SelectValue} from 'antd/lib/select'
+import { Select as AntdSelect } from 'antd'
+import { SelectProps as AntdSelectProps, SelectValue } from 'antd/lib/select'
 
 export type SelectProps = AntdSelectProps & {
     forwardedRef?: React.RefObject<AntdSelect<string>>
@@ -11,7 +11,6 @@ export type SelectProps = AntdSelectProps & {
  * https://github.com/react-component/select/issues/378
  */
 export class Select<T = SelectValue> extends React.PureComponent<SelectProps> {
-
     /**
      * STUB
      */
@@ -26,11 +25,7 @@ export class Select<T = SelectValue> extends React.PureComponent<SelectProps> {
             transitionName: ''
         }
 
-        return <AntdSelect
-            {...extendedProps}
-            className={this.props.className}
-            ref={this.props.forwardedRef}
-        />
+        return <AntdSelect {...extendedProps} className={this.props.className} ref={this.props.forwardedRef} />
     }
 }
 

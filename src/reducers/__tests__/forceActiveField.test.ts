@@ -1,8 +1,8 @@
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../interfaces/store'
-import {mockStore} from '../../tests/mockStore'
-import {$do} from '../../index'
-import {RowMeta, RowMetaField} from '../../interfaces/rowMeta'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../interfaces/store'
+import { mockStore } from '../../tests/mockStore'
+import { $do } from '../../index'
+import { RowMeta, RowMetaField } from '../../interfaces/rowMeta'
 
 const exampleBcName = 'bcExample'
 const testCursor = '1'
@@ -42,27 +42,29 @@ describe('Force active field', () => {
             }
         }
 
-        store.dispatch($do.forceActiveRmUpdate({
-            currentRecordData: {
-                id: '1',
-                vstamp: 1,
-                [normalFieldKey]: 'normalFieldRecordValue',
-                [forceActiveFieldKey]: 'faFieldRecordValue'
-            },
-            rowMeta: testRowMeta,
-            bcName: exampleBcName,
-            bcUrl: testBcUrl,
-            cursor: testCursor
-        }))
+        store.dispatch(
+            $do.forceActiveRmUpdate({
+                currentRecordData: {
+                    id: '1',
+                    vstamp: 1,
+                    [normalFieldKey]: 'normalFieldRecordValue',
+                    [forceActiveFieldKey]: 'faFieldRecordValue'
+                },
+                rowMeta: testRowMeta,
+                bcName: exampleBcName,
+                bcUrl: testBcUrl,
+                cursor: testCursor
+            })
+        )
 
-        expect(store.getState().view.handledForceActive[exampleBcName][testCursor][rmForceActiveField.key])
-            .toBe(forceActiveFieldSelectedValue)
-        expect(store.getState().view.pendingDataChanges[exampleBcName][testCursor][rmForceActiveField.key])
-            .toBe(forceActiveFieldSelectedValue)
-        expect(store.getState().view.rowMeta[exampleBcName][testBcUrl])
-            .toEqual(testRowMeta)
+        expect(store.getState().view.handledForceActive[exampleBcName][testCursor][rmForceActiveField.key]).toBe(
+            forceActiveFieldSelectedValue
+        )
+        expect(store.getState().view.pendingDataChanges[exampleBcName][testCursor][rmForceActiveField.key]).toBe(
+            forceActiveFieldSelectedValue
+        )
+        expect(store.getState().view.rowMeta[exampleBcName][testBcUrl]).toEqual(testRowMeta)
 
-        expect(store.getState().view.pendingDataChanges[exampleBcName][testCursor][rmNormalField.key])
-            .toBe(normalFieldForcedValue)
+        expect(store.getState().view.pendingDataChanges[exampleBcName][testCursor][rmNormalField.key]).toBe(normalFieldForcedValue)
     })
 })

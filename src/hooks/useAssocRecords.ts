@@ -1,6 +1,6 @@
 import React from 'react'
-import {AssociatedItem} from '../interfaces/operation'
-import {PendingDataItem} from '../interfaces/data'
+import { AssociatedItem } from '../interfaces/operation'
+import { PendingDataItem } from '../interfaces/data'
 
 const emptyData: any[] = []
 
@@ -12,7 +12,9 @@ const emptyData: any[] = []
  * @param isRadio
  */
 export function useAssocRecords<T extends AssociatedItem>(
-    data: T[], pendingChanges: Record<string, PendingDataItem>, isRadio?: boolean
+    data: T[],
+    pendingChanges: Record<string, PendingDataItem>,
+    isRadio?: boolean
 ): T[] {
     return React.useMemo(() => {
         let records = emptyData

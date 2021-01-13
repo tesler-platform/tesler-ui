@@ -1,7 +1,7 @@
 import React from 'react'
-import {shallow} from 'enzyme'
-import {FormWidget} from './FormWidget'
-import {WidgetFormMeta, WidgetTypes} from 'interfaces/widget'
+import { shallow } from 'enzyme'
+import { FormWidget } from './FormWidget'
+import { WidgetFormMeta, WidgetTypes } from 'interfaces/widget'
 
 const widgetMeta = {
     name: '1',
@@ -11,35 +11,33 @@ const widgetMeta = {
     position: 1,
     gridWidth: 1,
     fields: [
-        {label: 'testField-1', key: 'testKey-1', type: 'text'},
-        {label: 'testField-2', key: 'testKey-2', type: 'text'},
-        {label: 'testField-3', key: 'testKey-3', type: 'text'},
-        {label: 'testField-4', key: 'testKey-4', type: 'text'},
-        {label: 'testField-5', key: 'testKey-5', type: 'text'},
+        { label: 'testField-1', key: 'testKey-1', type: 'text' },
+        { label: 'testField-2', key: 'testKey-2', type: 'text' },
+        { label: 'testField-3', key: 'testKey-3', type: 'text' },
+        { label: 'testField-4', key: 'testKey-4', type: 'text' },
+        { label: 'testField-5', key: 'testKey-5', type: 'text' }
     ],
     options: {
         layout: {
             rows: [
-                {cols: [{fieldKey: 'testKey-1', span: 24}]},
-                {cols: [{fieldKey: 'testKey-2', span: 12}]},
-                {cols: [{fieldKey: 'testKey-3', span: 6}]},
-                {cols: [{fieldKey: 'testKey-4', span: 12}, {fieldKey: 'testKey-5', span: 12}]},
+                { cols: [{ fieldKey: 'testKey-1', span: 24 }] },
+                { cols: [{ fieldKey: 'testKey-2', span: 12 }] },
+                { cols: [{ fieldKey: 'testKey-3', span: 6 }] },
+                {
+                    cols: [
+                        { fieldKey: 'testKey-4', span: 12 },
+                        { fieldKey: 'testKey-5', span: 12 }
+                    ]
+                }
             ]
         }
     }
 }
 
 describe('FormWidget columns and blocks test', () => {
-
     it('component should render 4 rows', () => {
         const wrapper = shallow(
-            <FormWidget
-                cursor={null}
-                meta={widgetMeta as WidgetFormMeta}
-                fields={[]}
-                metaErrors={null}
-                missingFields={null}
-            />
+            <FormWidget cursor={null} meta={widgetMeta as WidgetFormMeta} fields={[]} metaErrors={null} missingFields={null} />
         )
         const form = wrapper.find('Form')
         const rows = form.find('Row').at(0)
@@ -49,13 +47,7 @@ describe('FormWidget columns and blocks test', () => {
 
     it('Test each row', () => {
         const wrapper = shallow(
-            <FormWidget
-                cursor={null}
-                meta={widgetMeta as WidgetFormMeta}
-                fields={[]}
-                metaErrors={null}
-                missingFields={null}
-            />
+            <FormWidget cursor={null} meta={widgetMeta as WidgetFormMeta} fields={[]} metaErrors={null} missingFields={null} />
         )
         const form = wrapper.find('Form')
         const rows = form.find('Row').at(0)
@@ -78,16 +70,10 @@ describe('FormWidget columns and blocks test', () => {
     })
 
     it('should hide "hidden": true fields', () => {
-        const toHideWidgetMeta = {...widgetMeta} as any
+        const toHideWidgetMeta = { ...widgetMeta } as any
         toHideWidgetMeta.fields[0].hidden = true
         const wrapper = shallow(
-            <FormWidget
-                cursor={null}
-                meta={toHideWidgetMeta as WidgetFormMeta}
-                fields={[]}
-                metaErrors={null}
-                missingFields={null}
-            />
+            <FormWidget cursor={null} meta={toHideWidgetMeta as WidgetFormMeta} fields={[]} metaErrors={null} missingFields={null} />
         )
         const form = wrapper.find('Form')
         const rows = form.find('Row').at(0)

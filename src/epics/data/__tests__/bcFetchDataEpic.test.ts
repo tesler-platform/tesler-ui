@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {mockStore} from '../../../tests/mockStore'
-import {WidgetTableMeta, WidgetTypes} from '../../../interfaces/widget'
-import {FieldType} from '../../../interfaces/view'
-import {dataEpics} from '../../data'
-import {$do} from '../../../actions/actions'
-import {ActionsObservable} from 'redux-observable'
-import {testEpic} from '../../../tests/testEpic'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { mockStore } from '../../../tests/mockStore'
+import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
+import { FieldType } from '../../../interfaces/view'
+import { dataEpics } from '../../data'
+import { $do } from '../../../actions/actions'
+import { ActionsObservable } from 'redux-observable'
+import { testEpic } from '../../../tests/testEpic'
 import * as api from '../../../api/api'
-import {customAction} from '../../../api/api'
-import {Observable} from 'rxjs'
+import { customAction } from '../../../api/api'
+import { Observable } from 'rxjs'
 
 const customActionMock = jest.fn().mockImplementation((...args: Parameters<typeof customAction>) => {
     const [screenName] = args
@@ -65,8 +65,7 @@ describe('bcFetchDataEpic', () => {
         })
         const epic = dataEpics.bcFetchDataEpic(ActionsObservable.of(action), store)
         testEpic(epic, () => {
-            expect(customActionMock).toBeCalledWith('test', 'bcExample',
-                {'_limit': 5, '_page': 2}, canceler.cancelToken)
+            expect(customActionMock).toBeCalledWith('test', 'bcExample', { _limit: 5, _page: 2 }, canceler.cancelToken)
         })
     })
 
@@ -79,8 +78,7 @@ describe('bcFetchDataEpic', () => {
         })
         const epic = dataEpics.bcFetchDataEpic(ActionsObservable.of(action), store)
         testEpic(epic, () => {
-            expect(customActionMock).toBeCalledWith('test', 'bcExample',
-                {'_limit': 10, '_page': 1}, canceler.cancelToken)
+            expect(customActionMock).toBeCalledWith('test', 'bcExample', { _limit: 10, _page: 1 }, canceler.cancelToken)
         })
     })
 
@@ -88,12 +86,11 @@ describe('bcFetchDataEpic', () => {
         store.getState().view.widgets[0] = { ...getWidgetMeta() }
         store.getState().view.infiniteWidgets[0] = 'widget-example'
         const action = $do.bcForceUpdate({
-            bcName: 'bcExample',
+            bcName: 'bcExample'
         })
         const epic = dataEpics.bcFetchDataEpic(ActionsObservable.of(action), store)
         testEpic(epic, () => {
-            expect(customActionMock).toBeCalledWith('test', 'bcExample',
-                {'_limit': 10, '_page': 1}, canceler.cancelToken)
+            expect(customActionMock).toBeCalledWith('test', 'bcExample', { _limit: 10, _page: 1 }, canceler.cancelToken)
         })
     })
 
@@ -107,13 +104,12 @@ describe('bcFetchDataEpic', () => {
         })
         const epic = dataEpics.bcFetchDataEpic(ActionsObservable.of(action), store)
         testEpic(epic, () => {
-            expect(customActionMock).toBeCalledWith('test', 'bcExample',
-                {'_limit': 25, '_page': 1}, canceler.cancelToken)
+            expect(customActionMock).toBeCalledWith('test', 'bcExample', { _limit: 25, _page: 1 }, canceler.cancelToken)
         })
     })
 
     it('bcFetchDataPages call data to current page', () => {
-        store.getState().view.widgets[0] = { ...getWidgetMeta()}
+        store.getState().view.widgets[0] = { ...getWidgetMeta() }
         store.getState().screen.bo.bc[bcExample.name].page = 5
         const action = $do.bcFetchDataPages({
             bcName: 'bcExample',
@@ -121,11 +117,9 @@ describe('bcFetchDataEpic', () => {
         })
         const epic = dataEpics.bcFetchDataEpic(ActionsObservable.of(action), store)
         testEpic(epic, () => {
-            expect(customActionMock).toBeCalledWith('test', 'bcExample',
-                {'_limit': 20, '_page': 1}, canceler.cancelToken)
+            expect(customActionMock).toBeCalledWith('test', 'bcExample', { _limit: 20, _page: 1 }, canceler.cancelToken)
         })
     })
-
 })
 
 function getWidgetMeta(): WidgetTableMeta {
@@ -136,11 +130,13 @@ function getWidgetMeta(): WidgetTableMeta {
         bcName: 'bcExample',
         position: 1,
         gridWidth: null,
-        fields: [{
-            key: 'name',
-            title: 'Test Column',
-            type: FieldType.input
-        }],
+        fields: [
+            {
+                key: 'name',
+                title: 'Test Column',
+                type: FieldType.input
+            }
+        ]
     }
 }
 

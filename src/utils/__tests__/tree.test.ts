@@ -15,14 +15,13 @@
  * limitations under the License.
  */
 
-import {assignTreeLinks, getDescendants, buildSearchResultTree, presort} from '../tree'
+import { assignTreeLinks, getDescendants, buildSearchResultTree, presort } from '../tree'
 
 const consoleMock = jest.fn()
 
 jest.spyOn(console, 'warn').mockImplementation(consoleMock)
 
 describe('assignTreeLinks', () => {
-
     afterEach(() => {
         jest.clearAllMocks()
     })
@@ -34,9 +33,9 @@ describe('assignTreeLinks', () => {
         expect(result.find(item => item.id === '1').children[0].id).toBe('11')
         expect(
             result
-            .find(item => item.id === '2').children
-            .find(item => item.id === '22').children
-            .find(item => item.id === '221').children[0].id
+                .find(item => item.id === '2')
+                .children.find(item => item.id === '22')
+                .children.find(item => item.id === '221').children[0].id
         ).toBe('2211')
     })
 
@@ -52,7 +51,7 @@ describe('assignTreeLinks', () => {
 
     it('excludes orphans and throws console warning', () => {
         const orphan = { id: 'orphan', level: 2, parentId: 'missing-parent' }
-        const sampleWithOrphan = [ ...sample, orphan ]
+        const sampleWithOrphan = [...sample, orphan]
         const resultWithoutOrphan = assignTreeLinks(sampleWithOrphan)
         expect(resultWithoutOrphan.length).toBe(result.length)
         expect(consoleMock).toBeCalledWith(expect.stringContaining(`[id] = ${orphan.id}`))
@@ -71,13 +70,12 @@ describe('getDescendants', () => {
 describe('buildSearchResultTree', () => {
     it('returns array of matching nodes, their direct children and every ancestor', () => {
         const sample = assignTreeLinks(getAssignTreeLinksSample())
-        expect(buildSearchResultTree(sample, ['221']).map(item => item.id))
-        .toEqual(expect.arrayContaining(['2211', '221', '22', '2']))
+        expect(buildSearchResultTree(sample, ['221']).map(item => item.id)).toEqual(expect.arrayContaining(['2211', '221', '22', '2']))
         expect(buildSearchResultTree(sample, ['999']).length).toBe(0)
-        expect(buildSearchResultTree(sample, ['2', '999']).map(item => item.id))
-        .toEqual(expect.arrayContaining(['2', '21', '22']))
-        expect(buildSearchResultTree(sample, ['31', '22']).map(item => item.id))
-        .toEqual(expect.arrayContaining(['31', '3', '22', '221', '2']))
+        expect(buildSearchResultTree(sample, ['2', '999']).map(item => item.id)).toEqual(expect.arrayContaining(['2', '21', '22']))
+        expect(buildSearchResultTree(sample, ['31', '22']).map(item => item.id)).toEqual(
+            expect.arrayContaining(['31', '3', '22', '221', '2'])
+        )
     })
 })
 
@@ -135,7 +133,7 @@ function getUnsortedSample() {
         { id: '2', parentId: '0', level: 1 },
         { id: '31', parentId: '3', level: 2 },
         { id: '32', parentId: '3', level: 2 },
-        { id: '3', parentId: '0', level: 1 },
+        { id: '3', parentId: '0', level: 1 }
     ]
 }
 
@@ -148,20 +146,20 @@ const getDescendantsSample = [
             },
             {
                 id: '12',
-                children: [{
-                    id: '121'
-                }]
+                children: [
+                    {
+                        id: '121'
+                    }
+                ]
             },
             {
                 id: '13'
-            },
+            }
         ]
     },
     { id: '2' },
     {
         id: '3',
-        children: [
-            { id: '31' }
-        ]
-    },
+        children: [{ id: '31' }]
+    }
 ]

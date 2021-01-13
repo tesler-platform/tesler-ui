@@ -1,6 +1,6 @@
 import React from 'react'
-import {useSelector} from 'react-redux'
-import {Store} from '../interfaces/store'
+import { useSelector } from 'react-redux'
+import { Store } from '../interfaces/store'
 
 /**
  * Get filters from the store for specific widget and field

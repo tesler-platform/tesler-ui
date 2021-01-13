@@ -1,7 +1,7 @@
-import {AnyAction, types} from '../actions/actions'
-import {Session} from '../interfaces/session'
+import { AnyAction, types } from '../actions/actions'
+import { Session } from '../interfaces/session'
 
-const initialState: Session  = {
+const initialState: Session = {
     active: false,
     loginSpin: false,
     errorMsg: null,

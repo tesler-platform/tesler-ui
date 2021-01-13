@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-import {$do} from '../../../actions/actions'
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {mockStore} from '../../../tests/mockStore'
-import {ActionsObservable} from 'redux-observable'
-import {testEpic } from '../../../tests/testEpic'
-import {httpErrorDefault} from '../httpErrorDefault'
-import {AxiosError} from 'axios'
-import {ApplicationError, ApplicationErrorType} from '../../../interfaces/view'
-import {knownHttpErrors} from '../apiError'
+import { $do } from '../../../actions/actions'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { mockStore } from '../../../tests/mockStore'
+import { ActionsObservable } from 'redux-observable'
+import { testEpic } from '../../../tests/testEpic'
+import { httpErrorDefault } from '../httpErrorDefault'
+import { AxiosError } from 'axios'
+import { ApplicationError, ApplicationErrorType } from '../../../interfaces/view'
+import { knownHttpErrors } from '../apiError'
 
 describe('httpErrorDefault', () => {
     let store: Store<CoreStore> = null
@@ -40,10 +40,14 @@ describe('httpErrorDefault', () => {
             callContext: { widgetName: 'widget-example' }
         })
         const epic = httpErrorDefault(ActionsObservable.of(action), store)
-        testEpic(epic, (result) => {
-            expect(result[0]).toEqual(expect.objectContaining($do.showViewError({
-                error: applicationError
-            })))
+        testEpic(epic, result => {
+            expect(result[0]).toEqual(
+                expect.objectContaining(
+                    $do.showViewError({
+                        error: applicationError
+                    })
+                )
+            )
         })
     })
 
@@ -55,7 +59,7 @@ describe('httpErrorDefault', () => {
                 callContext: { widgetName: 'widget-example' }
             })
             const epic = httpErrorDefault(ActionsObservable.of(action), store)
-            testEpic(epic, (result) => {
+            testEpic(epic, result => {
                 expect(result.length).toBe(0)
             })
         })

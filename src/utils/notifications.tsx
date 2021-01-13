@@ -16,7 +16,7 @@
  */
 
 import React from 'react'
-import {Button, notification} from 'antd'
+import { Button, notification } from 'antd'
 import i18n from 'i18next'
 
 /**
@@ -45,9 +45,11 @@ export const openButtonWarningNotification = (
         onButtonClick?.()
         notification.close(notificationKey)
     }
-    const btn = <Button type="primary" onClick={btnAction}>
-        {buttonText}
-    </Button>
+    const btn = (
+        <Button type="primary" onClick={btnAction}>
+            {buttonText}
+        </Button>
+    )
 
     notification.warning({
         description,

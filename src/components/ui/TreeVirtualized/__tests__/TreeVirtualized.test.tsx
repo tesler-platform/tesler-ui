@@ -16,16 +16,16 @@
  */
 
 import React from 'react'
-import {mount} from 'enzyme'
-import {TreeVirtualized, TreeVirtualizedDomContainer} from '../TreeVirtualized'
-import {TreeVirtualizedNode, TreeVirtualizedNodeProps} from '../TreeVirtualizedNode'
-import {act} from 'react-dom/test-utils'
-import {FilterType} from '../../../../interfaces/filters'
-import {FieldType} from '../../../../interfaces/view'
-import {Store as CoreStore} from '../../../../interfaces/store'
-import {Store} from 'redux'
-import {mockStore} from '../../../../tests/mockStore'
-import {Provider} from 'react-redux'
+import { mount } from 'enzyme'
+import { TreeVirtualized, TreeVirtualizedDomContainer } from '../TreeVirtualized'
+import { TreeVirtualizedNode, TreeVirtualizedNodeProps } from '../TreeVirtualizedNode'
+import { act } from 'react-dom/test-utils'
+import { FilterType } from '../../../../interfaces/filters'
+import { FieldType } from '../../../../interfaces/view'
+import { Store as CoreStore } from '../../../../interfaces/store'
+import { Store } from 'redux'
+import { mockStore } from '../../../../tests/mockStore'
+import { Provider } from 'react-redux'
 
 describe('<TreeVirtualized />', () => {
     const sample = getTreeSample()
@@ -35,7 +35,8 @@ describe('<TreeVirtualized />', () => {
     })
 
     it('respects `matchCase` option when searching', () => {
-        let wrapper = mount(<Provider store={store}>
+        let wrapper = mount(
+            <Provider store={store}>
                 <TreeVirtualized<typeof sample[number]>
                     items={sample}
                     width={640}
@@ -54,17 +55,18 @@ describe('<TreeVirtualized />', () => {
         expect(wrapper.find(TreeVirtualizedNode).at(3).text()).toBe('Lucky Twelve')
         expect(wrapper.find(TreeVirtualizedNode).at(4).text()).toBe('three')
         expect(wrapper.find(TreeVirtualizedNode).at(5).text()).toBe('lucky Eight')
-        wrapper = mount(<Provider store={store}>
-            <TreeVirtualized<typeof sample[number]>
-                matchCase={true}
-                items={sample}
-                width={640}
-                height={480}
-                itemSize={45}
-                filters={[{ fieldName: 'name', value: 'lucky', type: FilterType.contains }]}
-                fields={[{ key: 'name', title: '', type: FieldType.input }]}
-                onSelect={jest.fn}
-            />
+        wrapper = mount(
+            <Provider store={store}>
+                <TreeVirtualized<typeof sample[number]>
+                    matchCase={true}
+                    items={sample}
+                    width={640}
+                    height={480}
+                    itemSize={45}
+                    filters={[{ fieldName: 'name', value: 'lucky', type: FilterType.contains }]}
+                    fields={[{ key: 'name', title: '', type: FieldType.input }]}
+                    onSelect={jest.fn}
+                />
             </Provider>
         )
         expect(wrapper.find(TreeVirtualizedNode).length).toBe(2)
@@ -73,15 +75,16 @@ describe('<TreeVirtualized />', () => {
     })
 
     it('expands node or collapse node and all descendants on toggle', () => {
-        const wrapper = mount(<Provider store={store}>
-            <TreeVirtualized<typeof sample[number]>
-                items={sample}
-                width={640}
-                height={480}
-                itemSize={45}
-                fields={[{ key: 'name', title: '', type: FieldType.input }]}
-                onSelect={jest.fn}
-            />
+        const wrapper = mount(
+            <Provider store={store}>
+                <TreeVirtualized<typeof sample[number]>
+                    items={sample}
+                    width={640}
+                    height={480}
+                    itemSize={45}
+                    fields={[{ key: 'name', title: '', type: FieldType.input }]}
+                    onSelect={jest.fn}
+                />
             </Provider>
         )
         // initial
@@ -90,8 +93,7 @@ describe('<TreeVirtualized />', () => {
         expect(wrapper.find(TreeVirtualizedNode).at(1).text()).toBe('two')
         expect(wrapper.find(TreeVirtualizedNode).at(2).text()).toBe('three')
         // open node `two`
-        let props = wrapper.find(TreeVirtualizedNode).at(1)
-            .props() as TreeVirtualizedNodeProps<typeof sample[number]>
+        let props = wrapper.find(TreeVirtualizedNode).at(1).props() as TreeVirtualizedNodeProps<typeof sample[number]>
         act(() => {
             props.data.onToggle('2')
         })
@@ -103,8 +105,7 @@ describe('<TreeVirtualized />', () => {
         expect(wrapper.find(TreeVirtualizedNode).at(3).text()).toBe('ten')
         expect(wrapper.find(TreeVirtualizedNode).at(4).text()).toBe('three')
         // close node `two`
-        props = wrapper.find(TreeVirtualizedNode).at(1)
-            .props() as TreeVirtualizedNodeProps<typeof sample[number]>
+        props = wrapper.find(TreeVirtualizedNode).at(1).props() as TreeVirtualizedNodeProps<typeof sample[number]>
         act(() => {
             props.data.onToggle('2')
         })
@@ -119,18 +120,19 @@ describe('<TreeVirtualized />', () => {
         const largeSample = new Array(200).fill(null).map((item, index) => {
             return { id: index.toString(), parentId: '0', level: 1 }
         })
-        const wrapper = mount(<Provider store={store}>
-            <TreeVirtualized<typeof largeSample[number]>
-                items={largeSample}
-                width={640}
-                height={480}
-                itemSize={45}
-                fields={[{ key: 'name', title: '', type: FieldType.input }]}
-                onSelect={jest.fn}
-            />
+        const wrapper = mount(
+            <Provider store={store}>
+                <TreeVirtualized<typeof largeSample[number]>
+                    items={largeSample}
+                    width={640}
+                    height={480}
+                    itemSize={45}
+                    fields={[{ key: 'name', title: '', type: FieldType.input }]}
+                    onSelect={jest.fn}
+                />
             </Provider>
         )
-        const container = (wrapper.getDOMNode() as TreeVirtualizedDomContainer)
+        const container = wrapper.getDOMNode<TreeVirtualizedDomContainer>()
         container.scrollToItem('50', 'id', 'start')
         wrapper.update()
         expect((wrapper.find(TreeVirtualizedNode).at(0).props() as any).index).toBe(48)
@@ -150,7 +152,7 @@ function getTreeSample() {
         { id: '2211', name: 'Lucky Twelve', parentId: '221', level: 4 },
         { id: '3', name: 'three', parentId: '0', level: 1 },
         { id: '31', name: 'seven', parentId: '3', level: 2 },
-        { id: '32', name: 'lucky Eight', parentId: '3', level: 2 },
+        { id: '32', name: 'lucky Eight', parentId: '3', level: 2 }
     ]
     return tree
 }

@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {getViewTabs, getReferencedView} from '../viewTabs'
-import {ViewNavigationGroup} from '../../interfaces/navigation'
+import { getViewTabs, getReferencedView } from '../viewTabs'
+import { ViewNavigationGroup } from '../../interfaces/navigation'
 import * as navigationSample from './__mocks__/navigation.json'
 import * as navigationFlatSample from './__mocks__/navigationFlat.json'
 
@@ -32,36 +32,18 @@ describe('useNavigation helper', () => {
         ])
     })
     it('should form 2 level menu', () => {
-        expect(getViewTabs(sample, 2, 'viewB1')).toMatchObject([
-            { viewName: 'viewB1' },
-            { viewName: 'viewB2' }
-        ])
-        expect(getViewTabs(sample, 2, 'viewB2')).toMatchObject([
-            { viewName: 'viewB1' },
-            { viewName: 'viewB2' }
-        ])
-        expect(getViewTabs(sample, 2, 'viewC_1_2')).toMatchObject([
-            { viewName: 'viewC_2_2' },
-            { viewName: 'viewC_1_2' }
-        ])
+        expect(getViewTabs(sample, 2, 'viewB1')).toMatchObject([{ viewName: 'viewB1' }, { viewName: 'viewB2' }])
+        expect(getViewTabs(sample, 2, 'viewB2')).toMatchObject([{ viewName: 'viewB1' }, { viewName: 'viewB2' }])
+        expect(getViewTabs(sample, 2, 'viewC_1_2')).toMatchObject([{ viewName: 'viewC_2_2' }, { viewName: 'viewC_1_2' }])
     })
     it('should form 3 level menu', () => {
-        expect(getViewTabs(sample, 3, 'viewC_2_1')).toMatchObject([
-            { viewName: 'viewC_2_1' },
-            { viewName: 'viewC_2_2' }
-        ])
+        expect(getViewTabs(sample, 3, 'viewC_2_1')).toMatchObject([{ viewName: 'viewC_2_1' }, { viewName: 'viewC_2_2' }])
     })
     it('should form 4 level menu', () => {
-        expect(getViewTabs(sample, 4, 'viewD1')).toMatchObject([
-            { viewName: 'viewD1' },
-            { viewName: 'viewD2' }
-        ])
+        expect(getViewTabs(sample, 4, 'viewD1')).toMatchObject([{ viewName: 'viewD1' }, { viewName: 'viewD2' }])
     })
     it('should work with flat navigation', () => {
-        expect(getViewTabs(sampleFlat, 1, 'banklist')).toMatchObject([
-            { viewName: 'banklist' },
-            { viewName: 'bankcard' }
-        ])
+        expect(getViewTabs(sampleFlat, 1, 'banklist')).toMatchObject([{ viewName: 'banklist' }, { viewName: 'bankcard' }])
     })
     it('should not break when requesting non existing tab level', () => {
         expect(getViewTabs(sampleFlat, 2, 'twilightSparkle')).toMatchObject([])
@@ -70,13 +52,13 @@ describe('useNavigation helper', () => {
 
 describe('getReferencedView', () => {
     it('should return default category view when specified', () => {
-        expect(getReferencedView(sample[1]))
-        .toMatch((sample[1] as ViewNavigationGroup).defaultView)
-        expect(getReferencedView((sample[2] as ViewNavigationGroup).child[0]))
-        .toMatch(((sample[2] as ViewNavigationGroup).child[0] as ViewNavigationGroup).defaultView)
+        expect(getReferencedView(sample[1])).toMatch((sample[1] as ViewNavigationGroup).defaultView)
+        expect(getReferencedView((sample[2] as ViewNavigationGroup).child[0])).toMatch(
+            ((sample[2] as ViewNavigationGroup).child[0] as ViewNavigationGroup).defaultView
+        )
     }),
-    it('should return first available view when not specified', () => {
-        expect(getReferencedView(sample[0])).toMatch('viewA')
-        expect(getReferencedView(sample[2])).toMatch('viewC_1_2')
-    })
+        it('should return first available view when not specified', () => {
+            expect(getReferencedView(sample[0])).toMatch('viewA')
+            expect(getReferencedView(sample[2])).toMatch('viewC_1_2')
+        })
 })

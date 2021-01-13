@@ -1,5 +1,5 @@
-import {Middleware} from 'redux'
-import {middlewares} from '../middlewares'
+import { Middleware } from 'redux'
+import { middlewares } from '../middlewares'
 /**
  * Type of core middlewares
  */
@@ -12,7 +12,7 @@ export interface CustomMiddleware {
     /**
      * Implementation of custom middleware
      */
-    implementation: Middleware,
+    implementation: Middleware
     /**
      * Priority of custom middleware
      */
@@ -27,7 +27,7 @@ export type CoreMiddlewareType = keyof CoreMiddlewares
 /**
  * Descriptor of custom middleware not presented in core middlewares
  */
-export type NewMiddlewareDescriptor<T = {}> = Record<Exclude<keyof T, keyof CoreMiddlewares>, CustomMiddleware>
+export type NewMiddlewareDescriptor<T = Record<string, unknown>> = Record<Exclude<keyof T, keyof CoreMiddlewares>, CustomMiddleware>
 
 /**
  * Form a dictionary of override descriptors for those middleware
@@ -36,5 +36,4 @@ export type CoreMiddlewareOverrideDescriptors = Record<CoreMiddlewareType, Middl
 /**
  * Type of custom middlewares
  */
-export type CustomMiddlewares<T = {}> = Partial<CoreMiddlewareOverrideDescriptors> | NewMiddlewareDescriptor<T>
-
+export type CustomMiddlewares<T = Record<string, unknown>> = Partial<CoreMiddlewareOverrideDescriptors> | NewMiddlewareDescriptor<T>
