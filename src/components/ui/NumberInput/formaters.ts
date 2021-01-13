@@ -39,9 +39,7 @@ export function getFormattedNumber(value: number, digits: number, useGrouping = 
         minimumFractionDigits: precision,
         maximumFractionDigits: precision,
         useGrouping: useGrouping
-    }).format(
-        fractionsRound(value, precision)
-    )
+    }).format(fractionsRound(value, precision))
     // NumberFormat might return negative zero
     if (!precision && value < 0 && !result.match(/[1-9]/)) {
         result = result.replace('-', '')
@@ -62,10 +60,10 @@ export function fractionsRound(value: number, precision: number): number {
     }
     // Fraction offsetting
     const [mant, exp] = value.toString(10).split('e')
-    const val: number = Math.round(Number(mant + 'e' + ((exp) ? (Number(exp) + precision) : precision)))
+    const val: number = Math.round(Number(mant + 'e' + (exp ? Number(exp) + precision : precision)))
     // Reverse offsetting
     const [rmant, rexp] = val.toString(10).split('e')
-    return Number(rmant + 'e' + ((rexp) ? (Number(rexp) - precision) : -precision))
+    return Number(rmant + 'e' + (rexp ? Number(rexp) - precision : -precision))
 }
 
 /**
@@ -77,9 +75,7 @@ export function getPrecision(digits: number): number {
     let precision = 0
     // calculate target precision based on maximally allowed by Intl formatting
     if (digits) {
-        precision = digits < 0 ? 0
-            : digits > 20 ? 20
-                : Math.ceil(digits)
+        precision = digits < 0 ? 0 : digits > 20 ? 20 : Math.ceil(digits)
     }
     return precision
 }

@@ -1,5 +1,5 @@
-import {ActionPayloadTypes, ActionsObservable, AnyAction, types} from '../actions/actions'
-import {Observable} from 'rxjs'
+import { ActionPayloadTypes, ActionsObservable, AnyAction, types } from '../actions/actions'
+import { Observable } from 'rxjs'
 
 /**
  * Default list of action types which are triggers for request cancel
@@ -20,10 +20,16 @@ export function cancelRequestEpic(
     actionTypes: Array<keyof ActionPayloadTypes>,
     cancelFn: () => void,
     cancelActionCreator: AnyAction,
-    filterFn: (actions: AnyAction) => boolean = (item) => {return true}
+    filterFn: (actions: AnyAction) => boolean = item => {
+        return true
+    }
 ) {
-    return action$.ofType(...actionTypes).filter(filterFn).mergeMap(() => {
-        cancelFn()
-        return Observable.of(cancelActionCreator)
-    }).take(1)
+    return action$
+        .ofType(...actionTypes)
+        .filter(filterFn)
+        .mergeMap(() => {
+            cancelFn()
+            return Observable.of(cancelActionCreator)
+        })
+        .take(1)
 }

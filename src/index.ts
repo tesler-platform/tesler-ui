@@ -18,8 +18,8 @@
 import './imports/shim'
 import './imports/rxjs'
 
-import {connect} from 'react-redux'
-import {useTranslation} from 'react-i18next'
+import { connect } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import Provider, {
     store,
     getStoreInstance,
@@ -27,21 +27,18 @@ import Provider, {
     getBuildLocationInstance,
     getLocaleProviderInstance
 } from './Provider'
-import {$do, types, ActionPayloadTypes, AnyAction, needSaveAction} from './actions/actions'
-import {Action, uActionTypesMap, uActionsMap, AnyOfMap, createActionCreators, createActionTypes} from './actions/actions-utils'
-import {historyObj, changeLocation} from './reducers/router'
-import {
-    axiosForApi,
-    axiosGet, axiosPost, axiosPut, axiosDelete
-} from './utils/api'
-import {buildBcUrl} from './utils/strings'
-import {combineReducers} from './utils/redux'
-import {buildUrl, parseBcCursors} from './utils/history'
-import {getFilters, getSorters, parseFilters, parseSorters} from './utils/filters'
-import {matchOperationRole, flattenOperations} from './utils/operations'
-import {isViewNavigationItem, isViewNavigationCategory, isViewNavigationGroup} from './interfaces/navigation'
-import {isWidgetFieldBlock, TableLikeWidgetTypes} from './interfaces/widget'
-import {autosaveRoutine} from './utils/autosave'
+import { $do, types, ActionPayloadTypes, AnyAction, needSaveAction } from './actions/actions'
+import { Action, uActionTypesMap, uActionsMap, AnyOfMap, createActionCreators, createActionTypes } from './actions/actions-utils'
+import { historyObj, changeLocation } from './reducers/router'
+import { axiosForApi, axiosGet, axiosPost, axiosPut, axiosDelete } from './utils/api'
+import { buildBcUrl } from './utils/strings'
+import { combineReducers } from './utils/redux'
+import { buildUrl, parseBcCursors } from './utils/history'
+import { getFilters, getSorters, parseFilters, parseSorters } from './utils/filters'
+import { matchOperationRole, flattenOperations } from './utils/operations'
+import { isViewNavigationItem, isViewNavigationCategory, isViewNavigationGroup } from './interfaces/navigation'
+import { isWidgetFieldBlock, TableLikeWidgetTypes } from './interfaces/widget'
+import { autosaveRoutine } from './utils/autosave'
 const parseLocation = getParseLocationInstance
 const buildLocation = getBuildLocationInstance
 
@@ -135,7 +132,7 @@ export {
     TableLikeWidgetTypes,
     // Unstable
     buildBcUrl,
-    flattenOperations,
+    flattenOperations
 }
 
 /**
@@ -166,7 +163,7 @@ export {
     // Stable
     useTranslation,
     // Unstable
-    getLocaleProviderInstance,
+    getLocaleProviderInstance
 }
 
 /**
@@ -180,36 +177,34 @@ export {
     /**
      * @deprecated
      */
-    isViewNavigationCategory,
+    isViewNavigationCategory
 }
 
 /**
  * Epics implementations
  */
-export {processPostInvokeImpl} from './epics/screen/processPostInvoke'
-export {apiErrorImpl} from './epics/screen/apiError'
-export {httpError401Impl} from './epics/screen/httpError401'
-export {httpError409Impl} from './epics/screen/httpError409'
-export {httpError418Impl} from './epics/screen/httpError418'
-export {httpError500Impl} from './epics/screen/httpError500'
-export {httpErrorDefaultImpl} from './epics/screen/httpErrorDefault'
-export {fileUploadConfirmImpl} from './epics/view/fileUploadConfirm'
-export {showFileUploadPopupImpl} from './epics/view/showFileUploadPopup'
-export {sendOperationEpicImpl} from './epics/view/sendOperation'
-export {showAssocPopupEpicImpl} from './epics/view/showAssocPopup'
-export {removeMultivalueTagImpl} from './epics/data/removeMultivalueTag'
-export {bcCancelCreateDataEpicImpl} from './epics/data/bcCancelCreateDataEpic'
-export {bcNewDataEpicImpl} from './epics/data/bcNewDataEpic'
-export {bcFetchRowMetaRequestImpl} from './epics/data/bcFetchRowMetaRequest'
-export {selectViewImpl} from './epics/data/selectView'
-export {drillDownImpl} from './epics/router/drilldown'
-export {selectScreenImpl} from './epics/router/selectScreen'
-export {selectViewFailImpl} from './epics/router/selectViewFail'
-export {loginDone} from './epics/router/loginDone'
+export { processPostInvokeImpl } from './epics/screen/processPostInvoke'
+export { apiErrorImpl } from './epics/screen/apiError'
+export { httpError401Impl } from './epics/screen/httpError401'
+export { httpError409Impl } from './epics/screen/httpError409'
+export { httpError418Impl } from './epics/screen/httpError418'
+export { httpError500Impl } from './epics/screen/httpError500'
+export { httpErrorDefaultImpl } from './epics/screen/httpErrorDefault'
+export { fileUploadConfirmImpl } from './epics/view/fileUploadConfirm'
+export { showFileUploadPopupImpl } from './epics/view/showFileUploadPopup'
+export { sendOperationEpicImpl } from './epics/view/sendOperation'
+export { showAssocPopupEpicImpl } from './epics/view/showAssocPopup'
+export { removeMultivalueTagImpl } from './epics/data/removeMultivalueTag'
+export { bcCancelCreateDataEpicImpl } from './epics/data/bcCancelCreateDataEpic'
+export { bcNewDataEpicImpl } from './epics/data/bcNewDataEpic'
+export { bcFetchRowMetaRequestImpl } from './epics/data/bcFetchRowMetaRequest'
+export { selectViewImpl } from './epics/data/selectView'
+export { drillDownImpl } from './epics/router/drilldown'
+export { selectScreenImpl } from './epics/router/selectScreen'
+export { selectViewFailImpl } from './epics/router/selectViewFail'
+export { loginDone } from './epics/router/loginDone'
 
 /**
  * Autosave middleware utils
  */
-export {
-    autosaveRoutine
-}
+export { autosaveRoutine }

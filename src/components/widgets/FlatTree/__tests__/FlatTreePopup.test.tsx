@@ -16,18 +16,18 @@
  */
 
 import React from 'react'
-import {mount} from 'enzyme'
-import {Store} from 'redux'
+import { mount } from 'enzyme'
+import { Store } from 'redux'
 import * as redux from 'react-redux'
-import {Provider} from 'react-redux'
-import {ListChildComponentProps} from 'react-window'
-import {FlatTreePopup} from '../FlatTreePopup'
-import {Store as CoreStore} from '../../../../interfaces/store'
-import {WidgetTypes, WidgetTableMeta} from '../../../../interfaces/widget'
-import {FieldType} from '../../../../interfaces/view'
+import { Provider } from 'react-redux'
+import { ListChildComponentProps } from 'react-window'
+import { FlatTreePopup } from '../FlatTreePopup'
+import { Store as CoreStore } from '../../../../interfaces/store'
+import { WidgetTypes, WidgetTableMeta } from '../../../../interfaces/widget'
+import { FieldType } from '../../../../interfaces/view'
 import { mockStore } from '../../../../tests/mockStore'
 import FlatTree from '../FlatTree'
-import {types as coreActions} from '../../../../actions/actions'
+import { types as coreActions } from '../../../../actions/actions'
 
 const bcExample = {
     name: 'bcExample',
@@ -76,14 +76,12 @@ describe('<FlatTreePopup />', () => {
     })
 
     it('passes custom component as children to nested FlatTree implementation', () => {
-        const CustomComponent: React.FC<ListChildComponentProps> = (props) => {
+        const CustomComponent: React.FC<ListChildComponentProps> = props => {
             return <div>I'm custom</div>
         }
         const wrapper = mount(
             <Provider store={store}>
-                <FlatTreePopup meta={widget}>
-                    {CustomComponent}
-                </FlatTreePopup>
+                <FlatTreePopup meta={widget}>{CustomComponent}</FlatTreePopup>
             </Provider>
         )
         expect(wrapper.find(FlatTree).props().children).toBe(CustomComponent)
@@ -94,8 +92,8 @@ describe('<FlatTreePopup />', () => {
             <Provider store={store}>
                 <FlatTreePopup meta={widget} />
             </Provider>
-        );
-        (wrapper.find(FlatTree).props().onSelect as (item: any) => void)({ id: 'test', name: 'Test', vstamp: 0 })
+        )
+        ;(wrapper.find(FlatTree).props().onSelect as (item: any) => void)({ id: 'test', name: 'Test', vstamp: 0 })
         expect(dispatch).toHaveBeenCalledTimes(0)
     })
 
@@ -108,8 +106,8 @@ describe('<FlatTreePopup />', () => {
             <Provider store={store}>
                 <FlatTreePopup meta={widget} />
             </Provider>
-        );
-        (wrapper.find(FlatTree).props().onSelect as (item: any) => void)({ id: 'test', name: 'Test', vstamp: 0 })
+        )
+        ;(wrapper.find(FlatTree).props().onSelect as (item: any) => void)({ id: 'test', name: 'Test', vstamp: 0 })
         expect(dispatch).toHaveBeenCalledWith(
             expect.objectContaining({
                 type: coreActions.changeDataItem,
@@ -155,9 +153,11 @@ const widget: WidgetTableMeta = {
     bcName: 'bcExample',
     position: 1,
     gridWidth: null,
-    fields: [{
-        key: 'field-example',
-        title: 'Test Column',
-        type: FieldType.input
-    }]
+    fields: [
+        {
+            key: 'field-example',
+            title: 'Test Column',
+            type: FieldType.input
+        }
+    ]
 }

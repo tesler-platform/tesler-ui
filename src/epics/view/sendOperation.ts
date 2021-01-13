@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-import {Observable} from 'rxjs'
-import {matchOperationRole} from '../../utils/operations'
-import {OperationErrorEntity, OperationError} from '../../interfaces/operation'
-import {Store} from 'redux'
-import {Epic, types, $do, AnyAction, ActionsMap} from '../../actions/actions'
-import {Store as CoreStore} from '../../interfaces/store'
-import {buildBcUrl} from '../../utils/strings'
-import {postOperationRoutine} from '../../epics/view'
-import {AxiosError} from 'axios'
-import {customAction} from '../../api/api'
+import { Observable } from 'rxjs'
+import { matchOperationRole } from '../../utils/operations'
+import { OperationErrorEntity, OperationError } from '../../interfaces/operation'
+import { Store } from 'redux'
+import { Epic, types, $do, AnyAction, ActionsMap } from '../../actions/actions'
+import { Store as CoreStore } from '../../interfaces/store'
+import { buildBcUrl } from '../../utils/strings'
+import { postOperationRoutine } from '../../epics/view'
+import { AxiosError } from 'axios'
+import { customAction } from '../../api/api'
 
 /**
  * Handle any `sendOperation` action which is not part of built-in operations types
@@ -37,11 +37,13 @@ import {customAction} from '../../api/api'
  * @param action$ Payload includes operation type and widget that initiated operation
  * @param store
  */
-export const sendOperation: Epic = (action$, store) => action$.ofType(types.sendOperation)
-.filter(action => matchOperationRole('none', action.payload, store.getState()))
-.mergeMap((action) => {
-    return sendOperationEpicImpl(action, store)
-})
+export const sendOperation: Epic = (action$, store) =>
+    action$
+        .ofType(types.sendOperation)
+        .filter(action => matchOperationRole('none', action.payload, store.getState()))
+        .mergeMap(action => {
+            return sendOperationEpicImpl(action, store)
+        })
 
 /**
  * Default implementation of `sendOperation` handler
@@ -52,7 +54,7 @@ export const sendOperation: Epic = (action$, store) => action$.ofType(types.send
 export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store: Store<CoreStore, AnyAction>) {
     const state = store.getState()
     const screenName = state.screen.screenName
-    const {bcName, operationType, widgetName} = action.payload
+    const { bcName, operationType, widgetName } = action.payload
     // TODO: Remove conformOperation n 2.0.0
     const confirm = action.payload.confirmOperation?.type || action.payload.confirm
     const bcUrl = buildBcUrl(bcName, true)
@@ -68,41 +70,40 @@ export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store
         }
     }
     const data = record && { ...pendingRecordChange, vstamp: record.vstamp }
-    const defaultSaveOperation = state.view.widgets
-        ?.find(item => item.name === widgetName)?.options?.actionGroups
-        ?.defaultSave === action.payload.operationType && action.payload?.onSuccessAction?.type === types.changeLocation
-    const params = confirm
-        ? { _action: operationType, _confirm: confirm }
-        : { _action: operationType }
+    const defaultSaveOperation =
+        state.view.widgets?.find(item => item.name === widgetName)?.options?.actionGroups?.defaultSave === action.payload.operationType &&
+        action.payload?.onSuccessAction?.type === types.changeLocation
+    const params = confirm ? { _action: operationType, _confirm: confirm } : { _action: operationType }
     const context = { widgetName: action.payload.widgetName }
     return customAction(screenName, bcUrl, data, context, params)
-    .mergeMap(response => {
-        const postInvoke = response.postActions[0]
-        // TODO: Remove in 2.0.0 in favor of postInvokeConfirm (is this todo needed?)
-        const preInvoke = response.preInvoke
-        // defaultSaveOperation mean that executed custom autosave and postAction will be ignored
-        // drop pendingChanges and onSuccessAction execute instead
-        return defaultSaveOperation
-        ? action?.payload?.onSuccessAction
-            ? Observable.concat(
-                Observable.of($do.bcCancelPendingChanges({bcNames: [bcName]})),
-                Observable.of(action.payload.onSuccessAction))
-            : Observable.empty<never>()
-        : Observable.concat(
-            Observable.of($do.sendOperationSuccess({ bcName, cursor })),
-            Observable.of($do.bcForceUpdate({ bcName })),
-            ...postOperationRoutine(widgetName, postInvoke, preInvoke, operationType, bcName),
-        )
-    })
-    .catch((e: AxiosError) => {
-        console.error(e)
-        let viewError: string = null
-        let entityError: OperationErrorEntity = null
-        const operationError = e.response?.data as OperationError
-        if (e.response?.data === Object(e.response?.data)) {
-            entityError = operationError?.error?.entity
-            viewError = operationError?.error?.popup?.[0]
-        }
-        return Observable.of($do.sendOperationFail({ bcName, bcUrl, viewError, entityError }))
-    })
+        .mergeMap(response => {
+            const postInvoke = response.postActions[0]
+            // TODO: Remove in 2.0.0 in favor of postInvokeConfirm (is this todo needed?)
+            const preInvoke = response.preInvoke
+            // defaultSaveOperation mean that executed custom autosave and postAction will be ignored
+            // drop pendingChanges and onSuccessAction execute instead
+            return defaultSaveOperation
+                ? action?.payload?.onSuccessAction
+                    ? Observable.concat(
+                          Observable.of($do.bcCancelPendingChanges({ bcNames: [bcName] })),
+                          Observable.of(action.payload.onSuccessAction)
+                      )
+                    : Observable.empty<never>()
+                : Observable.concat(
+                      Observable.of($do.sendOperationSuccess({ bcName, cursor })),
+                      Observable.of($do.bcForceUpdate({ bcName })),
+                      ...postOperationRoutine(widgetName, postInvoke, preInvoke, operationType, bcName)
+                  )
+        })
+        .catch((e: AxiosError) => {
+            console.error(e)
+            let viewError: string = null
+            let entityError: OperationErrorEntity = null
+            const operationError = e.response?.data as OperationError
+            if (e.response?.data === Object(e.response?.data)) {
+                entityError = operationError?.error?.entity
+                viewError = operationError?.error?.popup?.[0]
+            }
+            return Observable.of($do.sendOperationFail({ bcName, bcUrl, viewError, entityError }))
+        })
 }

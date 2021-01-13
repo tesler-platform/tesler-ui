@@ -1,8 +1,8 @@
 /**
  * Моки меты виджетов
  */
-import {WidgetTypes, WidgetMeta} from '../../interfaces/widget'
-import {FieldType} from '../../interfaces/view'
+import { WidgetTypes, WidgetMeta } from '../../interfaces/widget'
+import { FieldType } from '../../interfaces/view'
 
 export const baseWidgetMeta: WidgetMeta = {
     name: 'mockWidget',
@@ -94,12 +94,11 @@ export const hierarchyWidgetMeta: any = {
     ]
 }
 
-export const hierarchyWidgetProps: any = { // TableWidgetProps
+export const hierarchyWidgetProps: any = {
+    // TableWidgetProps
     cursor: '9',
     loading: false,
-    route: {
-
-    },
+    route: {},
     data: [],
     onDrillDown: undefined,
     onExpand: undefined,

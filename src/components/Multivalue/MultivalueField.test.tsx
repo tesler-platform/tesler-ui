@@ -1,17 +1,17 @@
 import React from 'react'
-import {mount} from 'enzyme'
-import {Store} from 'redux'
-import {Provider} from 'react-redux'
-import {mockStore} from '../../tests/mockStore'
-import {Store as CoreStore} from '../../interfaces/store'
+import { mount } from 'enzyme'
+import { Store } from 'redux'
+import { Provider } from 'react-redux'
+import { mockStore } from '../../tests/mockStore'
+import { Store as CoreStore } from '../../interfaces/store'
 import styles from '../ui/Multivalue/MultivalueField.less'
 import MultivalueField from './MultivalueField'
-import {FieldType} from '../../interfaces/view'
-import {MultivalueSingleValue} from '../../interfaces/data'
-import {MultivalueFieldMeta} from '../../interfaces/widget'
-import {Tag} from 'antd'
+import { FieldType } from '../../interfaces/view'
+import { MultivalueSingleValue } from '../../interfaces/data'
+import { MultivalueFieldMeta } from '../../interfaces/widget'
+import { Tag } from 'antd'
 import Field from '../Field/Field'
-import {buildBcUrl} from '../..'
+import { buildBcUrl } from '../..'
 
 const testBcName = 'bcExample'
 const testPopupBcName = 'testAssoc'
@@ -19,9 +19,9 @@ const testPopupBcName = 'testAssoc'
 const testCursor = '4'
 
 const testMultivalueData: MultivalueSingleValue[] = [
-    {id: '1', value: 'test1', options: {}},
-    {id: '2', value: 'test2', options: {}},
-    {id: '3', value: 'test3', options: {}}
+    { id: '1', value: 'test1', options: {} },
+    { id: '2', value: 'test2', options: {} },
+    { id: '3', value: 'test3', options: {} }
 ]
 
 const widgetFieldMeta: MultivalueFieldMeta = {
@@ -36,20 +36,21 @@ const fieldProperties = {
     bcName: testBcName,
     cursor: testCursor,
     widgetName: 'name',
-    widgetFieldMeta: widgetFieldMeta,
+    widgetFieldMeta: widgetFieldMeta
 }
 
 describe('Multivalue test', () => {
-
     let store: Store<CoreStore> = null
 
     beforeAll(() => {
         store = mockStore()
-        store.getState().data[testBcName] = [{
-            id: testCursor,
-            vstamp: 1,
-            [widgetFieldMeta.key]: testMultivalueData
-        }]
+        store.getState().data[testBcName] = [
+            {
+                id: testCursor,
+                vstamp: 1,
+                [widgetFieldMeta.key]: testMultivalueData
+            }
+        ]
         store.getState().screen.bo.bc[testBcName] = {
             name: testBcName,
             parentName: null,
@@ -60,21 +61,25 @@ describe('Multivalue test', () => {
         store.getState().view.rowMeta[testBcName] = {
             [buildBcUrl(testBcName, true)]: {
                 actions: [],
-                fields: [{
-                    key: widgetFieldMeta.key,
-                    disabled: false,
-                    currentValue: testMultivalueData
-                }]
+                fields: [
+                    {
+                        key: widgetFieldMeta.key,
+                        disabled: false,
+                        currentValue: testMultivalueData
+                    }
+                ]
             }
         }
         store.getState().view.rowMeta[testPopupBcName] = {
             [buildBcUrl(testPopupBcName, true)]: {
                 actions: [],
-                fields: [{
-                    key: '1',
-                    disabled: false,
-                    currentValue:'Value'
-                }]
+                fields: [
+                    {
+                        key: '1',
+                        disabled: false,
+                        currentValue: 'Value'
+                    }
+                ]
             }
         }
     })
@@ -82,9 +87,7 @@ describe('Multivalue test', () => {
     it('component should render field correctly', () => {
         const wrapper = mount(
             <Provider store={store}>
-                <Field
-                    {...fieldProperties}
-                />
+                <Field {...fieldProperties} />
             </Provider>
         )
         const multivalue = wrapper.find(MultivalueField)
@@ -95,9 +98,7 @@ describe('Multivalue test', () => {
     it('component should render tags correctly', () => {
         const wrapper = mount(
             <Provider store={store}>
-                <Field
-                    {...fieldProperties}
-                />
+                <Field {...fieldProperties} />
             </Provider>
         )
         const multivalue = wrapper.find(MultivalueField)
@@ -111,9 +112,7 @@ describe('Multivalue test', () => {
     it.skip('component should delete tags', () => {
         const wrapper = mount(
             <Provider store={store}>
-                <Field
-                    {...fieldProperties}
-                />
+                <Field {...fieldProperties} />
             </Provider>
         )
         const field = wrapper.find(Field)
@@ -122,7 +121,8 @@ describe('Multivalue test', () => {
         expect(field.find(Tag).length).toBe(3)
         store.getState().data[testBcName] = []
         field.find(Tag).at(0).props().onClose()
-        const dataChangesLength = store.getState().view.pendingDataChanges[testBcName] &&
+        const dataChangesLength =
+            store.getState().view.pendingDataChanges[testBcName] &&
             store.getState().view.pendingDataChanges[testBcName][testCursor] &&
             store.getState().view.pendingDataChanges[testBcName][testCursor][widgetFieldMeta.key]
         expect(dataChangesLength).toHaveLength(2)
@@ -134,9 +134,7 @@ describe('Multivalue test', () => {
     it('component should change popup state', () => {
         const wrapper = mount(
             <Provider store={store}>
-                <Field
-                    {...fieldProperties}
-                />
+                <Field {...fieldProperties} />
             </Provider>
         )
         const multivalue = wrapper.find(MultivalueField)
@@ -145,5 +143,4 @@ describe('Multivalue test', () => {
         showPopupIconContainer.simulate('click')
         expect(store.getState().view.popupData.bcName).toBe(widgetFieldMeta.popupBcName)
     })
-
 })

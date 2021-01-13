@@ -15,46 +15,54 @@
  * limitations under the License.
  */
 
-import {getFilters, getSorters, parseSorters, getFilterType, parseFilters} from '../filters'
-import {FieldType} from '../../interfaces/view'
-import {FilterType} from '../../interfaces/filters'
+import { getFilters, getSorters, parseSorters, getFilterType, parseFilters } from '../filters'
+import { FieldType } from '../../interfaces/view'
+import { FilterType } from '../../interfaces/filters'
 
 describe('getFilters', () => {
     it('should map input values to dictionary with keys of `${filter.fieldName}.${filter.type}', () => {
         expect(
-            getFilters([{
-                type: FilterType.contains,
-                fieldName: 'test-field',
-                value: 'test-value'
-            }])
+            getFilters([
+                {
+                    type: FilterType.contains,
+                    fieldName: 'test-field',
+                    value: 'test-value'
+                }
+            ])
         ).toMatchObject({ 'test-field.contains': 'test-value' })
         expect(
-            getFilters([{
-                type: FilterType.contains,
-                fieldName: 'test-field1',
-                value: 'test-value1'
-            },
-            {
-                type: FilterType.equals,
-                fieldName: 'test-field2',
-                value: 5
-            }])
+            getFilters([
+                {
+                    type: FilterType.contains,
+                    fieldName: 'test-field1',
+                    value: 'test-value1'
+                },
+                {
+                    type: FilterType.equals,
+                    fieldName: 'test-field2',
+                    value: 5
+                }
+            ])
         ).toMatchObject({ 'test-field1.contains': 'test-value1', 'test-field2.equals': '5' })
     })
     it('should stringify array values with each item enclosed with double quote ', () => {
         expect(
-            getFilters([{
-                type: FilterType.equalsOneOf,
-                fieldName: 'test-field',
-                value: ['test-value1', 'test-value2']
-            }])
+            getFilters([
+                {
+                    type: FilterType.equalsOneOf,
+                    fieldName: 'test-field',
+                    value: ['test-value1', 'test-value2']
+                }
+            ])
         ).toMatchObject({ 'test-field.equalsOneOf': '["test-value1","test-value2"]' })
         expect(
-            getFilters([{
-                type: FilterType.containsOneOf,
-                fieldName: 'test-field',
-                value: [4, 6, 6, 0]
-            }])
+            getFilters([
+                {
+                    type: FilterType.containsOneOf,
+                    fieldName: 'test-field',
+                    value: [4, 6, 6, 0]
+                }
+            ])
         ).toMatchObject({ 'test-field.containsOneOf': '["4","6","6","0"]' })
     })
     it('should return null on empty input', () => {
@@ -66,14 +74,18 @@ describe('getFilters', () => {
 
 describe('getSorters', () => {
     it('should map input fieldNames into a dictionary with keys of `_sort.${index}.${item.direction}`', () => {
-        expect(getSorters([{
-            fieldName: 'test1',
-            direction: 'asc'
-        },{
-            fieldName: 'test2',
-            direction: 'desc'
-        }]))
-        .toMatchObject({ '_sort.0.asc': 'test1', '_sort.1.desc': 'test2'})
+        expect(
+            getSorters([
+                {
+                    fieldName: 'test1',
+                    direction: 'asc'
+                },
+                {
+                    fieldName: 'test2',
+                    direction: 'desc'
+                }
+            ])
+        ).toMatchObject({ '_sort.0.asc': 'test1', '_sort.1.desc': 'test2' })
     })
     it('should return null on empty input', () => {
         expect(getSorters(undefined)).toBe(null)
@@ -113,24 +125,27 @@ describe('parseFilters', () => {
     })
 
     it('skips filters with any attribute missing', () => {
-        expect(parseFilters('.equals=1&test-field2.contains=test'))
-        .toEqual([{
-            fieldName: 'test-field2',
-            type: FilterType.contains,
-            value: 'test'
-        }])
-        expect(parseFilters('test-field1.=1&test-field2.contains=test'))
-        .toEqual([{
-            fieldName: 'test-field2',
-            type: FilterType.contains,
-            value: 'test'
-        }])
-        expect(parseFilters('test-field1.equals=&test-field2.contains=test'))
-        .toEqual([{
-            fieldName: 'test-field2',
-            type: FilterType.contains,
-            value: 'test'
-        }])
+        expect(parseFilters('.equals=1&test-field2.contains=test')).toEqual([
+            {
+                fieldName: 'test-field2',
+                type: FilterType.contains,
+                value: 'test'
+            }
+        ])
+        expect(parseFilters('test-field1.=1&test-field2.contains=test')).toEqual([
+            {
+                fieldName: 'test-field2',
+                type: FilterType.contains,
+                value: 'test'
+            }
+        ])
+        expect(parseFilters('test-field1.equals=&test-field2.contains=test')).toEqual([
+            {
+                fieldName: 'test-field2',
+                type: FilterType.contains,
+                value: 'test'
+            }
+        ])
     })
 
     it('throws warning and fallbacks to empty array for unparsable values', () => {
@@ -192,5 +207,4 @@ describe('getFilterType', () => {
         expect(getFilterType(FieldType.dictionary)).toBe(FilterType.equalsOneOf)
         expect(getFilterType(FieldType.number)).toBe(FilterType.equals)
     })
-
 })

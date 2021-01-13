@@ -1,24 +1,14 @@
 import React from 'react'
-import {mount} from 'enzyme'
+import { mount } from 'enzyme'
 import RadioButton from './RadioButton'
-import {FieldType} from '../../../interfaces/view'
-import {BaseFieldProps} from '../../Field/Field'
+import { FieldType } from '../../../interfaces/view'
+import { BaseFieldProps } from '../../Field/Field'
 
 describe('RadioButton component test', () => {
-    const values = [
-        {value: 'testRadio-0'},
-        {value: 'testRadio-1'},
-        {value: 'testRadio-2'},
-    ]
+    const values = [{ value: 'testRadio-0' }, { value: 'testRadio-1' }, { value: 'testRadio-2' }]
 
     it('component should render 3 values', () => {
-        const wrapper = mount(
-            <RadioButton
-                {...baseFieldProps}
-                value={'testRadio-2'}
-                values={values}
-            />
-        )
+        const wrapper = mount(<RadioButton {...baseFieldProps} value={'testRadio-2'} values={values} />)
         const radios = wrapper.find('input[type="radio"]')
         const checkedRadio = wrapper.find('input[type="radio"][checked=true]')
 
@@ -31,13 +21,7 @@ describe('RadioButton component test', () => {
         const onChange = jest.fn(() => {
             wrapper.setProps({ value: 'testRadio-1' })
         })
-        const wrapper = mount(
-            <RadioButton
-                {...baseFieldProps}
-                values={values}
-                onChange={onChange}
-            />
-        )
+        const wrapper = mount(<RadioButton {...baseFieldProps} values={values} onChange={onChange} />)
         const radios = wrapper.find('input[type="radio"]')
         radios.at(1).simulate('change')
         expect(onChange.mock.calls.length).toBe(1)
@@ -48,12 +32,7 @@ describe('RadioButton component test', () => {
     })
 
     it('values is null or undefined', () => {
-        const wrapper = mount(
-            <RadioButton
-                {...baseFieldProps}
-                values={null}
-            />
-        )
+        const wrapper = mount(<RadioButton {...baseFieldProps} values={null} />)
         expect(wrapper.find(RadioButton).length).toBe(1)
         expect(wrapper.find('input[type="radio"]').length).toBe(0)
     })

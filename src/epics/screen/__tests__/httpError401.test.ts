@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-import {$do} from '../../../actions/actions'
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {mockStore} from '../../../tests/mockStore'
-import {ActionsObservable} from 'redux-observable'
-import {testEpic } from '../../../tests/testEpic'
-import {httpError401} from '../httpError401'
+import { $do } from '../../../actions/actions'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { mockStore } from '../../../tests/mockStore'
+import { ActionsObservable } from 'redux-observable'
+import { testEpic } from '../../../tests/testEpic'
+import { httpError401 } from '../httpError401'
 
 const pushMock = jest.fn().mockImplementation()
 const dispatchMock = jest.fn()

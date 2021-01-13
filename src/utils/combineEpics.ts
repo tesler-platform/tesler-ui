@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import {combineEpics as defaultCombineEpics} from 'redux-observable'
+import { combineEpics as defaultCombineEpics } from 'redux-observable'
 import coreEpics from '../epics'
-import CustomEpics, {RootEpicSlices, CustomEpicDescriptor, AnyEpic} from '../interfaces/customEpics'
+import CustomEpics, { RootEpicSlices, CustomEpicDescriptor, AnyEpic } from '../interfaces/customEpics'
 
 /**
  * Combine customEpics configuration with core epics.
@@ -52,7 +52,7 @@ export const combineEpics = (customEpics: CustomEpics) => {
             return
         })
         if (customEpics[coreSlice]) {
-            Object.entries(customEpics[coreSlice]).forEach((entry) => {
+            Object.entries(customEpics[coreSlice]).forEach(entry => {
                 const p = coreSliceEpics[entry[0] as keyof typeof coreSliceEpics]
                 if (!p) {
                     resultSliceEpics.push(entry[1])
@@ -64,13 +64,13 @@ export const combineEpics = (customEpics: CustomEpics) => {
     })
     // Handle root epic slices without core implementations
     Object.entries(customEpics)
-    .filter(([ slice, epics ]) => {
-        return ((coreSlices as string[]).includes(slice) === false)
-    })
-    .forEach(([ slice, epics ]) => {
-        const newSliceEpics = Object.values(epics)
-        resultSlices.push(defaultCombineEpics(...newSliceEpics))
-    })
+        .filter(([slice, epics]) => {
+            return (coreSlices as string[]).includes(slice) === false
+        })
+        .forEach(([slice, epics]) => {
+            const newSliceEpics = Object.values(epics)
+            resultSlices.push(defaultCombineEpics(...newSliceEpics))
+        })
 
     return defaultCombineEpics(...resultSlices)
 }

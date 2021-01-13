@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {mockStore} from '../../../tests/mockStore'
-import {selectView} from '../selectView'
-import {$do} from '../../../actions/actions'
-import {ActionsObservable} from 'redux-observable'
-import {WidgetTableMeta, WidgetTypes} from '../../../interfaces/widget'
-import {FieldType, ViewMetaResponse} from '../../../interfaces/view'
-import {testEpic} from '../../../tests/testEpic'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { mockStore } from '../../../tests/mockStore'
+import { selectView } from '../selectView'
+import { $do } from '../../../actions/actions'
+import { ActionsObservable } from 'redux-observable'
+import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
+import { FieldType, ViewMetaResponse } from '../../../interfaces/view'
+import { testEpic } from '../../../tests/testEpic'
 
 describe('bcFetchRowMetaRequest', () => {
     let store: Store<CoreStore> = null
@@ -67,16 +67,24 @@ describe('bcFetchRowMetaRequest', () => {
     it('Schedules `bcFetchDataRequest` for every widget on the view', () => {
         const action = $do.selectView(viewMetaResponse)
         const epic = selectView(ActionsObservable.of(action), store)
-        testEpic(epic, (result) => {
+        testEpic(epic, result => {
             expect(result.length).toBe(2)
-            expect(result[0]).toEqual(expect.objectContaining($do.bcFetchDataRequest({
-                bcName: 'bcExample-1',
-                widgetName: 'widget-example-1-1-1'
-            })))
-            expect(result[1]).toEqual(expect.objectContaining($do.bcFetchDataRequest({
-                bcName: 'bcExample-2',
-                widgetName: 'widget-example-2'
-            })))
+            expect(result[0]).toEqual(
+                expect.objectContaining(
+                    $do.bcFetchDataRequest({
+                        bcName: 'bcExample-1',
+                        widgetName: 'widget-example-1-1-1'
+                    })
+                )
+            )
+            expect(result[1]).toEqual(
+                expect.objectContaining(
+                    $do.bcFetchDataRequest({
+                        bcName: 'bcExample-2',
+                        widgetName: 'widget-example-2'
+                    })
+                )
+            )
         })
     })
 })
@@ -89,11 +97,13 @@ function getWidgetMeta(): WidgetTableMeta {
         bcName: 'bcExample',
         position: 1,
         gridWidth: null,
-        fields: [{
-            key: 'name',
-            title: 'Test Column',
-            type: FieldType.input
-        }],
+        fields: [
+            {
+                key: 'name',
+                title: 'Test Column',
+                type: FieldType.input
+            }
+        ]
     }
 }
 

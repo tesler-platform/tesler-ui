@@ -1,10 +1,10 @@
-import {ScreenMetaResponse} from './screen'
-import {TeslerResponse} from './objectMap'
+import { ScreenMetaResponse } from './screen'
+import { TeslerResponse } from './objectMap'
 
 export interface Session {
-    active: boolean,
-    screens: SessionScreen[],
-    loginSpin: boolean,
+    active: boolean
+    screens: SessionScreen[]
+    loginSpin: boolean
     errorMsg?: string
 }
 
@@ -14,12 +14,12 @@ export interface LoginResponse extends TeslerResponse {
 }
 
 export interface SessionScreen {
-    id: string,
-    name: string,
-    text: string, // Отображаемое название
-    url: string,
-    defaultScreen?: boolean,
-    meta?: ScreenMetaResponse,
-    icon?: string,
+    id: string
+    name: string
+    text: string // Отображаемое название
+    url: string
+    defaultScreen?: boolean
+    meta?: ScreenMetaResponse
+    icon?: string
     notification?: number
 }

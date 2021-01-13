@@ -1,33 +1,32 @@
 import React from 'react'
-import {WidgetInfoField, WidgetInfoMeta} from '../../../interfaces/widget'
-import {DataItem} from '../../../interfaces/data'
-import {RowMetaField} from '../../../interfaces/rowMeta'
-import {useFlatFormFields} from '../../../hooks'
-import {Row} from 'antd'
-import {Store} from '../../../interfaces/store'
-import {buildBcUrl} from '../../../utils/strings'
-import {Dispatch} from 'redux'
-import {$do} from '../../../actions/actions'
-import {connect} from 'react-redux'
+import { WidgetInfoField, WidgetInfoMeta } from '../../../interfaces/widget'
+import { DataItem } from '../../../interfaces/data'
+import { RowMetaField } from '../../../interfaces/rowMeta'
+import { useFlatFormFields } from '../../../hooks'
+import { Row } from 'antd'
+import { Store } from '../../../interfaces/store'
+import { buildBcUrl } from '../../../utils/strings'
+import { Dispatch } from 'redux'
+import { $do } from '../../../actions/actions'
+import { connect } from 'react-redux'
 import InfoRow from './components/InfoRow'
 
 interface InfoWidgetOwnProps {
-    meta: WidgetInfoMeta,
+    meta: WidgetInfoMeta
     containerStyle?: string
 }
 
 interface InfoWidgetProps extends InfoWidgetOwnProps {
-    cursor: string,
-    data: DataItem,
-    fields: RowMetaField[],
+    cursor: string
+    data: DataItem
+    fields: RowMetaField[]
     onDrillDown: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void
 }
 
-const InfoWidget: React.FunctionComponent<InfoWidgetProps> = (props) => {
+const InfoWidget: React.FunctionComponent<InfoWidgetProps> = props => {
     const options = props.meta.options
     const hiddenKeys: string[] = []
-    const flattenWidgetFields = useFlatFormFields<WidgetInfoField>(props.meta.fields)
-    .filter((item) => {
+    const flattenWidgetFields = useFlatFormFields<WidgetInfoField>(props.meta.fields).filter(item => {
         if (!item.hidden) {
             return true
         } else {
@@ -37,24 +36,26 @@ const InfoWidget: React.FunctionComponent<InfoWidgetProps> = (props) => {
     })
 
     const InfoRows = options?.layout?.rows
-    .filter((row) => row.cols.find((col) => !hiddenKeys.includes(col.fieldKey)))
-    .map((row, index) => <InfoRow
-            key={index}
-            meta={props.meta}
-            data={props.data}
-            flattenWidgetFields={flattenWidgetFields}
-            fields={props.fields}
-            onDrillDown={props.onDrillDown}
-            row={row}
-            cursor={props.cursor}
-            index={index}
-        />)
+        .filter(row => row.cols.find(col => !hiddenKeys.includes(col.fieldKey)))
+        .map((row, index) => (
+            <InfoRow
+                key={index}
+                meta={props.meta}
+                data={props.data}
+                flattenWidgetFields={flattenWidgetFields}
+                fields={props.fields}
+                onDrillDown={props.onDrillDown}
+                row={row}
+                cursor={props.cursor}
+                index={index}
+            />
+        ))
 
-    return <div className={props.containerStyle}>
-        <Row>
-            {InfoRows}
-        </Row>
-    </div>
+    return (
+        <div className={props.containerStyle}>
+            <Row>{InfoRows}</Row>
+        </div>
+    )
 }
 
 const emptyObject = {}

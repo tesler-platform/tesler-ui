@@ -9,6 +9,6 @@ declare module '*.svg' {
 }
 
 declare module '*.json' {
-    const jsonSource: Record<String, any>
+    const jsonSource: Record<string, any>
     export = jsonSource
 }

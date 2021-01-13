@@ -16,17 +16,17 @@
  */
 
 import * as util from './actions-utils'
-import {ActionsObservable as rActionsObservable} from 'redux-observable'
-import {Observable} from 'rxjs/Observable'
-import {Store} from 'redux'
-import {LoginResponse, SessionScreen} from '../interfaces/session'
-import {Action as HistoryAction} from 'history'
-import {DrillDownType, Route} from '../interfaces/router'
-import {ViewMetaResponse, ApplicationError, PopupType} from '../interfaces/view'
-import {DataItem, MultivalueSingleValue, PendingDataItem, PickMap} from '../interfaces/data'
-import {Store as CoreStore} from '../interfaces/store'
-import {RowMeta} from '../interfaces/rowMeta'
-import {ObjectMap, AppNotificationType} from '../interfaces/objectMap'
+import { ActionsObservable as rActionsObservable } from 'redux-observable'
+import { Observable } from 'rxjs/Observable'
+import { Store } from 'redux'
+import { LoginResponse, SessionScreen } from '../interfaces/session'
+import { Action as HistoryAction } from 'history'
+import { DrillDownType, Route } from '../interfaces/router'
+import { ViewMetaResponse, ApplicationError, PopupType } from '../interfaces/view'
+import { DataItem, MultivalueSingleValue, PendingDataItem, PickMap } from '../interfaces/data'
+import { Store as CoreStore } from '../interfaces/store'
+import { RowMeta } from '../interfaces/rowMeta'
+import { ObjectMap, AppNotificationType } from '../interfaces/objectMap'
 import {
     OperationPostInvokeAny,
     OperationTypeCrud,
@@ -35,9 +35,9 @@ import {
     OperationPostInvokeConfirm,
     OperationPreInvoke
 } from '../interfaces/operation'
-import {BcFilter, BcSorter} from '../interfaces/filters'
-import {AxiosError} from 'axios'
-import {ApiCallContext} from '../utils/api'
+import { BcFilter, BcSorter } from '../interfaces/filters'
+import { AxiosError } from 'axios'
+import { ApiCallContext } from '../utils/api'
 
 const z = null as any
 
@@ -49,7 +49,6 @@ const z = null as any
  * @property z Mandatory to prevent typescript from erasing unused class fields (@see https://github.com/microsoft/TypeScript/issues/12437)
  */
 export class ActionPayloadTypes {
-
     /**
      * Browser location change occured (either through history listener or manually)
      */
@@ -57,11 +56,11 @@ export class ActionPayloadTypes {
         /**
          * Change was requested to browser url
          */
-        rawLocation?: string,
+        rawLocation?: string
         /**
          * Change was requested to precalculated application route
          */
-        location?: Route,
+        location?: Route
         /**
          * History API type, usually 'PUSH'
          */
@@ -75,11 +74,11 @@ export class ActionPayloadTypes {
         /**
          * User-provided login
          */
-        login: string,
+        login: string
         /**
          * User-provided password
          */
-        password: string,
+        password: string
         /**
          * Optionally user can choose a role to authentificate with
          */
@@ -161,21 +160,21 @@ export class ActionPayloadTypes {
          *
          * @deprecated TODO: 2.0.0 Should be removed in favor of widgetName
          */
-        bcName: string,
+        bcName: string
         /**
          * The level of hierarchy to fetch data for
          *
          * @deprecated TODO: 2.0.0 Should be all moved to separate hierarchy-specific action
          */
-        depth?: number,
+        depth?: number
         /**
          * What widget requires data (widget can only request its own data here)
          */
-        widgetName: string,
+        widgetName: string
         /**
          * Page size should be ignored
          */
-        ignorePageLimit?: boolean,
+        ignorePageLimit?: boolean
         /**
          * Pending changes should not be dropped when performing this request
          * (due to hierarchy expanging through cursor change, for same BC hierarchy this leads to data loss)
@@ -192,15 +191,15 @@ export class ActionPayloadTypes {
          *
          * @deprecated TODO: 2.0.0 Should be removed in favor of widgetName
          */
-        bcName: string,
+        bcName: string
         /**
          * Fisrt page to fetch (default is 1)
          */
-        widgetName: string,
+        widgetName: string
         /**
          * What widget requires data (widget can only request its own data here)
          */
-        from?: number,
+        from?: number
         /**
          * Last page to fetch (default is current page)
          */
@@ -214,11 +213,11 @@ export class ActionPayloadTypes {
         /**
          * The business component to fetch data for
          */
-        bcName: string,
+        bcName: string
         /**
          * Search expression // TODO: Check format
          */
-        searchSpec: string,
+        searchSpec: string
         /**
          * Value to search for
          */
@@ -234,21 +233,21 @@ export class ActionPayloadTypes {
          *
          * @deprecated TODO: 2.0.0 Remove in favor of widgetName
          */
-        bcName: string,
+        bcName: string
         /**
          * Data records from response for this business component
          */
-        data: DataItem[],
+        data: DataItem[]
         /**
          * For same BC hierarchies, the level which was requested
          *
          * @deprecated TODO: 2.0.0 Should be all moved to separate hierarchy-specific action
          */
-        depth?: number,
+        depth?: number
         /**
          * BC url with respect of parents cursors
          */
-        bcUrl: string,
+        bcUrl: string
         /**
          * If there are more data to fetch (other pages etc.)
          */
@@ -262,11 +261,11 @@ export class ActionPayloadTypes {
         /**
          * Business component that initiated data fetch
          */
-        bcName: string,
+        bcName: string
         /**
          * BC url with respect of parents cursors
          */
-        bcUrl: string,
+        bcUrl: string
         /**
          * For same BC hierarchies, the level which was requested
          *
@@ -282,7 +281,7 @@ export class ActionPayloadTypes {
         /**
          * Business component that initiated data fetch
          */
-        bcName: string,
+        bcName: string
         /**
          * Widget that initiated row meta fetch
          */
@@ -299,7 +298,7 @@ export class ActionPayloadTypes {
          *
          * @deprecated TODO: 2.0.0 Remove in favor of widgetName
          */
-        bcName: string,
+        bcName: string
         /**
          * Widget that initiated row meta fetch
          */
@@ -315,15 +314,15 @@ export class ActionPayloadTypes {
         /**
          * Business component that initiated row meta fetch
          */
-        bcName: string,
+        bcName: string
         /**
          * Path to BC with respect to ancestors BC and their cursors
          */
-        bcUrl: string,
+        bcUrl: string
         /**
          * Row meta returned by Tesler API
          */
-        rowMeta: RowMeta,
+        rowMeta: RowMeta
         /**
          * Cursor for a record that initiated row meta fetch.
          *
@@ -358,11 +357,11 @@ export class ActionPayloadTypes {
         /**
          * Business component for which new record was created
          */
-        bcName: string,
+        bcName: string
         /**
          * New record with `id` returned by Tesler API and vstamp = -1 (denoting a record draft)
          */
-        dataItem: DataItem,
+        dataItem: DataItem
         /**
          * Path to BC with respect to ancestors BC and their cursors
          */
@@ -390,9 +389,9 @@ export class ActionPayloadTypes {
      * Request to change Force active field was unsuccesful
      */
     forceActiveChangeFail: {
-        bcName: string,
-        bcUrl: string,
-        viewError: string,
+        bcName: string
+        bcUrl: string
+        viewError: string
         entityError: OperationErrorEntity
     } = z
 
@@ -403,29 +402,29 @@ export class ActionPayloadTypes {
         /**
          * The business component to fetch data for
          */
-        bcName: string,
+        bcName: string
         /**
          * Type of operation to be performed
          */
-        operationType: OperationTypeCrud | string,
+        operationType: OperationTypeCrud | string
         /**
          * What widget requires data
          */
-        widgetName: string,
+        widgetName: string
         /**
          * Any other action
          */
-        onSuccessAction?: AnyAction,
+        onSuccessAction?: AnyAction
         /**
          * params for confirm modal
          */
-        confirm?: string,
+        confirm?: string
         /**
          * key called bk
          *
          * @deprecated TODO: Remove in 2.0.0
          */
-        bcKey?: string,
+        bcKey?: string
         /**
          * @deprecated TODO: Remove in 2.0.0 in favor of sendOperationWithConfirm
          */
@@ -436,9 +435,9 @@ export class ActionPayloadTypes {
      * TODO
      */
     sendOperationFail: {
-        bcName: string,
-        bcUrl: string,
-        viewError: string,
+        bcName: string
+        bcUrl: string
+        viewError: string
         entityError: OperationErrorEntity
     } = z
 
@@ -446,7 +445,7 @@ export class ActionPayloadTypes {
      * TODO
      */
     sendOperationSuccess: {
-        bcName: string,
+        bcName: string
         cursor: string
     } = z
 
@@ -457,9 +456,9 @@ export class ActionPayloadTypes {
         /**
          * @deprecated TODO: Prefer widgetName instead (2.0.0)
          */
-        bcName: string,
-        postInvoke: OperationPostInvokeAny,
-        cursor?: string,
+        bcName: string
+        postInvoke: OperationPostInvokeAny
+        cursor?: string
         /**
          * What widget initiated original operation, TODO: mandatory in 2.0.0
          */
@@ -473,15 +472,15 @@ export class ActionPayloadTypes {
         /**
          * The business component to fetch data for
          */
-        bcName: string,
+        bcName: string
         /**
          * Type of operation to be performed
          */
-        operationType: string,
+        operationType: string
         /**
          * What widget requires data
          */
-        widgetName: string,
+        widgetName: string
         /**
          * Action that will be performed before the main operation
          */
@@ -495,15 +494,15 @@ export class ActionPayloadTypes {
         /**
          * The business component to fetch data for
          */
-        bcName: string,
+        bcName: string
         /**
          * Type of operation to be performed
          */
-        operationType: string,
+        operationType: string
         /**
          * What widget requires data
          */
-        widgetName: string,
+        widgetName: string
         /**
          * Action that will be performed after the main operation and confirmation
          */
@@ -514,9 +513,9 @@ export class ActionPayloadTypes {
      * TODO
      */
     userDrillDown: {
-        widgetName: string,
-        bcName: string,
-        cursor: string,
+        widgetName: string
+        bcName: string
+        cursor: string
         fieldKey: string
     } = z
 
@@ -524,8 +523,8 @@ export class ActionPayloadTypes {
      * TODO
      */
     userDrillDownSuccess: {
-        bcUrl: string,
-        bcName: string,
+        bcUrl: string
+        bcName: string
         cursor: string
     } = z
 
@@ -533,10 +532,10 @@ export class ActionPayloadTypes {
      * TODO
      */
     drillDown: {
-        url: string,
-        drillDownType?: DrillDownType,
-        urlName?: string,
-        route: Route,
+        url: string
+        drillDownType?: DrillDownType
+        urlName?: string
+        route: Route
         widgetName?: string
     } = z
 
@@ -544,7 +543,7 @@ export class ActionPayloadTypes {
      * TODO
      */
     bcChangeCursors: {
-        cursorsMap: ObjectMap<string>,
+        cursorsMap: ObjectMap<string>
         keepDelta?: boolean
     } = z
 
@@ -552,8 +551,8 @@ export class ActionPayloadTypes {
      * TODO
      */
     bcChangeDepthCursor: {
-        bcName: string,
-        depth: number,
+        bcName: string
+        depth: number
         cursor: string
     } = z
 
@@ -561,9 +560,9 @@ export class ActionPayloadTypes {
      * TODO
      */
     changeDataItem: {
-        bcName: string,
-        cursor: string,
-        dataItem: PendingDataItem,
+        bcName: string
+        cursor: string
+        dataItem: PendingDataItem
         disableRetry?: boolean
     } = z
 
@@ -571,8 +570,8 @@ export class ActionPayloadTypes {
      * TODO
      */
     changeDataItems: {
-        bcName: string,
-        cursors: string[],
+        bcName: string
+        cursors: string[]
         dataItems: PendingDataItem[]
     } = z
 
@@ -583,10 +582,10 @@ export class ActionPayloadTypes {
         /**
          * current data for record that initiated rowMeta fetch
          */
-        currentRecordData: DataItem,
-        rowMeta: RowMeta,
-        bcName: string,
-        bcUrl: string,
+        currentRecordData: DataItem
+        rowMeta: RowMeta
+        bcName: string
+        bcUrl: string
         cursor: string
     } = z
 
@@ -597,16 +596,16 @@ export class ActionPayloadTypes {
         /**
          * @deprecated TODO: Remove in 2.0.0 in favor of widget name
          */
-        bcName: string,
+        bcName: string
         /**
          * @deprecated TODO: Remove in 2.0.0 in favor of widget name
          */
-        calleeBCName?: string,
-        calleeWidgetName?: string,
-        associateFieldKey?: string,
-        assocValueKey?: string,
-        active?: boolean,
-        isFilter?: boolean,
+        calleeBCName?: string
+        calleeWidgetName?: string
+        associateFieldKey?: string
+        assocValueKey?: string
+        active?: boolean
+        isFilter?: boolean
         type?: PopupType
     } = z
 
@@ -631,7 +630,7 @@ export class ActionPayloadTypes {
      * TODO
      */
     viewPutPickMap: {
-        map: PickMap,
+        map: PickMap
         bcName: string
     } = z
 
@@ -644,11 +643,11 @@ export class ActionPayloadTypes {
      * TODO
      */
     saveAssociations: {
-        bcNames: string[],
+        bcNames: string[]
         /**
          * For usage outside of Popup (without opening multivalue)
          */
-        calleeBcName?: string,
+        calleeBcName?: string
         associateFieldKey?: string
     } = z
 
@@ -656,7 +655,7 @@ export class ActionPayloadTypes {
      * TODO
      */
     changeAssociations: {
-        bcName: string,
+        bcName: string
         records?: DataItem[]
     } = z
 
@@ -664,11 +663,11 @@ export class ActionPayloadTypes {
      * TODO
      */
     removeMultivalueTag: {
-        bcName: string,
-        popupBcName: string,
-        cursor: string,
-        associateFieldKey: string,
-        dataItem: MultivalueSingleValue[],
+        bcName: string
+        popupBcName: string
+        cursor: string
+        associateFieldKey: string
+        dataItem: MultivalueSingleValue[]
         removedItem: MultivalueSingleValue
     } = z
 
@@ -676,8 +675,8 @@ export class ActionPayloadTypes {
      * TODO
      */
     bcSaveDataSuccess: {
-        bcName: string,
-        cursor: string,
+        bcName: string
+        cursor: string
         dataItem: DataItem
     } = z
 
@@ -685,9 +684,9 @@ export class ActionPayloadTypes {
      * TODO
      */
     bcSaveDataFail: {
-        bcName: string,
-        bcUrl: string,
-        entityError?: OperationErrorEntity,
+        bcName: string
+        bcUrl: string
+        entityError?: OperationErrorEntity
         viewError?: string
     } = z
 
@@ -699,10 +698,10 @@ export class ActionPayloadTypes {
          * Current operation
          */
         operation: {
-            bcName: string,
-            operationType: OperationTypeCrud | string,
+            bcName: string
+            operationType: OperationTypeCrud | string
             widgetName: string
-        },
+        }
         /**
          * Text for confirm modal
          */
@@ -713,7 +712,7 @@ export class ActionPayloadTypes {
      * TODO
      */
     bcForceUpdate: {
-        bcName: string,
+        bcName: string
         /**
          * What widget requires data (widget can only request its own data here)
          */
@@ -746,9 +745,9 @@ export class ActionPayloadTypes {
      * TODO
      */
     bcSelectRecord: {
-        bcName: string,
-        cursor: string,
-        ignoreChildrenPageLimit?: boolean,
+        bcName: string
+        cursor: string
+        ignoreChildrenPageLimit?: boolean
         keepDelta?: boolean
     } = z
 
@@ -756,8 +755,8 @@ export class ActionPayloadTypes {
      * TODO
      */
     bcSelectDepthRecord: {
-        bcName: string,
-        depth: number,
+        bcName: string
+        depth: number
         cursor: string
     } = z
 
@@ -765,9 +764,9 @@ export class ActionPayloadTypes {
      * TODO
      */
     changeAssociation: {
-        bcName: string,
-        widgetName: string,
-        dataItem: AssociatedItem,
+        bcName: string
+        widgetName: string
+        dataItem: AssociatedItem
         assocValueKey: string
     } = z
 
@@ -775,10 +774,10 @@ export class ActionPayloadTypes {
      * TODO
      */
     changeAssociationSameBc: {
-        bcName: string,
-        depth: number,
-        widgetName: string,
-        dataItem: AssociatedItem,
+        bcName: string
+        depth: number
+        widgetName: string
+        dataItem: AssociatedItem
         assocValueKey: string
     } = z
 
@@ -786,10 +785,10 @@ export class ActionPayloadTypes {
      * TODO
      */
     changeAssociationFull: {
-        bcName: string,
-        depth: number,
-        widgetName: string,
-        dataItem: AssociatedItem,
+        bcName: string
+        depth: number
+        widgetName: string
+        dataItem: AssociatedItem
         /**
          * @deprecated TODO: Remove in 2.0.0 in favor of store.view.popupData.assocValueKey instead
          */
@@ -800,8 +799,8 @@ export class ActionPayloadTypes {
      * TODO
      */
     changeChildrenAssociations: {
-        bcName: string,
-        assocValueKey: string,
+        bcName: string
+        assocValueKey: string
         selected: boolean
     } = z
 
@@ -809,9 +808,9 @@ export class ActionPayloadTypes {
      * TODO
      */
     changeChildrenAssociationsSameBc: {
-        bcName: string,
-        depth: number,
-        assocValueKey: string,
+        bcName: string
+        depth: number
+        assocValueKey: string
         selected: boolean
     } = z
 
@@ -819,10 +818,10 @@ export class ActionPayloadTypes {
      * TODO
      */
     changeDescendantsAssociationsFull: {
-        bcName: string,
-        parentId: string,
-        depth: number,
-        assocValueKey: string,
+        bcName: string
+        parentId: string
+        depth: number
+        assocValueKey: string
         selected: boolean
     } = z
 
@@ -837,7 +836,7 @@ export class ActionPayloadTypes {
      * TODO
      */
     dropAllAssociationsSameBc: {
-        bcName: string,
+        bcName: string
         depthFrom: number
     } = z
 
@@ -845,8 +844,8 @@ export class ActionPayloadTypes {
      * TODO
      */
     dropAllAssociationsFull: {
-        bcName: string,
-        depth: number,
+        bcName: string
+        depth: number
         dropDescendants?: boolean
     } = z
 
@@ -854,16 +853,16 @@ export class ActionPayloadTypes {
      * TODO
      */
     handleRouter: {
-        path: string,
-        params: object
+        path: string
+        params: Record<string, unknown>
     } = z
 
     /**
      * TODO
      */
     selectTableCellInit: {
-        widgetName: string,
-        rowId: string,
+        widgetName: string
+        rowId: string
         fieldKey: string
     } = z
 
@@ -871,8 +870,8 @@ export class ActionPayloadTypes {
      * TODO
      */
     selectTableCell: {
-        widgetName: string,
-        rowId: string,
+        widgetName: string
+        rowId: string
         fieldKey: string
     } = z
 
@@ -880,8 +879,8 @@ export class ActionPayloadTypes {
      * TODO
      */
     showAllTableRecordsInit: {
-        bcName: string,
-        cursor: string,
+        bcName: string
+        cursor: string
         /**
          * @deprecated Remove in 2.0 (accessible from the store)
          */
@@ -892,7 +891,7 @@ export class ActionPayloadTypes {
      * TODO
      */
     showNotification: {
-        type: AppNotificationType,
+        type: AppNotificationType
         message: string
     } = z
 
@@ -907,7 +906,7 @@ export class ActionPayloadTypes {
      * TODO
      */
     bcAddFilter: {
-        bcName: string,
+        bcName: string
         filter: BcFilter
     } = z
 
@@ -915,7 +914,7 @@ export class ActionPayloadTypes {
      * TODO
      */
     bcRemoveFilter: {
-        bcName: string,
+        bcName: string
         filter: BcFilter
     } = z
 
@@ -930,7 +929,7 @@ export class ActionPayloadTypes {
      * TODO
      */
     bcAddSorter: {
-        bcName: string,
+        bcName: string
         sorter: BcSorter | BcSorter[]
     } = z
 
@@ -938,7 +937,7 @@ export class ActionPayloadTypes {
      * TODO
      */
     bcRemoveSorter: {
-        bcName: string,
+        bcName: string
         sorter: BcSorter
     } = z
 
@@ -946,7 +945,7 @@ export class ActionPayloadTypes {
      * TODO
      */
     bcChangePage: {
-        bcName: string,
+        bcName: string
         page: number
     } = z
 
@@ -1003,7 +1002,7 @@ export class ActionPayloadTypes {
         /**
          * Axios error object
          */
-        error: AxiosError,
+        error: AxiosError
         /**
          * Request context
          */
@@ -1017,11 +1016,11 @@ export class ActionPayloadTypes {
         /**
          * Status code for failed request caught by `onErrorHook`
          */
-        statusCode: number,
+        statusCode: number
         /**
          * Axios error object
          */
-        error: AxiosError,
+        error: AxiosError
         /**
          * Request context
          */
@@ -1061,7 +1060,7 @@ export type ActionsMap = util.uActionsMap<ActionPayloadTypes>
 /**
  * Any of the core actions
  */
-export type AnyAction = util.AnyOfMap<ActionsMap> | { type: ' UNKNOWN ACTION ', payload?: any }
+export type AnyAction = util.AnyOfMap<ActionsMap> | { type: ' UNKNOWN ACTION '; payload?: any }
 
 export interface ActionsObservable<T extends AnyAction> extends rActionsObservable<T> {
     /**

@@ -1,7 +1,7 @@
 /**
  * Utilities for urls and browser history
  */
-import {getTemplate} from './strings'
+import { getTemplate } from './strings'
 
 /**
  * Appends '/' in front of `absoluteUrl` argument.
@@ -39,7 +39,7 @@ export function parseBcCursors(bcPath: string) {
  * @param literals
  * @param placeholders
  */
-export function buildUrl(literals: TemplateStringsArray, ...placeholders: Array<string|number>) {
+export function buildUrl(literals: TemplateStringsArray, ...placeholders: Array<string | number>) {
     let result = ''
 
     for (let i = 0; i < placeholders.length; i++) {

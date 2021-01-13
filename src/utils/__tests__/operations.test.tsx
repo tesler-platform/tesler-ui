@@ -15,34 +15,28 @@
  * limitations under the License.
  */
 
-import {flattenOperations, matchOperationRole} from '../operations'
-import {Operation, OperationTypeCrud} from '../../interfaces/operation'
-import {mockStore} from '../../tests/mockStore'
-import {ActionPayloadTypes} from '../../actions/actions'
+import { flattenOperations, matchOperationRole } from '../operations'
+import { Operation, OperationTypeCrud } from '../../interfaces/operation'
+import { mockStore } from '../../tests/mockStore'
+import { ActionPayloadTypes } from '../../actions/actions'
 
 test('flattenOperations', () => {
     const operations = flattenOperations([
         create,
         save,
         {
-            actions: [
-                update,
-                edit
-            ],
+            actions: [update, edit],
             text: 'Group1',
             maxGroupVisualButtonsCount: 1
         },
         unsave,
         {
-            actions: [
-                cancel,
-                associate,
-            ],
+            actions: [cancel, associate],
             text: 'Group2',
             maxGroupVisualButtonsCount: 1
-        },
+        }
     ])
-    expect(operations).toEqual(expect.arrayContaining([ create, save, update, edit, unsave, cancel, associate ]))
+    expect(operations).toEqual(expect.arrayContaining([create, save, update, edit, unsave, cancel, associate]))
     expect(flattenOperations(null)).toHaveLength(0)
 })
 
@@ -56,7 +50,7 @@ test('matchOperationRole', () => {
     }
     store.view.rowMeta.bcExample = {
         bcExample: {
-            actions: [ create, save, update, edit, unsave, cancel, associate ],
+            actions: [create, save, update, edit, unsave, cancel, associate],
             fields: []
         }
     }
@@ -69,7 +63,6 @@ test('matchOperationRole', () => {
     expect(matchOperationRole('none', sendOperationCreate, store)).toBeFalsy()
     expect(matchOperationRole('none', sendOperationUnsave, store)).toBeFalsy()
 })
-
 
 test('matchOperationRole missing row meta', () => {
     const store = mockStore().getState()
@@ -87,7 +80,7 @@ test('matchOperationRole missing row meta', () => {
     }
     store.view.rowMeta.bcExample = {
         bcExample: {
-            actions: [ create, save, update, edit, unsave, cancel, associate ],
+            actions: [create, save, update, edit, unsave, cancel, associate],
             fields: []
         }
     }
@@ -119,23 +112,23 @@ const unsave: Operation = {
 const sendOperationCreate: ActionPayloadTypes['sendOperation'] = {
     bcName: 'bcExample',
     operationType: create.type,
-    widgetName: 'widget-example',
+    widgetName: 'widget-example'
 }
 
 const sendOperationUpdate: ActionPayloadTypes['sendOperation'] = {
     bcName: 'bcExample',
     operationType: update.type,
-    widgetName: 'widget-example',
+    widgetName: 'widget-example'
 }
 
 const sendOperationUnsave: ActionPayloadTypes['sendOperation'] = {
     bcName: 'bcExample',
     operationType: unsave.type,
-    widgetName: 'widget-example',
+    widgetName: 'widget-example'
 }
 
 const sendOperationCustom: ActionPayloadTypes['sendOperation'] = {
     bcName: 'bcExample',
     operationType: custom.type,
-    widgetName: 'widget-example',
+    widgetName: 'widget-example'
 }

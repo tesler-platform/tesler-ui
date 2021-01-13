@@ -1,4 +1,4 @@
-import {DataValue} from './data'
+import { DataValue } from './data'
 
 export const enum FilterType {
     equals = 'equals',
@@ -14,19 +14,19 @@ export const enum FilterType {
 }
 
 export interface BcFilter {
-    type: FilterType,
-    fieldName: string,
-    value: DataValue | DataValue[],
-    viewName?: string,
+    type: FilterType
+    fieldName: string
+    value: DataValue | DataValue[]
+    viewName?: string
     widgetName?: string
 }
 
 export interface BcSorter {
-    fieldName: string,
+    fieldName: string
     direction: 'asc' | 'desc'
 }
 
 export interface FilterGroup {
-    name: string,
+    name: string
     filters: string
 }

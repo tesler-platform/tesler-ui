@@ -16,8 +16,8 @@
  */
 
 import React from 'react'
-import {FullHierarchyDataItem} from '../FullHierarchyTable'
-import {BcFilter} from '../../../interfaces/filters'
+import { FullHierarchyDataItem } from '../FullHierarchyTable'
+import { BcFilter } from '../../../interfaces/filters'
 
 const emptyArray: string[] = []
 
@@ -57,12 +57,8 @@ export function useExpandedKeys(
             }
             return prev
         }, [])
-        const distinctExpandedKeys = new Set([
-            ...expandedKeys,
-            ...(defaultExpandedKeys || emptyArray),
-            ...selectedBranches
-        ])
-        setExpandedKeys([ ...Array.from(distinctExpandedKeys) ])
+        const distinctExpandedKeys = new Set([...expandedKeys, ...(defaultExpandedKeys || emptyArray), ...selectedBranches])
+        setExpandedKeys([...Array.from(distinctExpandedKeys)])
     }, [defaultExpandedKeys, selectedRecords, data])
     /**
      * All ancestors of search result record should be expanded
@@ -73,18 +69,16 @@ export function useExpandedKeys(
         }
         const ancestorsData = filters && data.filter(item => searchAncestorsKeys.has(item.id))
         const searchResultBranches = filters?.length
-            ? ancestorsData?.filter(item => {
-                    return ancestorsData.some(child => item.id === child.parentId)
-                })
-                .map(item => item.id)
+            ? ancestorsData
+                  ?.filter(item => {
+                      return ancestorsData.some(child => item.id === child.parentId)
+                  })
+                  .map(item => item.id)
             : emptyArray
-        const distinctExpandedKeys = new Set([
-            ...expandedKeys,
-            ...searchResultBranches
-        ])
+        const distinctExpandedKeys = new Set([...expandedKeys, ...searchResultBranches])
         hierarchyDisableDescendants
             ? setExpandedKeys(Array.from(searchResultBranches))
-            : setExpandedKeys(prev => [ ...prev, ...Array.from(distinctExpandedKeys) ])
+            : setExpandedKeys(prev => [...prev, ...Array.from(distinctExpandedKeys)])
     }, [filters, data, searchAncestorsKeys])
     return [expandedKeys, setExpandedKeys] as const
 }

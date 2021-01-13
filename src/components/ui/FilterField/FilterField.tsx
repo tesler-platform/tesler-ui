@@ -20,65 +20,73 @@
  */
 
 import React from 'react'
-import {CheckboxFilter} from '../CheckboxFilter/CheckboxFilter'
-import {DataValue} from '../../../interfaces/data'
-import {FieldType} from '../../../interfaces/view'
-import {Checkbox, Input, Icon, DatePicker} from 'antd'
-import {CheckboxChangeEvent} from 'antd/lib/checkbox'
-import moment, {Moment} from 'moment'
-import {WidgetListField} from '../../../interfaces/widget'
-import {RowMetaField} from '../../../interfaces/rowMeta'
-import {getFormat} from '../DatePickerField/DatePickerField'
+import { CheckboxFilter } from '../CheckboxFilter/CheckboxFilter'
+import { DataValue } from '../../../interfaces/data'
+import { FieldType } from '../../../interfaces/view'
+import { Checkbox, Input, Icon, DatePicker } from 'antd'
+import { CheckboxChangeEvent } from 'antd/lib/checkbox'
+import moment, { Moment } from 'moment'
+import { WidgetListField } from '../../../interfaces/widget'
+import { RowMetaField } from '../../../interfaces/rowMeta'
+import { getFormat } from '../DatePickerField/DatePickerField'
 
 export interface ColumnFilterControlProps {
-    widgetFieldMeta: WidgetListField,
-    rowFieldMeta: RowMetaField,
-    value: DataValue | DataValue[],
+    widgetFieldMeta: WidgetListField
+    rowFieldMeta: RowMetaField
+    value: DataValue | DataValue[]
     onChange: (value: DataValue | DataValue[]) => void
 }
 
-export const ColumnFilterControl: React.FC<ColumnFilterControlProps> = (props) => {
+export const ColumnFilterControl: React.FC<ColumnFilterControlProps> = props => {
     switch (props.widgetFieldMeta.type) {
-        case (FieldType.dictionary):
-        case (FieldType.pickList): {
-            return <CheckboxFilter
-                title={props.widgetFieldMeta.title}
-                value={props.value as DataValue[]}
-                filterValues={props.rowFieldMeta.filterValues}
-                onChange={props.onChange}
-            />
+        case FieldType.dictionary:
+        case FieldType.pickList: {
+            return (
+                <CheckboxFilter
+                    title={props.widgetFieldMeta.title}
+                    value={props.value as DataValue[]}
+                    filterValues={props.rowFieldMeta.filterValues}
+                    onChange={props.onChange}
+                />
+            )
         }
-        case (FieldType.checkbox): {
-            return <Checkbox
-                onChange={(e: CheckboxChangeEvent) => {
-                    props.onChange(e.target.value || null)
-                }}
-            />
+        case FieldType.checkbox: {
+            return (
+                <Checkbox
+                    onChange={(e: CheckboxChangeEvent) => {
+                        props.onChange(e.target.value || null)
+                    }}
+                />
+            )
         }
         case FieldType.dateTime:
-        case (FieldType.date): {
-            return <DatePicker
-                autoFocus
-                onChange={(date: Moment, dateString: string) => {
-                    props.onChange(date?.toISOString())
-                }}
-                value={props.value ? moment(props.value as string, moment.ISO_8601) : null}
-                format={getFormat()}
-            />
+        case FieldType.date: {
+            return (
+                <DatePicker
+                    autoFocus
+                    onChange={(date: Moment, dateString: string) => {
+                        props.onChange(date?.toISOString())
+                    }}
+                    value={props.value ? moment(props.value as string, moment.ISO_8601) : null}
+                    format={getFormat()}
+                />
+            )
         }
-        case (FieldType.input):
-        case (FieldType.text):
-        case (FieldType.number):
+        case FieldType.input:
+        case FieldType.text:
+        case FieldType.number:
         default: {
-            return <Input
-                autoFocus
-                value={props.value as string}
-                suffix={<Icon type="search"/>}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const textValue = e.target.value.substr(0, 100)
-                    props.onChange(textValue || null)
-                }}
-            />
+            return (
+                <Input
+                    autoFocus
+                    value={props.value as string}
+                    suffix={<Icon type="search" />}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const textValue = e.target.value.substr(0, 100)
+                        props.onChange(textValue || null)
+                    }}
+                />
+            )
         }
     }
 }

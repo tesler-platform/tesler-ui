@@ -1,12 +1,12 @@
-import {combineEpics} from '../combineEpics'
-import {testEpic} from '../../tests/testEpic'
-import {$do, Epic, types} from '../../actions/actions'
-import {ActionsObservable} from 'redux-observable'
-import {mockStore } from '../../tests/mockStore'
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../interfaces/store'
-import {notification} from 'antd'
-import {Observable} from 'rxjs'
+import { combineEpics } from '../combineEpics'
+import { testEpic } from '../../tests/testEpic'
+import { $do, Epic, types } from '../../actions/actions'
+import { ActionsObservable } from 'redux-observable'
+import { mockStore } from '../../tests/mockStore'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../interfaces/store'
+import { notification } from 'antd'
+import { Observable } from 'rxjs'
 
 const notificationMock = jest.fn()
 const customImplementation = jest.fn()
@@ -28,7 +28,7 @@ describe('combineEpics', () => {
         const rootEpic = combineEpics({})
         const action = $do.selectViewFail({ viewName: 'view-example' })
         const epic = rootEpic(ActionsObservable.of(action), store)
-        testEpic(epic, (res) => {
+        testEpic(epic, res => {
             // if epic was not overriden, it fires as usual
             expect(notificationMock).toBeCalled()
             expect(res.length).toBe(0)
@@ -45,7 +45,7 @@ describe('combineEpics', () => {
         })
         const action = $do.selectViewFail({ viewName: 'view-example' })
         const epic = rootEpic(ActionsObservable.of(action), store)
-        testEpic(epic, (res) => {
+        testEpic(epic, res => {
             // default implementation disabled
             expect(notificationMock).toBeCalledTimes(0)
             // custom implementation working
@@ -65,7 +65,7 @@ describe('combineEpics', () => {
         })
         const action = $do.selectViewFail({ viewName: 'view-example' })
         const epic = rootEpic(ActionsObservable.of(action), store)
-        testEpic(epic, (res) => {
+        testEpic(epic, res => {
             // default implementation disabled
             expect(notificationMock).toBeCalledTimes(0)
         })
@@ -80,7 +80,7 @@ describe('combineEpics', () => {
         })
         const action = $do.selectViewFail({ viewName: 'view-example' })
         const epic = rootEpic(ActionsObservable.of(action), store)
-        testEpic(epic, (res) => {
+        testEpic(epic, res => {
             // default implementation fires
             expect(notificationMock).toBeCalledTimes(1)
             // custom implementation working
@@ -99,7 +99,7 @@ describe('combineEpics', () => {
         })
         const action = $do.selectViewFail({ viewName: 'view-example' })
         const epic = rootEpic(ActionsObservable.of(action), store)
-        testEpic(epic, (res) => {
+        testEpic(epic, res => {
             // custom implementation working
             expect(customImplementation).toBeCalledTimes(1)
             expect(res.length).toBe(1)
@@ -109,8 +109,8 @@ describe('combineEpics', () => {
 })
 
 // Declare custom epic on the client application side
-const customSelectViewFail: Epic = (action$) => action$.ofType(types.selectViewFail)
-.mergeMap(action => {
-    customImplementation()
-    return Observable.of($do.selectView(null))
-})
+const customSelectViewFail: Epic = action$ =>
+    action$.ofType(types.selectViewFail).mergeMap(action => {
+        customImplementation()
+        return Observable.of($do.selectView(null))
+    })

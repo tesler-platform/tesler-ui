@@ -1,8 +1,8 @@
-import {FieldType} from './view'
-import {ConnectedComponent} from 'react-redux'
-import {FunctionComponent} from 'react'
-import {PickMap, DataValue} from './data'
-import {OperationType, OperationInclusionDescriptor} from './operation'
+import { FieldType } from './view'
+import { ConnectedComponent } from 'react-redux'
+import { FunctionComponent } from 'react'
+import { PickMap, DataValue } from './data'
+import { OperationType, OperationInclusionDescriptor } from './operation'
 
 export const enum WidgetTypes {
     Info = 'Info',
@@ -43,11 +43,7 @@ export const TableLikeWidgetTypes = [
  *
  * TODO: Make extenstion point
  */
-export const PopupWidgetTypes = [
-    WidgetTypes.PickListPopup,
-    WidgetTypes.AssocListPopup,
-    WidgetTypes.FlatTreePopup
-] as const
+export const PopupWidgetTypes = [WidgetTypes.PickListPopup, WidgetTypes.AssocListPopup, WidgetTypes.FlatTreePopup] as const
 
 /**
  * All widget types that display table-like data
@@ -55,30 +51,30 @@ export const PopupWidgetTypes = [
 type TableLikeWidgetType = typeof TableLikeWidgetTypes[number]
 
 export interface WidgetFieldBase {
-    type: FieldType,
-    key: string,
-    drillDown?: boolean,
-    bgColor?: string,
-    bgColorKey?: string,
-    label?: string,
-    snapshotKey?: string,
+    type: FieldType
+    key: string
+    drillDown?: boolean
+    bgColor?: string
+    bgColorKey?: string
+    label?: string
+    snapshotKey?: string
     /**
      * Maximum number of characters
      */
-    maxInput?: number,
+    maxInput?: number
     /**
      * Whether the field is hidden
      */
-    hidden?: boolean,
+    hidden?: boolean
     /**
      * Shift value of different hierarchy level
      */
-    hierarchyShift?: boolean,
+    hierarchyShift?: boolean
     drillDownKey?: string
 }
 
 export interface WidgetListFieldBase extends WidgetFieldBase {
-    title: string,
+    title: string
     width?: number
 }
 
@@ -89,8 +85,8 @@ export interface WidgetFormFieldBase extends WidgetFieldBase {
 export type AllWidgetTypeFieldBase = WidgetFormFieldBase | WidgetListFieldBase
 
 export type NumberFieldMeta = AllWidgetTypeFieldBase & {
-    type: FieldType.number | FieldType.money | FieldType.percent,
-    digits?: number,
+    type: FieldType.number | FieldType.money | FieldType.percent
+    digits?: number
     nullable?: boolean
 }
 
@@ -111,13 +107,13 @@ export type DateTimeWithSecondsFieldMeta = AllWidgetTypeFieldBase & {
 }
 
 export type DictionaryFieldMeta = AllWidgetTypeFieldBase & {
-    type: FieldType.dictionary,
-    multiple?: boolean,
+    type: FieldType.dictionary
+    multiple?: boolean
     dictionaryName?: string
 }
 
 export type TextFieldMeta = AllWidgetTypeFieldBase & {
-    type: FieldType.text,
+    type: FieldType.text
     popover?: boolean
 }
 
@@ -126,36 +122,36 @@ export type InputFieldMeta = AllWidgetTypeFieldBase & {
 }
 
 export type MultiFieldMeta = AllWidgetTypeFieldBase & {
-    type: FieldType.multifield,
-    fields: WidgetField[],
+    type: FieldType.multifield
+    fields: WidgetField[]
     style: 'inline' | 'list'
 }
 
 export type MultivalueFieldMeta = AllWidgetTypeFieldBase & {
-    type: FieldType.multivalue | FieldType.multivalueHover,
-    popupBcName?: string,
-    assocValueKey?: string,
-    associateFieldKey?: string,
+    type: FieldType.multivalue | FieldType.multivalueHover
+    popupBcName?: string
+    assocValueKey?: string
+    associateFieldKey?: string
     displayedKey?: string
 }
 
 export type PickListFieldMeta = AllWidgetTypeFieldBase & {
-    type: FieldType.pickList,
-    popupBcName: string,
+    type: FieldType.pickList
+    popupBcName: string
     pickMap: PickMap
 }
 
 export type InlinePickListFieldMeta = AllWidgetTypeFieldBase & {
-    type: FieldType.inlinePickList,
-    searchSpec: string,
-    popupBcName: string,
+    type: FieldType.inlinePickList
+    searchSpec: string
+    popupBcName: string
     pickMap: PickMap
 }
 
 export type FileUploadFieldMeta = AllWidgetTypeFieldBase & {
-    type: FieldType.fileUpload,
-    fileIdKey: string,
-    fileSource: string,
+    type: FieldType.fileUpload
+    fileIdKey: string
+    fileSource: string
     snapshotFileIdKey?: string
 }
 
@@ -173,7 +169,8 @@ export type RadioButtonFieldMeta = AllWidgetTypeFieldBase & {
 /**
  * Field descriptor in widget configuration
  */
-export type WidgetField = NumberFieldMeta
+export type WidgetField =
+    | NumberFieldMeta
     | DateFieldMeta
     | DateTimeFieldMeta
     | DateTimeWithSecondsFieldMeta
@@ -197,13 +194,13 @@ export type WidgetListField = Extract<WidgetField, WidgetListFieldBase>
  *
  */
 export type WidgetInfoField = WidgetFormField & {
-    drillDownTitle?: string,
-    drillDownTitleKey?: string,
+    drillDownTitle?: string
+    drillDownTitleKey?: string
     hintKey?: string
 }
 
 export interface WidgetInfoOptions {
-    fieldBorderBottom?: boolean,
+    fieldBorderBottom?: boolean
     footer?: string
 }
 
@@ -213,54 +210,54 @@ export interface WidgetInfoOptions {
  */
 export interface WidgetOptions {
     layout?: {
-        header?: string[],
-        aside?: string[],
+        header?: string[]
+        aside?: string[]
         rows: LayoutRow[]
-    },
+    }
     /**
      * Options for allowed on table widget actions
      */
-    tableOperations?: TableOperations,
+    tableOperations?: TableOperations
     /**
      * TODO: Move all hierarchy-specific properties to a single property
      */
-    hierarchy?: WidgetTableHierarchy[],
-    hierarchySameBc?: boolean,
-    hierarchyFull?: boolean,
-    hierarchyParentKey?: string,
-    hierarchyGroupSelection?: boolean,
-    hierarchyGroupDeselection?: boolean,
-    hierarchyTraverse?: boolean,
-    hierarchyRadio?: boolean,
-    hierarchyRadioAll?: boolean,
-    hierarchyDisableRoot?: boolean,
+    hierarchy?: WidgetTableHierarchy[]
+    hierarchySameBc?: boolean
+    hierarchyFull?: boolean
+    hierarchyParentKey?: string
+    hierarchyGroupSelection?: boolean
+    hierarchyGroupDeselection?: boolean
+    hierarchyTraverse?: boolean
+    hierarchyRadio?: boolean
+    hierarchyRadioAll?: boolean
+    hierarchyDisableRoot?: boolean
     /**
      * Disable searched item descendants in fullHierarchy search
      */
-    hierarchyDisableDescendants?: boolean,
-    hierarchyDisableParent?: boolean,
-    actionGroups?: WidgetOperations,
+    hierarchyDisableDescendants?: boolean
+    hierarchyDisableParent?: boolean
+    actionGroups?: WidgetOperations
     /**
      * All widget fields are not editable
      */
-    readOnly?: boolean,
+    readOnly?: boolean
     /**
      * @deprecated TODO: Remove in 2.0.0 in favor of actionGroups
      */
-    hideActionGroups?: string[],
+    hideActionGroups?: string[]
     /**
      * Record field which value will be used as a title for the whole record
      * for this particular widget
      */
-    displayedValueKey?: string,
+    displayedValueKey?: string
     /**
      * Disable tooltip with error text
      */
-    disableHoverError?: boolean,
+    disableHoverError?: boolean
     /**
      * Disable notification after failed operation
      */
-    disableNotification?: boolean,
+    disableNotification?: boolean
     /**
      * Allow selecting multiple items for FlatListPopup
      *
@@ -270,16 +267,16 @@ export interface WidgetOptions {
 }
 
 export interface WidgetMeta {
-    name: string,
-    type: WidgetTypes | string, // TODO: Как учитывать типы клиентских виджетов кроме string?
-    title: string, // отображаемое название,
-    bcName: string,
-    position: number,
-    limit?: number,
-    gridWidth: number, // 1-24
-    fields: object[],
-    options?: WidgetOptions,
-    showCondition?: WidgetShowCondition,
+    name: string
+    type: WidgetTypes | string // TODO: Как учитывать типы клиентских виджетов кроме string?
+    title: string // отображаемое название,
+    bcName: string
+    position: number
+    limit?: number
+    gridWidth: number // 1-24
+    fields: unknown[]
+    options?: WidgetOptions
+    showCondition?: WidgetShowCondition
     description?: string // description for documentation
 }
 
@@ -294,10 +291,10 @@ export interface WidgetMeta {
  * @param fieldCondition Field key and value expected from this field
  */
 export interface WidgetShowCondition {
-    bcName: string,
-    isDefault: boolean,
+    bcName: string
+    isDefault: boolean
     params: {
-        fieldKey: string,
+        fieldKey: string
         value: DataValue
     }
 }
@@ -311,19 +308,19 @@ export interface WidgetFieldBlock<T> {
     /**
      * Block ID
      */
-    blockId: number,
+    blockId: number
     /**
      * Name of the block
      */
-    name: string,
+    name: string
     /**
      * Fields contained in the block
      */
-    fields: T[],
+    fields: T[]
     /**
      * @deprecated TODO: Remove in 2.0.0, used to denote a new row in old layout system for forms
      */
-    newRow?: boolean,
+    newRow?: boolean
     /**
      * @deprecated TODO: Remove in 2.0.0, used to ...
      */
@@ -339,7 +336,7 @@ export interface WidgetFormMeta extends WidgetMeta {
     /**
      * Unambiguous marker for JSON file specifing widget type
      */
-    type: WidgetTypes.Form,
+    type: WidgetTypes.Form
     /**
      * Descriptor for fields or block of fields on the form
      */
@@ -353,7 +350,7 @@ export interface WidgetTableMeta extends WidgetMeta {
     /**
      * Unambiguous marker for JSON file specifing widget type
      */
-    type: TableLikeWidgetType,
+    type: TableLikeWidgetType
     /**
      * Descriptor for table columns
      */
@@ -367,11 +364,11 @@ export interface WidgetInfoMeta extends WidgetMeta {
     /**
      * Unambiguous marker for JSON file specifing widget type
      */
-    type: WidgetTypes.Info,
+    type: WidgetTypes.Info
     /**
      * Descriptor for fields or block of fields on the form
      */
-    fields: WidgetFieldsOrBlocks<WidgetInfoField>,
+    fields: WidgetFieldsOrBlocks<WidgetInfoField>
     /**
      * Options for customizing widget
      */
@@ -385,11 +382,11 @@ export interface WidgetTextMeta extends WidgetMeta {
     /**
      * Unambiguous marker for JSON file specifing widget type
      */
-    type: WidgetTypes.Text,
+    type: WidgetTypes.Text
     /**
      * Text to display
      */
-    description: string,
+    description: string
     /**
      * Title text
      */
@@ -429,15 +426,15 @@ export interface WidgetTableHierarchy {
     /**
      * Which business component is displayed on this level
      */
-    bcName: string,
+    bcName: string
     /**
      * What record field to use as displayed value of that record
      */
-    assocValueKey?: string,
+    assocValueKey?: string
     /**
      * If true only one item can be selected
      */
-    radio?: boolean,
+    radio?: boolean
     /**
      * Fields that will be displayed on this hierarchy level
      */
@@ -451,11 +448,11 @@ export interface WidgetOperations {
     /**
      * List of included operations or groups of operations
      */
-    include?: OperationInclusionDescriptor[],
+    include?: OperationInclusionDescriptor[]
     /**
      * List of excluded operations or groups of operations
      */
-    exclude?: OperationType[],
+    exclude?: OperationType[]
     /**
      * default no crud save action
      */
@@ -466,7 +463,7 @@ export interface WidgetOperations {
  * Description of the interface for WidgetOptions's layout.rows
  */
 export interface LayoutCol {
-    fieldKey: string,
+    fieldKey: string
     span?: number
 }
 
@@ -479,10 +476,12 @@ export interface LayoutRow {
 
 export type CustomWidget = ConnectedComponent<any, any> | FunctionComponent<any>
 
-export type CustomWidgetDescriptor = CustomWidget | {
-    component: CustomWidget,
-    card?: CustomWidget
-}
+export type CustomWidgetDescriptor =
+    | CustomWidget
+    | {
+          component: CustomWidget
+          card?: CustomWidget
+      }
 
 /**
  * Check if descriptor is just a widget, or it has additional data
@@ -497,7 +496,7 @@ export function isCustomWidget(descriptor: CustomWidgetDescriptor): descriptor i
  * @param item
  */
 export function isWidgetFieldBlock(item: any): item is WidgetFieldBlock<any> {
-    return !!item && ('blockId' in item)
+    return !!item && 'blockId' in item
 }
 
 /**

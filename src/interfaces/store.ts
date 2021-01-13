@@ -1,17 +1,17 @@
-import {Route} from './router'
-import {Session} from './session'
-import {ScreenState} from './screen'
-import {ViewState} from './view'
-import {DataState, DepthDataState} from './data'
-import {AnyAction} from '../actions/actions'
+import { Route } from './router'
+import { Session } from './session'
+import { ScreenState } from './screen'
+import { ViewState } from './view'
+import { DataState, DepthDataState } from './data'
+import { AnyAction } from '../actions/actions'
 
 export interface Store {
-    router: Route,
-    session: Session,
-    screen: ScreenState,
-    view: ViewState,
-    data: DataState,
-    depthData: DepthDataState,
+    router: Route
+    session: Session
+    screen: ScreenState
+    view: ViewState
+    data: DataState
+    depthData: DepthDataState
     [reducerName: string]: any // TODO: Исправить комбинирование редьюсеров и убрать
 }
 
@@ -22,8 +22,8 @@ export type CoreReducer<ReducerState, ClientActions, State = Store> = (
 ) => ReducerState
 
 export interface ClientReducer<ReducerState, ClientActions> {
-    initialState: ReducerState,
-    override?: boolean,
+    initialState: ReducerState
+    override?: boolean
     reducer: CoreReducer<ReducerState, ClientActions>
 }
 

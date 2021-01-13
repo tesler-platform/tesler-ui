@@ -1,7 +1,7 @@
-import {useSelector} from 'react-redux'
-import {Store} from '../interfaces/store'
-import {WidgetFieldBase} from '../interfaces/widget'
-import {buildBcUrl} from '../utils/strings'
+import { useSelector } from 'react-redux'
+import { Store } from '../interfaces/store'
+import { WidgetFieldBase } from '../interfaces/widget'
+import { buildBcUrl } from '../utils/strings'
 
 /**
  * @param bcName - bcName passed to field
@@ -19,7 +19,7 @@ export function useDrillDownUrl(bcName: string, fieldMeta: WidgetFieldBase, curs
             return null
         }
         const rowFieldMeta = rowMeta.fields?.find(field => field.key === fieldMeta.key)
-        return record?.[fieldMeta?.drillDownKey] as string || rowFieldMeta?.drillDown || null
+        return (record?.[fieldMeta?.drillDownKey] as string) || rowFieldMeta?.drillDown || null
     })
     return drillDownLink
 }

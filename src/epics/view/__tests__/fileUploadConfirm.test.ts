@@ -15,24 +15,21 @@
  * limitations under the License.
  */
 
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {mockStore} from '../../../tests/mockStore'
-import {WidgetTableMeta, WidgetTypes} from '../../../interfaces/widget'
-import {FieldType} from '../../../interfaces/view'
-import {fileUploadConfirm} from '../fileUploadConfirm'
-import {$do, types as coreActions} from '../../../actions/actions'
-import {ActionsObservable} from 'redux-observable'
-import {testEpic} from '../../../tests/testEpic'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { mockStore } from '../../../tests/mockStore'
+import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
+import { FieldType } from '../../../interfaces/view'
+import { fileUploadConfirm } from '../fileUploadConfirm'
+import { $do, types as coreActions } from '../../../actions/actions'
+import { ActionsObservable } from 'redux-observable'
+import { testEpic } from '../../../tests/testEpic'
 import * as api from '../../../api/api'
-import {customAction} from '../../../api/api'
-import {Observable} from 'rxjs'
+import { customAction } from '../../../api/api'
+import { Observable } from 'rxjs'
 
 const customActionMock = jest.fn().mockImplementation((args: Parameters<typeof customAction>) => {
-    return Observable.of({ record: null,
-        postActions: [],
-        preInvoke: null
-    })
+    return Observable.of({ record: null, postActions: [], preInvoke: null })
 })
 
 jest.spyOn<any, any>(api, 'customAction').mockImplementation(customActionMock)
@@ -58,10 +55,16 @@ describe('fileUploadConfirm', () => {
             fileIds: ['123', '567']
         })
         const epic = fileUploadConfirm(ActionsObservable.of(action), store)
-        testEpic(epic, (result) => {
-            expect(customActionMock).toBeCalledWith('test', 'bcExample/1', {
-                bulkIds: action.payload.fileIds
-            }, null, { _action: 'file-upload-save' })
+        testEpic(epic, result => {
+            expect(customActionMock).toBeCalledWith(
+                'test',
+                'bcExample/1',
+                {
+                    bulkIds: action.payload.fileIds
+                },
+                null,
+                { _action: 'file-upload-save' }
+            )
         })
     })
 
@@ -71,20 +74,26 @@ describe('fileUploadConfirm', () => {
         })
         const epic = fileUploadConfirm(ActionsObservable.of(action), store)
 
-        testEpic(epic, (result) => {
+        testEpic(epic, result => {
             expect(result.length).toBe(3)
-            expect(result[0]).toEqual(expect.objectContaining({
-                type: coreActions.sendOperationSuccess,
-                payload:  { bcName: 'bcExample', cursor: null }
-            }))
-            expect(result[1]).toEqual(expect.objectContaining({
-                type: coreActions.bcForceUpdate,
-                payload:  { bcName: 'bcExample' }
-            }))
-            expect(result[2]).toEqual(expect.objectContaining({
-                type: coreActions.closeViewPopup,
-                payload:  { bcName: 'bcExample' }
-            }))
+            expect(result[0]).toEqual(
+                expect.objectContaining({
+                    type: coreActions.sendOperationSuccess,
+                    payload: { bcName: 'bcExample', cursor: null }
+                })
+            )
+            expect(result[1]).toEqual(
+                expect.objectContaining({
+                    type: coreActions.bcForceUpdate,
+                    payload: { bcName: 'bcExample' }
+                })
+            )
+            expect(result[2]).toEqual(
+                expect.objectContaining({
+                    type: coreActions.closeViewPopup,
+                    payload: { bcName: 'bcExample' }
+                })
+            )
         })
     })
 
@@ -93,7 +102,6 @@ describe('fileUploadConfirm', () => {
          * TODO
          */
     })
-
 })
 
 function getWidgetMeta(): WidgetTableMeta {
@@ -104,11 +112,13 @@ function getWidgetMeta(): WidgetTableMeta {
         bcName: 'bcExample',
         position: 1,
         gridWidth: null,
-        fields: [{
-            key: 'name',
-            title: 'Test Column',
-            type: FieldType.input
-        }],
+        fields: [
+            {
+                key: 'name',
+                title: 'Test Column',
+                type: FieldType.input
+            }
+        ],
         options: {
             hierarchyFull: true
         }

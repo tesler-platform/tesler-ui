@@ -15,33 +15,36 @@
  * limitations under the License.
  */
 
-import {Observable} from 'rxjs'
-import {Store} from 'redux'
-import {Epic, types, $do, AnyAction, ActionsMap} from '../../actions/actions'
-import {Store as CoreStore} from '../../interfaces/store'
-import {historyObj} from '../../reducers/router'
+import { Observable } from 'rxjs'
+import { Store } from 'redux'
+import { Epic, types, $do, AnyAction, ActionsMap } from '../../actions/actions'
+import { Store as CoreStore } from '../../interfaces/store'
+import { historyObj } from '../../reducers/router'
 import {
-    OperationPostInvokeType, OperationPostInvokeDrillDown, OperationPostInvokeRefreshBc,
-    OperationPostInvokeShowMessage, OperationPostInvokeDownloadFile, OperationPostInvokeDownloadFileByUrl
+    OperationPostInvokeType,
+    OperationPostInvokeDrillDown,
+    OperationPostInvokeRefreshBc,
+    OperationPostInvokeShowMessage,
+    OperationPostInvokeDownloadFile,
+    OperationPostInvokeDownloadFileByUrl
 } from '../../interfaces/operation'
 
-export const processPostInvoke: Epic = (action$, store) => action$.ofType(types.processPostInvoke)
-.mergeMap((action) => {
-    return processPostInvokeImpl(action, store)
-})
+export const processPostInvoke: Epic = (action$, store) =>
+    action$.ofType(types.processPostInvoke).mergeMap(action => {
+        return processPostInvokeImpl(action, store)
+    })
 
-export function processPostInvokeImpl(
-    action: ActionsMap['processPostInvoke'],
-    store: Store<CoreStore, AnyAction>
-): Observable<AnyAction> {
+export function processPostInvokeImpl(action: ActionsMap['processPostInvoke'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     const state = store.getState()
     switch (action.payload.postInvoke.type) {
         case OperationPostInvokeType.drillDown:
-            return Observable.of($do.drillDown({
-                ...action.payload.postInvoke as OperationPostInvokeDrillDown,
-                route: state.router,
-                widgetName: action.payload.widgetName
-            }))
+            return Observable.of(
+                $do.drillDown({
+                    ...(action.payload.postInvoke as OperationPostInvokeDrillDown),
+                    route: state.router,
+                    widgetName: action.payload.widgetName
+                })
+            )
         case OperationPostInvokeType.postDelete: {
             const cursorsMap: Record<string, string> = { [action.payload.bcName]: null }
             const result: AnyAction[] = [$do.bcChangeCursors({ cursorsMap })]
@@ -50,10 +53,12 @@ export function processPostInvokeImpl(
                 const newUrl = `/screen/${state.router.screenName}/view/${state.router.viewName}/${newBcUrl}`
                 historyObj.push(newUrl)
             } else {
-                result.push($do.bcFetchDataRequest({
-                    bcName: action.payload.bcName,
-                    widgetName: action.payload.widgetName
-                }))
+                result.push(
+                    $do.bcFetchDataRequest({
+                        bcName: action.payload.bcName,
+                        widgetName: action.payload.widgetName
+                    })
+                )
             }
             return Observable.of(...result)
         }
@@ -64,19 +69,22 @@ export function processPostInvokeImpl(
             const postInvokeBCItem = bo.bc[postInvoke.bc]
             const widgetName = action.payload.widgetName
             const infiniteWidgets: string[] = state.view.infiniteWidgets || []
-            const infinitePagination = state.view.widgets
-                  .some((item) => item.bcName === postInvokeBC && infiniteWidgets.includes(item.name))
+            const infinitePagination = state.view.widgets.some(item => item.bcName === postInvokeBC && infiniteWidgets.includes(item.name))
             return infinitePagination
-                ? Observable.of($do.bcFetchDataPages({
-                    bcName: postInvokeBCItem.name,
-                    widgetName: widgetName,
-                    from: 1,
-                    to: postInvokeBCItem.page
-                }))
-                : Observable.of($do.bcFetchDataRequest({
-                    bcName: postInvokeBCItem.name,
-                    widgetName
-                }))
+                ? Observable.of(
+                      $do.bcFetchDataPages({
+                          bcName: postInvokeBCItem.name,
+                          widgetName: widgetName,
+                          from: 1,
+                          to: postInvokeBCItem.page
+                      })
+                  )
+                : Observable.of(
+                      $do.bcFetchDataRequest({
+                          bcName: postInvokeBCItem.name,
+                          widgetName
+                      })
+                  )
         }
         case OperationPostInvokeType.showMessage: {
             const postInvoke = action.payload.postInvoke as OperationPostInvokeShowMessage

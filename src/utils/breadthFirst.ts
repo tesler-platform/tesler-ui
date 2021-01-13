@@ -28,10 +28,9 @@ export function breadthFirstSearch<T>(
     depth = 1,
     childrenProperty = 'child' as keyof T
 ): BreadthFirstResult<T> {
-
     // Check the root if we can stop searching
     const rootMatch = predicate(root) && root
-    const rootChildren = root[childrenProperty] as unknown as T[]
+    const rootChildren = (root[childrenProperty] as unknown) as T[]
     if (!rootMatch && !rootChildren) {
         return null
     }
@@ -39,16 +38,14 @@ export function breadthFirstSearch<T>(
         return { node: rootMatch, depth }
     }
     // Check all nodes on current depth
-    let simpleLeaf = rootChildren
-    .filter(item => !item[childrenProperty])
-    .find(item => predicate(item))
+    let simpleLeaf = rootChildren.filter(item => !item[childrenProperty]).find(item => predicate(item))
     if (simpleLeaf) {
         return { node: simpleLeaf, depth: depth + 1 }
     }
     // Move to the next depth
     let resultDepth = depth
     rootChildren.some(item => {
-        const search = breadthFirstSearch<T>(item, predicate, resultDepth + 1, childrenProperty ?? 'child' as keyof T)
+        const search = breadthFirstSearch<T>(item, predicate, resultDepth + 1, childrenProperty ?? ('child' as keyof T))
         simpleLeaf = search?.node
         resultDepth = search?.depth
         return search?.node
@@ -63,7 +60,7 @@ export interface BreadthFirstResult<T> {
     /**
      * Matching node
      */
-    node: T,
+    node: T
     /**
      * Tree depth where this node was found
      */
