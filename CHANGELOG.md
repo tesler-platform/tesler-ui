@@ -99,7 +99,7 @@
 
 ## Fixes
 
-* Revert middleware customization as it's apparently sometimes cause action douplication ([#376](https://github.com/tesler-platform/tesler-ui/issues/376))
+* Middleware customization causes action douplication ([#376](https://github.com/tesler-platform/tesler-ui/issues/376), [#476](https://github.com/tesler-platform/tesler-ui/issues/476)).
 
 # Version 1.22.0 (October 10, 2020)
 
