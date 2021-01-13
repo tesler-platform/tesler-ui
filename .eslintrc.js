@@ -40,27 +40,6 @@ module.exports = {
                 "default": "array-simple"
             }
         ],
-        "@typescript-eslint/ban-types": "off",
-        "@typescript-eslint/consistent-type-assertions": "error",
-        "@typescript-eslint/explicit-member-accessibility": [
-            "error",
-            {
-                "accessibility": "no-public"
-            }
-        ],
-        // "@typescript-eslint/member-delimiter-style": [
-        //     "error",
-        //     {
-        //         "multiline": {
-        //             "delimiter": "comma",
-        //             "requireLast": false
-        //         },
-        //         "singleline": {
-        //             "delimiter": "comma",
-        //             "requireLast": false
-        //         }
-        //     }
-        // ],
         "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/naming-convention": "off",
         "@typescript-eslint/no-empty-function": "error",
@@ -76,7 +55,6 @@ module.exports = {
         "@typescript-eslint/no-unused-expressions": "off",
         "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/no-unsafe-return" : "off",
-        "@typescript-eslint/no-unnecessary-type-assertion": "off",
         "@typescript-eslint/no-var-requires": "off",
         "@typescript-eslint/prefer-for-of": "error",
         "@typescript-eslint/prefer-function-type": "error",
@@ -85,28 +63,7 @@ module.exports = {
         "@typescript-eslint/restrict-plus-operands": "off",
         "@typescript-eslint/restrict-template-expressions": "off",
         "@typescript-eslint/no-unused-vars": ["warn", { "vars": "all", "args": "none", "ignoreRestSiblings": true }],
-        "@typescript-eslint/quotes": [
-            "error",
-            "single"
-        ],
-        "@typescript-eslint/semi": [
-            "error",
-            "never"
-        ],
-        "@typescript-eslint/triple-slash-reference": [
-            "error",
-            {
-                "path": "always",
-                "types": "prefer-import",
-                "lib": "always"
-            }
-        ],
         "@typescript-eslint/unified-signatures": "error",
-        "arrow-parens": [
-            "off",
-            "always"
-        ],
-        "comma-dangle": "off",
         "complexity": "off",
         "constructor-super": "error",
         "eqeqeq": [
@@ -124,13 +81,6 @@ module.exports = {
             "error",
             1
         ],
-        "max-len": [
-            "error",
-            {
-                "code": 140
-            }
-        ],
-        "new-parens": "error",
         "no-bitwise": "error",
         "no-caller": "error",
         "no-case-declarations": "off",
@@ -179,11 +129,8 @@ module.exports = {
         "react/jsx-no-useless-fragment": "error",
         "react/jsx-pascal-case": "error",
         "react/prop-types": "off",
-
         "react-hooks/rules-of-hooks": "off",
         "react-hooks/exhaustive-deps": "off",
-        "keyword-spacing": "error",
-        "curly": "error"
     },
     "settings": {
         "react": {
