@@ -17,6 +17,7 @@ import { FieldType } from '../interfaces/view'
  *
  * @param filters Filters for business components
  * @returns Dictionary of query-params for GET-request
+ * @category Utils
  */
 export function getFilters(filters: BcFilter[]) {
     if (!filters || !filters.length) {
@@ -41,6 +42,7 @@ export function getFilters(filters: BcFilter[]) {
  *
  * @param sorters Array of business component sorters
  * @returns Dictionary of query-params for GET-request
+ * @category Utils
  */
 export function getSorters(sorters: BcSorter[]) {
     if (!sorters || !sorters.length) {
@@ -58,6 +60,7 @@ export function getSorters(sorters: BcSorter[]) {
  *
  * @see {@link getFilters} Reverse function
  * @param defaultFilters string representation of filters
+ * @category Utils
  */
 export function parseFilters(defaultFilters: string) {
     const result: BcFilter[] = []
@@ -96,6 +99,7 @@ export function parseFilters(defaultFilters: string) {
  * i.e. "_sort.0.asc=firstName"
  *
  * @param sorters string representation of sorters
+ * @category Utils
  */
 export function parseSorters(sorters: string) {
     if (!sorters || !sorters.length) {

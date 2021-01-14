@@ -5,6 +5,15 @@ import { TreeAssociatedRecord } from '../../../interfaces/tree'
 import { Store } from '../../../interfaces/store'
 import { useAssocRecords } from '../../../hooks/useAssocRecords'
 
+/**
+ *
+ * @param bcName
+ * @param hierarchyGroupSelection
+ * @param hierarchyGroupDeselection
+ * @param hierarchyRadioAll
+ * @param hierarchyRootRadio
+ * @category Hooks
+ */
 export function useMultipleSelect(
     bcName: string,
     hierarchyGroupSelection: boolean,

@@ -15,19 +15,39 @@
  * limitations under the License.
  */
 
+/**
+ * TODO: Move to interfaces
+ *
+ * @category Actions
+ */
 export interface Action<K, P> {
     type: K
     payload: P
 }
 
+/**
+ * TODO: Move to interfaces
+ *
+ * @category Actions
+ */
 export type uActionTypesMap<A> = {
     [key in keyof A]: key
 }
 
+/**
+ * TODO: Move to interfaces
+ *
+ * @category Actions
+ */
 export type uActionsMap<A> = {
     [key in keyof A]: Action<key, A[key]>
 }
 
+/**
+ * TODO: Move to interfaces
+ *
+ * @category Actions
+ */
 export type AnyOfMap<A> = A[keyof A]
 
 export type uActionCreators<A> = {
@@ -38,6 +58,7 @@ export type uActionCreators<A> = {
  * TODO
  *
  * @param actionObj
+ * @category Utils
  */
 export function createActionCreators<A>(actionObj: A): uActionCreators<A> {
     const keys = Object.keys(actionObj)
@@ -55,6 +76,7 @@ export function createActionCreators<A>(actionObj: A): uActionCreators<A> {
  * TODO
  *
  * @param actionObj
+ * @category Utils
  */
 export function createActionTypes<A>(actionObj: A): uActionTypesMap<A> {
     const keys = Object.keys(actionObj)

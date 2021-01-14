@@ -12,6 +12,11 @@ export interface RadioButtonProps extends BaseFieldProps {
     style?: React.CSSProperties
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const RadioButton: React.FunctionComponent<RadioButtonProps> = props => {
     if (props.readOnly) {
         const readOnlyValue = props.value ?? ''
@@ -67,4 +72,10 @@ const RadioButton: React.FunctionComponent<RadioButtonProps> = props => {
         </Radio.Group>
     )
 }
-export default React.memo(RadioButton)
+
+/**
+ * @category Components
+ */
+const MemoizedRadioButton = React.memo(RadioButton)
+
+export default MemoizedRadioButton

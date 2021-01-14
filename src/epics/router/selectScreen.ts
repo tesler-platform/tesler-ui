@@ -32,7 +32,13 @@ export const changeScreen: Epic = (action$, store) =>
         return selectScreenImpl(action, store)
     })
 
-export function selectScreenImpl(action: ActionsMap['selectScreen'], store: Store<CoreStore>) {
+/**
+ *
+ * @param action
+ * @param store
+ * @category Epics
+ */
+export function selectScreenImpl(action: ActionsMap['selectScreen'], store: Store<CoreStore>): Observable<AnyAction> {
     const state = store.getState()
     const nextViewName = state.router.viewName
     const requestedView = state.screen.views.find(item => item.name === nextViewName)

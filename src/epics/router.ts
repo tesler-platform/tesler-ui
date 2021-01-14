@@ -29,7 +29,13 @@ import { changeScreen } from './router/selectScreen'
 import { changeView } from './router/selectView'
 import { loginDone } from './router/loginDone'
 
-const userDrillDown: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const userDrillDown: Epic = (action$, store) =>
     action$
         .ofType(types.userDrillDown)
         .map(action => {
@@ -76,7 +82,13 @@ const userDrillDown: Epic = (action$, store) =>
                 })
         })
 
-const handleRouter: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const handleRouter: Epic = (action$, store) =>
     action$.ofType(types.handleRouter).switchMap(action => {
         const path = action.payload.path
         const params = action.payload.params

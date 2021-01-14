@@ -2,10 +2,11 @@ import React from 'react'
 import { isWidgetFieldBlock, WidgetFieldsOrBlocks } from '../interfaces/widget'
 
 /**
- * Получение плоского списка полей из массива, который может содержать как поля, так и блоки из нескольких полей.
+ * Receive flat list of fields from array containing fields or field blocks.
  *
- * @template T Тип содержащихся в блоке и возвращаемых полей
- * @param fields Массив полей и блоков полей
+ * @template T Field type
+ * @param fields Array of fields or field blocks
+ * @category Hooks
  */
 export function useFlatFormFields<T>(fields: WidgetFieldsOrBlocks<T>) {
     return React.useMemo(() => {

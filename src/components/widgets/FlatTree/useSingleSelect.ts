@@ -3,6 +3,14 @@ import { DataItem, PendingDataItem, PickMap } from '../../../interfaces/data'
 import { useDispatch } from 'react-redux'
 import { $do } from '../../../actions/actions'
 
+/**
+ *
+ * @param pickListDescriptor
+ * @param bcName
+ * @param parentCursor
+ * @param parentBcName
+ * @category Hooks
+ */
 export function useSingleSelect(pickListDescriptor: PickMap, bcName: string, parentCursor: string, parentBcName: string) {
     const dispatch = useDispatch()
 

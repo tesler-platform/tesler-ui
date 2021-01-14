@@ -7,6 +7,7 @@ import { Store } from '../interfaces/store'
  *
  * @param widgetName
  * @param fieldKey
+ * @category Hooks
  */
 export function useWidgetFilters(widgetName: string, fieldKey: string) {
     return useSelector((store: Store) => {
@@ -26,6 +27,12 @@ export function useWidgetFilters(widgetName: string, fieldKey: string) {
     })
 }
 
+/**
+ *
+ * @param widgetName
+ * @param fieldKey
+ * @category Hooks
+ */
 export function useWidgetHighlightFilter(widgetName: string, fieldKey: string) {
     const filters = useWidgetFilters(widgetName, fieldKey)
     const filter = filters[0]

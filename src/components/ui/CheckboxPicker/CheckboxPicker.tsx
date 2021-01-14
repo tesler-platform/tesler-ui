@@ -25,6 +25,11 @@ interface CheckboxPickerProps extends CheckboxPickerOwnProps {
     onChange: (payload: ChangeDataItemPayload) => void
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const CheckboxPicker = (props: CheckboxPickerProps) => {
     const { metaField } = props
 
@@ -69,4 +74,9 @@ function mapDispatchToProps(dispatch: Dispatch) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CheckboxPicker)
+/**
+ * @category Components
+ */
+export const ConnectedCheckboxPicker = connect(mapStateToProps, mapDispatchToProps)(CheckboxPicker)
+
+export default ConnectedCheckboxPicker

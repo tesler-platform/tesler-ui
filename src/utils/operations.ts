@@ -24,6 +24,7 @@ import { ActionPayloadTypes } from '../actions/actions'
  * Extract operations from all operations groups and return them as an array of flat operations
  *
  * @param operations Operations or operation groups as received from row meta
+ * @category Utils
  */
 export function flattenOperations(operations: Array<Operation | OperationGroup>) {
     const result: Operation[] = []
@@ -48,6 +49,7 @@ export function flattenOperations(operations: Array<Operation | OperationGroup>)
  * @param role Expected operation role or 'none' if operation shouldn't match any crud role
  * @param payload sendOperation action payload
  * @param store Store instance
+ * @category Utils
  */
 export function matchOperationRole(role: OperationTypeCrud | 'none' | string, payload: ActionPayloadTypes['sendOperation'], store: Store) {
     if (payload.operationType === role) {

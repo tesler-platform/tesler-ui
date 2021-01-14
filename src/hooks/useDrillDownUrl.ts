@@ -9,6 +9,7 @@ import { buildBcUrl } from '../utils/strings'
  * @param fieldMeta - widget field meta
  * @description Allows to override drilldown url from field data by drillDownKey. Checking order allows to disable
  * drilldown link, for example if object is removed.
+ * @category Hooks
  */
 export function useDrillDownUrl(bcName: string, fieldMeta: WidgetFieldBase, cursor: string): string | null {
     const drillDownLink = useSelector((store: Store) => {

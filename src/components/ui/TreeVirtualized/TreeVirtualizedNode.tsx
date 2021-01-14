@@ -83,6 +83,7 @@ export interface TreeVirtualizedNodeProps<T> extends ListChildComponentProps {
  *
  * @param props Component props
  * @typeParam T Type of node item
+ * @category Components
  */
 export function TreeVirtualizedNode<T extends TreeNodeBidirectional>(props: TreeVirtualizedNodeProps<T>) {
     const data = props.data
@@ -132,4 +133,9 @@ export function TreeVirtualizedNode<T extends TreeNodeBidirectional>(props: Tree
     )
 }
 
-export default React.memo(TreeVirtualizedNode)
+/**
+ * @category Components
+ */
+const MemoizedTreeVirtualizedNode = React.memo(TreeVirtualizedNode)
+
+export default MemoizedTreeVirtualizedNode

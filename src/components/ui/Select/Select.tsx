@@ -9,6 +9,8 @@ export type SelectProps = AntdSelectProps & {
 /**
  * Wrapper for original rc-select due to performance problems with last version
  * https://github.com/react-component/select/issues/378
+ *
+ * @category Components
  */
 export class Select<T = SelectValue> extends React.PureComponent<SelectProps> {
     /**
@@ -29,4 +31,7 @@ export class Select<T = SelectValue> extends React.PureComponent<SelectProps> {
     }
 }
 
+/**
+ * @category Components
+ */
 export default Select

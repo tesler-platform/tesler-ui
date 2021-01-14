@@ -69,6 +69,11 @@ type AssociatedItemTag = Omit<AssociatedItem, 'vstamp'> & {
     _value?: string
 }
 
+/**
+ *
+ * @param props
+ * @category Widgets
+ */
 export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActions> = props => {
     const {
         onCancel,
@@ -318,6 +323,9 @@ const mapDispatchToProps = createMapDispatchToProps(
     }
 )
 
+/**
+ * @category Widgets
+ */
 const AssocListPopupConnected = connect(mapStateToProps, mapDispatchToProps)(AssocListPopup)
 
 export default AssocListPopupConnected

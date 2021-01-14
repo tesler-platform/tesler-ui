@@ -18,6 +18,11 @@ export interface DictionaryProps extends BaseFieldProps {
     multiple?: boolean
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const Dictionary: React.FunctionComponent<DictionaryProps> = props => {
     if (props.readOnly) {
         let readOnlyValue = props.value ?? ''
@@ -120,4 +125,9 @@ export function getIconByParams(params: string, extraStyleClasses?: string) {
     return null
 }
 
-export default React.memo(Dictionary)
+/**
+ * @category Components
+ */
+const MemoizedDictionary = React.memo(Dictionary)
+
+export default MemoizedDictionary

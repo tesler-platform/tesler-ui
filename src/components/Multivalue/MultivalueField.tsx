@@ -35,6 +35,11 @@ export interface MultivalueFieldProps extends MultivalueFieldOwnProps {
     onMultivalueAssocOpen: () => void
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const MultivalueField: FunctionComponent<MultivalueFieldProps> = props => {
     const onRemove = (newValue: MultivalueSingleValue[], removedItem: MultivalueSingleValue) => {
         props.onRemove(props.bcName, props.popupBcName, props.cursor, props.fieldKey, newValue, removedItem)
@@ -111,4 +116,9 @@ function mapDispatchToProps(dispatch: Dispatch) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MultivalueField)
+/**
+ * @category Components
+ */
+const ConnectedMultivalueField = connect(mapStateToProps, mapDispatchToProps)(MultivalueField)
+
+export default ConnectedMultivalueField

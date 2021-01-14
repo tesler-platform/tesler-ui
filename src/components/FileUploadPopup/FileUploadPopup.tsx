@@ -8,6 +8,9 @@ import { $do } from '../../actions/actions'
 import * as styles from './FileUploadPopup.less'
 import { getFileUploadEndpoint } from '../../utils/api'
 
+/**
+ * @category Components
+ */
 export const FileUploadPopup: React.FC = () => {
     const { t } = useTranslation()
     const popupData = useSelector((state: Store) => state.view.popupData)
@@ -51,4 +54,7 @@ export const FileUploadPopup: React.FC = () => {
     )
 }
 
+/**
+ * @category Components
+ */
 export default React.memo(FileUploadPopup)

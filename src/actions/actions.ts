@@ -47,6 +47,7 @@ const z = null as any
  * @param ActionName Name for an action (redux action "type") and corresponding action creater action
  * @param PayloadType Typescript description for payload
  * @property z Mandatory to prevent typescript from erasing unused class fields (@see https://github.com/microsoft/TypeScript/issues/12437)
+ * @category Actions
  */
 export class ActionPayloadTypes {
     /**
@@ -1034,11 +1035,15 @@ export class ActionPayloadTypes {
 }
 
 // action-types
+/**
+ * @category Actions
+ */
 export const types = util.createActionTypes(new ActionPayloadTypes())
 /**
  * Checks if need to perform autosave on specified action type call
  *
  * @param action
+ * @category Actions
  */
 export const needSaveAction = (action: string) => {
     const actions: string[] = [
@@ -1055,10 +1060,15 @@ export const needSaveAction = (action: string) => {
     return actions.indexOf(action) > -1
 }
 // action-creators
+/**
+ * @category Actions
+ */
 export const $do = util.createActionCreators(new ActionPayloadTypes())
 export type ActionsMap = util.uActionsMap<ActionPayloadTypes>
 /**
  * Any of the core actions
+ *
+ * @category Actions
  */
 export type AnyAction = util.AnyOfMap<ActionsMap> | { type: ' UNKNOWN ACTION '; payload?: any }
 

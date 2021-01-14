@@ -42,6 +42,11 @@ interface WidgetProps extends WidgetOwnProps {
 
 const skeletonParams = { rows: 5 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 export const Widget: FunctionComponent<WidgetProps> = props => {
     if (!props.showWidget) {
         return null
@@ -180,4 +185,9 @@ function checkShowCondition(condition: WidgetShowCondition, bcMap: Record<string
     return pendingValue !== undefined ? pendingValue === params.value : actualValue === params.value
 }
 
-export default connect(mapStateToProps)(Widget)
+/**
+ * @category Components
+ */
+const ConnectedWidget = connect(mapStateToProps)(Widget)
+
+export default ConnectedWidget

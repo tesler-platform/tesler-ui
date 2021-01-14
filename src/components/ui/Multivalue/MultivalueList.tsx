@@ -15,6 +15,11 @@ export interface MultivalueListProps {
     className?: string
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const MultivalueList: React.FunctionComponent<MultivalueListProps> = props => {
     return (
         <div
@@ -49,4 +54,9 @@ const MultivalueList: React.FunctionComponent<MultivalueListProps> = props => {
     )
 }
 
-export default React.memo(MultivalueList)
+/**
+ * @category Components
+ */
+const MemoizedMultivalueList = React.memo(MultivalueList)
+
+export default MemoizedMultivalueList

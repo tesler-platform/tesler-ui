@@ -29,6 +29,12 @@ export const apiError: Epic = (action$, store) =>
         return apiErrorImpl(action, store)
     })
 
+/**
+ *
+ * @param action
+ * @param store
+ * @category Epics
+ */
 export function apiErrorImpl(action: ActionsMap['apiError'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     const { error, callContext } = action.payload
     if (error.response) {

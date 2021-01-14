@@ -74,4 +74,9 @@ export const ErrorPopup: FunctionComponent<ErrorPopupOwnProps> = props => {
     )
 }
 
-export default React.memo(ErrorPopup)
+/**
+ * @category Components
+ */
+const MemoizedErrorPopup = React.memo(ErrorPopup)
+
+export default MemoizedErrorPopup

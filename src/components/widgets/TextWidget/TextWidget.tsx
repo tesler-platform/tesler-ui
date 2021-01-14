@@ -9,6 +9,11 @@ interface TextWidgetOwnProps {
     meta: WidgetTextMeta
 }
 
+/**
+ *
+ * @param props
+ * @category Widgets
+ */
 const TextWidget: React.FunctionComponent<TextWidgetOwnProps> = props => {
     const description = props.meta.description
     const htmlText = parse(marked(description))
@@ -19,4 +24,7 @@ const TextWidget: React.FunctionComponent<TextWidgetOwnProps> = props => {
     )
 }
 
+/**
+ * @category Widgets
+ */
 export default TextWidget

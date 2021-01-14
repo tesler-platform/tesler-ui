@@ -31,6 +31,7 @@ type GetParamsMap = ObjectMap<string | number>
  *
  * @param path
  * @param params
+ * @category Tesler API Endpoints
  */
 export function routerRequest(path: string, params: Record<string, unknown>) {
     return axiosGet(applyRawParams(path, params))
@@ -43,6 +44,7 @@ export function routerRequest(path: string, params: Record<string, unknown>) {
  * @param bcUrl
  * @param params
  * @param cancelToken
+ * @category Tesler API Endpoints
  */
 export function fetchBcData(screenName: string, bcUrl: string, params: GetParamsMap = {}, cancelToken?: CancelToken) {
     const noLimit = params._limit === 0
@@ -61,6 +63,7 @@ export function fetchBcData(screenName: string, bcUrl: string, params: GetParams
  * @param screenName
  * @param bcUrl
  * @param params
+ * @category Tesler API Endpoints
  */
 export function fetchBcDataAll(screenName: string, bcUrl: string, params: GetParamsMap = {}) {
     let currentPage = 1
@@ -81,6 +84,7 @@ export function fetchBcDataAll(screenName: string, bcUrl: string, params: GetPar
  * @param bcUrl
  * @param params
  * @param cancelToken
+ * @category Tesler API Endpoints
  */
 export function fetchRowMeta(screenName: string, bcUrl: string, params?: GetParamsMap, cancelToken?: CancelToken) {
     const url = applyParams(buildUrl`row-meta/${screenName}/` + bcUrl, params)
@@ -93,6 +97,7 @@ export function fetchRowMeta(screenName: string, bcUrl: string, params?: GetPara
  * @param screenName Screen name
  * @param bcUrl Business component cursors hierarchy
  * @param params
+ * @category Tesler API Endpoints
  */
 export function newBcData(screenName: string, bcUrl: string, context: ApiCallContext, params?: GetParamsMap) {
     const url = applyParams(buildUrl`row-meta-new/${screenName}/` + bcUrl, params)
@@ -107,6 +112,7 @@ export function newBcData(screenName: string, bcUrl: string, context: ApiCallCon
  * @param data Changed fields
  * @param context Call context
  * @param params
+ * @category Tesler API Endpoints
  */
 export function saveBcData(
     screenName: string,
@@ -126,6 +132,7 @@ export function saveBcData(
  * @param bcUrl Business component cursors hierarchy
  * @param context Call context
  * @param params
+ * @category Tesler API Endpoints
  */
 export function deleteBcData(screenName: string, bcUrl: string, context: ApiCallContext, params?: GetParamsMap) {
     const url = applyParams(buildUrl`data/${screenName}/` + bcUrl, params)
@@ -140,6 +147,7 @@ export function deleteBcData(screenName: string, bcUrl: string, context: ApiCall
  * @param data Changed fields
  * @param context Call context
  * @param params
+ * @category Tesler API Endpoints
  */
 export function customAction(screenName: string, bcUrl: string, data: Record<string, any>, context: ApiCallContext, params?: GetParamsMap) {
     const url = applyParams(buildUrl`custom-action/${screenName}/` + bcUrl, params)
@@ -157,6 +165,7 @@ export function customAction(screenName: string, bcUrl: string, data: Record<str
  * @param bcUrl Business component cursors hierarchy
  * @param data An array of records or a dictionary
  * @param params
+ * @category Tesler API Endpoints
  */
 export function associate(
     screenName: string,
@@ -183,6 +192,7 @@ export function associate(
  * @param bcUrl Business component cursors hierarchy
  * @param data Changed fields
  * @param params
+ * @category Tesler API Endpoints
  */
 export function getRmByForceActive(screenName: string, bcUrl: string, data: PendingDataItem & { vstamp: number }, params?: GetParamsMap) {
     const url = applyParams(buildUrl`row-meta/${screenName}/` + bcUrl, params)

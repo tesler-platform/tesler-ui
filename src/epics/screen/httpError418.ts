@@ -30,6 +30,12 @@ export const httpError418: Epic = (action$, store) =>
             return httpError418Impl(action, store)
         })
 
+/**
+ *
+ * @param action
+ * @param store
+ * @category Epics
+ */
 export function httpError418Impl(action: ActionsMap['httpError'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     const { error, callContext } = action.payload
     const result: Array<Observable<AnyAction>> = []

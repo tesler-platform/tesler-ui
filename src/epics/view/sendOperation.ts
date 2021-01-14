@@ -50,8 +50,9 @@ export const sendOperation: Epic = (action$, store) =>
  *
  * @param action
  * @param store
+ * @category Epics
  */
-export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store: Store<CoreStore, AnyAction>) {
+export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     const state = store.getState()
     const screenName = state.screen.screenName
     const { bcName, operationType, widgetName } = action.payload

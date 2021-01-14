@@ -25,6 +25,11 @@ export const widths = {
     large: '808px'
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 export const Popup: FunctionComponent<PopupProps> = props => {
     const {
         onOkHandler,
@@ -86,4 +91,9 @@ export const Popup: FunctionComponent<PopupProps> = props => {
     )
 }
 
-export default React.memo(Popup)
+/**
+ * @category Components
+ */
+const MemoizedPopup = React.memo(Popup)
+
+export default MemoizedPopup

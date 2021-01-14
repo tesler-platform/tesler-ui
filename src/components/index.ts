@@ -1,5 +1,9 @@
 // UI
 export { default as Link } from './ui/Link/Link'
+
+/**
+ * @category Components
+ */
 export { default as DashboardLayout } from './ui/DashboardLayout/DashboardLayout'
 export { default as ActionLink } from './ui/ActionLink/ActionLink'
 export { default as DatePickerField } from './ui/DatePickerField/DatePickerField'
