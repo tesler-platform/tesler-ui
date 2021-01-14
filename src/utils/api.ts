@@ -58,6 +58,9 @@ function onErrorHook(error: AxiosError, callContext?: ApiCallContext) {
     throw error
 }
 
+/**
+ * @category Utils
+ */
 const axiosForApi = {
     get: <ResponsePayload>(path: string, config: AxiosRequestConfig, callContext?: ApiCallContext) =>
         createAxiosRequest()
@@ -97,6 +100,7 @@ const axiosForApi = {
  * @param headers Request headers
  * @param callContext Call context
  * @template ResponsePayload Response payload type
+ * @category Utils
  */
 const axiosGet = <ResponsePayload>(path: string, config: AxiosRequestConfig = {}, callContext?: ApiCallContext) => {
     return Observable.fromPromise(axiosForApi.get<ResponsePayload>(path, config, callContext))
@@ -112,6 +116,7 @@ const axiosGet = <ResponsePayload>(path: string, config: AxiosRequestConfig = {}
  * @param headers Request headers
  * @param callContext Call context
  * @template ResponsePayload Response payload type
+ * @category Utils
  */
 const axiosPost = <ResponsePayload>(path: string, data: any, config: AxiosRequestConfig = {}, callContext?: ApiCallContext) => {
     return Observable.fromPromise(axiosForApi.post<ResponsePayload>(path, data, config, callContext))
@@ -127,6 +132,7 @@ const axiosPost = <ResponsePayload>(path: string, data: any, config: AxiosReques
  * @param headers Request headers
  * @param callContext Call context
  * @template ResponsePayload Response payload type
+ * @category Utils
  */
 const axiosPut = <ResponsePayload>(path: string, data: any, callContext?: ApiCallContext) => {
     return Observable.fromPromise(axiosForApi.put<ResponsePayload>(path, data, callContext))
@@ -142,6 +148,7 @@ const axiosPut = <ResponsePayload>(path: string, data: any, callContext?: ApiCal
  * @param headers Request headers
  * @param callContext Call context
  * @template ResponsePayload Response payload type
+ * @category Utils
  */
 const axiosDelete = <ResponsePayload>(path: string, callContext?: ApiCallContext) => {
     return Observable.fromPromise(axiosForApi.delete<ResponsePayload>(path, callContext))

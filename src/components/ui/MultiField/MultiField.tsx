@@ -14,6 +14,11 @@ export interface MultiFieldProps {
     style: 'inline' | 'list'
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const MultiField: React.FunctionComponent<MultiFieldProps> = props => {
     const valuesStyle = props.style === 'list' ? styles.listValues : styles.inlineValues
     const valueStyle = props.style === 'list' ? styles.listValue : styles.inlineValue
@@ -43,4 +48,9 @@ const MultiField: React.FunctionComponent<MultiFieldProps> = props => {
     )
 }
 
-export default React.memo(MultiField)
+/**
+ * @category Components
+ */
+const MemoizedMultiField = React.memo(MultiField)
+
+export default MemoizedMultiField

@@ -34,6 +34,12 @@ export const processPostInvoke: Epic = (action$, store) =>
         return processPostInvokeImpl(action, store)
     })
 
+/**
+ *
+ * @param action
+ * @param store
+ * @category Epics
+ */
 export function processPostInvokeImpl(action: ActionsMap['processPostInvoke'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     const state = store.getState()
     switch (action.payload.postInvoke.type) {

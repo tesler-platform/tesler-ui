@@ -15,6 +15,7 @@ export interface ViewNavigationItem {
  * Returns MenuItem if it is ViewNavigationItem
  *
  * @param item to be identified as view
+ * @category Type Guards
  */
 export function isViewNavigationItem(item: MenuItem): item is ViewNavigationItem {
     return !!item && 'viewName' in item
@@ -26,7 +27,8 @@ export function isViewNavigationItem(item: MenuItem): item is ViewNavigationItem
  *
  * @param categoryName The name of the category.
  * @param child list of categories or menu items included in a category.
- * TODO Deprecated. ViewNavigationCategory will be deleted in 2.0.0
+ * @deprecated ViewNavigationCategory will be deleted in 2.0.0
+ * @category Type Guards
  */
 export interface ViewNavigationCategory {
     categoryName: string
@@ -35,7 +37,8 @@ export interface ViewNavigationCategory {
 
 /**
  * @param item
- * TODO Deprecated. ViewNavigationCategory will be deleted in 2.0.0
+ * @deprecated ViewNavigationCategory will be deleted in 2.0.0
+ * @category Type Guards
  */
 export function isViewNavigationCategory(item: any): item is ViewNavigationCategory {
     return !!item && 'categoryName' in item
@@ -62,6 +65,7 @@ export interface ViewNavigationGroup {
  * Returns MenuItem if it is ViewNavigationGroup
  *
  * @param item to be identified as group
+ * @category Type Guards
  */
 export function isViewNavigationGroup(item: MenuItem): item is ViewNavigationGroup {
     // TODO: remove 'categoryName' check in 2.0.0

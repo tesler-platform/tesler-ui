@@ -28,6 +28,8 @@ export const enum WidgetTypes {
  * For example, autofocus on missing required field should work for tables but not forms.
  *
  * TODO: Make extension point
+ *
+ * @category Components
  */
 export const TableLikeWidgetTypes = [
     WidgetTypes.List,
@@ -494,6 +496,7 @@ export function isCustomWidget(descriptor: CustomWidgetDescriptor): descriptor i
  * TODO
  *
  * @param item
+ * @category Type Guards
  */
 export function isWidgetFieldBlock(item: any): item is WidgetFieldBlock<any> {
     return !!item && 'blockId' in item

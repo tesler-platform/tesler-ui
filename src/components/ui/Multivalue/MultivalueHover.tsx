@@ -15,6 +15,11 @@ export interface MultivalueHoverProps extends BaseFieldProps {
     className?: string
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const Multivalue: React.FunctionComponent<MultivalueHoverProps> = props => {
     const filterKey = useWidgetHighlightFilter(props.widgetName, props.meta?.key)?.value?.toString()
     const filterValue = props.data?.find(bcDataItem => filterKey?.split(',')?.includes(bcDataItem.id))?.value.toString()
@@ -50,4 +55,9 @@ const Multivalue: React.FunctionComponent<MultivalueHoverProps> = props => {
     )
 }
 
-export default React.memo(Multivalue)
+/**
+ * @category Components
+ */
+const MemoizedMultivalue = React.memo(Multivalue)
+
+export default MemoizedMultivalue

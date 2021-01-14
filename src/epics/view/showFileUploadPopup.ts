@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Epic, types, $do, ActionsMap } from '../../actions/actions'
+import { Epic, types, $do, ActionsMap, AnyAction } from '../../actions/actions'
 import { Observable } from 'rxjs'
 import { matchOperationRole } from '../../utils/operations'
 import { OperationTypeCrud } from '../../interfaces/operation'
@@ -41,8 +41,9 @@ export const showFileUploadPopup: Epic = (action$, store) =>
  *
  * @param action sendOperation
  * @param store Store instance
+ * @category Epics
  */
-export function showFileUploadPopupImpl(action: ActionsMap['sendOperation']) {
+export function showFileUploadPopupImpl(action: ActionsMap['sendOperation']): Observable<AnyAction> {
     return Observable.concat(
         Observable.of($do.bcChangeCursors({ cursorsMap: { [action.payload.bcName]: null } })),
         Observable.of($do.showFileUploadPopup({ widgetName: action.payload.widgetName }))

@@ -37,6 +37,11 @@ export interface ColumnFilterControlProps {
     onChange: (value: DataValue | DataValue[]) => void
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 export const ColumnFilterControl: React.FC<ColumnFilterControlProps> = props => {
     switch (props.widgetFieldMeta.type) {
         case FieldType.dictionary:
@@ -91,4 +96,9 @@ export const ColumnFilterControl: React.FC<ColumnFilterControlProps> = props => 
     }
 }
 
-export default React.memo(ColumnFilterControl)
+/**
+ * @category Components
+ */
+const MemoizedColumnFilterControl = React.memo(ColumnFilterControl)
+
+export default MemoizedColumnFilterControl

@@ -27,6 +27,7 @@ const initialExpanded: Record<string, boolean> = { '0': true }
  * @param searchPredicate Filter condition
  * @param setExpandedNodes Callback to set ancestors
  * @returns A memoized array of matching nodes
+ * @category Hooks
  */
 export function useMatchingNodes<T extends TreeNodeAscending>(
     nodes: T[],
@@ -47,6 +48,7 @@ export function useMatchingNodes<T extends TreeNodeAscending>(
  *
  * @param nodes An array to filter
  * @param searchPredicate Filter condition
+ * @category Utils
  */
 export function getMatchingNodes<T extends TreeNodeAscending>(nodes: T[], searchPredicate: (item: T) => boolean) {
     if (!searchPredicate || !nodes) {

@@ -13,6 +13,11 @@ export interface PickInputProps {
     loading?: boolean
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const PickInput: React.FunctionComponent<PickInputProps> = props => {
     const handleClick = React.useCallback(() => {
         if (!props.disabled && props.onClick) {
@@ -47,4 +52,9 @@ const PickInput: React.FunctionComponent<PickInputProps> = props => {
     )
 }
 
-export default React.memo(PickInput)
+/**
+ * @category Components
+ */
+const MemoizedPickInput = React.memo(PickInput)
+
+export default MemoizedPickInput

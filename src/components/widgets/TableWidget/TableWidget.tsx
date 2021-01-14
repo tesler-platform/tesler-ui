@@ -79,6 +79,11 @@ export interface TableWidgetProps extends TableWidgetOwnProps {
     onForceUpdate: (bcName: string) => void
 }
 
+/**
+ *
+ * @param props
+ * @category Widgets
+ */
 export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
     const {
         meta,
@@ -569,4 +574,10 @@ function mapDispatchToProps(dispatch: Dispatch) {
     }
 }
 TableWidget.displayName = 'TableWidget'
-export default connect(mapStateToProps, mapDispatchToProps)(TableWidget)
+
+/**
+ * @category Widgets
+ */
+const ConnectedTable = connect(mapStateToProps, mapDispatchToProps)(TableWidget)
+
+export default ConnectedTable

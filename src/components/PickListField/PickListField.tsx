@@ -22,6 +22,11 @@ interface IPickListWidgetInputProps extends IPickListWidgetInputOwnProps {
     popupRowMetaDone: boolean
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const PickListField: React.FunctionComponent<IPickListWidgetInputProps> = props => {
     if (props.readOnly) {
         return (
@@ -83,4 +88,9 @@ const mapDispatchToProps = (dispatch: any) => ({
     }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(PickListField)
+/**
+ * @category Components
+ */
+const ConnectedPickListField = connect(mapStateToProps, mapDispatchToProps)(PickListField)
+
+export default ConnectedPickListField

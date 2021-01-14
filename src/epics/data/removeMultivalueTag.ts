@@ -65,8 +65,12 @@ export const removeMultivalueTag: Epic = (action$, store) =>
  *
  * @param action removeMultivalueTag
  * @param store Store instance
+ * @category Epics
  */
-export function removeMultivalueTagImpl(action: ActionsMap['removeMultivalueTag'], store: Store<CoreStore, AnyAction>) {
+export function removeMultivalueTagImpl(
+    action: ActionsMap['removeMultivalueTag'],
+    store: Store<CoreStore, AnyAction>
+): Observable<AnyAction> {
     const state = store.getState()
     const { bcName, cursor, popupBcName, associateFieldKey } = action.payload
     const widget = state.view.widgets.find(

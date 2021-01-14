@@ -23,6 +23,11 @@ export interface ReadOnlyFieldProps {
     children: React.ReactNode
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const ReadOnlyField: React.FunctionComponent<ReadOnlyFieldProps> = props => {
     const filter = useWidgetHighlightFilter(props.widgetName, props.meta.key)
     const displayedValue = filter ? (
@@ -44,4 +49,9 @@ const ReadOnlyField: React.FunctionComponent<ReadOnlyFieldProps> = props => {
     )
 }
 
-export default React.memo(ReadOnlyField)
+/**
+ * @category Components
+ */
+const MemoizedReadOnlyField = React.memo(ReadOnlyField)
+
+export default MemoizedReadOnlyField

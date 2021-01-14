@@ -32,6 +32,12 @@ export const selectScreenFail: Epic = (action$, store) =>
         return selectScreenFailImpl(action, store)
     })
 
+/**
+ *
+ * @param action
+ * @param store
+ * @category Epics
+ */
 export function selectScreenFailImpl(action: ActionsMap['selectScreenFail'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     notification.error({
         message: i18n.t('Screen is missing or unavailable for your role', { screenName: action.payload.screenName }),

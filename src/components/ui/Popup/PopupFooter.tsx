@@ -8,6 +8,11 @@ export interface PopupFooterProps {
     onCancel?: () => void
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 export const PopupFooter: React.FC<PopupFooterProps> = props => {
     const { t } = useTranslation()
 
@@ -23,4 +28,9 @@ export const PopupFooter: React.FC<PopupFooterProps> = props => {
     )
 }
 
-export default React.memo(PopupFooter)
+/**
+ * @category Components
+ */
+const MemoizedPopupFooter = React.memo(PopupFooter)
+
+export default MemoizedPopupFooter

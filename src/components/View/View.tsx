@@ -20,6 +20,11 @@ export const CustomizationContext: React.Context<{
     customFields: {}
 })
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 export const View: FunctionComponent<ViewProps> = props => {
     let layout: React.ReactNode = null
     const fileUploadPopup = useSelector((state: Store) => state.view.popupData?.type === 'file-upload')
@@ -57,4 +62,9 @@ function mapStateToProps(store: Store) {
     }
 }
 
-export default connect(mapStateToProps)(View)
+/**
+ * @category Components
+ */
+const ConnectedView = connect(mapStateToProps)(View)
+
+export default ConnectedView

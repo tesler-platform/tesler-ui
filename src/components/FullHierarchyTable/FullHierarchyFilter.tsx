@@ -19,4 +19,7 @@ function mapDispatchToProps(dispatch: Dispatch) {
 }
 
 const FullHierarchyFilter = connect(mapStateToProps, mapDispatchToProps)(ColumnFilter)
+/**
+ * @category Components
+ */
 export default FullHierarchyFilter

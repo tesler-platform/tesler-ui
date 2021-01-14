@@ -48,6 +48,7 @@ export interface FlatTreePopupProps {
  * Data must be presorted (every parent is followed by its descendants) for this widget.
  *
  * @param props Widget props
+ * @category Widgets
  */
 export const FlatTreePopup: React.FC<FlatTreePopupProps> = props => {
     const { multiple, hierarchyGroupSelection, hierarchyGroupDeselection, hierarchyRadioAll, hierarchyRadio: hierarchyRootRadio } =
@@ -109,4 +110,9 @@ export const FlatTreePopup: React.FC<FlatTreePopupProps> = props => {
     return <PickListPopup widget={props.meta} components={components} disableScroll />
 }
 
-export default React.memo(FlatTreePopup)
+/**
+ * @category Widgets
+ */
+const MemoizedFlatTreePopup = React.memo(FlatTreePopup)
+
+export default MemoizedFlatTreePopup

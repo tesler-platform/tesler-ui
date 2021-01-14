@@ -85,4 +85,7 @@ function mapDispatchToProps(dispatch: Dispatch) {
     }
 }
 
+/**
+ * @category Components
+ */
 export default connect(mapStateToProps, mapDispatchToProps)(ColumnSort)

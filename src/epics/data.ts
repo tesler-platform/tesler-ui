@@ -33,8 +33,9 @@ const maxDepthLevel = 10
  * - initializes child BCs data load
  *
  * @param action.payload.bcName BC's name for data load
+ * @category Epics
  */
-const bcFetchDataEpic: Epic = (action$, store) =>
+export const bcFetchDataEpic: Epic = (action$, store) =>
     action$
         .ofType(types.bcFetchDataRequest, types.bcFetchDataPages, types.showViewPopup, types.bcForceUpdate, types.bcChangePage)
         .mergeMap(action => {
@@ -187,7 +188,13 @@ const bcFetchDataEpic: Epic = (action$, store) =>
             return Observable.race(cancelFlow, cancelByParentBc, normalFlow)
         })
 
-const bcLoadMore: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const bcLoadMore: Epic = (action$, store) =>
     action$.ofType(types.bcLoadMore).mergeMap(action => {
         const state = store.getState()
         const bcName = action.payload.bcName
@@ -230,7 +237,13 @@ const bcLoadMore: Epic = (action$, store) =>
         return Observable.race(cancelFlow, normalFlow)
     })
 
-const bcSelectRecord: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const bcSelectRecord: Epic = (action$, store) =>
     action$.ofType(types.bcSelectRecord).mergeMap(action => {
         const { bcName, cursor } = action.payload
         const widgets = store.getState().view.widgets
@@ -251,7 +264,13 @@ const bcSelectRecord: Epic = (action$, store) =>
         )
     })
 
-const bcSelectDepthRecord: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const bcSelectDepthRecord: Epic = (action$, store) =>
     action$.ofType(types.bcSelectDepthRecord).mergeMap(action => {
         const { bcName, cursor, depth } = action.payload
         return Observable.concat(
@@ -267,7 +286,13 @@ const bcSelectDepthRecord: Epic = (action$, store) =>
         )
     })
 
-const inlinePickListFetchDataEpic: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const inlinePickListFetchDataEpic: Epic = (action$, store) =>
     action$.ofType(types.inlinePickListFetchDataRequest).mergeMap(action => {
         const { bcName, searchSpec, searchString } = action.payload
         const bcUrl = buildBcUrl(bcName, false)
@@ -285,7 +310,13 @@ const inlinePickListFetchDataEpic: Epic = (action$, store) =>
         return Observable.race(cancelFlow, normalFlow)
     })
 
-const bcDeleteDataEpic: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const bcDeleteDataEpic: Epic = (action$, store) =>
     action$
         .ofType(types.sendOperation)
         .filter(action => matchOperationRole(OperationTypeCrud.delete, action.payload, store.getState()))
@@ -315,7 +346,13 @@ const bcDeleteDataEpic: Epic = (action$, store) =>
                 })
         })
 
-const bcSaveDataEpic: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const bcSaveDataEpic: Epic = (action$, store) =>
     action$
         .ofType(types.sendOperation)
         .filter(action => matchOperationRole(OperationTypeCrud.save, action.payload, store.getState()))
@@ -395,8 +432,10 @@ const bcSaveDataEpic: Epic = (action$, store) =>
 
 /**
  * Works with assoc-lists, which doesn't call back-end's assoc methods
+ *
+ * @category Epics
  */
-const saveAssociationsPassive: Epic = (action$, store) =>
+export const saveAssociationsPassive: Epic = (action$, store) =>
     action$
         .ofType(types.saveAssociations)
         .filter(action => {
@@ -454,8 +493,10 @@ const saveAssociationsPassive: Epic = (action$, store) =>
 
 /**
  * Works with assoc-lists, which does call back-end's assoc methods by click on confirm button in modal window
+ *
+ * @category Epics
  */
-const saveAssociationsActive: Epic = (action$, store) =>
+export const saveAssociationsActive: Epic = (action$, store) =>
     action$
         .ofType(types.saveAssociations)
         .filter(action => {
@@ -487,7 +528,13 @@ const saveAssociationsActive: Epic = (action$, store) =>
                 })
         })
 
-const changeChildrenAssociations: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const changeChildrenAssociations: Epic = (action$, store) =>
     action$.ofType(types.changeChildrenAssociations).mergeMap(action => {
         const state = store.getState()
         const data = state.data[action.payload.bcName]
@@ -504,7 +551,13 @@ const changeChildrenAssociations: Epic = (action$, store) =>
         )
     })
 
-const changeChildrenAssociationsSameBc: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const changeChildrenAssociationsSameBc: Epic = (action$, store) =>
     action$.ofType(types.changeChildrenAssociationsSameBc).mergeMap(action => {
         const state = store.getState()
         const data = state.depthData[action.payload.depth]?.[action.payload.bcName] || []
@@ -526,8 +579,9 @@ const changeChildrenAssociationsSameBc: Epic = (action$, store) =>
  *
  * @param action$
  * @param store
+ * @category Epics
  */
-const changeDescendantsAssociationsFull: Epic = (action$, store) =>
+export const changeDescendantsAssociationsFull: Epic = (action$, store) =>
     action$.ofType(types.changeDescendantsAssociationsFull).mergeMap(action => {
         const state = store.getState()
         const depth = action.payload.depth
@@ -566,7 +620,13 @@ const changeDescendantsAssociationsFull: Epic = (action$, store) =>
         return Observable.concat(...result)
     })
 
-const changeAssociation: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const changeAssociation: Epic = (action$, store) =>
     action$.ofType(types.changeAssociation).mergeMap(action => {
         const state = store.getState()
         const selected = action.payload.dataItem._associate
@@ -661,7 +721,13 @@ const changeAssociation: Epic = (action$, store) =>
         return Observable.concat(...result)
     })
 
-const changeAssociationSameBc: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const changeAssociationSameBc: Epic = (action$, store) =>
     action$.ofType(types.changeAssociationSameBc).mergeMap(action => {
         const bcName = action.payload.bcName
         const result: Array<Observable<AnyAction>> = [
@@ -738,8 +804,9 @@ const changeAssociationSameBc: Epic = (action$, store) =>
  *
  * @param action$
  * @param store
+ * @category Epics
  */
-const changeAssociationFull: Epic = (action$, store) =>
+export const changeAssociationFull: Epic = (action$, store) =>
     action$.ofType(types.changeAssociationFull).mergeMap(action => {
         const state = store.getState()
         const result: Array<Observable<AnyAction>> = []

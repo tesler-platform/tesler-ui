@@ -22,7 +22,13 @@ import { showFileUploadPopup } from './view/showFileUploadPopup'
 import { sendOperation } from './view/sendOperation'
 import { showAssocPopup } from './view/showAssocPopup'
 
-const sendOperationAssociate: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const sendOperationAssociate: Epic = (action$, store) =>
     action$
         .ofType(types.sendOperation)
         .filter(action => matchOperationRole(OperationTypeCrud.associate, action.payload, store.getState()))
@@ -35,10 +41,14 @@ const sendOperationAssociate: Epic = (action$, store) =>
             })
         })
 
-/*
- *   Эпик, который отправляет запрос на роумету при изменении значения поля с признаком forceActive.
+/**
+ * Sends row meta request when `forceActive` field fires `onChange`
+ *
+ * @param action$
+ * @param store
+ * @category Epics
  */
-const getRowMetaByForceActive: Epic = (action$, store) =>
+export const getRowMetaByForceActive: Epic = (action$, store) =>
     action$.ofType(types.changeDataItem).mergeMap(action => {
         const state = store.getState()
         const initUrl = state.view.url
@@ -117,12 +127,16 @@ const getRowMetaByForceActive: Epic = (action$, store) =>
         return Observable.empty<never>()
     })
 
-/*
- *   Эпик, который очищает дельту по дочерним бк при смене курсора
- * TODO При реализации автосохранения потеряет смысл, можно будет удалить
- * Initial code of `clearPendingDataChangesAfterCursorChange` is deleted. TODO: refactor a rest part of epic
+/**
+ * Clears descendant business components pending changes on cursor change
+ *
+ * TODO: Review required as it might be no longer valid due to autosave middleware implementation
+ *
+ * @param action$
+ * @param store
+ * @category Epics
  */
-const clearPendingDataChangesAfterCursorChange: Epic = (action$, store) =>
+export const clearPendingDataChangesAfterCursorChange: Epic = (action$, store) =>
     action$.ofType(types.bcChangeCursors).mergeMap(action => {
         const state = store.getState()
 
@@ -146,7 +160,13 @@ const clearPendingDataChangesAfterCursorChange: Epic = (action$, store) =>
         return Observable.empty<never>()
     })
 
-const selectTableCellInit: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const selectTableCellInit: Epic = (action$, store) =>
     action$.ofType(types.selectTableCellInit).mergeMap(action => {
         const resultObservables: Array<Observable<AnyAction>> = []
         const state = store.getState()
@@ -174,7 +194,13 @@ const selectTableCellInit: Epic = (action$, store) =>
         return Observable.concat(...resultObservables)
     })
 
-const showAllTableRecordsInit: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const showAllTableRecordsInit: Epic = (action$, store) =>
     action$.ofType(types.showAllTableRecordsInit).mergeMap(action => {
         const resultObservables: Array<Observable<AnyAction>> = []
 
@@ -198,6 +224,7 @@ const showAllTableRecordsInit: Epic = (action$, store) =>
  * @param preInvoke Response pre-invoke
  * @param operationType Which operation was performed
  * @param bcName
+ * @category Utils
  */
 export function postOperationRoutine(
     widgetName: string,

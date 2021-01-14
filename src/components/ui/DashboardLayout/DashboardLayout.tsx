@@ -15,6 +15,7 @@ export interface DashboardLayoutProps {
  * TODO
  *
  * @param props
+ * @category Components
  */
 export function DashboardLayout(props: DashboardLayoutProps) {
     const widgetsByRow = React.useMemo(() => {
@@ -55,5 +56,9 @@ function groupByRow(widgets: WidgetMeta[], skipWidgetTypes: string[]) {
         })
     return byRow
 }
+/**
+ * @category Components
+ */
+export const MemoizedDashboard = React.memo(DashboardLayout)
 
-export default React.memo(DashboardLayout)
+export default MemoizedDashboard

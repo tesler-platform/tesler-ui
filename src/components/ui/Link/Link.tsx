@@ -8,6 +8,11 @@ export interface LinkProps {
     href: string
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 export const Link: FunctionComponent<LinkProps> = props => {
     const { className, href, ...rest } = props
     return (

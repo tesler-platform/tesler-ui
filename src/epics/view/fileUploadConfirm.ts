@@ -52,8 +52,9 @@ export const fileUploadConfirm: Epic = (action$, store) =>
  *
  * @param action removeMultivalueTag
  * @param store Store instance
+ * @category Epics
  */
-export function fileUploadConfirmImpl(action: ActionsMap['bulkUploadFiles'], store: Store<CoreStore, AnyAction>) {
+export function fileUploadConfirmImpl(action: ActionsMap['bulkUploadFiles'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     const state = store.getState()
     const bcName = state.view.popupData.bcName
     const bcUrl = buildBcUrl(bcName, true)

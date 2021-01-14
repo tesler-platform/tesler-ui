@@ -26,6 +26,7 @@ export function getTemplate(literals: TemplateStringsArray, ...placeholders: any
  * @param bcName Business component name
  * @param includeSelf If result hierarchy should include target bc or only ancestors
  * @param store
+ * @category Utils
  */
 export function buildBcUrl(bcName: string, includeSelf = false, store?: Store) {
     const storeInstance = store || globalStore.getState()

@@ -15,6 +15,11 @@ export interface HistoryFieldProps {
     widgetName: string
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const HistoryField: React.FunctionComponent<HistoryFieldProps> = props => {
     const prevValue = ((props.fieldMeta.snapshotKey && props.data?.[props.fieldMeta.snapshotKey]) || '').toString()
     const currentValue = (props.data?.[props.fieldMeta.key] || '').toString()
@@ -88,4 +93,9 @@ const HistoryField: React.FunctionComponent<HistoryFieldProps> = props => {
     )
 }
 
-export default React.memo(HistoryField)
+/**
+ * @category Components
+ */
+const MemoizedHistoryField = React.memo(HistoryField)
+
+export default MemoizedHistoryField

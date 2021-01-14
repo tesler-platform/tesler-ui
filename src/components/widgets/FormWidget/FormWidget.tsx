@@ -23,6 +23,11 @@ interface FormWidgetProps extends FormWidgetOwnProps {
     missingFields: Record<string, string>
 }
 
+/**
+ *
+ * @param props
+ * @category Widgets
+ */
 export const FormWidget: FunctionComponent<FormWidgetProps> = props => {
     const hiddenKeys: string[] = []
     const flattenWidgetFields = useFlatFormFields<WidgetFormField>(props.meta.fields).filter(item => {
@@ -113,4 +118,9 @@ function mapStateToProps(store: Store, ownProps: FormWidgetOwnProps) {
     }
 }
 
-export default connect(mapStateToProps)(FormWidget)
+/**
+ * @category Widgets
+ */
+const ConnectedFormWidget = connect(mapStateToProps)(FormWidget)
+
+export default ConnectedFormWidget
