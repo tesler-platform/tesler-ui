@@ -1,0 +1,365 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>OperationPostInvokeType | @tesler-ui/core</title>
+	<meta name="description" content="Documentation for @tesler-ui/core">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">@tesler-ui/core</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../index.html">@tesler-ui/core</a>
+				</li>
+				<li>
+					<a href="../modules/types.html">Types</a>
+				</li>
+				<li>
+					<a href="../modules/types.operation.html">operation</a>
+				</li>
+				<li>
+					<a href="types.operation.operationpostinvoketype.html">OperationPostInvokeType</a>
+				</li>
+			</ul>
+			<h1>Enumeration OperationPostInvokeType</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>A type of action which fires after user&#39;s operation</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Enumeration members</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="types.operation.operationpostinvoketype.html#downloadfile" class="tsd-kind-icon">download<wbr>File</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="types.operation.operationpostinvoketype.html#downloadfilebyurl" class="tsd-kind-icon">download<wbr>File<wbr>ByUrl</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="types.operation.operationpostinvoketype.html#drilldown" class="tsd-kind-icon">drill<wbr>Down</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="types.operation.operationpostinvoketype.html#openpicklist" class="tsd-kind-icon">open<wbr>Pick<wbr>List</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="types.operation.operationpostinvoketype.html#postdelete" class="tsd-kind-icon">post<wbr>Delete</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="types.operation.operationpostinvoketype.html#refreshbc" class="tsd-kind-icon">refreshBC</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="types.operation.operationpostinvoketype.html#showmessage" class="tsd-kind-icon">show<wbr>Message</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Enumeration members</h2>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="downloadfile" class="tsd-anchor"></a>
+					<h3>download<wbr>File</h3>
+					<div class="tsd-signature tsd-kind-icon">download<wbr>File<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;downloadFile&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/ab37ce6/src/interfaces/operation.ts#L182">src/interfaces/operation.ts:182</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>File downloading by <code>fileId</code> which comes from  answer to user&#39;s operation.
+							Вызов сохранения файла в браузере по пришедшему в ответе fileId</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="downloadfilebyurl" class="tsd-anchor"></a>
+					<h3>download<wbr>File<wbr>ByUrl</h3>
+					<div class="tsd-signature tsd-kind-icon">download<wbr>File<wbr>ByUrl<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;downloadFileByUrl&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/ab37ce6/src/interfaces/operation.ts#L187">src/interfaces/operation.ts:187</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>File downloading by <code>url</code> which comes from  answer to user&#39;s operation.
+							Вызов сохранения файла в браузере по пришедшему в ответе url</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="drilldown" class="tsd-anchor"></a>
+					<h3>drill<wbr>Down</h3>
+					<div class="tsd-signature tsd-kind-icon">drill<wbr>Down<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;drillDown&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/ab37ce6/src/interfaces/operation.ts#L191">src/interfaces/operation.ts:191</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Calling a browser transition to some record</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="openpicklist" class="tsd-anchor"></a>
+					<h3>open<wbr>Pick<wbr>List</h3>
+					<div class="tsd-signature tsd-kind-icon">open<wbr>Pick<wbr>List<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;openPickList&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/ab37ce6/src/interfaces/operation.ts#L195">src/interfaces/operation.ts:195</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p><code>Pick list</code> widget opening</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="postdelete" class="tsd-anchor"></a>
+					<h3>post<wbr>Delete</h3>
+					<div class="tsd-signature tsd-kind-icon">post<wbr>Delete<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;postDelete&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/ab37ce6/src/interfaces/operation.ts#L211">src/interfaces/operation.ts:211</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Инициировать удаление записей</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>deprecated</dt>
+							<dd><p>TODO: Бэк должен сам их удалить и в ответе возвращать список удаленных
+								Не использовать и убрать с Досье, когда определимся с форматом ответов</p>
+							</dd>
+						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="refreshbc" class="tsd-anchor"></a>
+					<h3>refreshBC</h3>
+					<div class="tsd-signature tsd-kind-icon">refreshBC<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;refreshBC&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/ab37ce6/src/interfaces/operation.ts#L177">src/interfaces/operation.ts:177</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>BC&#39;s refresh. It leads to cursor dropping, data refresh of current BC and its children</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="showmessage" class="tsd-anchor"></a>
+					<h3>show<wbr>Message</h3>
+					<div class="tsd-signature tsd-kind-icon">show<wbr>Message<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;showMessage&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/ab37ce6/src/interfaces/operation.ts#L204">src/interfaces/operation.ts:204</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Showing pop-up message</p>
+						</div>
+					</div>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="../index.html">Modules</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-enum tsd-parent-kind-namespace">
+						<a href="types.operation.operationpostinvokeconfirmtype.html" class="tsd-kind-icon">Operation<wbr>Post<wbr>Invoke<wbr>Confirm<wbr>Type</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-enum tsd-parent-kind-namespace">
+						<a href="types.operation.operationpostinvoketype.html" class="tsd-kind-icon">Operation<wbr>Post<wbr>Invoke<wbr>Type</a>
+						<ul>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="types.operation.operationpostinvoketype.html#downloadfile" class="tsd-kind-icon">download<wbr>File</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="types.operation.operationpostinvoketype.html#downloadfilebyurl" class="tsd-kind-icon">download<wbr>File<wbr>ByUrl</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="types.operation.operationpostinvoketype.html#drilldown" class="tsd-kind-icon">drill<wbr>Down</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="types.operation.operationpostinvoketype.html#openpicklist" class="tsd-kind-icon">open<wbr>Pick<wbr>List</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="types.operation.operationpostinvoketype.html#postdelete" class="tsd-kind-icon">post<wbr>Delete</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="types.operation.operationpostinvoketype.html#refreshbc" class="tsd-kind-icon">refreshBC</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="types.operation.operationpostinvoketype.html#showmessage" class="tsd-kind-icon">show<wbr>Message</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-enum tsd-parent-kind-namespace">
+						<a href="types.operation.operationpreinvoketype.html" class="tsd-kind-icon">Operation<wbr>Pre<wbr>Invoke<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-parent-kind-namespace">
+						<a href="types.operation.operationtypecrud.html" class="tsd-kind-icon">Operation<wbr>Type<wbr>Crud</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="../interfaces/types.operation.associateditem.html" class="tsd-kind-icon">Associated<wbr>Item</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="../interfaces/types.operation.operation.html" class="tsd-kind-icon">Operation</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="../interfaces/types.operation.operationerror.html" class="tsd-kind-icon">Operation<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="../interfaces/types.operation.operationerrorentity.html" class="tsd-kind-icon">Operation<wbr>Error<wbr>Entity</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="../interfaces/types.operation.operationgroup.html" class="tsd-kind-icon">Operation<wbr>Group</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="../interfaces/types.operation.operationmodalinvokeconfirm.html" class="tsd-kind-icon">Operation<wbr>Modal<wbr>Invoke<wbr>Confirm</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="../interfaces/types.operation.operationpostinvoke.html" class="tsd-kind-icon">Operation<wbr>Post<wbr>Invoke</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="../interfaces/types.operation.operationpostinvokeconfirm.html" class="tsd-kind-icon">Operation<wbr>Post<wbr>Invoke<wbr>Confirm</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="../interfaces/types.operation.operationpostinvokedownloadfile.html" class="tsd-kind-icon">Operation<wbr>Post<wbr>Invoke<wbr>Download<wbr>File</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="../interfaces/types.operation.operationpostinvokedownloadfilebyurl.html" class="tsd-kind-icon">Operation<wbr>Post<wbr>Invoke<wbr>Download<wbr>File<wbr>ByUrl</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="../interfaces/types.operation.operationpostinvokedrilldown.html" class="tsd-kind-icon">Operation<wbr>Post<wbr>Invoke<wbr>Drill<wbr>Down</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="../interfaces/types.operation.operationpostinvokeopenpicklist.html" class="tsd-kind-icon">Operation<wbr>Post<wbr>Invoke<wbr>Open<wbr>Pick<wbr>List</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="../interfaces/types.operation.operationpostinvokerefreshbc.html" class="tsd-kind-icon">Operation<wbr>Post<wbr>Invoke<wbr>Refresh<wbr>Bc</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="../interfaces/types.operation.operationpostinvokeshowmessage.html" class="tsd-kind-icon">Operation<wbr>Post<wbr>Invoke<wbr>Show<wbr>Message</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="../interfaces/types.operation.operationpreinvoke.html" class="tsd-kind-icon">Operation<wbr>Pre<wbr>Invoke</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-namespace">
+						<a href="../modules/types.operation.html#operationinclusiondescriptor" class="tsd-kind-icon">Operation<wbr>Inclusion<wbr>Descriptor</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-namespace">
+						<a href="../modules/types.operation.html#operationpostinvokeany" class="tsd-kind-icon">Operation<wbr>Post<wbr>Invoke<wbr>Any</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-namespace">
+						<a href="../modules/types.operation.html#operationscope" class="tsd-kind-icon">Operation<wbr>Scope</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-namespace">
+						<a href="../modules/types.operation.html#operationtype" class="tsd-kind-icon">Operation<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-namespace">
+						<a href="../modules/types.operation.html#coreoperations" class="tsd-kind-icon">core<wbr>Operations</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="../modules/types.operation.html#iscoreoperation" class="tsd-kind-icon">is<wbr>Core<wbr>Operation</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="../modules/types.operation.html#isoperationgroup" class="tsd-kind-icon">is<wbr>Operation<wbr>Group</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
