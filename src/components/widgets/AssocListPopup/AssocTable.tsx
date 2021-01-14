@@ -24,6 +24,11 @@ export interface AssocTableProps extends AssocTableOwnProps {
     onSelectAll: (bcName: string, cursors: string[], dataItems: PendingDataItem[]) => void
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 export const AssocTable: FunctionComponent<AssocTableProps> = props => {
     const selectedRecords = useAssocRecords(props.data, props.pendingChanges)
 
@@ -90,4 +95,9 @@ export function mapDispatchToProps(dispatch: Dispatch) {
 
 AssocTable.displayName = 'AssocTable'
 
-export default connect(mapStateToProps, mapDispatchToProps)(AssocTable)
+/**
+ * @category Components
+ */
+const ConnectedAssocTable = connect(mapStateToProps, mapDispatchToProps)(AssocTable)
+
+export default ConnectedAssocTable

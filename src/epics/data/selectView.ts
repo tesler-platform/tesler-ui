@@ -48,6 +48,7 @@ export const selectView: Epic = (action$, store) =>
  * @see {@link src/epics/data/bcFetchDataEpic.ts} for details how descendants resolved
  * @param action `selectView` action
  * @param store Store instance
+ * @category Epics
  */
 export function selectViewImpl(action: ActionsMap['selectView'], store: Store<CoreStore, AnyAction>) {
     const state = store.getState()

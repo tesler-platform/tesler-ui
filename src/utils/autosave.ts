@@ -10,6 +10,7 @@ import { AnyAction, Dispatch, MiddlewareAPI } from 'redux'
  * @param action
  * @param store
  * @param next
+ * @category Utils
  */
 export function autosaveRoutine(action: AnyAction, store: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>, next: Dispatch) {
     const state = store.getState()

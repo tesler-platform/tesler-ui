@@ -23,6 +23,11 @@ interface InfoWidgetProps extends InfoWidgetOwnProps {
     onDrillDown: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void
 }
 
+/**
+ *
+ * @param props
+ * @category Widgets
+ */
 const InfoWidget: React.FunctionComponent<InfoWidgetProps> = props => {
     const options = props.meta.options
     const hiddenKeys: string[] = []
@@ -82,4 +87,9 @@ function mapDispatchToProps(dispatch: Dispatch) {
 }
 
 InfoWidget.displayName = 'InfoWidget'
-export default connect(mapStateToProps, mapDispatchToProps)(InfoWidget)
+/**
+ * @category Widgets
+ */
+const ConnectedInfoWidget = connect(mapStateToProps, mapDispatchToProps)(InfoWidget)
+
+export default ConnectedInfoWidget

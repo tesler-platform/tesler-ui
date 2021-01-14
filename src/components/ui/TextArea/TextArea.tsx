@@ -18,6 +18,11 @@ export interface TextAreaProps extends BaseFieldProps, AdditionalAntdTextAreaPro
     maxRows?: number
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 export const TextArea: React.FunctionComponent<TextAreaProps> = props => {
     if (props.readOnly) {
         return (
@@ -134,4 +139,9 @@ export const TextArea: React.FunctionComponent<TextAreaProps> = props => {
     }
 }
 
-export default React.memo(TextArea)
+/**
+ * @category Components
+ */
+const MemoizedTextArea = React.memo(TextArea)
+
+export default MemoizedTextArea

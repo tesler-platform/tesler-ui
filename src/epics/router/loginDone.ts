@@ -34,7 +34,13 @@ export const loginDone: Epic = (action$, store) =>
         return loginDoneImpl(action, store)
     })
 
-export function loginDoneImpl(action: ActionsMap['loginDone'], store: Store<CoreStore>) {
+/**
+ *
+ * @param action
+ * @param store
+ * @category Epics
+ */
+export function loginDoneImpl(action: ActionsMap['loginDone'], store: Store<CoreStore>): Observable<AnyAction> {
     const state = store.getState()
 
     if (state.router.type === RouteType.router) {

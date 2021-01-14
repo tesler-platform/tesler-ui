@@ -63,6 +63,11 @@ export const Exp: FunctionComponent = (props: any) => {
 const emptyArray: string[] = []
 const emptyData: AssociatedItem[] = []
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 export const HierarchyTable: FunctionComponent<HierarchyTableProps> = props => {
     const bcName = props.nestedByBc || props.meta.bcName
 
@@ -311,4 +316,7 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: HierarchyTableOwnProps
 }
 
 const ConnectedHierarchyTable = connect(mapStateToProps, mapDispatchToProps)(HierarchyTable)
+/**
+ * @category Components
+ */
 export default ConnectedHierarchyTable

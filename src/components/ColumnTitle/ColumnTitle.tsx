@@ -8,6 +8,9 @@ import styles from './ColumnTitle.less'
 import TemplatedTitle from '../TemplatedTitle/TemplatedTitle'
 import { FieldType } from '../../interfaces/view'
 
+/**
+ * TODO: Rename to ColumnTitleProps in 2.0.0
+ */
 export interface ColumnTitle {
     widgetName: string
     widgetMeta: WidgetListField
@@ -28,6 +31,11 @@ export const notSortableFields: readonly FieldType[] = [
     FieldType.hint
 ]
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 export const ColumnTitle: FunctionComponent<ColumnTitle> = props => {
     if (!props.widgetMeta && !props.rowMeta) {
         return null

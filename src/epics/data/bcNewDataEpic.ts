@@ -62,8 +62,9 @@ export const bcNewDataEpic: Epic = (action$, store) =>
  *
  * @param action `sendOperation` with `create` role
  * @param store Store instance
+ * @category Epics
  */
-export function bcNewDataEpicImpl(action: ActionsMap['sendOperation'], store: Store<CoreStore, AnyAction>) {
+export function bcNewDataEpicImpl(action: ActionsMap['sendOperation'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     const state = store.getState()
     const bcName = action.payload.bcName
     const bcUrl = buildBcUrl(bcName)

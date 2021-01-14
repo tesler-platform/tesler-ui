@@ -10,7 +10,13 @@ import { httpError418 } from './screen/httpError418'
 import { httpError500 } from './screen/httpError500'
 import { httpErrorDefault } from './screen/httpErrorDefault'
 
-const downloadFile: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const downloadFile: Epic = (action$, store) =>
     action$.ofType(types.downloadFile).mergeMap(action => {
         const { fileId } = action.payload
         const anchor = document.createElement('a')
@@ -24,7 +30,13 @@ const downloadFile: Epic = (action$, store) =>
         return Observable.empty()
     })
 
-const downloadFileByUrl: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const downloadFileByUrl: Epic = (action$, store) =>
     action$.ofType(types.downloadFileByUrl).mergeMap(action => {
         const { url } = action.payload
         const anchor = document.createElement('a')
@@ -38,7 +50,13 @@ const downloadFileByUrl: Epic = (action$, store) =>
         return Observable.empty()
     })
 
-const processPostInvokeConfirm: Epic = (action$, store) =>
+/**
+ *
+ * @param action$
+ * @param store
+ * @category Epics
+ */
+export const processPostInvokeConfirm: Epic = (action$, store) =>
     action$.ofType(types.processPostInvokeConfirm, types.processPreInvoke).mergeMap(action => {
         const { bcName, operationType, widgetName } = action.payload
         const confirm = action.type === types.processPostInvokeConfirm ? action.payload.postInvokeConfirm : action.payload.preInvoke

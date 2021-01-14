@@ -81,6 +81,11 @@ const Exp: FunctionComponent = (props: any) => {
     )
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllProps> = props => {
     const bcName = props.meta.bcName
     const fields = props.meta.fields
@@ -326,4 +331,7 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: FullHierarchyTableOwnP
 }
 
 const ConnectedFullHierarchyTable = connect(mapStateToProps, mapDispatchToProps)(FullHierarchyTable)
+/**
+ * @category Components
+ */
 export default ConnectedFullHierarchyTable

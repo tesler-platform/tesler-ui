@@ -82,6 +82,7 @@ const initialExpanded: Record<string, boolean> = { '0': true }
  * Tree component based on `react-window` to virtualize tree data.
  *
  * @param props Component properties
+ * @category Components
  */
 export function TreeVirtualized<T extends DataNode>(props: TreeVirtualizedProps<T>) {
     const { items, fields, filters, matchCase, children, ...rest } = props
@@ -180,4 +181,9 @@ export function TreeVirtualized<T extends DataNode>(props: TreeVirtualizedProps<
     )
 }
 
-export default React.memo(TreeVirtualized) as typeof TreeVirtualized
+/**
+ * @category Components
+ */
+const MemoizedTreeVirtualized = React.memo(TreeVirtualized) as typeof TreeVirtualized
+
+export default MemoizedTreeVirtualized

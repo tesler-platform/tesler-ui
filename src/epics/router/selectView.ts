@@ -33,6 +33,12 @@ export const changeView: Epic = (action$, store) =>
         return selectViewImpl(action, store)
     })
 
+/**
+ *
+ * @param action
+ * @param store
+ * @category Epics
+ */
 export function selectViewImpl(action: ActionsMap['selectView'], store: Store<CoreStore>): Observable<AnyAction> {
     const state = store.getState()
     const nextCursors = parseBcCursors(state.router.bcPath) || {}

@@ -31,6 +31,7 @@ import { OperationTypeCrud } from '../../interfaces/operation'
  *
  * @param action sendOperation with `cancel-create` role
  * @param store Store instance
+ * @category Epics
  */
 
 export const bcCancelCreateDataEpic: Epic = (action$, store) =>
@@ -52,8 +53,9 @@ export const bcCancelCreateDataEpic: Epic = (action$, store) =>
  *
  * @param action sendOperation with `cancel-create` role
  * @param store Store instance
+ * @category Epics
  */
-export function bcCancelCreateDataEpicImpl(action: ActionsMap['sendOperation'], store: Store<CoreStore, AnyAction>) {
+export function bcCancelCreateDataEpicImpl(action: ActionsMap['sendOperation'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     const state = store.getState()
     const screenName = state.screen.screenName
     const bcName = action.payload.bcName

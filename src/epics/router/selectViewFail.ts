@@ -32,6 +32,12 @@ export const selectViewFail: Epic = (action$, store) =>
         return selectViewFailImpl(action, store)
     })
 
+/**
+ *
+ * @param action
+ * @param store
+ * @category Epics
+ */
 export function selectViewFailImpl(action: ActionsMap['selectViewFail'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     notification.error({
         message: i18n.t('View is missing or unavailable for your role', { viewName: action.payload.viewName }),

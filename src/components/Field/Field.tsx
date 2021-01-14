@@ -112,6 +112,11 @@ const simpleDiffSupportedFieldTypes = [
 
 const emptyFieldMeta = [] as any
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 export const Field: FunctionComponent<FieldProps> = props => {
     const [localValue, setLocalValue] = React.useState(null)
     let resultField: React.ReactChild = null
@@ -491,4 +496,10 @@ function mapDispatchToProps(dispatch: Dispatch) {
     }
 }
 Field.displayName = 'Field'
-export default connect(mapStateToProps, mapDispatchToProps)(Field)
+
+/**
+ * @category Components
+ */
+const ConnectedField = connect(mapStateToProps, mapDispatchToProps)(Field)
+
+export default ConnectedField

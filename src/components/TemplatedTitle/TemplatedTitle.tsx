@@ -13,6 +13,11 @@ interface TemplatedTitleProps extends TemplatedTitleOwnProps {
     templatedTitle: string
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 export const TemplatedTitle: FunctionComponent<TemplatedTitleProps> = props => {
     if (!props.title) {
         return null
@@ -33,4 +38,9 @@ function mapStateToProps(store: Store, ownProps: TemplatedTitleOwnProps) {
     }
 }
 TemplatedTitle.displayName = 'TemplatedTitle'
-export default connect(mapStateToProps)(TemplatedTitle)
+/**
+ * @category Components
+ */
+const ConnectedTemplatedTitle = connect(mapStateToProps)(TemplatedTitle)
+
+export default ConnectedTemplatedTitle

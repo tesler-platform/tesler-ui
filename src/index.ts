@@ -15,6 +15,17 @@
  * limitations under the License.
  */
 
+/**
+ * Runtime exports of Tesler UI.
+ *
+ * Can be imported as:
+ *
+ * `import {entityName} from '@tesler-ui/core'`
+ *
+ * @packageDocumentation
+ * @module Global Exports
+ */
+
 import './imports/shim'
 import './imports/rxjs'
 
@@ -39,7 +50,15 @@ import { matchOperationRole, flattenOperations } from './utils/operations'
 import { isViewNavigationItem, isViewNavigationCategory, isViewNavigationGroup } from './interfaces/navigation'
 import { isWidgetFieldBlock, TableLikeWidgetTypes } from './interfaces/widget'
 import { autosaveRoutine } from './utils/autosave'
+
+/**
+ * @category Utils
+ */
 const parseLocation = getParseLocationInstance
+
+/**
+ * @category Utils
+ */
 const buildLocation = getBuildLocationInstance
 
 /**

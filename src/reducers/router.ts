@@ -4,13 +4,18 @@ import { Route, RouteType } from '../interfaces/router'
 import { shallowCompare } from '../utils/redux'
 import { parseLocation, store } from '../Provider'
 
-/* Global instance */
+/**
+ * Global instance
+ *
+ * @category Utils
+ */
 export const historyObj = createHashHistory()
 
 /**
  * TODO
  *
  * @param href
+ * @category Utils
  */
 export function changeLocation(href: string) {
     historyObj.push(href)

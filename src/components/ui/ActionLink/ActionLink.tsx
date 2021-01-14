@@ -8,6 +8,11 @@ export interface IActionLinkProps {
     onClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const ActionLink = (props: IActionLinkProps) => {
     const handleClick = React.useCallback(
         (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -26,4 +31,9 @@ const ActionLink = (props: IActionLinkProps) => {
     )
 }
 
-export default React.memo(ActionLink)
+/**
+ * @category Components
+ */
+const MemoizedActionLink = React.memo(ActionLink)
+
+export default MemoizedActionLink

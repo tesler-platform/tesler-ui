@@ -30,6 +30,11 @@ const outputDateTimeFormat = 'DD.MM.YYYY HH:mm'
 const outputDateTimeWithSecondsFormat = 'DD.MM.YYYY HH:mm:ss'
 const isoLocalFormatter = (date: Moment) => date.format('YYYY-MM-DD[T]HH:mm:ss')
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const DatePickerField: React.FunctionComponent<IDatePickerFieldProps> = props => {
     const { disabled, value, showTime, showSeconds, monthYear } = props
 
@@ -116,4 +121,9 @@ export const DatePickerFieldFormat = (date: string | null, withTime?: boolean, w
     return moment(date, dateFormat).format(getFormat(withTime, withSeconds, monthYear))
 }
 
-export default React.memo(DatePickerField)
+/**
+ * @category Components
+ */
+const MemoizedDatePickerField = React.memo(DatePickerField)
+
+export default MemoizedDatePickerField

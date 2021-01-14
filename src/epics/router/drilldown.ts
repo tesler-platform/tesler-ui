@@ -33,6 +33,12 @@ export const drillDown: Epic = (action$, store) =>
         return drillDownImpl(action, store)
     })
 
+/**
+ *
+ * @param action
+ * @param store
+ * @category Epics
+ */
 export function drillDownImpl(action: ActionsMap['drillDown'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     const state = store.getState()
     const url = action.payload.url

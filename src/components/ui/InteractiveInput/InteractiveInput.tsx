@@ -20,6 +20,11 @@ export interface InteractiveInputProps {
     onSuffixClick?: () => void
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 export const InteractiveInput: FunctionComponent<InteractiveInputProps> = props => {
     return (
         <div className={styles.container}>
@@ -33,4 +38,9 @@ export const InteractiveInput: FunctionComponent<InteractiveInputProps> = props 
     )
 }
 
-export default React.memo(InteractiveInput)
+/**
+ * @category Components
+ */
+const MemoizedInteractiveInput = React.memo(InteractiveInput)
+
+export default MemoizedInteractiveInput

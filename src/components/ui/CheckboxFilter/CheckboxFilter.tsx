@@ -31,6 +31,11 @@ export interface CheckboxFilterProps {
 
 const emptyValue: DataValue[] = []
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 export const CheckboxFilter: React.FC<CheckboxFilterProps> = props => {
     const handleCheckbox = (e: CheckboxChangeEvent) => {
         const prevValues = props.value || emptyValue
@@ -69,4 +74,9 @@ export const CheckboxFilter: React.FC<CheckboxFilterProps> = props => {
     )
 }
 
-export default React.memo(CheckboxFilter)
+/**
+ * @category Components
+ */
+export const MemoizedCheckboxFilter = React.memo(CheckboxFilter)
+
+export default MemoizedCheckboxFilter

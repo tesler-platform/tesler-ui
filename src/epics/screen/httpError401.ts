@@ -29,6 +29,12 @@ export const httpError401: Epic = (action$, store) =>
             return httpError401Impl(action, store)
         })
 
+/**
+ *
+ * @param action
+ * @param store
+ * @category Epics
+ */
 export function httpError401Impl(action: ActionsMap['httpError'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     store.dispatch($do.logoutDone(null))
     historyObj.push('/')
