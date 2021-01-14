@@ -121,4 +121,7 @@ export function mapStateToProps(store: Store, ownProps: ColumnFilterOwnProps) {
     }
 }
 
+/**
+ * @category Components
+ */
 export default connect(mapStateToProps)(ColumnFilter)

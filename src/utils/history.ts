@@ -18,6 +18,7 @@ export function makeRelativeUrl(absoluteUrl: string) {
  * and their cursors.
  *
  * @param bcPath Business component hierarchy url, e.g. `bcName1/cursor1/bcName2/cursor2`
+ * @category Utils
  */
 export function parseBcCursors(bcPath: string) {
     if (!bcPath) {
@@ -38,6 +39,7 @@ export function parseBcCursors(bcPath: string) {
  *
  * @param literals
  * @param placeholders
+ * @category Utils
  */
 export function buildUrl(literals: TemplateStringsArray, ...placeholders: Array<string | number>) {
     let result = ''

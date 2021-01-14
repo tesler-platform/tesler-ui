@@ -8,6 +8,11 @@ interface SearchHighlightProps {
     notMatch?: (substring: string) => React.ReactNode
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const SearchHighlight: React.FC<SearchHighlightProps> = props => {
     const tokens = splitIntoTokens(props.source, props.search)
     return (
@@ -34,4 +39,9 @@ const SearchHighlight: React.FC<SearchHighlightProps> = props => {
  */
 export const defaultHighlighter = (value: string) => <b>{value}</b>
 
-export default React.memo(SearchHighlight)
+/**
+ * @category Components
+ */
+const MemoizedSearchHighlight = React.memo(SearchHighlight)
+
+export default MemoizedSearchHighlight

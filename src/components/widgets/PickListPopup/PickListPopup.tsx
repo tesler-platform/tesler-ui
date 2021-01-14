@@ -51,6 +51,11 @@ export interface PickListPopupProps extends PickListPopupOwnProps {
     rowMetaFields: RowMetaField[]
 }
 
+/**
+ *
+ * @param props
+ * @category Widgets
+ */
 export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopupActions> = props => {
     const {
         onChange,
@@ -205,6 +210,9 @@ const mapDispatchToProps = createMapDispatchToProps(
     }
 )
 
+/**
+ * @category Widgets
+ */
 const PickListPopupConnected = connect(mapStateToProps, mapDispatchToProps)(PickListPopup)
 
 export default PickListPopupConnected

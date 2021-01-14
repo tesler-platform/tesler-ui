@@ -18,6 +18,11 @@ export interface MultivalueTagProps {
     onChange: (newValue: MultivalueSingleValue[], removedValue: MultivalueSingleValue) => void
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const MultivalueTag: React.FunctionComponent<MultivalueTagProps> = props => {
     const loading = props.loading
     const handleOpen = React.useCallback(() => {
@@ -72,4 +77,9 @@ const MultivalueTag: React.FunctionComponent<MultivalueTagProps> = props => {
     )
 }
 
-export default React.memo(MultivalueTag)
+/**
+ * @category Components
+ */
+const MemoizedMultivalueTag = React.memo(MultivalueTag)
+
+export default MemoizedMultivalueTag

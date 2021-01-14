@@ -40,6 +40,11 @@ export interface FilterPopupProps {
     onCancel?: () => void
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 export const FilterPopup: React.FC<FilterPopupProps> = props => {
     const widget = useSelector((store: Store) => {
         return store.view.widgets.find(item => item.name === props.widgetName)
@@ -103,4 +108,7 @@ export const FilterPopup: React.FC<FilterPopupProps> = props => {
     )
 }
 
+/**
+ * @category Components
+ */
 export default React.memo(FilterPopup)

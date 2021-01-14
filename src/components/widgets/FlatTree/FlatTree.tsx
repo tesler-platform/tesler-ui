@@ -72,6 +72,7 @@ const emptyData: DataItemNode[] = []
  * Data must be presorted (every parent is followed by its descendants) for this widget.
  *
  * @param props Widget props
+ * @category Widgets
  */
 export const FlatTree: React.FC<FlatTreeProps> = props => {
     const { meta, width = 808, height = 375, itemSize = 60 } = props
@@ -132,4 +133,9 @@ export const FlatTree: React.FC<FlatTreeProps> = props => {
     )
 }
 
-export default React.memo(FlatTree)
+/**
+ * @category Widgets
+ */
+const MemoizedFlatTree = React.memo(FlatTree)
+
+export default MemoizedFlatTree

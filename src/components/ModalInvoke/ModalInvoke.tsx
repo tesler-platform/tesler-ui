@@ -22,6 +22,11 @@ interface ModalInvokeProps extends ModalInvokeOwnProps {
     onCancel: () => void
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const ModalInvoke: React.FunctionComponent<ModalInvokeProps> = props => {
     const { t } = useTranslation()
     const [value, setValue] = React.useState('')
@@ -137,5 +142,9 @@ function mapDispatchToProps(dispatch: Dispatch) {
     }
 }
 
+/**
+ * @category Components
+ */
 const ConnectedModalInvoke = connect(mapStateToProps, mapDispatchToProps)(ModalInvoke)
+
 export default ConnectedModalInvoke

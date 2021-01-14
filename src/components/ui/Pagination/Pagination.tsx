@@ -77,6 +77,8 @@ type PaginationAllProps = PaginationOwnProps & Partial<PaginationStateProps> & P
  * Pagination component for tables displaying business component's data
  *
  * Depending on the display mode, fires `bcLoadMore` or `bcChangePage` action
+ *
+ * @category Components
  */
 const Pagination: React.FunctionComponent<PaginationAllProps> = props => {
     const bcName =
@@ -130,4 +132,9 @@ const Pagination: React.FunctionComponent<PaginationAllProps> = props => {
     )
 }
 
-export default React.memo(Pagination)
+/**
+ * @category Components
+ */
+const MemoizedPagination = React.memo(Pagination)
+
+export default MemoizedPagination

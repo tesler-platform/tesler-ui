@@ -1,3 +1,14 @@
+/**
+ * Types exports of Tesler UI.
+ *
+ * Can be imported as:
+ *
+ * `import {typeName} from '@tesler-ui/core/interfaces/moduleName'`
+ *
+ * @packageDocumentation
+ * @module Types
+ */
+
 export * as bc from './bc'
 export * as data from './data'
 export * as objectMap from './objectMap'

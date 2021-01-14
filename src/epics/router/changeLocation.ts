@@ -36,6 +36,12 @@ export const changeLocation: Epic = (action$, store) =>
         return changeLocationImpl(action, store)
     })
 
+/**
+ *
+ * @param action
+ * @param store
+ * @category Epics
+ */
 function changeLocationImpl(
     // completely ignored, handled in reducer
     action: ActionsMap['changeLocation'],

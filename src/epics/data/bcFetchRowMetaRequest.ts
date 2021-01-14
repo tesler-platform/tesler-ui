@@ -29,11 +29,18 @@ export const bcFetchRowMetaRequest: Epic = (action$, store) =>
         return bcFetchRowMetaRequestImpl(action, store, action$)
     })
 
+/**
+ *
+ * @param action
+ * @param store
+ * @param actionObservable
+ * @category Epics
+ */
 export function bcFetchRowMetaRequestImpl(
     action: ActionsMap['bcFetchRowMeta'],
     store: Store<CoreStore, AnyAction>,
     actionObservable: ActionsObservable<AnyAction>
-) {
+): Observable<AnyAction> {
     const state = store.getState()
     const screenName = state.screen.screenName
     const bcName = action.payload.bcName

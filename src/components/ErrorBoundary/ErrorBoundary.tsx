@@ -4,6 +4,9 @@ interface ErrorBoundaryProps {
     msg?: React.ReactNode
 }
 
+/**
+ * @category Components
+ */
 export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, { hasError: boolean }> {
     static getDerivedStateFromError(error: any) {
         return { hasError: true }

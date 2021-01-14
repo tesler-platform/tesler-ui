@@ -38,6 +38,7 @@ function mapStateToProps(store: Store): UseViewTabsState {
  * Returns an array of tabs for specified level of navigation
  *
  * @param depth 1 for top level navigation; 2, 3, 4 for SecondLevelMenu, ThirdLevelMenu and FourthLevelMenu
+ * @category Hooks
  */
 export function useViewTabs(depth: NavigationLevel) {
     const state: UseViewTabsState = useSelector(mapStateToProps, shallowEqual)

@@ -30,6 +30,11 @@ interface InlinePickListProps extends InlinePickListOwnProps {
     onSearch: (bcName: string, searchSpec: string, searchString: string) => void
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const InlinePickList: React.FunctionComponent<InlinePickListProps> = props => {
     const { t } = useTranslation()
 
@@ -131,4 +136,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     }
 })
 
+/**
+ * @category Components
+ */
 export default connect(mapStateToProps, mapDispatchToProps)(InlinePickList)

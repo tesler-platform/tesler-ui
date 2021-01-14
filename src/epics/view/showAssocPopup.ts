@@ -30,7 +30,13 @@ export const showAssocPopup: Epic = (action$, store) =>
             return showAssocPopupEpicImpl(action, store)
         })
 
-export function showAssocPopupEpicImpl(action: ActionsMap['showViewPopup'], store: Store<CoreStore, AnyAction>) {
+/**
+ *
+ * @param action
+ * @param store
+ * @category Epics
+ */
+export function showAssocPopupEpicImpl(action: ActionsMap['showViewPopup'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     const { bcName, calleeBCName } = action.payload
 
     const state = store.getState()

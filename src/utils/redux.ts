@@ -12,6 +12,7 @@ import { AnyAction } from '../actions/actions'
  * (simplifies callbacks, epics and actions' payloads).
  *
  * @param reducers A dictionary of reducers for different slices of the redux store
+ * @category Utils
  */
 export function combineReducers<State>(
     reducers: ReducersMapObject<State, AnyAction> | CombinedReducersMapObject<State, AnyAction>

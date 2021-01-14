@@ -30,6 +30,12 @@ export const httpErrorDefault: Epic = (action$, store) =>
             return httpErrorDefaultImpl(action, store)
         })
 
+/**
+ *
+ * @param action
+ * @param store
+ * @category Epics
+ */
 export function httpErrorDefaultImpl(action: ActionsMap['httpError'], store: Store<CoreStore, AnyAction>) {
     const businessError = {
         type: ApplicationErrorType.BusinessError,

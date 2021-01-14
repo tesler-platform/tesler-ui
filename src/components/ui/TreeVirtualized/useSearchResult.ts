@@ -29,6 +29,7 @@ import { breadthFirstSearch } from '../../../utils/breadthFirst'
  * @param nodes An array to search
  * @param matchingNodes Ids of the searched nodes
  * @param expandedNodes Ids of the nodes that are expanded
+ * @category Hooks
  */
 export function useSearchResult<T extends TreeNodeBidirectional>(nodes: T[], matchingNodes: string[], expandedNodes: string[]) {
     return React.useMemo(() => {
@@ -47,6 +48,7 @@ export function useSearchResult<T extends TreeNodeBidirectional>(nodes: T[], mat
  * @param nodes Source array of nodes
  * @param matchingNodes Ids of the searched nodes
  * @param expandedNodes Ids of the nodes that are expanded
+ * @category Utils
  */
 export function getSearchResult<T extends TreeNodeBidirectional>(
     nodes: T[],

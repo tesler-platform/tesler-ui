@@ -15,6 +15,11 @@ export interface NumberInputProps extends BaseFieldProps {
     forceFocus?: boolean
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const NumberInput: React.FunctionComponent<NumberInputProps> = props => {
     if (props.readOnly) {
         return (
@@ -172,4 +177,9 @@ function getUnformatedValueSelection(formatedValue: string, start: number, end: 
     return [unformatValue(selectionStartStart).length, unformatValue(selectionEndStart).length]
 }
 
-export default React.memo(NumberInput)
+/**
+ * @category Components
+ */
+const MemoizedNumberInput = React.memo(NumberInput)
+
+export default MemoizedNumberInput

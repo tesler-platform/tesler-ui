@@ -39,6 +39,11 @@ export interface FileUploadActions {
     onUploadFileFailed: () => void
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps & FileUploadActions> = props => {
     const onUploadSuccess = React.useCallback(
         (response: any, file: UploadFile) => {
@@ -218,4 +223,7 @@ function mapDispatchToProps(dispatch: Dispatch): FileUploadActions {
     }
 }
 
+/**
+ * @category Components
+ */
 export default connect(mapStateToProps, mapDispatchToProps)(FileUpload)

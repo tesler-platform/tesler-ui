@@ -34,6 +34,9 @@ export interface ProviderProps<ClientState, ClientActions> {
     langDictionary?: Resource
 }
 
+/**
+ * @category Utils
+ */
 export let store: Store<CoreStore> = null
 export let axiosInstance: AxiosInstance = null
 export let parseLocation: (loc: Location<any>) => Route = null
@@ -51,6 +54,8 @@ function withLogger(storeCreator: StoreCreator): StoreCreator {
 
 /**
  * TODO
+ *
+ * @category Utils
  */
 export function getStoreInstance() {
     return store
@@ -80,7 +85,7 @@ export function getBuildLocationInstance() {
 }
 
 /**
- * TODO
+ * @category Utils
  */
 export function getLocaleProviderInstance() {
     return localeProviderInstance
@@ -136,6 +141,11 @@ export function configureStore<ClientState, ClientActions extends Action<any>>(
     return compose(applyMiddleware(...middlewares))(withLogger(createStore))(combineReducers(reducers))
 }
 
+/**
+ *
+ * @param props
+ * @category Components
+ */
 const Provider = <ClientState extends Partial<CoreStore>, ClientActions extends Action<any>>(
     props: ProviderProps<ClientState, ClientActions>
 ) => {

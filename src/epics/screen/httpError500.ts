@@ -29,6 +29,12 @@ export const httpError500: Epic = (action$, store) =>
             return httpError500Impl(action, store)
         })
 
+/**
+ *
+ * @param action
+ * @param store
+ * @category Epics
+ */
 export function httpError500Impl(action: ActionsMap['httpError'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     const systemError: SystemError = {
         type: ApplicationErrorType.SystemError,

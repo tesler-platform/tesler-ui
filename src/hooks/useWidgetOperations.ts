@@ -5,10 +5,11 @@ import { WidgetMeta } from '../interfaces/widget'
 const emptyArray: Array<Operation | OperationGroup> = []
 
 /**
- * Возвращает мемоизированный список операций согласно списку включения/исключения в мете виджета
+ * Returns a memoized array of operations with respect to include/exclude list in widget meta configuration
  *
- * @param operations Список операций
- * @param widgetMeta Мета виджета
+ * @param operations List of operations
+ * @param widgetMeta Widget meta configuration
+ * @category Hooks
  */
 export function useWidgetOperations(operations: Array<Operation | OperationGroup>, widgetMeta: WidgetMeta) {
     return useMemo(() => {
@@ -22,13 +23,15 @@ export function useWidgetOperations(operations: Array<Operation | OperationGroup
 }
 
 /**
- * Возвращает список операций с учетом списков включения/исключения
- * Если элемент является группой операций, то входящие в нее операции также проверяются по этим спискам,
- * при этом учитываются оба списка исключения: собственный список внутри группы и общий (операций и групп)
+ * Returns an array of operations with respect to include/exclude lists.
  *
- * @param operations Список операций
- * @param include Список включаемых операций
- * @param exclude Список исключаемых операций
+ * If element is an operation group than its nested operations also checked against inclusion/exclusion lists;
+ * noth inclusion/exclusion lists from arguments and from group declarations are checked against.
+ *
+ * @param operations List of operations
+ * @param include List of operations to include
+ * @param exclude List of operations to exclude
+ * @category Utils
  */
 export function getIncludedOperations(
     operations: Array<Operation | OperationGroup>,
@@ -63,13 +66,14 @@ export function getIncludedOperations(
 }
 
 /**
- * Проверяет операцию или группу операций по спискам включения/исключения:
- * - если список включения задан, то операция должна присутствовать в нем и отсутствовать в списке исключения
- * - если список включения не задан, то операция должна отсутствовать в списке исключения
+ * Checks operation or operation group against inclusion/exclusion lists:
+ * - if inclusion list is specified then operation should be present there and shouldn't be present in exlusion list
+ * - if inlusion list is not specified then operation should be absent from exclusion list
  *
- * @param item Проверяемая операция
- * @param include Список включаемых операций
- * @param exclude Список исключаемых операций
+ * @param item Operation or operation group to check
+ * @param include List of operations to include
+ * @param exclude List of operations to exclude
+ * @category Utils
  */
 export function shouldPickOperation(
     item: Operation | OperationGroup,
