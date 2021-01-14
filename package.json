@@ -14,7 +14,8 @@
     "test": "jest",
     "test:coverage": "jest --coverage --coverageProvider=v8",
     "lint": "yarn eslint ./src",
-    "check": "yarn run lint && yarn run test"
+    "check": "yarn run lint && yarn run test",
+    "doc:gen": "typedoc --out docs --categorizeByGroup src/index.ts src/interfaces/index.ts --categorizeByGroup false --readme none"
   },
   "devDependencies": {
     "@types/classnames": "2.2.6",
@@ -68,6 +69,7 @@
     "ts-loader": "6.2.2",
     "tslint-eslint-rules": "5.4.0",
     "typed-css-modules": "0.3.5",
+    "typedoc": "0.20.14",
     "typescript": "~3.9.7",
     "typings-for-css-modules-loader": "1.7.0",
     "url-loader": "0.6.2",
