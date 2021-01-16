@@ -41,7 +41,7 @@ export const fileUploadConfirm: Epic = (action$, store) =>
     })
 
 /**
- * Default implementation for `fileUploadConfirmImpl` epic
+ * Default implementation for `fileUploadConfirm` epic
  *
  * It sends customAction request for `file-upload-save` endpoint with `bulkIds` data
  * containing ids of uploaded files.

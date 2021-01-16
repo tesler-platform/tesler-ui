@@ -221,7 +221,8 @@ export { selectViewImpl } from './epics/data/selectView'
 export { drillDownImpl } from './epics/router/drilldown'
 export { selectScreenImpl } from './epics/router/selectScreen'
 export { selectViewFailImpl } from './epics/router/selectViewFail'
-export { loginDone } from './epics/router/loginDone'
+export { loginDoneImpl } from './epics/router/loginDone'
+export { handleRouterImpl } from './epics/router/handleRouter'
 
 /**
  * Autosave middleware utils

@@ -851,10 +851,17 @@ export class ActionPayloadTypes {
     } = z
 
     /**
-     * TODO
+     * For server side routing where {@link RouteType.router | routes are handled by Tesler API endpoint}, this action is dispatched
+     * to process requested route.
      */
     handleRouter: {
+        /**
+         * An URL that will be passed to Tesler API router endpoint
+         */
         path: string
+        /**
+         * AJAX request parameters for the requests
+         */
         params: Record<string, unknown>
     } = z
 
