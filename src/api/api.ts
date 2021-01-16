@@ -17,14 +17,13 @@
 
 import { applyParams, applyRawParams, axiosDelete, axiosGet, axiosPost, axiosPut, ApiCallContext } from '../utils/api'
 import { buildUrl } from '../utils/history'
-import { ObjectMap } from '../interfaces/objectMap'
 import { BcDataResponse, DataItem, DataItemResponse, PendingDataItem } from '../interfaces/data'
 import { RowMetaResponse } from '../interfaces/rowMeta'
 import { AssociatedItem } from '../interfaces/operation'
 import { Observable } from 'rxjs/Observable'
 import axios, { CancelToken } from 'axios'
 
-type GetParamsMap = ObjectMap<string | number>
+type GetParamsMap = Record<string, string | number>
 
 /**
  * TODO
