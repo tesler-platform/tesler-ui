@@ -28,6 +28,7 @@ import { changeLocation } from './router/changeLocation'
 import { changeScreen } from './router/selectScreen'
 import { changeView } from './router/selectView'
 import { loginDone } from './router/loginDone'
+import { handleRouter } from './router/handleRouter'
 
 /**
  *
@@ -81,28 +82,6 @@ export const userDrillDown: Epic = (action$, store) =>
                     return Observable.empty() // TODO:
                 })
         })
-
-/**
- *
- * @param action$
- * @param store
- * @category Epics
- */
-export const handleRouter: Epic = (action$, store) =>
-    action$.ofType(types.handleRouter).switchMap(action => {
-        const path = action.payload.path
-        const params = action.payload.params
-        // todo: Обработка ошибок
-        return api
-            .routerRequest(path, params)
-            .mergeMap(data => {
-                return Observable.empty<never>()
-            })
-            .catch(error => {
-                console.error(error)
-                return Observable.empty()
-            })
-    })
 
 export const routerEpics = {
     changeLocation,
