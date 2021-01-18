@@ -1,7 +1,10 @@
 /**
  * Utilities for urls and browser history
  */
+import { Location } from 'history'
+import { Route, RouteType } from '../interfaces/router'
 import { getTemplate } from './strings'
+import qs from 'query-string'
 
 /**
  * Appends '/' in front of `absoluteUrl` argument.
@@ -60,4 +63,70 @@ export function buildUrl(literals: TemplateStringsArray, ...placeholders: Array<
 
     result += literals[literals.length - 1]
     return result
+}
+
+/**
+ * Default implementation for utility to parse `history`-compatible location to {@link Route | Tesler UI route}.
+ *
+ * Supports three types of URLs:
+ * - {@link RouteType.screen | RouteType.screen}, i.e. an url referencing some UI entity that can be parsed to Route directly. Example: `/screen/name/view/name/`;
+ * - {@link RouteType.router | RouteType.router}, i.e. an url without information about entity that should be handled on server side. Example: `/router/server-entity`
+ * - {@link RouteType.default | RouteType.default}, i.e. an url that leads to default entity of the application. Example: `/`
+ *
+ * Reverse function is {@link defaultBuildLocation}.
+ *
+ * @param loc Location compatible with `history` module
+ * @category Utils
+ */
+export function defaultParseLocation(loc: Location<any>): Route {
+    let path: string = loc.pathname
+    if (path.startsWith('/')) {
+        path = path.substring(1)
+    }
+    if (path.endsWith('/')) {
+        path = path.substring(0, path.length - 1)
+    }
+    const params = qs.parse(loc.search)
+    const tokens = path.split('/').map(decodeURIComponent)
+
+    let type = RouteType.unknown
+    let screenName = null
+    let viewName = null
+    let bcPath = null
+
+    if (tokens.length > 0 && tokens[0] === 'router') {
+        type = RouteType.router
+    } else if (tokens.length === 1) {
+        type = RouteType.default
+    } else if (tokens.length >= 2 && tokens[0] === 'screen') {
+        let bcIndex = 2
+        type = RouteType.screen
+        screenName = tokens[1]
+        if (tokens.length >= 4 && tokens[2] === 'view') {
+            bcIndex += 2
+            viewName = tokens[3]
+        }
+        bcPath = tokens.slice(bcIndex).map(encodeURIComponent).join('/')
+    }
+
+    return {
+        type: type,
+        path: path,
+        params: params,
+        screenName: screenName,
+        viewName: viewName,
+        bcPath: bcPath
+    }
+}
+
+/**
+ * Transform {@link Route | Tesler UI route} to string url.
+ *
+ * Reverse function is {@link defaultParseLocation}.
+ *
+ * @param route Tesler UI route
+ * @category Utils
+ */
+export function defaultBuildLocation(route: Route) {
+    return `/screen/${route.screenName}/view/${route.viewName}/${route.bcPath}`
 }
