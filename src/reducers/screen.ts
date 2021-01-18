@@ -106,7 +106,7 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
             )
                 .filter(bcName => state.bo.bc[bcName])
                 .forEach(bcName => {
-                    newBcs[bcName] = { ...state.bo.bc[bcName], page: 1, loading: true }
+                    newBcs[bcName] = { ...state.bo.bc[bcName], page: 1 }
                 })
             return {
                 ...state,
@@ -294,7 +294,7 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                 newCursors[bcName] = { ...state.bo.bc[bcName], cursor }
                 newCache[bcName] = cursor
             })
-            // Сбросить также курсоры у всех дочерних БК от запрошенных
+            // Also reset cursors of all children of requested BCs
             const changedParents = Object.values(newCursors).map(bc => `${bc.url}/:id`)
             Object.values(state.bo.bc).forEach(bc => {
                 if (changedParents.some(item => bc.url.includes(item))) {
@@ -367,7 +367,6 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                         ...state.bo.bc,
                         [action.payload.bcName]: {
                             ...prevBc,
-                            cursor: null,
                             loading: true
                         }
                     }
