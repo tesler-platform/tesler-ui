@@ -130,6 +130,18 @@ export const bcFetchDataEpic: Epic = (action$, store) =>
                 .fetchBcData(state.screen.screenName, bcUrl, fetchParams, canceler.cancelToken)
                 .mergeMap(data => {
                     const newCursor = data.data[0]?.id
+                    const changeCurrentCursor = Observable.of<AnyAction>(
+                        $do.bcChangeCursors({
+                            cursorsMap: {
+                                [bcName]: data.data.some(i => i.id === cursor) ? cursor : newCursor
+                            },
+                            keepDelta: !!anyHierarchyWidget || (action.type === types.bcFetchDataRequest && action.payload.keepDelta)
+                        })
+                    )
+                    const changeCursors =
+                        action.type === types.bcFetchDataRequest && action.payload.depth
+                            ? Observable.of<AnyAction>($do.bcChangeDepthCursor({ bcName, cursor: newCursor, depth: action.payload.depth }))
+                            : changeCurrentCursor
                     const fetchChildrenBcData = data.data?.length
                         ? depthLevel
                             ? depthLevel <= maxDepthLevel
@@ -157,15 +169,7 @@ export const bcFetchDataEpic: Epic = (action$, store) =>
                         : Observable.empty<never>()
 
                     return Observable.concat(
-                        action.type === types.bcFetchDataRequest && action.payload.depth
-                            ? Observable.of<AnyAction>($do.bcChangeDepthCursor({ bcName, cursor: newCursor, depth: action.payload.depth }))
-                            : Observable.of<AnyAction>(
-                                  $do.bcChangeCursors({
-                                      cursorsMap: { [bcName]: newCursor },
-                                      keepDelta:
-                                          !!anyHierarchyWidget || (action.type === types.bcFetchDataRequest && action.payload.keepDelta)
-                                  })
-                              ),
+                        changeCursors,
                         Observable.of(
                             $do.bcFetchDataSuccess({
                                 bcName,
