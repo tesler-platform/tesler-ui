@@ -3,12 +3,11 @@ import { Action, applyMiddleware, compose, createStore, Middleware, Store, Store
 import { Provider as ReduxProvider } from 'react-redux'
 import { createEpicMiddleware, Epic, combineEpics as legacyCombineEpics } from 'redux-observable'
 import { reducers as coreReducers } from './reducers/index'
-import { Route, RouteType } from './interfaces/router'
+import { Route } from './interfaces/router'
 import { ClientReducersMapObject, CombinedReducersMapObject, CoreReducer, Store as CoreStore } from './interfaces/store'
 import { Location } from 'history'
 import { AnyAction } from './actions/actions'
 import { AxiosInstance } from 'axios'
-import qs from 'query-string'
 import { initHistory } from './reducers/router'
 import { combineReducers } from './utils/redux'
 import { initLocale } from './imports/i18n'
@@ -19,6 +18,7 @@ import { legacyCoreEpics } from './epics'
 import { combineMiddlewares } from './utils/combineMiddlewares'
 import { middlewares as coreMiddlewares } from './middlewares'
 import { CustomMiddlewares } from './interfaces/customMiddlewares'
+import { defaultBuildLocation, defaultParseLocation } from './utils/history'
 
 export interface ProviderProps<ClientState, ClientActions> {
     children: React.ReactNode
@@ -158,69 +158,6 @@ const Provider = <ClientState extends Partial<CoreStore>, ClientActions extends 
     parseLocation = props.parseLocation || defaultParseLocation
     buildLocation = props.buildLocation || defaultBuildLocation
     return <ReduxProvider store={store}>{props.children}</ReduxProvider>
-}
-
-/**
- * TODO: Extract into separate module
- *
- * @param loc
- */
-export function defaultParseLocation(loc: Location<any>): Route {
-    let path: string = loc.pathname
-    if (path.startsWith('/')) {
-        path = path.substring(1)
-    }
-    if (path.endsWith('/')) {
-        path = path.substring(0, path.length - 1)
-    }
-    const params = qs.parse(loc.search)
-    const tokens = path.split('/').map(decodeURIComponent)
-
-    // possible urls are:
-    // - / - default page
-    // - /screen/name/view/name/... - local navigation handled by Tesler UI
-    // - /router/... - universal link handled by Tesler API
-
-    let type = RouteType.unknown
-    let screenName = null
-    let viewName = null
-    let bcPath = null
-
-    if (tokens.length > 0 && tokens[0] === 'router') {
-        // universal link
-        type = RouteType.router
-    } else if (tokens.length === 1) {
-        // default screen
-        type = RouteType.default
-    } else if (tokens.length >= 2 && tokens[0] === 'screen') {
-        // navigation
-        let bcIndex = 2
-        type = RouteType.screen
-        screenName = tokens[1]
-        if (tokens.length >= 4 && tokens[2] === 'view') {
-            bcIndex += 2
-            viewName = tokens[3]
-        }
-        bcPath = tokens.slice(bcIndex).map(encodeURIComponent).join('/')
-    }
-
-    return {
-        type: type,
-        path: path,
-        params: params,
-        screenName: screenName,
-        viewName: viewName,
-        bcPath: bcPath
-    }
-}
-
-/**
- * TODO
- *
- * @param route
- */
-function defaultBuildLocation(route: Route) {
-    return `/screen/${route.screenName}/view/${route.viewName}/${route.bcPath}`
 }
 
 export default Provider
