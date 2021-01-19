@@ -8,6 +8,7 @@ export interface DashboardLayoutProps {
     widgets: WidgetMeta[]
     customWidgets?: Record<string, CustomWidgetDescriptor>
     skipWidgetTypes?: string[]
+    customSpinner?: (props: any) => React.ReactElement<any>
     card?: (props: any) => React.ReactElement<any>
 }
 
@@ -27,7 +28,12 @@ export function DashboardLayout(props: DashboardLayoutProps) {
                 <Row key={rowIndex}>
                     {row.map((widget, colIndex) => (
                         <Col key={colIndex} span={24}>
-                            <Widget meta={widget} card={props.card} customWidgets={props.customWidgets} />
+                            <Widget
+                                meta={widget}
+                                card={props.card}
+                                customWidgets={props.customWidgets}
+                                customSpinner={props.customSpinner}
+                            />
                         </Col>
                     ))}
                 </Row>

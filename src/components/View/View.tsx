@@ -9,6 +9,7 @@ export interface ViewProps {
     widgets: WidgetMeta[]
     skipWidgetTypes?: string[]
     card?: (props: any) => React.ReactElement<any>
+    customSpinner?: (props: any) => React.ReactElement<any>
     customWidgets?: Record<string, CustomWidgetDescriptor>
     customLayout?: (props: any) => React.ReactElement<any>
     customFields?: Record<string, CustomWidget>
@@ -31,6 +32,7 @@ export const View: FunctionComponent<ViewProps> = props => {
     if (props.customLayout) {
         layout = (
             <props.customLayout
+                customSpinner={props.customSpinner}
                 widgets={props.widgets}
                 customWidgets={props.customWidgets}
                 card={props.card}
@@ -40,6 +42,7 @@ export const View: FunctionComponent<ViewProps> = props => {
     } else {
         layout = (
             <DashboardLayout
+                customSpinner={props.customSpinner}
                 widgets={props.widgets}
                 customWidgets={props.customWidgets}
                 card={props.card}
