@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react'
 import { mount, shallow } from 'enzyme'
 import { Store } from 'redux'
 import { Provider } from 'react-redux'
-import { Skeleton } from 'antd'
+import { Skeleton, Spin } from 'antd'
 import { mockStore } from '../../tests/mockStore'
 import { WidgetField, WidgetTypes, PopupWidgetTypes } from '../../interfaces/widget'
 import { Store as CoreStore } from '../../interfaces/store'
@@ -193,5 +193,39 @@ describe('widget visibility', () => {
             wrapper.update()
             expect(wrapper.find(widgetNames[popupWidgetType]).length).toBe(0)
         })
+    })
+})
+
+describe('Widget spinner testing', () => {
+    let store: Store<CoreStore> = null
+
+    beforeAll(() => {
+        store = mockStore()
+        store.getState().screen.bo.bc[exampleBcName] = {} as BcMetaState
+        store.getState().data[exampleBcName] = [{ id: '11111', vstamp: 1 }]
+        store.getState().screen.bo.bc[exampleBcName] = { ...store.getState().screen.bo.bc[exampleBcName], loading: true }
+    })
+
+    it('should render default spinner', () => {
+        const wrapper = mount(
+            <Provider store={store}>
+                <Widget meta={widgetMeta} />
+            </Provider>
+        )
+        expect(wrapper.find(Spin).length).toBe(1)
+    })
+
+    it('should render custom spinner', () => {
+        const customSpinner: React.FunctionComponent<{ props: any }> = props => {
+            return <div>customLayout</div>
+        }
+        customSpinner.displayName = 'customSpinner'
+        const wrapper = mount(
+            <Provider store={store}>
+                <Widget meta={widgetMeta} customSpinner={customSpinner} />
+            </Provider>
+        )
+        expect(wrapper.find(customSpinner).length).toBe(1)
+        expect(wrapper.find(Spin).length).toBe(0)
     })
 })
