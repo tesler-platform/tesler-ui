@@ -28,6 +28,7 @@ import FlatTree from '../widgets/FlatTree/FlatTree'
 interface WidgetOwnProps {
     meta: WidgetMeta | WidgetMetaAny
     card?: (props: any) => React.ReactElement<any>
+    customSpinner?: (props: any) => React.ReactElement<any>
     children?: React.ReactNode
 }
 
@@ -75,12 +76,21 @@ export const Widget: FunctionComponent<WidgetProps> = props => {
     const showSpinner = !!(props.loading && (props.rowMetaExists || props.dataExists))
     const showSkeleton = props.loading && !showSpinner
 
+    const spinnerElement = props.customSpinner ? (
+        <props.customSpinner spinning={showSpinner}>
+            {chooseWidgetType(props.meta, props.customWidgets, props.children)}
+        </props.customSpinner>
+    ) : (
+        <Spin spinning={showSpinner}>{chooseWidgetType(props.meta, props.customWidgets, props.children)}</Spin>
+    )
+
+    // TODO 2.0.0 delete spinner and skeleton. Spinner and skeleton should be overridden by props.card component
     if (props.card) {
         const Card = props.card
         return (
             <Card meta={props.meta}>
                 {showSkeleton && <Skeleton loading paragraph={skeletonParams} />}
-                {!showSkeleton && <Spin spinning={showSpinner}>{chooseWidgetType(props.meta, props.customWidgets, props.children)}</Spin>}
+                {!showSkeleton && spinnerElement}
             </Card>
         )
     }
@@ -88,7 +98,7 @@ export const Widget: FunctionComponent<WidgetProps> = props => {
         <div className={styles.container} data-widget-type={props.meta.type}>
             <h2 className={styles.title}>{props.meta.title}</h2>
             {showSkeleton && <Skeleton loading paragraph={skeletonParams} />}
-            {!showSkeleton && <Spin spinning={showSpinner}>{chooseWidgetType(props.meta, props.customWidgets, props.children)}</Spin>}
+            {!showSkeleton && spinnerElement}
         </div>
     )
 }
