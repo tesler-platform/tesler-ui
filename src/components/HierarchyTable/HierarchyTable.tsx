@@ -190,6 +190,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = props => {
     }
 
     const fields = hierarchyLevel ? hierarchyLevel.fields : props.meta.fields
+    const withHierarchyShift = fields.find(field => field.hierarchyShift === true)
 
     // Уровни иерархии отбиваются отступом через пустую колонку с вычисляемой шириной
     const indentColumn = {
@@ -197,7 +198,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = props => {
         key: '_indentColumn',
         dataIndex: null as string,
         className: styles.selectColumn,
-        width: '50px',
+        width: withHierarchyShift ? `${50 + indentLevel * 20}px` : '50px',
         render: (text: string, dataItem: AssociatedItem): React.ReactNode => {
             return null
         }
@@ -215,8 +216,9 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = props => {
                     title: item.title,
                     key: item.key,
                     dataIndex: item.key,
+                    width: item.width,
                     className: cn({
-                        [styles[`padding${indentLevel}`]]: fields[0].key === item.key && indentLevel,
+                        [styles[`padding${indentLevel}`]]: fields[0].key === item.key && indentLevel && !item.width,
                         [styles.numberColumn]: fields[0].key === item.key
                     }),
                     render: (text: string, dataItem: any) => {
