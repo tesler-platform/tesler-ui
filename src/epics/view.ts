@@ -3,7 +3,6 @@ import { Observable } from 'rxjs/Observable'
 import * as api from '../api/api'
 import { buildBcUrl } from '../utils/strings'
 import {
-    OperationTypeCrud,
     OperationError,
     OperationErrorEntity,
     OperationModalInvokeConfirm,
@@ -16,30 +15,11 @@ import { changeLocation } from '../reducers/router'
 import { AxiosError } from 'axios'
 import { parseBcCursors } from '../utils/history'
 import { WidgetTypes } from '../interfaces/widget'
-import { matchOperationRole } from '../utils/operations'
 import { fileUploadConfirm } from './view/fileUploadConfirm'
 import { showFileUploadPopup } from './view/showFileUploadPopup'
 import { sendOperation } from './view/sendOperation'
 import { showAssocPopup } from './view/showAssocPopup'
-
-/**
- *
- * @param action$
- * @param store
- * @category Epics
- */
-export const sendOperationAssociate: Epic = (action$, store) =>
-    action$
-        .ofType(types.sendOperation)
-        .filter(action => matchOperationRole(OperationTypeCrud.associate, action.payload, store.getState()))
-        .map(action => {
-            return $do.showViewPopup({
-                // TODO: bcKey will not be optional in 2.0.0
-                bcName: action.payload.bcKey ? `${action.payload.bcKey}` : `${action.payload.bcName}Assoc`,
-                calleeBCName: action.payload.bcName,
-                active: true
-            })
-        })
+import { sendOperationAssociate } from './view/sendOperationAssociate'
 
 /**
  * Sends row meta request when `forceActive` field fires `onChange`
