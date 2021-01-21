@@ -21,5 +21,5 @@ export function useFlatFormFields<T>(fields: WidgetFieldsOrBlocks<T>) {
         })
 
         return flatFields
-    }, fields)
+    }, [fields])
 }
