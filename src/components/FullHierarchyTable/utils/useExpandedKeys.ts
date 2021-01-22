@@ -59,7 +59,9 @@ export function useExpandedKeys(
         }, [])
         const distinctExpandedKeys = new Set([...expandedKeys, ...(defaultExpandedKeys || emptyArray), ...selectedBranches])
         setExpandedKeys([...Array.from(distinctExpandedKeys)])
-    }, [defaultExpandedKeys, selectedRecords, data])
+    }, [data]) // should be expanded once per data set, so we can collapse any record and be sure that it will not be
+    // opened again after component rerender
+
     /**
      * All ancestors of search result record should be expanded
      */
