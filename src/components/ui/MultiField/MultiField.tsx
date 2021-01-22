@@ -22,7 +22,7 @@ export interface MultiFieldProps {
 const MultiField: React.FunctionComponent<MultiFieldProps> = props => {
     const valuesStyle = props.style === 'list' ? styles.listValues : styles.inlineValues
     const valueStyle = props.style === 'list' ? styles.listValue : styles.inlineValue
-    const multiValueStyle = props.style === 'list' ? styles.listMultiValue : styles.inlineMultiValue
+    const multiValueStyle = props.style !== 'list' && styles.inlineMultiValue
     return (
         <div className={valuesStyle}>
             {props.fields.map(fieldMeta => {
