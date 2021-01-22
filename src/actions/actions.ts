@@ -530,13 +530,32 @@ export class ActionPayloadTypes {
     } = z
 
     /**
-     * TODO
+     * Redirect user to another route; handlers for relative or externals routes a pretty straight-forward
+     * interaction with `window` object, while routes to inner application entities are more complicated with
+     * additional processing of filters, sorters and forcing data fetch.
      */
     drillDown: {
+        /**
+         * URL for the new route
+         */
         url: string
+        /**
+         * Drilldown type, determines specific handler for this redirect
+         */
         drillDownType?: DrillDownType
+        /**
+         * @deprecated TODO: Remove in 2.0.0, not used
+         */
         urlName?: string
-        route: Route
+        /**
+         * @deprecated TODO: This will be remove in 2.0.0; it's not used anywhere and route easily accessed from the store
+         */
+        route?: Route
+        /**
+         * Widget from where drilldown occured;
+         *
+         * TODO: Should be mandatory in 2.0.0
+         */
         widgetName?: string
     } = z
 
