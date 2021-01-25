@@ -217,10 +217,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = props => {
                     key: item.key,
                     dataIndex: item.key,
                     width: item.width,
-                    className: cn({
-                        [styles[`padding${indentLevel}`]]: fields[0].key === item.key && indentLevel && !item.width,
-                        [styles.numberColumn]: fields[0].key === item.key
-                    }),
+                    className: cn({ [styles[`padding${indentLevel}`]]: fields[0].key === item.key && indentLevel && !item.width }),
                     render: (text: string, dataItem: any) => {
                         if (item.type === FieldType.multivalue) {
                             return (
