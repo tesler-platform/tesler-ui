@@ -402,7 +402,7 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
         case types.bcRemoveFilter: {
             const { bcName, filter } = action.payload
             const prevBcFilters = state.filters[bcName] || []
-            const newBcFilters = prevBcFilters.filter(item => item.fieldName !== filter?.fieldName || item.type !== item.type)
+            const newBcFilters = prevBcFilters.filter(item => item.fieldName !== filter?.fieldName || item.type !== filter.type)
             const newFilters = { ...state.filters, [bcName]: newBcFilters }
             if (!newBcFilters.length) {
                 delete newFilters[bcName]
