@@ -23,6 +23,7 @@ export { default as MultivalueField } from './Multivalue/MultivalueField'
 export { default as MultiValueListRecord } from './Multivalue/MultiValueListRecord'
 export { default as TreeVirtualized } from './ui/TreeVirtualized/TreeVirtualized'
 export { default as SearchHighlight } from './ui/SearchHightlight/SearchHightlight'
+export { default as FilterField } from './ui/FilterField/FilterField'
 // Containers
 export { default as TemplatedTitle } from './TemplatedTitle/TemplatedTitle'
 export { default as View } from './View/View'
