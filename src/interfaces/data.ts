@@ -1,5 +1,6 @@
 import { OperationPostInvokeAny, OperationPreInvoke } from './operation'
-import { DrillDownType } from './router'
+import { DataValue, DataItem } from '@tesler-ui/schema'
+export { DataValue, DataItem, MultivalueSingleValue, MultivalueSingleValueOptions, RecordSnapshotState } from '@tesler-ui/schema'
 
 /**
  * API's response on Business Component's data request
@@ -10,35 +11,11 @@ export interface BcDataResponse {
 }
 
 /**
- * Instance of `Business component` data
- * Has unlimited number of fields, which available to widget
- */
-export interface DataItem {
-    /**
-     * Record's identificator
-     */
-    id: string
-    /**
-     * Version of last record's edit
-     */
-    vstamp: number
-    /**
-     * User fields
-     */
-    [fieldName: string]: DataValue
-}
-
-/**
  * Edited changes
  */
 export interface PendingDataItem {
     [fieldName: string]: DataValue
 }
-
-/**
- * Possible types of fields values
- */
-export type DataValue = string | number | boolean | null | MultivalueSingleValue[] | undefined | DataItem[]
 
 /**
  * State of `data` in global store
@@ -71,44 +48,6 @@ export interface DataItemResponse {
          */
         preInvoke?: OperationPreInvoke
     }
-}
-
-export const enum RecordSnapshotState {
-    noChange = 'noChange',
-    new = 'new',
-    deleted = 'deleted'
-}
-
-/**
- * Structure which contain `Multivalue` field's values
- */
-export interface MultivalueSingleValue {
-    /**
-     * Record's identificator
-     */
-    id: string
-    /**
-     * Showed value
-     */
-    value: string
-    options?: MultivalueSingleValueOptions
-}
-
-/**
- * `Multivalue` field's options
- */
-export interface MultivalueSingleValueOptions {
-    /**
-     * Hint for value
-     */
-    hint?: string
-    /**
-     * Type of Icon
-     */
-    icon?: string
-    drillDown?: string
-    drillDownType?: DrillDownType
-    snapshotState?: RecordSnapshotState
 }
 
 /**
