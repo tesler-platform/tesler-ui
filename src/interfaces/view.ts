@@ -4,6 +4,7 @@ import { PendingDataItem, PickMap } from '../interfaces/data'
 import { SystemNotification } from './objectMap'
 import { OperationTypeCrud, OperationPostInvokeConfirm } from './operation'
 import { AxiosError } from 'axios'
+export { FieldType } from '@tesler-ui/schema'
 
 export interface ViewSelectedCell {
     widgetName: string
@@ -178,43 +179,6 @@ export interface PopupData {
      * TODO: Used only by assocs so probably move to AssocPopupDescriptor
      */
     isFilter?: boolean
-}
-
-export const enum FieldType {
-    number = 'number',
-    input = 'input',
-    monthYear = 'monthYear',
-    date = 'date',
-    dateTime = 'dateTime',
-    dateTimeWithSeconds = 'dateTimeWithSeconds',
-    checkbox = 'checkbox',
-    /**
-     * @deprecated TODO: project-specific, remove in 2.0.0
-     */
-    checkboxSql = 'checkboxSql',
-    /**
-     * @deprecated TODO: project-specific, remove in 2.0.0
-     */
-    DMN = 'DMN',
-    pickList = 'pickList',
-    inlinePickList = 'inline-pickList',
-    dictionary = 'dictionary',
-    hidden = 'hidden', // @deprecated TODO: Remove in 2.0.0 in favor of `hidden` flag of widget meta field description
-    text = 'text',
-    percent = 'percent',
-    fileUpload = 'fileUpload',
-    money = 'money',
-    /**
-     * @deprecated TODO: project-specific, remove in 2.0.0
-     */
-    comboCondition = 'combo-condition',
-    richText = 'richText',
-    printForm = 'printForm',
-    multifield = 'multifield',
-    multivalue = 'multivalue',
-    multivalueHover = 'multivalueHover',
-    hint = 'hint',
-    radio = 'radio'
 }
 
 export type ApplicationError = BusinessError | SystemError | ApplicationErrorBase

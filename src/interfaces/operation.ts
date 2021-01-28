@@ -1,18 +1,8 @@
 import { DrillDownType } from './router'
 import { AppNotificationType } from './objectMap'
 import { DataItem } from './data'
-
-/**
- * TODO: Rename to CoreOperationRole in 2.0.0
- */
-export const enum OperationTypeCrud {
-    create = 'create',
-    save = 'save',
-    delete = 'delete',
-    associate = 'associate',
-    cancelCreate = 'cancel-create',
-    fileUpload = 'file-upload'
-}
+import { OperationTypeCrud, OperationType } from '@tesler-ui/schema'
+export { OperationTypeCrud, OperationType, OperationInclusionDescriptor } from '@tesler-ui/schema'
 
 export const coreOperations = [
     OperationTypeCrud.create,
@@ -25,24 +15,11 @@ export const coreOperations = [
 
 /**
  *
- * @param operationType
- */
-export function isCoreOperation(operationType: string): operationType is OperationTypeCrud {
-    return coreOperations.includes(operationType as OperationTypeCrud)
-}
-
-/**
- *
  * @param operation
  */
 export function isOperationGroup(operation: Operation | OperationGroup): operation is OperationGroup {
     return Array.isArray((operation as OperationGroup).actions)
 }
-
-/**
- * String that uniquely identifies an operation on widget
- */
-export type OperationType = OperationTypeCrud | string
 
 /**
  * User operation: CRUD or any custom business action.
@@ -373,28 +350,6 @@ export type OperationScope = 'bc' | 'record' | 'page' | 'associate'
 export interface AssociatedItem extends DataItem {
     _associate: boolean
 }
-
-/**
- * Descriptor enabling operation on widget:
- * - string (if you just need to include / exclude operation or groups)
- * - object, if this is group in which you want to selectively include or exclude the operation
- */
-export type OperationInclusionDescriptor =
-    | string
-    | {
-          /**
-           * Type of transaction; a string that uniquely identifies the operation on the widget
-           */
-          type: OperationType
-          /**
-           * List of included operations or groups operations
-           */
-          include?: OperationInclusionDescriptor[]
-          /**
-           * List of excluded operations or groups operations
-           */
-          exclude?: OperationType[]
-      }
 
 export interface OperationError {
     success: false
