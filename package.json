@@ -15,12 +15,14 @@
     "test:coverage": "jest --coverage --coverageProvider=v8",
     "lint": "yarn eslint ./src",
     "check": "yarn run lint && yarn run test",
-    "doc:gen": "typedoc --out docs --categorizeByGroup src/index.ts src/interfaces/index.ts --categorizeByGroup false --readme none"
+    "doc:gen": "typedoc --out docs --categorizeByGroup src/index.ts src/interfaces/index.ts --categorizeByGroup false --readme none",
+    "gen:schema": "node ./node_modules/@tesler-ui/schema/bin/build-schema"
   },
   "devDependencies": {
+    "@tesler-ui/schema": "^0.2.0",
     "@types/classnames": "2.2.6",
     "@types/diff": "4.0.2",
-    "@types/enzyme": "3.10.3",
+    "@types/enzyme": "3.10.7",
     "@types/enzyme-adapter-react-16": "1.0.5",
     "@types/history": "4.7.2",
     "@types/jest": "24.0.18",
@@ -99,5 +101,8 @@
     "redux": "^4.0.5",
     "redux-observable": "^0.14.1",
     "rxjs": "^5.5.12"
+  },
+  "browser": {
+    "@tesler-ui/schema": false
   }
 }
