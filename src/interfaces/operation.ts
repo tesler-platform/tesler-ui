@@ -286,9 +286,6 @@ export interface OperationPostInvokeDownloadFileByUrl extends OperationPostInvok
 
 /**
  * Calling a browser transition to some record
- *
- * @param urlName При выполнении перехода на внешнюю сущность (POST-запрос на пришедший url),
- * этот адрес будет передан в теле запроса (см. CBR-9320 МР и тикет)
  */
 export interface OperationPostInvokeDrillDown extends OperationPostInvoke {
     /**
@@ -300,8 +297,7 @@ export interface OperationPostInvokeDrillDown extends OperationPostInvoke {
      */
     drillDownType?: DrillDownType
     /**
-     * If transition performs to outer entity (POST call),
-     * this param will be passed to request body
+     * @deprecated TODO: Remove in 2.0.0, not used
      */
     urlName?: string
 }
