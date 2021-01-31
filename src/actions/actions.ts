@@ -333,9 +333,12 @@ export class ActionPayloadTypes {
     } = z
 
     /**
-     * TODO
+     * Fetch request for row meta was unsuccesful
      */
     bcFetchRowMetaFail: {
+        /**
+         * Business component initiated row meta fetch
+         */
         bcName: string
     } = z
 
@@ -380,9 +383,12 @@ export class ActionPayloadTypes {
     } = z
 
     /**
-     * TODO
+     * Delete record request was
      */
     bcDeleteDataFail: {
+        /**
+         * Business component initiated delete record
+         */
         bcName: string
     } = z
 
@@ -390,9 +396,21 @@ export class ActionPayloadTypes {
      * Request to change Force active field was unsuccesful
      */
     forceActiveChangeFail: {
+        /**
+         * Business component initiated force active change
+         */
         bcName: string
+        /**
+         * Cursors hierarchy at the time of force active change to
+         */
         bcUrl: string
+        /**
+         * Error to show in modal
+         */
         viewError: string
+        /**
+         * Validation errors on fields
+         */
         entityError: OperationErrorEntity
     } = z
 
@@ -433,20 +451,38 @@ export class ActionPayloadTypes {
     } = z
 
     /**
-     * TODO
+     * Send operation request was unsuccessful
      */
     sendOperationFail: {
+        /**
+         * Business component initiated send operation request
+         */
         bcName: string
+        /**
+         * Cursors hierarchy at the time when request was fired
+         */
         bcUrl: string
+        /**
+         * Error to show in modal
+         */
         viewError: string
+        /**
+         * Validation errors on fields
+         */
         entityError: OperationErrorEntity
     } = z
 
     /**
-     * TODO
+     * Send operation request was successful
      */
     sendOperationSuccess: {
+        /**
+         * Business component initiated the request
+         */
         bcName: string
+        /**
+         * Cursor which initiated the request
+         */
         cursor: string
     } = z
 
