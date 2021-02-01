@@ -1,0 +1,1955 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "DataItem": {
+            "additionalProperties": {
+                "$ref": "#/definitions/DataValue"
+            },
+            "description": "Instance of `Business component` data\nHas unlimited number of fields, which available to widget",
+            "properties": {
+                "id": {
+                    "description": "Record's identificator",
+                    "type": "string"
+                },
+                "vstamp": {
+                    "description": "Version of last record's edit",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "id",
+                "vstamp"
+            ],
+            "type": "object"
+        },
+        "DataValue": {
+            "anyOf": [
+                {
+                    "items": {
+                        "$ref": "#/definitions/MultivalueSingleValue"
+                    },
+                    "type": "array"
+                },
+                {
+                    "items": {
+                        "$ref": "#/definitions/DataItem"
+                    },
+                    "type": "array"
+                },
+                {
+                    "type": [
+                        "null",
+                        "string",
+                        "number",
+                        "boolean"
+                    ]
+                }
+            ],
+            "description": "Possible types of fields values"
+        },
+        "FieldType": {
+            "enum": [
+                "DMN",
+                "checkbox",
+                "checkboxSql",
+                "combo-condition",
+                "date",
+                "dateTime",
+                "dateTimeWithSeconds",
+                "dictionary",
+                "fileUpload",
+                "hidden",
+                "hint",
+                "inline-pickList",
+                "input",
+                "money",
+                "monthYear",
+                "multifield",
+                "multivalue",
+                "multivalueHover",
+                "number",
+                "percent",
+                "pickList",
+                "printForm",
+                "radio",
+                "richText",
+                "text"
+            ],
+            "type": "string"
+        },
+        "LayoutCol": {
+            "description": "Description of the interface for WidgetOptions's layout.rows",
+            "properties": {
+                "fieldKey": {
+                    "type": "string"
+                },
+                "span": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "fieldKey"
+            ],
+            "type": "object"
+        },
+        "LayoutRow": {
+            "description": "Description of the interface for LayoutRow",
+            "properties": {
+                "cols": {
+                    "items": {
+                        "$ref": "#/definitions/LayoutCol"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "cols"
+            ],
+            "type": "object"
+        },
+        "MultivalueSingleValue": {
+            "description": "Structure which contain `Multivalue` field's values",
+            "properties": {
+                "id": {
+                    "description": "Record's identificator",
+                    "type": "string"
+                },
+                "options": {
+                    "$ref": "#/definitions/MultivalueSingleValueOptions",
+                    "description": "`Multivalue` field's options"
+                },
+                "value": {
+                    "description": "Showed value",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id",
+                "value"
+            ],
+            "type": "object"
+        },
+        "MultivalueSingleValueOptions": {
+            "description": "`Multivalue` field's options",
+            "properties": {
+                "drillDown": {
+                    "type": "string"
+                },
+                "drillDownType": {
+                    "description": "Types of drilldowns in the application, specified by Tesler API",
+                    "enum": [
+                        "external",
+                        "externalNew",
+                        "inner",
+                        "relative",
+                        "relativeNew"
+                    ],
+                    "type": "string"
+                },
+                "hint": {
+                    "description": "Hint for value",
+                    "type": "string"
+                },
+                "icon": {
+                    "description": "Type of Icon",
+                    "type": "string"
+                },
+                "snapshotState": {
+                    "enum": [
+                        "deleted",
+                        "new",
+                        "noChange"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "OperationInclusionDescriptor": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/{type:string;include?:OperationInclusionDescriptor[]|undefined;exclude?:string[]|undefined;}"
+                },
+                {
+                    "type": "string"
+                }
+            ],
+            "description": "Descriptor enabling operation on widget:\n- string (if you just need to include / exclude operation or groups)\n- object, if this is group in which you want to selectively include or exclude the operation"
+        },
+        "Pick<ViewNavigationGroup,\"title\"|\"hidden\"|\"child\"|\"defaultView\">": {
+            "description": "From T, pick a set of properties whose keys are in the union K",
+            "properties": {
+                "child": {
+                    "description": "Nested items for the group",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/ViewNavigationGroup"
+                            },
+                            {
+                                "$ref": "#/definitions/ViewNavigationItem"
+                            }
+                        ]
+                    },
+                    "type": "array"
+                },
+                "defaultView": {
+                    "description": "If specified this view will be default view for the group; if not, the first available view will be default view",
+                    "type": "string"
+                },
+                "hidden": {
+                    "description": "If true, the group will not be visible in navigation (but still accessible by direct link or drilldown)",
+                    "type": "boolean"
+                },
+                "title": {
+                    "description": "Displayed name for the grouup",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "child",
+                "title"
+            ],
+            "type": "object"
+        },
+        "Pick<ViewNavigationItem,\"hidden\"|\"viewName\">": {
+            "description": "From T, pick a set of properties whose keys are in the union K",
+            "properties": {
+                "hidden": {
+                    "type": "boolean"
+                },
+                "viewName": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "Record<string,string>": {
+            "description": "Construct a type with a set of properties K of type T",
+            "type": "object"
+        },
+        "TableOperations": {
+            "description": "Description of options of allowed on table widget actions",
+            "properties": {
+                "position": {
+                    "description": "Describes position of tableOperations relatively of table",
+                    "enum": [
+                        "Bottom",
+                        "Top",
+                        "TopAndBottom"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "ViewMetaWidgetLegacy": {
+            "description": "Widget can be uniquely identified by numeric id",
+            "properties": {
+                "gridWidth": {
+                    "description": "Currently unused",
+                    "type": "number"
+                },
+                "position": {
+                    "description": "Number used to order widget on the view; widgets with lesser `position` will be shown first",
+                    "type": "number"
+                },
+                "widgetId": {
+                    "description": "Reference to `id` property from *.widget.json file",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "position",
+                "widgetId"
+            ],
+            "type": "object"
+        },
+        "ViewMetaWidgetNew": {
+            "description": "Widget can be uniquely identified by string id",
+            "properties": {
+                "gridWidth": {
+                    "description": "Currently unused",
+                    "type": "number"
+                },
+                "position": {
+                    "description": "Number used to order widget on the view; widgets with lesser `position` will be shown first",
+                    "type": "number"
+                },
+                "widgetName": {
+                    "description": "Reference to `name` property from *.widget.json file",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "position",
+                "widgetName"
+            ],
+            "type": "object"
+        },
+        "ViewNavigationGroup": {
+            "description": "Description of groups in the navigation menu.\n\nUsed to create nesting levels of menu items.",
+            "properties": {
+                "child": {
+                    "description": "Nested items for the group",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/ViewNavigationGroup"
+                            },
+                            {
+                                "$ref": "#/definitions/ViewNavigationItem"
+                            }
+                        ]
+                    },
+                    "type": "array"
+                },
+                "defaultView": {
+                    "description": "If specified this view will be default view for the group; if not, the first available view will be default view",
+                    "type": "string"
+                },
+                "hidden": {
+                    "description": "If true, the group will not be visible in navigation (but still accessible by direct link or drilldown)",
+                    "type": "boolean"
+                },
+                "id": {
+                    "description": "TODO identifier will be nullable and string-only in 2.0.0",
+                    "type": [
+                        "string",
+                        "number"
+                    ]
+                },
+                "title": {
+                    "description": "Displayed name for the grouup",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "child",
+                "title"
+            ],
+            "type": "object"
+        },
+        "ViewNavigationItem": {
+            "description": "Description of the destination in the navigation menu.",
+            "properties": {
+                "hidden": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "description": "TODO: remove in 2.0.0",
+                    "type": "string"
+                },
+                "viewName": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "WidgetField": {
+            "anyOf": [
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetListFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "digits": {
+                                    "type": "number"
+                                },
+                                "nullable": {
+                                    "type": "boolean"
+                                },
+                                "type": {
+                                    "enum": [
+                                        "money",
+                                        "number",
+                                        "percent"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetFormFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "digits": {
+                                    "type": "number"
+                                },
+                                "nullable": {
+                                    "type": "boolean"
+                                },
+                                "type": {
+                                    "enum": [
+                                        "money",
+                                        "number",
+                                        "percent"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetListFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "date"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetFormFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "date"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetListFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "checkbox"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetFormFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "checkbox"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetListFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "dateTime"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetFormFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "dateTime"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetListFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "dateTimeWithSeconds"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetFormFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "dateTimeWithSeconds"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetListFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "dictionaryName": {
+                                    "type": "string"
+                                },
+                                "multiple": {
+                                    "type": "boolean"
+                                },
+                                "type": {
+                                    "enum": [
+                                        "dictionary"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetFormFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "dictionaryName": {
+                                    "type": "string"
+                                },
+                                "multiple": {
+                                    "type": "boolean"
+                                },
+                                "type": {
+                                    "enum": [
+                                        "dictionary"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetListFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "popover": {
+                                    "type": "boolean"
+                                },
+                                "type": {
+                                    "enum": [
+                                        "text"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetFormFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "popover": {
+                                    "type": "boolean"
+                                },
+                                "type": {
+                                    "enum": [
+                                        "text"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetListFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "hint",
+                                        "input"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetFormFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "hint",
+                                        "input"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetListFieldBase"
+                        },
+                        {
+                            "$ref": "#/definitions/{type:FieldType.multifield;fields:WidgetField[];style:\"inline\"|\"list\";}"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetFormFieldBase"
+                        },
+                        {
+                            "$ref": "#/definitions/{type:FieldType.multifield;fields:WidgetField[];style:\"inline\"|\"list\";}"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetListFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "assocValueKey": {
+                                    "type": "string"
+                                },
+                                "associateFieldKey": {
+                                    "type": "string"
+                                },
+                                "displayedKey": {
+                                    "type": "string"
+                                },
+                                "popupBcName": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "enum": [
+                                        "multivalue",
+                                        "multivalueHover"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetFormFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "assocValueKey": {
+                                    "type": "string"
+                                },
+                                "associateFieldKey": {
+                                    "type": "string"
+                                },
+                                "displayedKey": {
+                                    "type": "string"
+                                },
+                                "popupBcName": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "enum": [
+                                        "multivalue",
+                                        "multivalueHover"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetListFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "pickMap": {
+                                    "$ref": "#/definitions/Record<string,string>"
+                                },
+                                "popupBcName": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "enum": [
+                                        "pickList"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "pickMap",
+                                "popupBcName",
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetFormFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "pickMap": {
+                                    "$ref": "#/definitions/Record<string,string>"
+                                },
+                                "popupBcName": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "enum": [
+                                        "pickList"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "pickMap",
+                                "popupBcName",
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetListFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "pickMap": {
+                                    "$ref": "#/definitions/Record<string,string>"
+                                },
+                                "popupBcName": {
+                                    "type": "string"
+                                },
+                                "searchSpec": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "enum": [
+                                        "inline-pickList"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "pickMap",
+                                "popupBcName",
+                                "searchSpec",
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetFormFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "pickMap": {
+                                    "$ref": "#/definitions/Record<string,string>"
+                                },
+                                "popupBcName": {
+                                    "type": "string"
+                                },
+                                "searchSpec": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "enum": [
+                                        "inline-pickList"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "pickMap",
+                                "popupBcName",
+                                "searchSpec",
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetListFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "fileIdKey": {
+                                    "type": "string"
+                                },
+                                "fileSource": {
+                                    "type": "string"
+                                },
+                                "snapshotFileIdKey": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "enum": [
+                                        "fileUpload"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "fileIdKey",
+                                "fileSource",
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetFormFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "fileIdKey": {
+                                    "type": "string"
+                                },
+                                "fileSource": {
+                                    "type": "string"
+                                },
+                                "snapshotFileIdKey": {
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "enum": [
+                                        "fileUpload"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "fileIdKey",
+                                "fileSource",
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetListFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "hidden"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetFormFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "hidden"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetListFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "radio"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/WidgetFormFieldBase"
+                        },
+                        {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "radio"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type"
+                            ],
+                            "type": "object"
+                        }
+                    ]
+                }
+            ],
+            "description": "Field descriptor in widget configuration"
+        },
+        "WidgetFormFieldBase": {
+            "properties": {
+                "bgColor": {
+                    "type": "string"
+                },
+                "bgColorKey": {
+                    "type": "string"
+                },
+                "drillDown": {
+                    "type": "boolean"
+                },
+                "drillDownKey": {
+                    "type": "string"
+                },
+                "hidden": {
+                    "description": "Whether the field is hidden",
+                    "type": "boolean"
+                },
+                "hierarchyShift": {
+                    "description": "Shift value of different hierarchy level",
+                    "type": "boolean"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "maxInput": {
+                    "description": "Maximum number of characters",
+                    "type": "number"
+                },
+                "snapshotKey": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/FieldType"
+                }
+            },
+            "required": [
+                "key",
+                "label",
+                "type"
+            ],
+            "type": "object"
+        },
+        "WidgetListFieldBase": {
+            "properties": {
+                "bgColor": {
+                    "type": "string"
+                },
+                "bgColorKey": {
+                    "type": "string"
+                },
+                "drillDown": {
+                    "type": "boolean"
+                },
+                "drillDownKey": {
+                    "type": "string"
+                },
+                "hidden": {
+                    "description": "Whether the field is hidden",
+                    "type": "boolean"
+                },
+                "hierarchyShift": {
+                    "description": "Shift value of different hierarchy level",
+                    "type": "boolean"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "maxInput": {
+                    "description": "Maximum number of characters",
+                    "type": "number"
+                },
+                "snapshotKey": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/FieldType"
+                },
+                "width": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "key",
+                "title",
+                "type"
+            ],
+            "type": "object"
+        },
+        "WidgetMetaJsonNumber": {
+            "description": "Widget can be uniquely identified by numeric id",
+            "properties": {
+                "bc": {
+                    "description": "Business component name",
+                    "type": "string"
+                },
+                "fields": {
+                    "description": "Fields that will be displayed on widget",
+                    "items": {
+                        "$ref": "#/definitions/WidgetField",
+                        "description": "Field descriptor in widget configuration"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Unique identifier for the widget",
+                    "type": "number"
+                },
+                "limit": {
+                    "description": "For list-like widget this option will limit the number of displayed records",
+                    "type": "number"
+                },
+                "options": {
+                    "$ref": "#/definitions/WidgetOptions",
+                    "description": "Options specific for differet widget types and also a space to customize your own widget"
+                },
+                "showCondition": {
+                    "$ref": "#/definitions/WidgetShowCondition",
+                    "description": "When specified widget will not be displayed until specific conditions are met"
+                },
+                "title": {
+                    "description": "Displayed name",
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/WidgetTypes",
+                    "description": "Widget type"
+                }
+            },
+            "required": [
+                "bc",
+                "fields",
+                "id",
+                "title",
+                "type"
+            ],
+            "type": "object"
+        },
+        "WidgetMetaJsonString": {
+            "description": "Widget can be uniquely identified by numeric id",
+            "properties": {
+                "bc": {
+                    "description": "Business component name",
+                    "type": "string"
+                },
+                "fields": {
+                    "description": "Fields that will be displayed on widget",
+                    "items": {
+                        "$ref": "#/definitions/WidgetField",
+                        "description": "Field descriptor in widget configuration"
+                    },
+                    "type": "array"
+                },
+                "limit": {
+                    "description": "For list-like widget this option will limit the number of displayed records",
+                    "type": "number"
+                },
+                "name": {
+                    "description": "Unique identifier for the widget",
+                    "type": "string"
+                },
+                "options": {
+                    "$ref": "#/definitions/WidgetOptions",
+                    "description": "Options specific for differet widget types and also a space to customize your own widget"
+                },
+                "showCondition": {
+                    "$ref": "#/definitions/WidgetShowCondition",
+                    "description": "When specified widget will not be displayed until specific conditions are met"
+                },
+                "title": {
+                    "description": "Displayed name",
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/WidgetTypes",
+                    "description": "Widget type"
+                }
+            },
+            "required": [
+                "bc",
+                "fields",
+                "name",
+                "title",
+                "type"
+            ],
+            "type": "object"
+        },
+        "WidgetOperations": {
+            "description": "Operations description in `options` of widget meta, which allows its availability.",
+            "properties": {
+                "defaultSave": {
+                    "description": "default no crud save action",
+                    "type": "string"
+                },
+                "exclude": {
+                    "description": "List of excluded operations or groups of operations",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "include": {
+                    "description": "List of included operations or groups of operations",
+                    "items": {
+                        "$ref": "#/definitions/OperationInclusionDescriptor",
+                        "description": "Descriptor enabling operation on widget:\n- string (if you just need to include / exclude operation or groups)\n- object, if this is group in which you want to selectively include or exclude the operation"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "WidgetOptions": {
+            "properties": {
+                "actionGroups": {
+                    "$ref": "#/definitions/WidgetOperations",
+                    "description": "Operations description in `options` of widget meta, which allows its availability."
+                },
+                "disableHoverError": {
+                    "description": "Disable tooltip with error text",
+                    "type": "boolean"
+                },
+                "disableNotification": {
+                    "description": "Disable notification after failed operation",
+                    "type": "boolean"
+                },
+                "displayedValueKey": {
+                    "description": "Record field which value will be used as a title for the whole record\nfor this particular widget",
+                    "type": "string"
+                },
+                "hideActionGroups": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "hierarchy": {
+                    "description": "TODO: Move all hierarchy-specific properties to a single property",
+                    "items": {
+                        "$ref": "#/definitions/WidgetTableHierarchy"
+                    },
+                    "type": "array"
+                },
+                "hierarchyDisableDescendants": {
+                    "description": "Disable searched item descendants in fullHierarchy search",
+                    "type": "boolean"
+                },
+                "hierarchyDisableParent": {
+                    "type": "boolean"
+                },
+                "hierarchyDisableRoot": {
+                    "type": "boolean"
+                },
+                "hierarchyFull": {
+                    "type": "boolean"
+                },
+                "hierarchyGroupDeselection": {
+                    "type": "boolean"
+                },
+                "hierarchyGroupSelection": {
+                    "type": "boolean"
+                },
+                "hierarchyParentKey": {
+                    "type": "string"
+                },
+                "hierarchyRadio": {
+                    "type": "boolean"
+                },
+                "hierarchyRadioAll": {
+                    "type": "boolean"
+                },
+                "hierarchySameBc": {
+                    "type": "boolean"
+                },
+                "hierarchyTraverse": {
+                    "type": "boolean"
+                },
+                "layout": {
+                    "properties": {
+                        "aside": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "header": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        "rows": {
+                            "items": {
+                                "$ref": "#/definitions/LayoutRow"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "required": [
+                        "rows"
+                    ],
+                    "type": "object"
+                },
+                "multiple": {
+                    "description": "Allow selecting multiple items for FlatListPopup\n\nTODO: Move to separate interface",
+                    "type": "boolean"
+                },
+                "readOnly": {
+                    "description": "All widget fields are not editable",
+                    "type": "boolean"
+                },
+                "tableOperations": {
+                    "$ref": "#/definitions/TableOperations",
+                    "description": "Options for allowed on table widget actions"
+                }
+            },
+            "type": "object"
+        },
+        "WidgetShowCondition": {
+            "description": "Show widget only if certain condition is met\n\nSupported conditions:\n- Active record for specified business component {bcName} should contain field {fieldKey}\nwith value {fieldValue}",
+            "properties": {
+                "bcName": {
+                    "type": "string"
+                },
+                "isDefault": {
+                    "type": "boolean"
+                },
+                "params": {
+                    "properties": {
+                        "fieldKey": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "$ref": "#/definitions/DataValue",
+                            "description": "Possible types of fields values"
+                        }
+                    },
+                    "required": [
+                        "fieldKey"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "bcName",
+                "isDefault",
+                "params"
+            ],
+            "type": "object"
+        },
+        "WidgetTableHierarchy": {
+            "description": "Configuration descriptor for hierarchy subset of table widgets.\n\nEach descriptor describes a specific level of hierarchy",
+            "properties": {
+                "assocValueKey": {
+                    "description": "What record field to use as displayed value of that record",
+                    "type": "string"
+                },
+                "bcName": {
+                    "description": "Which business component is displayed on this level",
+                    "type": "string"
+                },
+                "fields": {
+                    "description": "Fields that will be displayed on this hierarchy level",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/WidgetListFieldBase"
+                                    },
+                                    {
+                                        "properties": {
+                                            "digits": {
+                                                "type": "number"
+                                            },
+                                            "nullable": {
+                                                "type": "boolean"
+                                            },
+                                            "type": {
+                                                "enum": [
+                                                    "money",
+                                                    "number",
+                                                    "percent"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "type"
+                                        ],
+                                        "type": "object"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/WidgetListFieldBase"
+                                    },
+                                    {
+                                        "properties": {
+                                            "type": {
+                                                "enum": [
+                                                    "date"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "type"
+                                        ],
+                                        "type": "object"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/WidgetListFieldBase"
+                                    },
+                                    {
+                                        "properties": {
+                                            "type": {
+                                                "enum": [
+                                                    "checkbox"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "type"
+                                        ],
+                                        "type": "object"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/WidgetListFieldBase"
+                                    },
+                                    {
+                                        "properties": {
+                                            "type": {
+                                                "enum": [
+                                                    "dateTime"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "type"
+                                        ],
+                                        "type": "object"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/WidgetListFieldBase"
+                                    },
+                                    {
+                                        "properties": {
+                                            "type": {
+                                                "enum": [
+                                                    "dateTimeWithSeconds"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "type"
+                                        ],
+                                        "type": "object"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/WidgetListFieldBase"
+                                    },
+                                    {
+                                        "properties": {
+                                            "dictionaryName": {
+                                                "type": "string"
+                                            },
+                                            "multiple": {
+                                                "type": "boolean"
+                                            },
+                                            "type": {
+                                                "enum": [
+                                                    "dictionary"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "type"
+                                        ],
+                                        "type": "object"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/WidgetListFieldBase"
+                                    },
+                                    {
+                                        "properties": {
+                                            "popover": {
+                                                "type": "boolean"
+                                            },
+                                            "type": {
+                                                "enum": [
+                                                    "text"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "type"
+                                        ],
+                                        "type": "object"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/WidgetListFieldBase"
+                                    },
+                                    {
+                                        "properties": {
+                                            "type": {
+                                                "enum": [
+                                                    "hint",
+                                                    "input"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "type"
+                                        ],
+                                        "type": "object"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/WidgetListFieldBase"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/{type:FieldType.multifield;fields:WidgetField[];style:\"inline\"|\"list\";}"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/WidgetListFieldBase"
+                                    },
+                                    {
+                                        "properties": {
+                                            "assocValueKey": {
+                                                "type": "string"
+                                            },
+                                            "associateFieldKey": {
+                                                "type": "string"
+                                            },
+                                            "displayedKey": {
+                                                "type": "string"
+                                            },
+                                            "popupBcName": {
+                                                "type": "string"
+                                            },
+                                            "type": {
+                                                "enum": [
+                                                    "multivalue",
+                                                    "multivalueHover"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "type"
+                                        ],
+                                        "type": "object"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/WidgetListFieldBase"
+                                    },
+                                    {
+                                        "properties": {
+                                            "pickMap": {
+                                                "$ref": "#/definitions/Record<string,string>"
+                                            },
+                                            "popupBcName": {
+                                                "type": "string"
+                                            },
+                                            "type": {
+                                                "enum": [
+                                                    "pickList"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "pickMap",
+                                            "popupBcName",
+                                            "type"
+                                        ],
+                                        "type": "object"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/WidgetListFieldBase"
+                                    },
+                                    {
+                                        "properties": {
+                                            "pickMap": {
+                                                "$ref": "#/definitions/Record<string,string>"
+                                            },
+                                            "popupBcName": {
+                                                "type": "string"
+                                            },
+                                            "searchSpec": {
+                                                "type": "string"
+                                            },
+                                            "type": {
+                                                "enum": [
+                                                    "inline-pickList"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "pickMap",
+                                            "popupBcName",
+                                            "searchSpec",
+                                            "type"
+                                        ],
+                                        "type": "object"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/WidgetListFieldBase"
+                                    },
+                                    {
+                                        "properties": {
+                                            "fileIdKey": {
+                                                "type": "string"
+                                            },
+                                            "fileSource": {
+                                                "type": "string"
+                                            },
+                                            "snapshotFileIdKey": {
+                                                "type": "string"
+                                            },
+                                            "type": {
+                                                "enum": [
+                                                    "fileUpload"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "fileIdKey",
+                                            "fileSource",
+                                            "type"
+                                        ],
+                                        "type": "object"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/WidgetListFieldBase"
+                                    },
+                                    {
+                                        "properties": {
+                                            "type": {
+                                                "enum": [
+                                                    "hidden"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "type"
+                                        ],
+                                        "type": "object"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/WidgetListFieldBase"
+                                    },
+                                    {
+                                        "properties": {
+                                            "type": {
+                                                "enum": [
+                                                    "radio"
+                                                ],
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "type"
+                                        ],
+                                        "type": "object"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "type": "array"
+                },
+                "radio": {
+                    "description": "If true only one item can be selected",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "bcName",
+                "fields"
+            ],
+            "type": "object"
+        },
+        "WidgetTypes": {
+            "enum": [
+                "AssocListPopup",
+                "DataGrid",
+                "DimFilter",
+                "FlatTree",
+                "FlatTreePopup",
+                "Form",
+                "FourthLevelMenu",
+                "HeaderWidget",
+                "Info",
+                "List",
+                "PickListPopup",
+                "Pivot",
+                "SecondLevelMenu",
+                "Text",
+                "ThirdLevelMenu",
+                "WidgetCreator"
+            ],
+            "type": "string"
+        },
+        "{type:FieldType.multifield;fields:WidgetField[];style:\"inline\"|\"list\";}": {
+            "properties": {
+                "fields": {
+                    "items": {
+                        "$ref": "#/definitions/WidgetField"
+                    },
+                    "type": "array"
+                },
+                "style": {
+                    "enum": [
+                        "inline",
+                        "list"
+                    ],
+                    "type": "string"
+                },
+                "type": {
+                    "enum": [
+                        "multifield"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "fields",
+                "style",
+                "type"
+            ],
+            "type": "object"
+        },
+        "{type:string;include?:OperationInclusionDescriptor[]|undefined;exclude?:string[]|undefined;}": {
+            "properties": {
+                "exclude": {
+                    "description": "List of excluded operations or groups operations",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "include": {
+                    "description": "List of included operations or groups operations",
+                    "items": {
+                        "$ref": "#/definitions/OperationInclusionDescriptor"
+                    },
+                    "type": "array"
+                },
+                "type": {
+                    "description": "Type of transaction; a string that uniquely identifies the operation on the widget",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "type": "object"
+        }
+    },
+    "description": "*.sqlbc.json file format\n\nDescribes SQL-based business components",
+    "properties": {
+        "binds": {
+            "description": "Configuration for bind variables passed to sql request from API query",
+            "items": {
+            },
+            "type": "array"
+        },
+        "editable": {
+            "description": "Not supported",
+            "enum": [
+                0
+            ],
+            "type": "number"
+        },
+        "name": {
+            "description": "Name for the business component",
+            "type": "string"
+        },
+        "pageLimit": {
+            "description": "Number of records to fetch for this business component",
+            "type": "number"
+        },
+        "queryFile": {
+            "description": "Path to sql file that describes business component",
+            "type": "string"
+        }
+    },
+    "required": [
+        "binds",
+        "editable",
+        "name",
+        "pageLimit",
+        "queryFile"
+    ],
+    "type": "object"
+}
+
