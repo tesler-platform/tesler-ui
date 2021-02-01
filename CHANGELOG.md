@@ -1,4 +1,24 @@
-# Version 1.26.2 (January 13, 2020)
+# Version 1.27.0 (Febraury 1, 2021)
+
+## Features
+
+* Documentation for library API now available: [API Reference](https://tesler-platform.github.io/tesler-ui/)
+* JSON schemas for `*.screen.json`, `*.view.json`, `*.widget.json` and `*.sqlbc.json` files from now on will be included as part of this library ([#582](https://github.com/tesler-platform/tesler-ui/pull/582), [@tesler-ui/schema](https://github.com/tesler-platform/tesler-schema))
+* `<View />` and `<Widget />` components now support `customSpinner` property to allow spinner customization ([#570](https://github.com/tesler-platform/tesler-ui/issues/570))
+* `<HierarchyTable />` now respects `withHierarchyShift` field option ([#569](https://github.com/tesler-platform/tesler-ui/pull/569))
+* `<FilterField />` now exported to allow building custom components around build-in filtration control ([#580](https://github.com/tesler-platform/tesler-ui/pull/580))
+
+
+## Fixes
+
+* Cursor is no longer reset after successful data fetch request ([#530](https://github.com/tesler-platform/tesler-ui/issues/530), [#566](https://github.com/tesler-platform/tesler-ui/issues/566))
+* [useFlatFormFields](https://tesler-platform.github.io/tesler-ui/modules/global_exports.html#useflatformfields) hook no longer crashing the application ([#573](https://github.com/tesler-platform/tesler-ui/pull/573))
+* [bcRemoveFilter](https://tesler-platform.github.io/tesler-ui/classes/global_exports.actionpayloadtypes.html#bcremovefilter) action worked incorrectly for two filters sharing the same field ([#579](https://github.com/tesler-platform/tesler-ui/pull/579))
+* `<FullHierarchyTable />` erroneously re-opened closed nodes after selecting another node ([#574](https://github.com/tesler-platform/tesler-ui/pull/574))
+* `<ReadOnlyField />` doesn't wrap text correctly in IE11 ([#583](https://github.com/tesler-platform/tesler-ui/pull/583))
+* `<MultiField />` styles doesn't work nicely for long colored values ([#575](https://github.com/tesler-platform/tesler-ui/pull/575))
+
+# Version 1.26.2 (January 13, 2021)
 
 ## Fixes
 
