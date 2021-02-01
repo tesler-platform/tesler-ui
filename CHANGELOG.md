@@ -1,3 +1,9 @@
+# Version 1.27.1 (Febraury 1, 2021)
+
+## Fixes
+
+* Broken 1.27.0 release due to `@tesler-ui/schema` declared as dev dependency
+
 # Version 1.27.0 (Febraury 1, 2021)
 
 ## Features
@@ -7,7 +13,6 @@
 * `<View />` and `<Widget />` components now support `customSpinner` property to allow spinner customization ([#570](https://github.com/tesler-platform/tesler-ui/issues/570))
 * `<HierarchyTable />` now respects `withHierarchyShift` field option ([#569](https://github.com/tesler-platform/tesler-ui/pull/569))
 * `<FilterField />` now exported to allow building custom components around build-in filtration control ([#580](https://github.com/tesler-platform/tesler-ui/pull/580))
-
 
 ## Fixes
 
