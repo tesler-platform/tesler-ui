@@ -49,7 +49,7 @@ const initialState: Route = { type: RouteType.default, path: '/', params: null, 
 export function router(state: Route = initialState, action: AnyAction): Route {
     switch (action.type) {
         case types.loginDone:
-            return parseLocation(historyObj.location)
+            return parseLocation(historyObj?.location)
         case types.changeLocation:
             const rawLocation = action.payload.rawLocation
             if (rawLocation != null) {
