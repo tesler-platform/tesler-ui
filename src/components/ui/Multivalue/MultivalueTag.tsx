@@ -70,7 +70,7 @@ const MultivalueTag: React.FunctionComponent<MultivalueTagProps> = props => {
                     )
                 })}
             </div>
-            <div className={cn(styles.iconContainer, { [styles.disabled]: props.disabled })} onClick={loading ? undefined : handleOpen}>
+            <div className={cn(styles.iconContainer, { [styles.disabled]: props.disabled })}>
                 <Icon type={loading ? 'loading' : 'folder-open'} spin={loading} />
             </div>
         </div>
