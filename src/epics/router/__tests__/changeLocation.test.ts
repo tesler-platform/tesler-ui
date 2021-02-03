@@ -139,7 +139,6 @@ describe('selectScreenFail', () => {
         store.getState().router.viewName = 'view-next'
         const epic = changeLocation(ActionsObservable.of(action), store)
         testEpic(epic, res => {
-            console.warn(res)
             expect(res.length).toBe(3)
             expect(res[0]).toEqual(
                 expect.objectContaining(
