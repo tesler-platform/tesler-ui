@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Operation, OperationGroup, isOperationGroup, OperationInclusionDescriptor } from '../interfaces/operation'
-import { WidgetMeta } from '../interfaces/widget'
+import { WidgetMeta, WidgetOperations } from '../interfaces/widget'
 
 const emptyArray: Array<Operation | OperationGroup> = []
 
@@ -9,17 +9,21 @@ const emptyArray: Array<Operation | OperationGroup> = []
  *
  * @param operations List of operations
  * @param widgetMeta Widget meta configuration
+ * @param bcName BC name in case of hierarchy usage
  * @category Hooks
  */
-export function useWidgetOperations(operations: Array<Operation | OperationGroup>, widgetMeta: WidgetMeta) {
+export function useWidgetOperations(operations: Array<Operation | OperationGroup>, widgetMeta: WidgetMeta, bcName?: string) {
     return useMemo(() => {
-        if (!widgetMeta.options || !widgetMeta.options.actionGroups) {
+        const actionGroup: WidgetOperations =
+            widgetMeta.options?.actionGroups &&
+            (bcName ? (widgetMeta.options.actionGroups as Record<string, WidgetOperations>)[bcName] : widgetMeta.options.actionGroups)
+        if (!actionGroup) {
             return operations || emptyArray
         }
 
-        const { include, exclude } = widgetMeta.options.actionGroups
+        const { include, exclude } = actionGroup
         return getIncludedOperations(operations || emptyArray, include, exclude)
-    }, [operations, widgetMeta])
+    }, [operations, widgetMeta, bcName])
 }
 
 /**
