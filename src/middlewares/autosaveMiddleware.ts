@@ -3,6 +3,7 @@ import { $do, types } from '../actions/actions'
 import { coreOperations, OperationTypeCrud } from '../interfaces/operation'
 import { Store as CoreStore } from '../interfaces/store'
 import { autosaveRoutine, checkUnsavedChangesOfBc } from '../utils/autosave'
+import { WidgetOperations } from '@tesler-ui/schema'
 
 const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) => (next: Dispatch) => (
     action: AnyAction
@@ -56,7 +57,7 @@ const saveFormMiddleware = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAc
         return next(
             $do.sendOperation({
                 bcName: defaultSaveWidget.bcName,
-                operationType: defaultSaveWidget.options.actionGroups.defaultSave,
+                operationType: (defaultSaveWidget.options.actionGroups as WidgetOperations).defaultSave,
                 widgetName: defaultSaveWidget.name,
                 onSuccessAction: action
             })
