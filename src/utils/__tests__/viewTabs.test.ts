@@ -48,6 +48,11 @@ describe('useNavigation helper', () => {
     it('should not break when requesting non existing tab level', () => {
         expect(getViewTabs(sampleFlat, 2, 'twilightSparkle')).toMatchObject([])
     })
+
+    it('does not crash for missing arguments', () => {
+        expect(getViewTabs(null, 1).length).toBe(0)
+        expect(() => getViewTabs(sample, 2, null)).toThrowError('activeView is required for navigation level greater than 1')
+    })
 })
 
 describe('getReferencedView', () => {

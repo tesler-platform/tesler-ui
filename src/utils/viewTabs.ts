@@ -64,9 +64,9 @@ export function getViewTabs(
                 }
                 const searchResult = breadthFirstSearch(item, searchCondition)
                 // Also the depth should match
-                const match = searchResult?.node && searchResult?.depth === Math.max(level - 1, 1)
+                const match = searchResult?.node && searchResult.depth === Math.max(level - 1, 1)
                 if (match) {
-                    result = searchResult.node?.child
+                    result = searchResult.node.child
                 }
                 return match
             })
