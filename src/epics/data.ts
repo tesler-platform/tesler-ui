@@ -22,6 +22,7 @@ import { bcNewDataEpic } from './data/bcNewDataEpic'
 import { bcFetchRowMetaRequest } from './data/bcFetchRowMetaRequest'
 import { selectView } from './data/selectView'
 import { getBcChildren } from '../utils/bc'
+import { bcSelectDepthRecord } from './data/bcSelectDepthRecord'
 
 const maxDepthLevel = 10
 
@@ -265,28 +266,6 @@ export const bcSelectRecord: Epic = (action$, store) =>
             Observable.of($do.bcChangeCursors({ cursorsMap: { [bcName]: cursor }, keepDelta: action.payload.keepDelta })),
             Observable.of($do.bcFetchRowMeta({ widgetName: '', bcName })),
             fetchChildrenBcData
-        )
-    })
-
-/**
- *
- * @param action$
- * @param store
- * @category Epics
- */
-export const bcSelectDepthRecord: Epic = (action$, store) =>
-    action$.ofType(types.bcSelectDepthRecord).mergeMap(action => {
-        const { bcName, cursor, depth } = action.payload
-        return Observable.concat(
-            Observable.of($do.bcChangeDepthCursor({ bcName, depth, cursor })),
-            Observable.of(
-                $do.bcFetchDataRequest({
-                    bcName,
-                    depth: depth + 1,
-                    widgetName: '',
-                    ignorePageLimit: true
-                })
-            )
         )
     })
 

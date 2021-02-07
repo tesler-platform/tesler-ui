@@ -221,7 +221,7 @@ function mapStateToProps(store: Store, ownProps: SameBcHierarchyTableOwnProps) {
     }
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: SameBcHierarchyTableOwnProps) {
+function mapDispatchToProps(dispatch: Dispatch) {
     return {
         onExpand: (bcName: string, depth: number, cursor: string) => {
             dispatch($do.bcSelectDepthRecord({ bcName, depth, cursor }))
