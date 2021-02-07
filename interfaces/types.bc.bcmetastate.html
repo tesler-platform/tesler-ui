@@ -117,7 +117,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="types.bc.bcmeta.html">BcMeta</a>.<a href="types.bc.bcmeta.html#cursor">cursor</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/c453c69/src/interfaces/bc.ts#L26">src/interfaces/bc.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/4510fd7/src/interfaces/bc.ts#L26">src/interfaces/bc.ts:26</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -133,7 +133,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="types.bc.bcmeta.html">BcMeta</a>.<a href="types.bc.bcmeta.html#defaultfilter">defaultFilter</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/c453c69/src/interfaces/bc.ts#L51">src/interfaces/bc.ts:51</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/4510fd7/src/interfaces/bc.ts#L51">src/interfaces/bc.ts:51</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -159,7 +159,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="types.bc.bcmeta.html">BcMeta</a>.<a href="types.bc.bcmeta.html#defaultsort">defaultSort</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/c453c69/src/interfaces/bc.ts#L37">src/interfaces/bc.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/4510fd7/src/interfaces/bc.ts#L37">src/interfaces/bc.ts:37</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -187,9 +187,16 @@
 					<div class="tsd-signature tsd-kind-icon">depth<wbr>Bc<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{ </span>cursor<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>loading<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/c453c69/src/interfaces/bc.ts#L59">src/interfaces/bc.ts:59</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/4510fd7/src/interfaces/bc.ts#L77">src/interfaces/bc.ts:77</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Stores a selected cursor and loading state per depth level.</p>
+						</div>
+						<p>Used by hierarchy widgets builded around single business component:
+						controls which record is expanded and which children should be fetched.</p>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="filtergroups" class="tsd-anchor"></a>
@@ -198,7 +205,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="types.bc.bcmeta.html">BcMeta</a>.<a href="types.bc.bcmeta.html#filtergroups">filterGroups</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/c453c69/src/interfaces/bc.ts#L41">src/interfaces/bc.ts:41</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/4510fd7/src/interfaces/bc.ts#L41">src/interfaces/bc.ts:41</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -213,9 +220,14 @@
 					<div class="tsd-signature tsd-kind-icon">has<wbr>Next<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/c453c69/src/interfaces/bc.ts#L58">src/interfaces/bc.ts:58</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/4510fd7/src/interfaces/bc.ts#L70">src/interfaces/bc.ts:70</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>There is an addional pages of data to fetch</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="limit" class="tsd-anchor"></a>
@@ -223,9 +235,14 @@
 					<div class="tsd-signature tsd-kind-icon">limit<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/c453c69/src/interfaces/bc.ts#L57">src/interfaces/bc.ts:57</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/4510fd7/src/interfaces/bc.ts#L66">src/interfaces/bc.ts:66</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Page limit to fetch</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="loading" class="tsd-anchor"></a>
@@ -233,9 +250,14 @@
 					<div class="tsd-signature tsd-kind-icon">loading<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/c453c69/src/interfaces/bc.ts#L55">src/interfaces/bc.ts:55</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/4510fd7/src/interfaces/bc.ts#L58">src/interfaces/bc.ts:58</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Data fetch for this business component is in progress</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="name" class="tsd-anchor"></a>
@@ -244,7 +266,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="types.bc.bcmeta.html">BcMeta</a>.<a href="types.bc.bcmeta.html#name">name</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/c453c69/src/interfaces/bc.ts#L14">src/interfaces/bc.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/4510fd7/src/interfaces/bc.ts#L14">src/interfaces/bc.ts:14</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -259,9 +281,14 @@
 					<div class="tsd-signature tsd-kind-icon">page<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/c453c69/src/interfaces/bc.ts#L56">src/interfaces/bc.ts:56</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/4510fd7/src/interfaces/bc.ts#L62">src/interfaces/bc.ts:62</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Number of the page to fetch</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="parentname" class="tsd-anchor"></a>
@@ -270,7 +297,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="types.bc.bcmeta.html">BcMeta</a>.<a href="types.bc.bcmeta.html#parentname">parentName</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/c453c69/src/interfaces/bc.ts#L18">src/interfaces/bc.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/4510fd7/src/interfaces/bc.ts#L18">src/interfaces/bc.ts:18</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -286,7 +313,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="types.bc.bcmeta.html">BcMeta</a>.<a href="types.bc.bcmeta.html#url">url</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/c453c69/src/interfaces/bc.ts#L22">src/interfaces/bc.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/4510fd7/src/interfaces/bc.ts#L22">src/interfaces/bc.ts:22</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
