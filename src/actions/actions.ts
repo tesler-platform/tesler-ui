@@ -174,6 +174,9 @@ export class ActionPayloadTypes {
         widgetName: string
         /**
          * Page size should be ignored
+         *
+         * Used mostly for hierarchy widgets which does not have controls
+         * for navigating between pages aside of root level.
          */
         ignorePageLimit?: boolean
         /**
@@ -585,11 +588,23 @@ export class ActionPayloadTypes {
     } = z
 
     /**
-     * TODO
+     * Sets a cursor for the specified depth level of hierarchy widget
+     * builded around a single business component.
      */
     bcChangeDepthCursor: {
+        /**
+         * Business component for the hierarchy widget
+         */
         bcName: string
+        /**
+         * Depth level for which cursor is set
+         */
         depth: number
+        /**
+         * Cursor set for specific depth level of the hierarchy widget.
+         *
+         * Controls the collapsed state of the record and which data are fetched for the next level of hierarchy
+         */
         cursor: string
     } = z
 
@@ -789,11 +804,23 @@ export class ActionPayloadTypes {
     } = z
 
     /**
-     * TODO
+     * Wrapper action to sets a cursor for the specified depth level of hierarchy widget
+     * builded around a single business component and fetch children for that record.
      */
     bcSelectDepthRecord: {
+        /**
+         * Business component for the hierarchy widget
+         */
         bcName: string
+        /**
+         * Depth level for which cursor is set
+         */
         depth: number
+        /**
+         * Cursor set for specific depth level of the hierarchy widget.
+         *
+         * Controls the collapsed state of the record and which data are fetched for the next level of hierarchy
+         */
         cursor: string
     } = z
 
