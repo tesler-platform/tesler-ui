@@ -52,10 +52,28 @@ export interface BcMeta {
 }
 
 export interface BcMetaState extends BcMeta {
+    /**
+     * Data fetch for this business component is in progress
+     */
     loading?: boolean
+    /**
+     * Number of the page to fetch
+     */
     page?: number
+    /**
+     * Page limit to fetch
+     */
     limit?: number
+    /**
+     * There is an addional pages of data to fetch
+     */
     hasNext?: boolean
+    /**
+     * Stores a selected cursor and loading state per depth level.
+     *
+     * Used by hierarchy widgets builded around single business component:
+     * controls which record is expanded and which children should be fetched.
+     */
     depthBc?: Record<
         number,
         {
