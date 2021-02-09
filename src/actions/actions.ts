@@ -704,10 +704,20 @@ export class ActionPayloadTypes {
     } = z
 
     /**
-     * TODO
+     * Sets intermediate state for association widget by storing associated records in pseudo-business component.
+     *
+     * Name for this pseudo-BC is formed as `${bcName}Delta`.
      */
     changeAssociations: {
+        /**
+         * Assoc widget's business component
+         */
         bcName: string
+        /**
+         * Records that marked as `associated` for this widget
+         *
+         * TODO: Will be mandatory in 2.0.0
+         */
         records?: DataItem[]
     } = z
 
