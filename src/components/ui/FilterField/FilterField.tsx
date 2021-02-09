@@ -59,7 +59,7 @@ export const ColumnFilterControl: React.FC<ColumnFilterControlProps> = props => 
             return (
                 <Checkbox
                     onChange={(e: CheckboxChangeEvent) => {
-                        props.onChange(e.target.value || null)
+                        props.onChange(e.target.checked)
                     }}
                 />
             )

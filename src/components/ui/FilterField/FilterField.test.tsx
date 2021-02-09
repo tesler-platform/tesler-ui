@@ -64,7 +64,7 @@ describe('`<ColumnFilterControl />`', () => {
             />
         )
         expect(wrapper.find(Checkbox)).toHaveLength(1)
-        const e = { target: { value: true } } as any
+        const e = { target: { checked: true } } as any
         wrapper.find(Checkbox).invoke('onChange')(e)
         expect(onChange).toBeCalledWith(true)
     })

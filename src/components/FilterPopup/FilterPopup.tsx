@@ -70,7 +70,7 @@ export const FilterPopup: React.FC<FilterPopupProps> = props => {
             viewName,
             widgetName: widget.name
         }
-        if (!props.value) {
+        if (props.value === null || props.value === undefined) {
             dispatch($do.bcRemoveFilter({ bcName: widget.bcName, filter }))
         } else {
             dispatch($do.bcAddFilter({ bcName: widget.bcName, filter: newFilter }))
