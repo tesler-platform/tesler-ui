@@ -61,6 +61,7 @@ export function data(state = initialState, action: AnyAction) {
                     return field.key !== '_associate'
                 })
                 .forEach(field => (nextDataItem[field.key] = field.currentValue))
+
             if (!prevDataItem) {
                 return {
                     ...state,
@@ -69,9 +70,7 @@ export function data(state = initialState, action: AnyAction) {
             }
             return {
                 ...state,
-                [action.payload.bcName]: (state[action.payload.bcName] || emptyData).map(item =>
-                    item === prevDataItem ? nextDataItem : item
-                )
+                [action.payload.bcName]: state[action.payload.bcName].map(item => (item === prevDataItem ? nextDataItem : item))
             }
         }
         case types.changeAssociations:
