@@ -53,6 +53,7 @@ export function sendOperationAssociateImpl(action: ActionsMap['sendOperation'], 
         // TODO: bcKey will not be optional in 2.0.0
         bcName: action.payload.bcKey ? `${action.payload.bcKey}` : `${action.payload.bcName}Assoc`,
         calleeBCName: action.payload.bcName,
-        active: true
+        active: true,
+        widgetName: action.payload.widgetName
     })
 }
