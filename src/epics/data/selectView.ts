@@ -18,7 +18,7 @@
 import { ActionsMap, $do, AnyAction, types, Epic } from '../../actions/actions'
 import { Store } from 'redux'
 import { Store as CoreStore } from '../../interfaces/store'
-import { WidgetMeta } from '../../interfaces/widget'
+import { PopupWidgetTypes, WidgetMeta } from '../../interfaces/widget'
 
 /**
  * Schedules data fetch for every widget on the view
@@ -53,19 +53,21 @@ export const selectView: Epic = (action$, store) =>
 export function selectViewImpl(action: ActionsMap['selectView'], store: Store<CoreStore, AnyAction>) {
     const state = store.getState()
     const bcToLoad: Record<string, WidgetMeta> = {}
-    state.view.widgets.forEach(widget => {
-        if (widget.bcName) {
-            let bcName = widget.bcName
-            let parentName = state.screen.bo.bc[widget.bcName].parentName
-            while (parentName) {
-                bcName = parentName
-                parentName = state.screen.bo.bc[parentName].parentName
+    state.view.widgets
+        .filter(widget => !PopupWidgetTypes.includes(widget.type as typeof PopupWidgetTypes[0]))
+        .forEach(widget => {
+            if (widget.bcName) {
+                let bcName = widget.bcName
+                let parentName = state.screen.bo.bc[widget.bcName].parentName
+                while (parentName) {
+                    bcName = parentName
+                    parentName = state.screen.bo.bc[parentName].parentName
+                }
+                if (!bcToLoad[bcName]) {
+                    bcToLoad[bcName] = widget
+                }
             }
-            if (!bcToLoad[bcName]) {
-                bcToLoad[bcName] = widget
-            }
-        }
-    })
+        })
     const result = Object.entries(bcToLoad).map(([bcName, widget]) => {
         // TODO: Row meta request should be scheduled after `bcFetchDataSuccess` here
         // (now it is scheduled in bcFetchDataRequest epic)

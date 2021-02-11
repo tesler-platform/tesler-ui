@@ -6,7 +6,6 @@ import { $do } from '../../actions/actions'
 import { MultivalueSingleValue } from '../../interfaces/data'
 import MultivalueTag from '../ui/Multivalue/MultivalueTag'
 import { MultivalueFieldMeta } from '../../interfaces/widget'
-import { buildBcUrl } from '../../utils/strings'
 
 export interface MultivalueFieldOwnProps {
     widgetName: string // TODO: for future pagination support
@@ -22,7 +21,12 @@ export interface MultivalueFieldProps extends MultivalueFieldOwnProps {
     cursor: string
     page: number
     popupBcName: string
-    popupRowMetaDone: boolean
+    /**
+     * @deprecated TODO: Remove in 2.0.0; initially existed to prevent race condition
+     * when opening popup that still fetches row meta, but after introducing lazy load
+     * for popup lost its relevance
+     */
+    popupRowMetaDone?: boolean
     fieldKey: string
     onRemove: (
         bcName: string,
@@ -32,7 +36,7 @@ export interface MultivalueFieldProps extends MultivalueFieldOwnProps {
         newValue: MultivalueSingleValue[],
         removedItem: MultivalueSingleValue
     ) => void
-    onMultivalueAssocOpen: () => void
+    onMultivalueAssocOpen: (bcName: string, widgetFieldMeta: MultivalueFieldMeta, page: number, widgetName?: string) => void
 }
 
 /**
@@ -54,7 +58,6 @@ const MultivalueField: FunctionComponent<MultivalueFieldProps> = props => {
             widgetFieldMeta={props.widgetFieldMeta}
             page={props.page}
             bcName={props.bcName}
-            loading={props.popupBcName && !props.popupRowMetaDone}
             metaError={props.metaError}
             placeholder={props.placeholder}
         />
@@ -66,21 +69,18 @@ function mapStateToProps(store: Store, ownProps: MultivalueFieldOwnProps) {
     // const widget = store.view.widgets.find(widget => widget.name === ownProps.widgetName)
     // const bc = store.screen.bo.bc[widget.bcName]
     const popupBcName = ownProps.widgetFieldMeta.popupBcName
-    const bcUrl = buildBcUrl(popupBcName, true)
-    const popupRowMetaDone = !!store.view.rowMeta[popupBcName]?.[bcUrl]?.fields
     return {
         cursor: store.screen.bo.bc[ownProps.bcName]?.cursor,
         page: 0,
         popupBcName: popupBcName,
         assocValueKey: ownProps.widgetFieldMeta.assocValueKey,
-        fieldKey: ownProps.widgetFieldMeta.key,
-        popupRowMetaDone: popupRowMetaDone
+        fieldKey: ownProps.widgetFieldMeta.key
     }
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {
     return {
-        onMultivalueAssocOpen: (bcName: string, widgetFieldMeta: MultivalueFieldMeta, page: number) => {
+        onMultivalueAssocOpen: (bcName: string, widgetFieldMeta: MultivalueFieldMeta, page: number, widgetName?: string) => {
             // TODO: for future pagination support
             // if (page !== 1) {
             //   dispatch($do.componentChangePage({page: 1, bcName: popupBcName, isPopup: true}))
@@ -90,7 +90,8 @@ function mapDispatchToProps(dispatch: Dispatch) {
                     assocValueKey: widgetFieldMeta.assocValueKey,
                     bcName: widgetFieldMeta.popupBcName,
                     calleeBCName: bcName,
-                    associateFieldKey: widgetFieldMeta.key
+                    associateFieldKey: widgetFieldMeta.key,
+                    widgetName
                 })
             )
         },
