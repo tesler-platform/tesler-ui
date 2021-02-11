@@ -5,8 +5,6 @@ import { connect } from 'react-redux'
 import { PickMap } from '../../interfaces/data'
 import ReadOnlyField from '../ui/ReadOnlyField/ReadOnlyField'
 import { ChangeDataItemPayload, BaseFieldProps } from '../Field/Field'
-import { Store } from '../../interfaces/store'
-import { buildBcUrl } from '../../utils/strings'
 
 interface IPickListWidgetInputOwnProps extends BaseFieldProps {
     parentBCName: string
@@ -18,8 +16,13 @@ interface IPickListWidgetInputOwnProps extends BaseFieldProps {
 
 interface IPickListWidgetInputProps extends IPickListWidgetInputOwnProps {
     onChange: (payload: ChangeDataItemPayload) => void
-    onClick: (bcName: string, pickMap: PickMap) => void
-    popupRowMetaDone: boolean
+    onClick: (bcName: string, pickMap: PickMap, widgetName?: string) => void
+    /**
+     * @deprecated TODO: Remove in 2.0.0; initially existed to prevent race condition
+     * when opening popup that still fetches row meta, but after introducing lazy load
+     * for popup lost its relevance
+     */
+    popupRowMetaDone?: boolean
 }
 
 /**
@@ -53,8 +56,8 @@ const PickListField: React.FunctionComponent<IPickListWidgetInputProps> = props 
     }, [props.pickMap, props.onChange, props.parentBCName, props.cursor])
 
     const handleClick = React.useCallback(() => {
-        props.onClick(props.bcName, props.pickMap)
-    }, [props.onClick, props.bcName, props.pickMap])
+        props.onClick(props.bcName, props.pickMap, props.widgetName)
+    }, [props.onClick, props.bcName, props.pickMap, props.widgetName])
 
     return (
         <PickInput
@@ -63,27 +66,16 @@ const PickListField: React.FunctionComponent<IPickListWidgetInputProps> = props 
             onClick={handleClick}
             onClear={handleClear}
             placeholder={props.placeholder}
-            loading={props.bcName && !props.popupRowMetaDone}
         />
     )
-}
-
-function mapStateToProps(store: Store, ownProps: IPickListWidgetInputOwnProps) {
-    const popupBcName = ownProps?.bcName
-    const bcUrl = buildBcUrl(popupBcName, true)
-    const popupRowMetaDone = !!store.view.rowMeta[popupBcName]?.[bcUrl]?.fields
-
-    return {
-        popupRowMetaDone: popupRowMetaDone
-    }
 }
 
 const mapDispatchToProps = (dispatch: any) => ({
     onChange: (payload: ChangeDataItemPayload) => {
         return dispatch($do.changeDataItem(payload))
     },
-    onClick: (bcName: string, pickMap: PickMap) => {
-        dispatch($do.showViewPopup({ bcName }))
+    onClick: (bcName: string, pickMap: PickMap, widgetName?: string) => {
+        dispatch($do.showViewPopup({ bcName, widgetName }))
         dispatch($do.viewPutPickMap({ map: pickMap, bcName }))
     }
 })
@@ -91,6 +83,6 @@ const mapDispatchToProps = (dispatch: any) => ({
 /**
  * @category Components
  */
-const ConnectedPickListField = connect(mapStateToProps, mapDispatchToProps)(PickListField)
+const ConnectedPickListField = connect(null, mapDispatchToProps)(PickListField)
 
 export default ConnectedPickListField

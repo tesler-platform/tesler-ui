@@ -19,6 +19,7 @@ describe('showFileUploadPopup', () => {
                 expect.objectContaining(
                     $do.showViewPopup({
                         bcName: 'bcExampleAssoc',
+                        widgetName: 'test-widget',
                         calleeBCName: 'bcExample',
                         active: true
                     })
@@ -40,6 +41,7 @@ describe('showFileUploadPopup', () => {
                 expect.objectContaining(
                     $do.showViewPopup({
                         bcName: 'some-value',
+                        widgetName: 'test-widget',
                         calleeBCName: 'bcExample',
                         active: true
                     })

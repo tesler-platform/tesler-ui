@@ -5,7 +5,7 @@ import { $do, AnyAction, Epic, types } from '../actions/actions'
 import { Observable } from 'rxjs/Observable'
 import { OperationTypeCrud, AssociatedItem, OperationErrorEntity, OperationError } from '../interfaces/operation'
 import { DataItem, MultivalueSingleValue } from '../interfaces/data'
-import { WidgetTableHierarchy, WidgetTableMeta, WidgetTypes } from '../interfaces/widget'
+import { PopupWidgetTypes, WidgetTableHierarchy, WidgetTableMeta, WidgetTypes } from '../interfaces/widget'
 import * as api from '../api/api'
 import { buildBcUrl } from '../utils/strings'
 import { openButtonWarningNotification } from '../utils/notifications'
@@ -39,7 +39,7 @@ export const bcFetchDataEpic: Epic = (action$, store) =>
         .mergeMap(action => {
             const state = store.getState()
             const bcName = action.payload.bcName
-            const widgetName = (action.payload as any).widgetName // TODO: interface should specify widgetName
+            const widgetName = action.payload.widgetName
             const bc = state.screen.bo.bc[bcName]
             const { cursor, page } = bc
             const limit = state.view.widgets.find(i => i.bcName === bcName)?.limit || bc.limit
@@ -54,15 +54,28 @@ export const bcFetchDataEpic: Epic = (action$, store) =>
                 return Observable.empty()
             }
 
-            const anyHierarchyWidget = state.view.widgets.find(widget => {
+            /**
+             * TODO: Widget name will be mandatory in 2.0.0 but until then collision-vulnarable fallback is provided
+             * through business component match
+             */
+            const widget =
+                state.view.widgets.find(item => item.name === widgetName) ?? state.view.widgets.find(item => item.bcName === bcName)
+
+            const anyHierarchyWidget = state.view.widgets.find(item => {
                 return (
+<<<<<<< HEAD
                     widget.bcName === bcName &&
                     widget.type === WidgetTypes.AssocListPopup &&
                     (widget.options?.hierarchy || widget.options?.hierarchyFull)
+=======
+                    item.bcName === bcName &&
+                    item.type === WidgetTypes.AssocListPopup &&
+                    (item.options?.hierarchy || item.options?.hierarchySameBc || item.options?.hierarchyFull)
+>>>>>>> 704bd66... Lazy load for popup widgets
                 )
             })
-            const fullHierarchyWidget = state.view.widgets.find(widget => {
-                return widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup && widget.options?.hierarchyFull
+            const fullHierarchyWidget = state.view.widgets.find(item => {
+                return item.bcName === bcName && item.type === WidgetTypes.AssocListPopup && item.options?.hierarchyFull
             })
 
             const limitBySelfCursor = state.router.bcPath?.includes(`${bcName}/${cursor}`)
@@ -125,6 +138,7 @@ export const bcFetchDataEpic: Epic = (action$, store) =>
                         action.type === types.bcFetchDataRequest && action.payload.depth
                             ? Observable.of<AnyAction>($do.bcChangeDepthCursor({ bcName, cursor: newCursor, depth: action.payload.depth }))
                             : changeCurrentCursor
+<<<<<<< HEAD
                     const fetchChildrenBcData = data.data?.length
                         ? Object.entries(getBcChildren(bcName, state.view.widgets, state.screen.bo.bc)).map(entry => {
                               const [childBcName, widgetNames] = entry
@@ -138,6 +152,57 @@ export const bcFetchDataEpic: Epic = (action$, store) =>
                               })
                           })
                         : Observable.empty<never>()
+=======
+                    const parentOfNotLazyWidget = state.view.widgets.some(item => {
+                        return state.screen.bo.bc[item.bcName]?.parentName === bcName
+                    })
+                    const lazyWidget = PopupWidgetTypes.includes(widget.type as typeof PopupWidgetTypes[0]) && !parentOfNotLazyWidget
+                    const infiniteLoopProtection = depthLevel > maxDepthLevel
+                    let fetchChildrenBcData: Observable<AnyAction>
+
+                    if (lazyWidget || !data.data?.length || (depthLevel && infiniteLoopProtection)) {
+                        fetchChildrenBcData = Observable.empty<never>()
+                    } else {
+                        fetchChildrenBcData = depthLevel
+                            ? Observable.of(
+                                  $do.bcFetchDataRequest({
+                                      bcName,
+                                      depth: depthLevel + 1,
+                                      widgetName: '',
+                                      ignorePageLimit: true
+                                  })
+                              )
+                            : Observable.concat(
+                                  ...Object.entries(getBcChildren(bcName, state.view.widgets, state.screen.bo.bc)).map(entry => {
+                                      const [childBcName, widgetNames] = entry
+                                      const childWidgetLazy =
+                                          state.view.widgets.some(
+                                              item =>
+                                                  widgetNames.includes(item.name) &&
+                                                  PopupWidgetTypes.includes(item.type as typeof PopupWidgetTypes[0])
+                                          ) &&
+                                          !state.view.widgets.some(item => {
+                                              return state.screen.bo.bc[item.bcName]?.parentName === childBcName
+                                          })
+                                      if (childWidgetLazy) {
+                                          return Observable.empty<never>()
+                                      }
+                                      return Observable.of(
+                                          $do.bcFetchDataRequest({
+                                              bcName: childBcName,
+                                              widgetName: widgetNames[0],
+                                              ignorePageLimit:
+                                                  (action.type === types.bcFetchDataRequest && action.payload.ignorePageLimit) ||
+                                                  action.type === types.showViewPopup,
+                                              keepDelta:
+                                                  !!anyHierarchyWidget ||
+                                                  (action.type === types.bcFetchDataRequest && action.payload.keepDelta)
+                                          })
+                                      )
+                                  })
+                              )
+                    }
+>>>>>>> 704bd66... Lazy load for popup widgets
 
                     return Observable.concat(
                         changeCursors,
@@ -150,7 +215,7 @@ export const bcFetchDataEpic: Epic = (action$, store) =>
                                 hasNext: data.hasNext
                             })
                         ),
-                        action.type === types.bcFetchDataRequest && action.payload.depth > 1
+                        action.type === types.bcFetchDataRequest && (lazyWidget || action.payload.depth > 1)
                             ? Observable.empty<never>()
                             : Observable.of<AnyAction>($do.bcFetchRowMeta({ widgetName, bcName })),
                         fetchChildrenBcData

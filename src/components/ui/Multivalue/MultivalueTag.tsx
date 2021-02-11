@@ -10,11 +10,15 @@ export interface MultivalueTagProps {
     placeholder?: string
     value: MultivalueSingleValue[]
     widgetFieldMeta: MultivalueFieldMeta
+    /**
+     * @deprecated TODO: Remove in 2.0.0 in favor of `widgetName`
+     */
     bcName: string
+    widgetName?: string
     loading?: boolean
     page: number
     metaError: string
-    onPopupOpen: (bcName: string, widgetFieldMeta: MultivalueFieldMeta, page: number) => void
+    onPopupOpen: (bcName: string, widgetFieldMeta: MultivalueFieldMeta, page: number, widgetName?: string) => void
     onChange: (newValue: MultivalueSingleValue[], removedValue: MultivalueSingleValue) => void
 }
 
@@ -26,11 +30,11 @@ export interface MultivalueTagProps {
 const MultivalueTag: React.FunctionComponent<MultivalueTagProps> = props => {
     const loading = props.loading
     const handleOpen = React.useCallback(() => {
-        const { disabled, onPopupOpen, bcName, page, widgetFieldMeta } = props
+        const { disabled, onPopupOpen, bcName, widgetName, page, widgetFieldMeta } = props
         if (!disabled) {
-            onPopupOpen(bcName, widgetFieldMeta, page)
+            onPopupOpen(bcName, widgetFieldMeta, page, widgetName)
         }
-    }, [props.disabled, props.onPopupOpen, props.bcName, props.page, props.widgetFieldMeta])
+    }, [props.disabled, props.onPopupOpen, props.bcName, props.page, props.widgetFieldMeta, props.widgetName])
 
     const handleDeleteTag = React.useCallback(
         (recordId: string) => {
