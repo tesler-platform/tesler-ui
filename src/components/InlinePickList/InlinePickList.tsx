@@ -25,7 +25,7 @@ interface InlinePickListOwnProps extends BaseFieldProps {
 
 interface InlinePickListProps extends InlinePickListOwnProps {
     data: DataItem[]
-    onClick: (bcName: string, pickMap: PickMap) => void
+    onClick: (bcName: string, pickMap: PickMap, widgetName?: string) => void
     onChange: (payload: ChangeDataItemPayload) => void
     onSearch: (bcName: string, searchSpec: string, searchString: string) => void
 }
@@ -63,7 +63,7 @@ const InlinePickList: React.FunctionComponent<InlinePickListProps> = props => {
 
     const handleClick = React.useCallback(() => {
         if (!props.disabled) {
-            props.onClick(props.popupBcName, props.pickMap)
+            props.onClick(props.popupBcName, props.pickMap, props.widgetName)
         }
     }, [props.disabled, props.popupBcName, props.pickMap])
 
@@ -127,8 +127,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     onChange: (payload: ChangeDataItemPayload) => {
         return dispatch($do.changeDataItem(payload))
     },
-    onClick: (bcName: string, pickMap: PickMap) => {
-        dispatch($do.showViewPopup({ bcName }))
+    onClick: (bcName: string, pickMap: PickMap, widgetName?: string) => {
+        dispatch($do.showViewPopup({ bcName, widgetName }))
         dispatch($do.viewPutPickMap({ map: pickMap, bcName }))
     },
     onSearch: (bcName: string, searchSpec: string, searchString: string) => {

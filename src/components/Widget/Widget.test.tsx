@@ -178,7 +178,7 @@ describe('widget visibility', () => {
         store.getState().popupData = { bcName: null }
     })
 
-    it('shows popup widgets only when their are opened', () => {
+    it('shows popup widgets only when they are opened', () => {
         PopupWidgetTypes.forEach(popupWidgetType => {
             const wrapper = mount(
                 <Provider store={store}>
@@ -186,7 +186,7 @@ describe('widget visibility', () => {
                 </Provider>
             )
             expect(wrapper.find(widgetNames[popupWidgetType]).length).toBe(0)
-            store.dispatch($do.showViewPopup({ bcName: exampleBcName }))
+            store.dispatch($do.showViewPopup({ bcName: exampleBcName, widgetName: '1' }))
             wrapper.update()
             expect(wrapper.find(widgetNames[popupWidgetType]).length).toBe(1)
             store.dispatch($do.closeViewPopup({ bcName: exampleBcName }))

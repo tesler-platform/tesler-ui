@@ -77,7 +77,8 @@ describe('`<Pagination />` page mode', () => {
             expect.objectContaining(
                 $do.bcChangePage({
                     bcName: 'bcExample',
-                    page: 7
+                    page: 7,
+                    widgetName: 'widgetExample'
                 })
             )
         )
@@ -86,7 +87,8 @@ describe('`<Pagination />` page mode', () => {
             expect.objectContaining(
                 $do.bcChangePage({
                     bcName: 'bcExample',
-                    page: 9
+                    page: 9,
+                    widgetName: 'widgetExample'
                 })
             )
         )

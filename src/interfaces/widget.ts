@@ -75,6 +75,15 @@ export interface WidgetMeta {
     type: WidgetTypes | string // TODO: Как учитывать типы клиентских виджетов кроме string?
     title: string // отображаемое название,
     bcName: string
+    /**
+     * Business components ancestors hierarchy
+     *
+     * TODO: Will be mandatory (but nullable) in 2.0.0
+     *
+     * It is declared in `WidgetDTO` of Tesler API, can be null for widgets without
+     * business component (headers, navigation tabs, etc.)
+     */
+    url?: string | null
     position: number
     limit?: number
     gridWidth: number // 1-24

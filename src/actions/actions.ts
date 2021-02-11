@@ -649,6 +649,7 @@ export class ActionPayloadTypes {
          * @deprecated TODO: Remove in 2.0.0 in favor of widget name
          */
         bcName: string
+        widgetName?: string
         /**
          * @deprecated TODO: Remove in 2.0.0 in favor of widget name
          */
@@ -771,12 +772,17 @@ export class ActionPayloadTypes {
     } = z
 
     /**
-     * TODO
+     * Manually update business component by fetching its data and and row meta
      */
     bcForceUpdate: {
+        /**
+         * @deprecated Will be removed in 2.0.0 in favor of `widgetName`
+         */
         bcName: string
         /**
          * What widget requires data (widget can only request its own data here)
+         *
+         * TODO: Will be mandatory in 2.0.0
          */
         widgetName?: string
     } = z
@@ -1023,11 +1029,23 @@ export class ActionPayloadTypes {
     } = z
 
     /**
-     * TODO
+     * Fetches data for the new page of business component, replacing existing data
      */
     bcChangePage: {
+        /**
+         * Business component changing the page
+         *
+         * @deprecated TODO: Will be removed in 2.0.0 in favor of `widgetNam`
+         */
         bcName: string
+        /**
+         * Requested page number
+         */
         page: number
+        /**
+         * Widget changing the page
+         */
+        widgetName?: string
     } = z
 
     /**

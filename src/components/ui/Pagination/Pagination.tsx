@@ -96,7 +96,7 @@ const Pagination: React.FunctionComponent<PaginationAllProps> = props => {
 
     const onPrevPage = React.useCallback(() => {
         const newPage = page - 1
-        dispatch($do.bcChangePage({ bcName, page: newPage }))
+        dispatch($do.bcChangePage({ bcName, page: newPage, widgetName: props.widgetName }))
         if (props.onChangePage) {
             props.onChangePage(newPage)
         }
@@ -104,7 +104,7 @@ const Pagination: React.FunctionComponent<PaginationAllProps> = props => {
 
     const onNextPage = React.useCallback(() => {
         const newPage = page + 1
-        dispatch($do.bcChangePage({ bcName, page: newPage }))
+        dispatch($do.bcChangePage({ bcName, page: newPage, widgetName: props.widgetName }))
         if (props.onChangePage) {
             props.onChangePage(newPage)
         }
