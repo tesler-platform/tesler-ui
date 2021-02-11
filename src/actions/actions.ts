@@ -161,7 +161,7 @@ export class ActionPayloadTypes {
          *
          * @deprecated TODO: 2.0.0 Should be removed in favor of widgetName
          */
-        bcName: string
+        bcName?: string
         /**
          * The level of hierarchy to fetch data for
          *
