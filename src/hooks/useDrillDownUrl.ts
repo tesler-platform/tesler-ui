@@ -13,6 +13,9 @@ import { buildBcUrl } from '../utils/strings'
  */
 export function useDrillDownUrl(bcName: string, fieldMeta: WidgetFieldBase, cursor: string): string | null {
     const drillDownLink = useSelector((store: Store) => {
+        if (!fieldMeta.drillDown) {
+            return null
+        }
         const record = store.data[bcName]?.find(dataItem => dataItem.id === cursor)
         const bcUrl = buildBcUrl(bcName, true)
         const rowMeta = bcUrl && store.view.rowMeta[bcName]?.[bcUrl]
