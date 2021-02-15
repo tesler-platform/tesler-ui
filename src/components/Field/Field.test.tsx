@@ -25,8 +25,10 @@ import ReadOnlyField from '../ui/ReadOnlyField/ReadOnlyField'
 import CheckboxPicker from '../ui/CheckboxPicker/CheckboxPicker'
 import RadioButton from '../ui/RadioButton/RadioButton'
 import MultivalueHover from '../ui/Multivalue/MultivalueHover'
+import { $do } from '../../actions/actions'
 
 const testBcName = 'bcExample'
+const testBcNameNoRowMeta = 'testBcNameNoRowMeta'
 const initialCursor = '1001'
 
 describe('Readonly field drilldown', () => {
@@ -44,16 +46,46 @@ describe('Readonly field drilldown', () => {
 
     const fieldProperties = {
         bcName: testBcName,
-        cursor: drillDownCursor,
+        cursor: initialCursor,
         widgetName: 'name',
         widgetFieldMeta: fieldMeta,
         readonly: true
     }
 
+    const fieldPropertiesNoRowMeta = {
+        ...fieldProperties,
+        bcName: testBcNameNoRowMeta
+    }
+
     beforeAll(() => {
         store = mockStore()
         store.getState().data = {
-            [testBcName]: [{ id: drillDownCursor, vstamp: 1 }]
+            [testBcName]: [
+                { id: initialCursor, vstamp: 1 },
+                { id: drillDownCursor, vstamp: 1 }
+            ]
+        }
+        store.getState().view = {
+            name: '',
+            url: '',
+            widgets: [],
+            pendingDataChanges: {},
+            handledForceActive: {},
+            metaInProgress: {},
+            rowMeta: {
+                [testBcName]: {
+                    [`${testBcName}/${initialCursor}`]: {
+                        fields: [
+                            {
+                                key: 'someInput',
+                                drillDown: `${testBcName}/${drillDownCursor}`,
+                                currentValue: '12345'
+                            }
+                        ],
+                        actions: []
+                    }
+                }
+            }
         }
     })
 
@@ -67,8 +99,11 @@ describe('Readonly field drilldown', () => {
         }
     })
 
-    // TODO: check drilldowns, broken test
-    it.skip('is rendered and do action on click', () => {
+    it('is rendered and do action on click', () => {
+        const dispatch = jest.fn()
+        const mock = jest.spyOn(store, 'dispatch').mockImplementation(action => {
+            return dispatch(action)
+        })
         const wrapper = mount(
             <Provider store={store}>
                 <Field {...fieldProperties} />
@@ -76,13 +111,30 @@ describe('Readonly field drilldown', () => {
         )
 
         expect(wrapper.find(Field).length).toBe(1)
-        const link = wrapper.find(ActionLink)
+        const link = wrapper.find('Memo(ActionLink)')
         expect(link.length).toBe(1)
         link.simulate('click')
-        expect(store.getState().screen.bo.bc[testBcName].cursor).toBe(drillDownCursor)
+        expect(dispatch).toHaveBeenCalledWith(
+            expect.objectContaining(
+                $do.userDrillDown({ widgetName: 'name', cursor: initialCursor, bcName: testBcName, fieldKey: 'someInput' })
+            )
+        )
+        mock.mockRestore()
     })
 
-    it('behaviour can be supressed', () => {
+    it("doesn't render without row-meta", () => {
+        const wrapper = mount(
+            <Provider store={store}>
+                <Field {...fieldPropertiesNoRowMeta} />
+            </Provider>
+        )
+
+        expect(wrapper.find(Field).length).toBe(1)
+        const link = wrapper.find('Memo(ActionLink)')
+        expect(link.length).toBe(0)
+    })
+
+    it('behaviour can be suppressed', () => {
         store.getState().view.widgets = [
             {
                 name: 'name',
