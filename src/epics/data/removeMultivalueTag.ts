@@ -140,7 +140,7 @@ export function removeMultivalueTagImpl(
     }
     // Non-full hierarchies drops removed item's `_associate` flag`
     // And also updates source record value
-    if (widget.options?.hierarchy || widget.options?.hierarchySameBc) {
+    if (widget.options?.hierarchy) {
         return Observable.concat(
             Observable.of(
                 $do.changeDataItem({

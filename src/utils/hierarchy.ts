@@ -44,12 +44,13 @@ export function getColumnWidth(
     const indentLevel = depthLevel - 1
     // exclude hidden fields
     const showedFields = fields
-        ?.filter(item =>
-            rowMetaFields
-                ?.filter(i => !item.hidden)
-                ?.map(i => item.key)
-                ?.includes(item.key)
-        )
+        ?.filter(item => {
+            const rowMetaField = rowMetaFields?.find(itemRowMeta => itemRowMeta.key === item.key)
+            if (rowMetaField) {
+                return !rowMetaField.hidden
+            }
+            return true
+        })
         ?.filter(item => item.type !== FieldType.hidden)
         ?.filter(item => !item.hidden)
     const currentField = showedFields?.find(item => item.key === columnName)

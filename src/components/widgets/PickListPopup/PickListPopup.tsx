@@ -10,7 +10,6 @@ import { Table, Skeleton } from 'antd'
 import { ColumnProps } from 'antd/es/table'
 import { DataItem, PickMap } from '../../../interfaces/data'
 import { ChangeDataItemPayload } from '../../Field/Field'
-import SameBcHierarchyTable from '../../SameBcHierarchyTable/SameBcHierarchyTable'
 import HierarchyTable from '../../../components/HierarchyTable/HierarchyTable'
 import FullHierarchyTable from '../../FullHierarchyTable/FullHierarchyTable'
 import ColumnTitle from '../../ColumnTitle/ColumnTitle'
@@ -133,11 +132,9 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
     const footer = props.components?.footer === undefined ? defaultFooter : props.components.footer
 
     const defaultTable =
-        props.widget.options?.hierarchy || props.widget.options?.hierarchySameBc || props.widget.options?.hierarchyFull ? (
+        props.widget.options?.hierarchy || props.widget.options?.hierarchyFull ? (
             props.widget.options.hierarchyFull ? (
                 <FullHierarchyTable meta={props.widget} onRow={onRow} />
-            ) : props.widget.options.hierarchySameBc ? (
-                <SameBcHierarchyTable meta={props.widget} onRow={onRow} />
             ) : (
                 <HierarchyTable meta={props.widget} onRow={onRow} />
             )
