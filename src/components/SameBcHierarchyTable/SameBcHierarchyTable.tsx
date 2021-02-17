@@ -61,6 +61,7 @@ const emptyData: AssociatedItem[] = []
 /**
  *
  * @param props
+ * @deprecated TODO: Will be removed in 2.0.0
  * @category Components
  */
 export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> = props => {
@@ -239,7 +240,9 @@ function mapDispatchToProps(dispatch: Dispatch) {
 }
 
 const ConnectedHierarchyTable = connect(mapStateToProps, mapDispatchToProps)(SameBcHierarchyTable)
+
 /**
+ * @deprecated TODO: Will be removed in 2.0.0
  * @category Components
  */
 export default ConnectedHierarchyTable

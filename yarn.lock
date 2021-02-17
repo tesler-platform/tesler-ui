@@ -396,7 +396,7 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@tesler-ui/schema@^0.2.0":
+"@tesler-ui/schema@0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@tesler-ui/schema/-/schema-0.2.0.tgz#b26a7460e630b278872335bb86784d660468bac8"
   integrity sha512-xHsCNGZ7CMaWgyMeDnZWv+VFdS98qFFt9nVJiXZ4z9KAYvAIKS53iWdXrtSpikB27ZanS4AeMRF88xkjBJw7Mg==

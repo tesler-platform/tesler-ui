@@ -19,6 +19,7 @@ import { useAssocRecords } from '../../hooks/useAssocRecords'
 import Pagination from '../ui/Pagination/Pagination'
 import { PaginationMode } from '../../interfaces/widget'
 import cn from 'classnames'
+import { getColumnWidth } from '../../utils/hierarchy'
 
 interface HierarchyTableOwnProps {
     meta: WidgetTableMeta
@@ -57,7 +58,7 @@ export const Exp: FunctionComponent = (props: any) => {
         return null
     }
     const type = props.expanded ? 'minus-square' : 'plus-square'
-    return <Icon style={{ fontSize: '20px' }} type={type} onClick={e => props.onExpand(props.record, e)} />
+    return <Icon className={styles.expand} type={type} onClick={e => props.onExpand(props.record, e)} />
 }
 
 const emptyArray: string[] = []
@@ -171,7 +172,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = props => {
         setCurrentCursor(null)
     }, [])
 
-    // Вложенный уровень иерархии рисуется новой таблицей
+    // Expanded nodes rendered as nested table component
     const nested = (record: DataItem, index: number, indent: number, expanded: boolean) => {
         if (record.id !== props.cursor) {
             return null
@@ -188,60 +189,77 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = props => {
             />
         )
     }
-
+    const isSameBcHierarchy = props.meta.options?.hierarchySameBc
     const fields = hierarchyLevel ? hierarchyLevel.fields : props.meta.fields
-    const withHierarchyShift = fields.find(field => field.hierarchyShift === true)
+    const withHierarchyShift = fields.some(field => field.hierarchyShift === true)
 
-    // Уровни иерархии отбиваются отступом через пустую колонку с вычисляемой шириной
-    const indentColumn = {
-        title: '',
-        key: '_indentColumn',
-        dataIndex: null as string,
-        className: styles.selectColumn,
-        width: withHierarchyShift ? `${50 + indentLevel * 20}px` : '50px',
-        render: (text: string, dataItem: AssociatedItem): React.ReactNode => {
-            return null
-        }
-    }
+    /**
+     * Hierarchies builded around the same business component rely on identical set of fields for each
+     * level of hierarchy, so the levels are indented by empty cell for field that belongs to top level.
+     *
+     * Regular hierarchies use pseudo-column for indentation
+     */
+    const indentColumn = !isSameBcHierarchy
+        ? [
+              {
+                  title: '',
+                  key: '_indentColumn',
+                  dataIndex: null as string,
+                  className: styles.selectColumn,
+                  width: withHierarchyShift ? `${50 + indentLevel * 20}px` : '50px',
+                  render: (): React.ReactNode => null
+              }
+          ]
+        : []
 
     const fieldCustomProps = React.useMemo(() => {
         return { hierarchyDepth: indentLevel + 1 }
     }, [indentLevel])
     const columns: Array<ColumnProps<DataItem>> = React.useMemo(() => {
         return [
-            indentColumn,
+            ...indentColumn,
             ...fields
                 .filter(item => !item.hidden && item.type !== FieldType.hidden)
-                .map((item: WidgetListField) => ({
-                    title: item.title,
-                    key: item.key,
-                    dataIndex: item.key,
-                    width: item.width,
-                    className: cn({ [styles[`padding${indentLevel}`]]: fields[0].key === item.key && indentLevel && !item.width }),
-                    render: (text: string, dataItem: any) => {
-                        if (item.type === FieldType.multivalue) {
-                            return (
-                                <MultivalueHover
-                                    data={(dataItem[item.key] || emptyMultivalue) as MultivalueSingleValue[]}
-                                    displayedValue={item.displayedKey && dataItem[item.displayedKey]}
-                                />
-                            )
+                .map((item: WidgetListField, index) => {
+                    const itemWidth = isSameBcHierarchy
+                        ? getColumnWidth(item.key, indentLevel, fields, props.rowMetaFields, hierarchyLevels.length, item.width)
+                        : item.width
+                    const className = isSameBcHierarchy
+                        ? styles.sameHierarchyNode
+                        : cn({ [styles[`padding${indentLevel}`]]: fields[0].key === item.key && indentLevel && !item.width })
+                    return {
+                        title: item.title,
+                        key: item.key,
+                        dataIndex: item.key,
+                        width: itemWidth,
+                        className,
+                        render: (text: string, dataItem: any) => {
+                            let node: React.ReactNode
+                            if (item.type === FieldType.multivalue) {
+                                node = (
+                                    <MultivalueHover
+                                        data={(dataItem[item.key] || emptyMultivalue) as MultivalueSingleValue[]}
+                                        displayedValue={item.displayedKey && dataItem[item.displayedKey]}
+                                    />
+                                )
+                            } else {
+                                node = (
+                                    <Field
+                                        bcName={bcName}
+                                        cursor={dataItem.id}
+                                        widgetName={props.meta.name}
+                                        widgetFieldMeta={item}
+                                        readonly
+                                        customProps={fieldCustomProps}
+                                    />
+                                )
+                            }
+                            return hasNested && index === 0 ? <span className={styles.expandPadding}>{node}</span> : node
                         }
-
-                        return (
-                            <Field
-                                bcName={bcName}
-                                cursor={dataItem.id}
-                                widgetName={props.meta.name}
-                                widgetFieldMeta={item}
-                                readonly
-                                customProps={fieldCustomProps}
-                            />
-                        )
                     }
-                }))
+                })
         ]
-    }, [indentLevel, fields])
+    }, [indentLevel, fields, props.rowMetaFields, hasNested])
 
     return (
         <div className={styles.container}>
