@@ -9,7 +9,6 @@ import { createMapDispatchToProps } from '../../../utils/redux'
 import HierarchyTable from '../../../components/HierarchyTable/HierarchyTable'
 import AssocTable from './AssocTable'
 import { Skeleton, Tag } from 'antd'
-import SameBcHierarchyTable from '../../SameBcHierarchyTable/SameBcHierarchyTable'
 import FullHierarchyTable from '../../FullHierarchyTable/FullHierarchyTable'
 import { AssociatedItem } from '../../../interfaces/operation'
 import { BcFilter, FilterType } from '../../../interfaces/filters'
@@ -203,11 +202,9 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
     const title = props.components?.title === undefined ? defaultTitle : props.components.title
 
     const defaultTable =
-        props.widget.options?.hierarchy || props.widget.options?.hierarchySameBc || props.widget.options?.hierarchyFull ? (
+        props.widget.options?.hierarchy || props.widget.options?.hierarchyFull ? (
             props.widget.options.hierarchyFull ? (
                 <FullHierarchyTable meta={props.widget} assocValueKey={props.assocValueKey} selectable />
-            ) : props.widget.options.hierarchySameBc ? (
-                <SameBcHierarchyTable meta={props.widget} assocValueKey={props.assocValueKey} selectable />
             ) : (
                 <HierarchyTable meta={props.widget} assocValueKey={props.assocValueKey} selectable />
             )

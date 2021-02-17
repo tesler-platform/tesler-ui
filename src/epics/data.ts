@@ -12,7 +12,6 @@ import { openButtonWarningNotification } from '../utils/notifications'
 import { getFilters, getSorters } from '../utils/filters'
 import { AxiosError } from 'axios'
 import i18n from 'i18next'
-import { FilterType } from '../interfaces/filters'
 import { matchOperationRole } from '../utils/operations'
 import { PendingValidationFailsFormat } from '../interfaces/view'
 import { removeMultivalueTag } from './data/removeMultivalueTag'
@@ -23,8 +22,6 @@ import { bcFetchRowMetaRequest } from './data/bcFetchRowMetaRequest'
 import { selectView } from './data/selectView'
 import { getBcChildren } from '../utils/bc'
 import { bcSelectDepthRecord } from './data/bcSelectDepthRecord'
-
-const maxDepthLevel = 10
 
 /**
  * Loads BC's data.
@@ -61,25 +58,15 @@ export const bcFetchDataEpic: Epic = (action$, store) =>
                 return (
                     widget.bcName === bcName &&
                     widget.type === WidgetTypes.AssocListPopup &&
-                    (widget.options?.hierarchy || widget.options?.hierarchySameBc || widget.options?.hierarchyFull)
+                    (widget.options?.hierarchy || widget.options?.hierarchyFull)
                 )
             })
             const fullHierarchyWidget = state.view.widgets.find(widget => {
                 return widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup && widget.options?.hierarchyFull
             })
 
-            const sameBcHierarchyOptions = anyHierarchyWidget?.options?.hierarchySameBc && anyHierarchyWidget?.options
-            const depthLevel = sameBcHierarchyOptions && ((action.type === types.bcFetchDataRequest && action.payload.depth) || 1)
-
-            const limitBySelfCursor = !depthLevel && state.router.bcPath?.includes(`${bcName}/${cursor}`)
+            const limitBySelfCursor = state.router.bcPath?.includes(`${bcName}/${cursor}`)
             const bcUrl = buildBcUrl(bcName, limitBySelfCursor)
-            if (depthLevel) {
-                filters.push({
-                    type: depthLevel === 1 ? FilterType.specified : FilterType.equals,
-                    fieldName: sameBcHierarchyOptions.hierarchyParentKey || 'parentId',
-                    value: depthLevel === 1 ? false : depthLevel === 2 ? cursor : bc.depthBc[depthLevel - 1].cursor
-                })
-            }
 
             // Hierarchy widgets has own filter implementation
             const fetchParams: Record<string, any> = {
@@ -111,17 +98,12 @@ export const bcFetchDataEpic: Epic = (action$, store) =>
                 fetchParams._limit = 0
             }
             const canceler = api.createCanceler()
-            const cancelFlow = cancelRequestEpic(
-                action$,
-                cancelRequestActionTypes,
-                canceler.cancel,
-                $do.bcFetchDataFail({ bcName, bcUrl, depth: depthLevel })
-            )
+            const cancelFlow = cancelRequestEpic(action$, cancelRequestActionTypes, canceler.cancel, $do.bcFetchDataFail({ bcName, bcUrl }))
             const cancelByParentBc = cancelRequestEpic(
                 action$,
                 [types.bcSelectRecord],
                 canceler.cancel,
-                $do.bcFetchDataFail({ bcName, bcUrl, depth: depthLevel }),
+                $do.bcFetchDataFail({ bcName, bcUrl }),
                 filteredAction => {
                     const actionBc = filteredAction.payload.bcName
                     return bc.parentName === actionBc
@@ -144,29 +126,17 @@ export const bcFetchDataEpic: Epic = (action$, store) =>
                             ? Observable.of<AnyAction>($do.bcChangeDepthCursor({ bcName, cursor: newCursor, depth: action.payload.depth }))
                             : changeCurrentCursor
                     const fetchChildrenBcData = data.data?.length
-                        ? depthLevel
-                            ? depthLevel <= maxDepthLevel
-                                ? Observable.of(
-                                      $do.bcFetchDataRequest({
-                                          bcName,
-                                          depth: depthLevel + 1,
-                                          widgetName: '',
-                                          ignorePageLimit: true
-                                      })
-                                  )
-                                : Observable.empty<never>()
-                            : Object.entries(getBcChildren(bcName, state.view.widgets, state.screen.bo.bc)).map(entry => {
-                                  const [childBcName, widgetNames] = entry
-                                  return $do.bcFetchDataRequest({
-                                      bcName: childBcName,
-                                      widgetName: widgetNames[0],
-                                      ignorePageLimit:
-                                          (action.type === types.bcFetchDataRequest && action.payload.ignorePageLimit) ||
-                                          action.type === types.showViewPopup,
-                                      keepDelta:
-                                          !!anyHierarchyWidget || (action.type === types.bcFetchDataRequest && action.payload.keepDelta)
-                                  })
+                        ? Object.entries(getBcChildren(bcName, state.view.widgets, state.screen.bo.bc)).map(entry => {
+                              const [childBcName, widgetNames] = entry
+                              return $do.bcFetchDataRequest({
+                                  bcName: childBcName,
+                                  widgetName: widgetNames[0],
+                                  ignorePageLimit:
+                                      (action.type === types.bcFetchDataRequest && action.payload.ignorePageLimit) ||
+                                      action.type === types.showViewPopup,
+                                  keepDelta: !!anyHierarchyWidget || (action.type === types.bcFetchDataRequest && action.payload.keepDelta)
                               })
+                          })
                         : Observable.empty<never>()
 
                     return Observable.concat(
@@ -188,7 +158,7 @@ export const bcFetchDataEpic: Epic = (action$, store) =>
                 })
                 .catch((error: any) => {
                     console.error(error)
-                    return Observable.of($do.bcFetchDataFail({ bcName: action.payload.bcName, bcUrl, depth: depthLevel }))
+                    return Observable.of($do.bcFetchDataFail({ bcName: action.payload.bcName, bcUrl }))
                 })
             return Observable.race(cancelFlow, cancelByParentBc, normalFlow)
         })
