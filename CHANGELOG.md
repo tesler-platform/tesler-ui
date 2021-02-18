@@ -1,3 +1,18 @@
+# Version 1.28.0 (Febraury 18, 2021)
+
+## Features
+
+* :red_circle: [Deprecation warning]: `<SameBcHierarchyTable />` is deprecated and will be removed in 2.0.0; `hierarchySameBc` widget option will continue to be used to display hierarchies with identical set of fields on each hierarchy level ([#599](https://github.com/tesler-platform/tesler-ui/pull/599))
+* Reducers now have access to `originalState` argument that contains the store slice state before its been modified by core reducer; it can be modified and returned from your own reducers and all built-in changes to the store will be ignored in favor of your changes ([#588](https://github.com/tesler-platform/tesler-ui/pull/588))
+* Popup widgets now declared as lazy widgets, i.e. they will not fetch data or row meta until they are visible ([#596](https://github.com/tesler-platform/tesler-ui/pull/596))
+
+## Fixes
+
+* `<MultivalueTag />` component fetched data twice ([#589](https://github.com/tesler-platform/tesler-ui/pull/589))
+* `<FilterField />` incorrectly used `value` instead of `checked` property for checkbox filters; `<FilterPopup />` incorrectly treated empty value ([#593](https://github.com/tesler-platform/tesler-ui/issues/593))
+* `useDrillDownUrl` hook ignored `drillDown` field property in widget description ([#598](https://github.com/tesler-platform/tesler-ui/pull/598))
+* `<HierarchyTable />` is now more consistent in calculating column width width `<FullHierarchyTable />` ([#600](https://github.com/tesler-platform/tesler-ui/pull/600))
+
 # Version 1.27.1 (Febraury 1, 2021)
 
 ## Fixes

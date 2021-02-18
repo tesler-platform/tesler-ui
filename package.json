@@ -1,6 +1,6 @@
 {
   "name": "@tesler-ui/core",
-  "version": "1.27.1",
+  "version": "1.28.0",
   "main": "tesler-ui-core.js",
   "homepage": "https://tesler.io/",
   "types": "index.d.ts",
