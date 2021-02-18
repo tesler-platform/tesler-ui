@@ -146,7 +146,6 @@ describe('bcFetchDataEpic', () => {
                         bcName: 'bcExample',
                         data: [{ id: '9', vstamp: 1 }],
                         bcUrl: 'bcExample',
-                        depth: null,
                         hasNext: true
                     })
                 )
