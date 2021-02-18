@@ -23,14 +23,11 @@ import { buildBcUrl } from '../../utils/strings'
 import { fetchBcData, createCanceler } from '../../api/api'
 import { cancelRequestActionTypes, cancelRequestEpic } from '../../utils/cancelRequestEpic'
 import { ActionsObservable } from 'redux-observable'
-import { DataItem, WidgetOptions, WidgetTypes } from '@tesler-ui/schema'
-import { BcFilter, FilterType } from '../../interfaces/filters'
+import { DataItem, WidgetTypes } from '@tesler-ui/schema'
 import { getFilters, getSorters } from '../../utils/filters'
 import { PopupWidgetTypes, WidgetMeta } from '../../interfaces/widget'
 import { getBcChildren } from '../../utils/bc'
 import { BcMetaState } from '../../interfaces/bc'
-
-const maxDepthLevel = 10
 
 /**
  *
@@ -72,8 +69,7 @@ export function bcFetchDataImpl(
      * through business component match
      */
     const widget = widgets.find(item => item.name === widgetName) ?? widgets.find(item => item.bcName === action.payload.bcName)
-    const bcName = widget.bcName
-    const { depth } = (action as ActionsMap[typeof types.bcFetchDataRequest]).payload
+    const bcName = action.payload.bcName
     const bc = state.screen.bo.bc[bcName]
     const { cursor, page } = bc
     const limit = widgets.find(i => i.bcName === bcName)?.limit || bc.limit
@@ -89,17 +85,18 @@ export function bcFetchDataImpl(
     const anyHierarchyWidget = widgets.find(item => {
         return item.bcName === bcName && item.type === WidgetTypes.AssocListPopup && isHierarchyWidget(item)
     })
+    const fullHierarchyWidget = state.view.widgets.find(item => {
+        return item.bcName === bcName && item.type === WidgetTypes.AssocListPopup && item.options?.hierarchyFull
+    })
 
-    const sameBcHierarchyOptions = anyHierarchyWidget?.options?.hierarchySameBc && anyHierarchyWidget.options
-    const depthLevel = sameBcHierarchyOptions && (depth || 1)
-    const limitBySelfCursor = !depthLevel && state.router.bcPath?.includes(`${bcName}/${cursor}`)
+    const limitBySelfCursor = state.router.bcPath?.includes(`${bcName}/${cursor}`)
     const bcUrl = buildBcUrl(bcName, limitBySelfCursor)
 
     // Hierarchy widgets has own filter implementation
     const fetchParams: Record<string, any> = {
         _page: page,
         _limit: limit,
-        ...getFiltersParams(widget, state.screen.filters[bcName], cursor, bc, depthLevel, widgets, sameBcHierarchyOptions),
+        ...getFilters(fullHierarchyWidget ? [] : state.screen.filters[bcName] || []),
         ...getSorters(sorters)
     }
 
@@ -125,13 +122,13 @@ export function bcFetchDataImpl(
         actionObservable,
         cancelRequestActionTypes,
         canceler.cancel,
-        $do.bcFetchDataFail({ bcName, bcUrl, depth: depthLevel })
+        $do.bcFetchDataFail({ bcName, bcUrl })
     )
     const cancelByParentBc = cancelRequestEpic(
         actionObservable,
         [types.bcSelectRecord],
         canceler.cancel,
-        $do.bcFetchDataFail({ bcName, bcUrl, depth: depthLevel }),
+        $do.bcFetchDataFail({ bcName, bcUrl }),
         filteredAction => {
             const actionBc = filteredAction.payload.bcName
             return bc.parentName === actionBc
@@ -145,16 +142,13 @@ export function bcFetchDataImpl(
                 return state.screen.bo.bc[item.bcName]?.parentName === bcName
             })
             const lazyWidget = PopupWidgetTypes.includes(widget.type as typeof PopupWidgetTypes[0]) && !parentOfNotLazyWidget
-
-            const infiniteLoopProtection = depthLevel > maxDepthLevel
-            if (lazyWidget || !response.data?.length || (depthLevel && infiniteLoopProtection)) {
+            if (lazyWidget && action.type !== types.showViewPopup) {
                 return Observable.empty<never>()
             }
-            const fetchChildren = getChildrenData(action, widgets, state.screen.bo.bc, depthLevel, !!anyHierarchyWidget)
-            const fetchRowMeta =
-                action.type === types.bcFetchDataRequest && action.payload.depth > 1
-                    ? Observable.empty<never>()
-                    : Observable.of<AnyAction>($do.bcFetchRowMeta({ widgetName, bcName }))
+            const fetchChildren = response.data?.length
+                ? getChildrenData(action, widgets, state.screen.bo.bc, !!anyHierarchyWidget)
+                : Observable.empty<never>()
+            const fetchRowMeta = Observable.of<AnyAction>($do.bcFetchRowMeta({ widgetName, bcName }))
 
             return Observable.concat(
                 cursorChange,
@@ -162,7 +156,6 @@ export function bcFetchDataImpl(
                     $do.bcFetchDataSuccess({
                         bcName,
                         data: response.data,
-                        depth: action.type === types.bcFetchDataRequest ? action.payload.depth : null,
                         bcUrl,
                         hasNext: response.hasNext
                     })
@@ -173,7 +166,7 @@ export function bcFetchDataImpl(
         })
         .catch((error: any) => {
             console.error(error)
-            return Observable.of($do.bcFetchDataFail({ bcName: action.payload.bcName, bcUrl, depth: depthLevel }))
+            return Observable.of($do.bcFetchDataFail({ bcName: action.payload.bcName, bcUrl }))
         })
     return [cancelFlow, cancelByParentBc, normalFlow]
 }
@@ -187,7 +180,7 @@ export function bcFetchDataImpl(
  */
 function getCursorChange(data: DataItem[], action: ActionType, prevCursor: string, isHierarchy: boolean) {
     const { bcName } = action.payload
-    const { keepDelta, depth } = (action as ActionsMap[typeof types.bcFetchDataRequest]).payload
+    const { keepDelta } = (action as ActionsMap[typeof types.bcFetchDataRequest]).payload
     const newCursor = data[0]?.id
     const changeCurrentCursor = Observable.of<AnyAction>(
         $do.bcChangeCursors({
@@ -197,11 +190,7 @@ function getCursorChange(data: DataItem[], action: ActionType, prevCursor: strin
             keepDelta: isHierarchy || keepDelta
         })
     )
-    const changeCursors =
-        action.type === types.bcFetchDataRequest && depth
-            ? Observable.of<AnyAction>($do.bcChangeDepthCursor({ bcName, cursor: newCursor, depth }))
-            : changeCurrentCursor
-    return changeCursors
+    return changeCurrentCursor
 }
 
 /**
@@ -209,37 +198,12 @@ function getCursorChange(data: DataItem[], action: ActionType, prevCursor: strin
  * @param action
  * @param widgets
  * @param bcDictionary
- * @param depthLevel
  * @param isHierarchy
  */
-function getChildrenData(
-    action: ActionType,
-    widgets: WidgetMeta[],
-    bcDictionary: Record<string, BcMetaState>,
-    depthLevel: number,
-    isHierarchy: boolean
-) {
+function getChildrenData(action: ActionType, widgets: WidgetMeta[], bcDictionary: Record<string, BcMetaState>, isHierarchy: boolean) {
     const { bcName } = action.payload
     const { ignorePageLimit } = (action as ActionsMap[typeof types.bcFetchDataRequest]).payload
     const { keepDelta } = (action as ActionsMap[typeof types.bcFetchDataRequest]).payload
-
-    /**
-     * Apparently only used for hierarchies builded around the same business component
-     *
-     * Simply repeats data fetch for incremented depth
-     * `ignorePageLimit` is set due to lack of pagination controls for nested nodes
-     */
-    if (depthLevel) {
-        // TODO: Should check `hierarchySameBc` widget option instead
-        return Observable.of(
-            $do.bcFetchDataRequest({
-                bcName,
-                depth: depthLevel + 1,
-                widgetName: '', // TODO: Should not be empty
-                ignorePageLimit: true
-            })
-        )
-    }
 
     return Observable.concat(
         ...Object.entries(getBcChildren(bcName, widgets, bcDictionary)).map(entry => {
@@ -251,7 +215,7 @@ function getChildrenData(
                 !widgets.some(item => {
                     return bcDictionary[item.bcName]?.parentName === childBcName
                 })
-            if (childWidgetLazy) {
+            if (childWidgetLazy && action.type !== types.showViewPopup) {
                 return Observable.empty<never>()
             }
             return Observable.of(
@@ -267,54 +231,13 @@ function getChildrenData(
 }
 
 /**
- * Builds filter parameters
- *
- * Full hierarchies are filtered locally
- *
- * @param item
- * @param filters
- * @param cursor
- * @param bc
- * @param depthLevel
- * @param widgets @deprecated TODO: Remove in favor of `item`
- * @param sameBcHierarchyOptions @deprecated TODO: Deductable from `item`
- * @returns Dictionary of GET query parameters
- */
-function getFiltersParams(
-    widget: WidgetMeta,
-    filters: BcFilter[],
-    cursor: string,
-    bc: BcMetaState,
-    depthLevel: number,
-    widgets: WidgetMeta[],
-    sameBcHierarchyOptions: WidgetOptions
-): Record<string, string> {
-    const result = filters ? [...filters] : []
-    const fullHierarchyWidget = widgets.find(item => {
-        return item.bcName === bc.name && item.type === WidgetTypes.AssocListPopup && item.options?.hierarchyFull
-    })
-    // Full hierarchies are filtered locally
-    if (fullHierarchyWidget) {
-        return {}
-    }
-    if (depthLevel) {
-        result.push({
-            type: depthLevel === 1 ? FilterType.specified : FilterType.equals,
-            fieldName: sameBcHierarchyOptions.hierarchyParentKey || 'parentId',
-            value: depthLevel === 1 ? false : depthLevel === 2 ? cursor : bc.depthBc[depthLevel - 1].cursor
-        })
-    }
-    return getFilters(result)
-}
-
-/**
  * Determines if the argument is hierarchy widget
  *
  * TODO: Should be typeguard when hierarchy widgets will have actual distinct interfaces
  *
  * @param widget Widget to check
- * @returns `true` if widget option `hierarchy`, `hierarchySameBc` or `hierarchyFull` is set; `else` otherwise
+ * @returns `true` if widget option `hierarchy` or `hierarchyFull` is set; `else` otherwise
  */
 function isHierarchyWidget(widget: WidgetMeta) {
-    return widget.options?.hierarchy || widget.options?.hierarchySameBc || widget.options?.hierarchyFull
+    return widget.options?.hierarchy || widget.options?.hierarchyFull
 }
