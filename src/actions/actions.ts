@@ -165,7 +165,7 @@ export class ActionPayloadTypes {
         /**
          * The level of hierarchy to fetch data for
          *
-         * @deprecated TODO: 2.0.0 Should be all moved to separate hierarchy-specific action
+         * @deprecated Do not use; TODO: Will be removed in 2.0.0
          */
         depth?: number
         /**
@@ -822,6 +822,8 @@ export class ActionPayloadTypes {
     /**
      * Wrapper action to sets a cursor for the specified depth level of hierarchy widget
      * builded around a single business component and fetch children for that record.
+     *
+     * @deprecated Do not use. TODO: Will be removed in 2.0.0
      */
     bcSelectDepthRecord: {
         /**
