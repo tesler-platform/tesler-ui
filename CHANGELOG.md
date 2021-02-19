@@ -1,3 +1,9 @@
+# Version 1.28.2 (Febraury 20, 2021)
+
+## Fixes
+
+* `bcFetchData` used a first available widget when resolving child business component instead of a first available non-lazy widget.
+
 # Version 1.28.1 (Febraury 19, 2021)
 
 ## Fixes
