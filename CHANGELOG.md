@@ -1,3 +1,9 @@
+# Version 1.28.1 (Febraury 19, 2021)
+
+## Fixes
+
+* Lazy load erroneously applied to nested BC in hierarchies ([#602](https://github.com/tesler-platform/tesler-ui/pull/602))
+
 # Version 1.28.0 (Febraury 18, 2021)
 
 ## Features
