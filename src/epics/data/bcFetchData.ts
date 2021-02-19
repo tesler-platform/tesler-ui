@@ -83,10 +83,10 @@ export function bcFetchDataImpl(
     }
 
     const anyHierarchyWidget = widgets.find(item => {
-        return item.bcName === bcName && item.type === WidgetTypes.AssocListPopup && isHierarchyWidget(item)
+        return item.bcName === widget.bcName && item.type === WidgetTypes.AssocListPopup && isHierarchyWidget(item)
     })
     const fullHierarchyWidget = state.view.widgets.find(item => {
-        return item.bcName === bcName && item.type === WidgetTypes.AssocListPopup && item.options?.hierarchyFull
+        return item.bcName === widget.bcName && item.type === WidgetTypes.AssocListPopup && item.options?.hierarchyFull
     })
 
     const limitBySelfCursor = state.router.bcPath?.includes(`${bcName}/${cursor}`)
@@ -139,10 +139,14 @@ export function bcFetchDataImpl(
         .mergeMap(response => {
             const cursorChange = getCursorChange(response.data, action, cursor, !!anyHierarchyWidget)
             const parentOfNotLazyWidget = widgets.some(item => {
-                return state.screen.bo.bc[item.bcName]?.parentName === bcName
+                return (
+                    state.screen.bo.bc[item.bcName]?.parentName === bcName &&
+                    !PopupWidgetTypes.includes(item.type as typeof PopupWidgetTypes[0])
+                )
             })
             const lazyWidget = PopupWidgetTypes.includes(widget.type as typeof PopupWidgetTypes[0]) && !parentOfNotLazyWidget
-            if (lazyWidget && action.type !== types.showViewPopup) {
+            const skipLazy = state.view.popupData?.bcName !== widget.bcName
+            if (lazyWidget && skipLazy) {
                 return Observable.empty<never>()
             }
             const fetchChildren = response.data?.length
@@ -204,7 +208,6 @@ function getChildrenData(action: ActionType, widgets: WidgetMeta[], bcDictionary
     const { bcName } = action.payload
     const { ignorePageLimit } = (action as ActionsMap[typeof types.bcFetchDataRequest]).payload
     const { keepDelta } = (action as ActionsMap[typeof types.bcFetchDataRequest]).payload
-
     return Observable.concat(
         ...Object.entries(getBcChildren(bcName, widgets, bcDictionary)).map(entry => {
             const [childBcName, widgetNames] = entry
@@ -215,7 +218,8 @@ function getChildrenData(action: ActionType, widgets: WidgetMeta[], bcDictionary
                 !widgets.some(item => {
                     return bcDictionary[item.bcName]?.parentName === childBcName
                 })
-            if (childWidgetLazy && action.type !== types.showViewPopup) {
+            const skipLazy = action.type !== types.showViewPopup
+            if (childWidgetLazy && skipLazy) {
                 return Observable.empty<never>()
             }
             return Observable.of(
