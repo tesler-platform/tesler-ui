@@ -211,21 +211,24 @@ function getChildrenData(action: ActionType, widgets: WidgetMeta[], bcDictionary
     return Observable.concat(
         ...Object.entries(getBcChildren(bcName, widgets, bcDictionary)).map(entry => {
             const [childBcName, widgetNames] = entry
+            const nonLazyWidget = widgets.find(
+                item => widgetNames.includes(item.name) && !PopupWidgetTypes.includes(item.type as typeof PopupWidgetTypes[0])
+            )
             const childWidgetLazy =
-                widgets.some(
+                widgets.every(
                     item => widgetNames.includes(item.name) && PopupWidgetTypes.includes(item.type as typeof PopupWidgetTypes[0])
                 ) &&
                 !widgets.some(item => {
                     return bcDictionary[item.bcName]?.parentName === childBcName
                 })
             const skipLazy = action.type !== types.showViewPopup
-            if (childWidgetLazy && skipLazy) {
+            if (!nonLazyWidget || (childWidgetLazy && skipLazy)) {
                 return Observable.empty<never>()
             }
             return Observable.of(
                 $do.bcFetchDataRequest({
                     bcName: childBcName,
-                    widgetName: widgetNames[0],
+                    widgetName: nonLazyWidget.name,
                     ignorePageLimit: ignorePageLimit || action.type === types.showViewPopup,
                     keepDelta: isHierarchy || keepDelta
                 })
