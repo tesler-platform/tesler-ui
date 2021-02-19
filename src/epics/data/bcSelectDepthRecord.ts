@@ -24,7 +24,7 @@ export const bcSelectDepthRecord: Epic = action$ =>
     })
 
 /**
- * Set a cursor when expanding a record in hierarchy widgets builded aroung single business components
+ * Set a cursor when expanding a record in hierarchy widgets builded around single business components
  * and fetch the data for children of expanded record.
  *
  * {@link ActionPayloadTypes.bcChangeDepthCursor | bcChangeDepthCursor} action is dispatched to set the cursor
@@ -37,6 +37,7 @@ export const bcSelectDepthRecord: Epic = action$ =>
  * TODO: There is no apparent reason why `widgetName` is empty; probably will be mandatory and replace `bcName` in 2.0.0.
  *
  * @param action This epic will fire on {@link ActionPayloadTypes.bcSelectDepthRecord | bcSelectDepthRecord} action
+ * @deprecated Do not use; TODO: Will be removed in 2.0.0
  * @category Epics
  */
 export function bcSelectDepthRecordImpl(action: ActionsMap['bcSelectDepthRecord']): Observable<AnyAction> {

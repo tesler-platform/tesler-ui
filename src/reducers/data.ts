@@ -16,12 +16,10 @@ const emptyData: DataItem[] = []
 export function data(state = initialState, action: AnyAction) {
     switch (action.type) {
         case types.bcFetchDataSuccess: {
-            return action.payload.depth && action.payload.depth > 1
-                ? state
-                : {
-                      ...state,
-                      [action.payload.bcName]: action.payload.data
-                  }
+            return {
+                ...state,
+                [action.payload.bcName]: action.payload.data
+            }
         }
         case types.bcNewDataSuccess: {
             return {
