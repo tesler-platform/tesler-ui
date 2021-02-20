@@ -83,11 +83,11 @@ export const FlatTreePopup: React.FC<FlatTreePopupProps> = props => {
     const handleConfirmMultiple = React.useCallback(() => {
         dispatch($do.saveAssociations({ bcNames: [bcName] }))
         dispatch($do.bcCancelPendingChanges({ bcNames: [bcName] }))
-        dispatch($do.closeViewPopup({ bcName }))
+        dispatch($do.closeViewPopup(null))
     }, [bcName])
 
     const handleCancelMultiple = React.useCallback(() => {
-        dispatch($do.closeViewPopup({ bcName }))
+        dispatch($do.closeViewPopup(null))
         dispatch($do.bcRemoveAllFilters({ bcName }))
         dispatch($do.bcCancelPendingChanges({ bcNames: [bcName] }))
     }, [bcName])

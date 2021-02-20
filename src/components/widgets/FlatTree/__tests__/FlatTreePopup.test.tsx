@@ -131,7 +131,7 @@ describe('<FlatTreePopup />', () => {
             expect.objectContaining({
                 type: coreActions.closeViewPopup,
                 payload: {
-                    bcName: bcExample.name
+                    bcName: null
                 }
             })
         )
