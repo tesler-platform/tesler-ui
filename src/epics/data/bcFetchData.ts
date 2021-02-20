@@ -69,6 +69,12 @@ export function bcFetchDataImpl(
      * through business component match
      */
     const widget = widgets.find(item => item.name === widgetName) ?? widgets.find(item => item.bcName === action.payload.bcName)
+    /**
+     * Missing widget means the view or screen were changed and data request is no longer relevant
+     */
+    if (!widget) {
+        return [Observable.empty()]
+    }
     const bcName = action.payload.bcName
     const bc = state.screen.bo.bc[bcName]
     const { cursor, page } = bc

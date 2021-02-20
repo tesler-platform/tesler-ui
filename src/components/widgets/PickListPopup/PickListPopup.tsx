@@ -200,7 +200,7 @@ const mapDispatchToProps = createMapDispatchToProps(
             },
             onClose: () => {
                 ctx.dispatch($do.viewClearPickMap(null))
-                ctx.dispatch($do.closeViewPopup({ bcName: ctx.props.bcName }))
+                ctx.dispatch($do.closeViewPopup(null))
                 ctx.dispatch($do.bcRemoveAllFilters({ bcName: ctx.props.bcName }))
             }
         }

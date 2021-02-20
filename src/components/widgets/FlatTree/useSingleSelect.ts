@@ -25,7 +25,7 @@ export function useSingleSelect(pickListDescriptor: PickMap, bcName: string, par
             })
             dispatch($do.changeDataItem({ bcName: parentBcName, cursor: parentCursor, dataItem }))
             dispatch($do.viewClearPickMap(null))
-            dispatch($do.closeViewPopup({ bcName }))
+            dispatch($do.closeViewPopup(null))
             dispatch($do.bcRemoveAllFilters({ bcName }))
         },
         [pickListDescriptor, parentCursor, bcName, parentBcName]

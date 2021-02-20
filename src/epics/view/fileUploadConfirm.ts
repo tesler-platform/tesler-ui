@@ -68,7 +68,7 @@ export function fileUploadConfirmImpl(action: ActionsMap['bulkUploadFiles'], sto
         return Observable.concat(
             Observable.of($do.sendOperationSuccess({ bcName, cursor: null })),
             Observable.of($do.bcForceUpdate({ bcName })),
-            Observable.of($do.closeViewPopup({ bcName })),
+            Observable.of($do.closeViewPopup(null)),
             ...postOperationRoutine(widgetName, postInvoke, preInvoke, OperationTypeCrud.save, bcName)
         )
     })
