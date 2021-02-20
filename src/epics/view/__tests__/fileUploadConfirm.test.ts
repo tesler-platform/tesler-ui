@@ -91,7 +91,7 @@ describe('fileUploadConfirm', () => {
             expect(result[2]).toEqual(
                 expect.objectContaining({
                     type: coreActions.closeViewPopup,
-                    payload: { bcName: 'bcExample' }
+                    payload: null
                 })
             )
         })

@@ -204,6 +204,14 @@ describe('bcFetchDataEpic', () => {
             )
         })
     })
+
+    it('does not breaks for missing widget', () => {
+        store.getState().view.widgets = []
+        const action = $do.bcFetchDataRequest({ widgetName: 'widget-example', bcName: 'bcExample' })
+        testEpic(flow(ActionsObservable.of(action), store), res => {
+            expect(res.length).toBe(0)
+        })
+    })
 })
 
 /** */

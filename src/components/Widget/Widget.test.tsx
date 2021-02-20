@@ -189,7 +189,7 @@ describe('widget visibility', () => {
             store.dispatch($do.showViewPopup({ bcName: exampleBcName, widgetName: '1' }))
             wrapper.update()
             expect(wrapper.find(widgetNames[popupWidgetType]).length).toBe(1)
-            store.dispatch($do.closeViewPopup({ bcName: exampleBcName }))
+            store.dispatch($do.closeViewPopup(null))
             wrapper.update()
             expect(wrapper.find(widgetNames[popupWidgetType]).length).toBe(0)
         })

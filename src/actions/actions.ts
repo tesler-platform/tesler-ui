@@ -673,10 +673,15 @@ export class ActionPayloadTypes {
     } = z
 
     /**
-     * TODO
+     * Closes currently active popup on view
      */
     closeViewPopup: {
-        bcName: string
+        /**
+         * Not used
+         *
+         * @deprecated TODO: Will be removed in 2.0.0
+         */
+        bcName?: string
     } = z
 
     /**
