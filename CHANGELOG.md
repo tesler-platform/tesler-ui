@@ -1,3 +1,9 @@
+# Version 1.28.3 (Febraury 20, 2021)
+
+## Fixes
+
+* Stale data fetch epic can crash the application.
+
 # Version 1.28.2 (Febraury 20, 2021)
 
 ## Fixes
