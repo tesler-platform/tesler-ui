@@ -130,9 +130,7 @@ describe('<FlatTreePopup />', () => {
         expect(dispatch).toHaveBeenCalledWith(
             expect.objectContaining({
                 type: coreActions.closeViewPopup,
-                payload: {
-                    bcName: null
-                }
+                payload: null
             })
         )
         expect(dispatch).toHaveBeenCalledWith(
