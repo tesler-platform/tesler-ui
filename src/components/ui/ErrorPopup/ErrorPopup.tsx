@@ -82,9 +82,11 @@ export const ErrorPopup: FunctionComponent<ErrorPopupProps> = props => {
                     </Form.Item>
                 )}
                 {isExportInfoShown && (
-                    <Button onClick={() => props.exportState()} type="link">
-                        {t('Save Info For Developers')}
-                    </Button>
+                    <Form.Item>
+                        <Button onClick={() => props.exportState()} type="link">
+                            {t('Save info for developers')}
+                        </Button>
+                    </Form.Item>
                 )}
             </Form>
             {props.children}
