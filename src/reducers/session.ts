@@ -19,6 +19,7 @@ import { AnyAction, types } from '../actions/actions'
 import { Session } from '../interfaces/session'
 
 export const initialState: Session = {
+    debugMode: false,
     exportStateEnabled: false,
     active: false,
     loginSpin: false,
@@ -46,6 +47,9 @@ export function session(state = initialState, action: AnyAction): Session {
         }
         case types.loginFail: {
             return { ...state, loginSpin: false, errorMsg: action.payload.errorMsg }
+        }
+        case types.switchDebugMode: {
+            return { ...state, debugMode: action.payload }
         }
         default:
             return state

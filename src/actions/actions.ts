@@ -1134,6 +1134,11 @@ export class ActionPayloadTypes {
     } = z
 
     /**
+     * Enable/disable debug mode
+     */
+    switchDebugMode: boolean = z
+
+    /**
      * Download state to device
      */
     exportState: null = z

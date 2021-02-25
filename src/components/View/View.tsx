@@ -4,8 +4,10 @@ import { Store } from '../../interfaces/store'
 import { CustomWidget, CustomWidgetDescriptor, CustomWidgetConfiguration, PopupWidgetTypes, WidgetMeta } from '../../interfaces/widget'
 import DashboardLayout from '../ui/DashboardLayout/DashboardLayout'
 import { FileUploadPopup } from '../../components/FileUploadPopup/FileUploadPopup'
+import ViewInfoLabel from '../DebugPanel/components/ViewInfoLabel'
 
 export interface ViewProps {
+    debugMode?: boolean
     widgets: WidgetMeta[]
     skipWidgetTypes?: string[]
     card?: (props: any) => React.ReactElement<any>
@@ -54,6 +56,7 @@ export const View: FunctionComponent<ViewProps> = props => {
 
     return (
         <CustomizationContext.Provider value={{ customFields: props.customFields }}>
+            {props.debugMode && <ViewInfoLabel />}
             {fileUploadPopup && <FileUploadPopup />}
             {layout}
         </CustomizationContext.Provider>
@@ -62,6 +65,7 @@ export const View: FunctionComponent<ViewProps> = props => {
 
 function mapStateToProps(store: Store) {
     return {
+        debugMode: store.session.debugMode,
         widgets: store.view.widgets
     }
 }

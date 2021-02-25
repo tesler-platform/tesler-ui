@@ -24,6 +24,7 @@ import { DataState } from '../../interfaces/data'
 import { buildBcUrl } from '../../utils/strings'
 import FlatTreePopup from '../widgets/FlatTree/FlatTreePopup'
 import FlatTree from '../widgets/FlatTree/FlatTree'
+import DebugPanel from '../DebugPanel/DebugPanel'
 
 interface WidgetOwnProps {
     meta: WidgetMeta | WidgetMetaAny
@@ -33,6 +34,7 @@ interface WidgetOwnProps {
 }
 
 interface WidgetProps extends WidgetOwnProps {
+    debugMode?: boolean
     loading?: boolean
     parentCursor?: string
     customWidgets?: Record<string, CustomWidgetDescriptor>
@@ -79,6 +81,7 @@ export const Widget: FunctionComponent<WidgetProps> = props => {
     const spinnerElement = props.customSpinner ? (
         <props.customSpinner spinning={showSpinner}>
             {chooseWidgetType(props.meta, props.customWidgets, props.children)}
+            {props.debugMode && <DebugPanel widgetMeta={props.meta} />}
         </props.customSpinner>
     ) : (
         <Spin spinning={showSpinner}>{chooseWidgetType(props.meta, props.customWidgets, props.children)}</Spin>
@@ -167,6 +170,7 @@ function mapStateToProps(store: Store, ownProps: WidgetOwnProps) {
     const bcUrl = buildBcUrl(bcName, true)
     const rowMeta = bcUrl && store.view.rowMeta[bcName]?.[bcUrl]
     return {
+        debugMode: store.session.debugMode,
         loading: bc?.loading,
         parentCursor: hasParent && parent.cursor,
         showWidget,

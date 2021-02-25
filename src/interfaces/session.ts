@@ -3,6 +3,10 @@ import { TeslerResponse } from './objectMap'
 
 export interface Session {
     /**
+     * Shows if debug mode is enabled
+     */
+    debugMode?: boolean
+    /**
      * Enables availability of saving redux store and other info on user device.
      * There is need to set it to `true` from client application.
      */
