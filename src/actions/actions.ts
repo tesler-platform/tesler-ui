@@ -1161,6 +1161,11 @@ export class ActionPayloadTypes {
     } = z
 
     /**
+     * Enable/disable debug mode
+     */
+    switchDebugMode: boolean = z
+
+    /**
      * Download state to device
      */
     exportState: null = z
@@ -1169,6 +1174,18 @@ export class ActionPayloadTypes {
      * TODO
      */
     emptyAction: null = z
+
+    /**
+     * refresh screens, views and widgets meta
+     */
+    refreshMeta: null = z
+
+    /**
+     * Switch to another user role
+     */
+    switchRole: {
+        role: string
+    } = z
 }
 
 // action-types

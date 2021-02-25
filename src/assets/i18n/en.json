@@ -7,6 +7,8 @@
         "Details": "Details",
         "Error": "Error",
         "Error code": "Error code",
+        "Invalid credentials": "Invalid credentials",
+        "Access denied": "Access denied",
         "Show all records": "Show all records",
         "Clear all filters": "Clear all filters",
         "Cancel": "Cancel",
@@ -28,10 +30,12 @@
         "System error has been occurred": "System error has been occurred",
         "There is no connection to the server": "There is no connection to the server",
         "Load more": "Load more",
+        "Refresh meta": "Refresh meta",
         "Required fields are missing": "Required fields are missing",
         "This field is mandatory": "This field is mandatory",
         "Enter value": "Enter value",
         "Save info for developers": "Save info for developers",
+        "Show meta": "Show meta",
         "Screen is missing or unavailable for your role": "Screen {{screenName}} is missing or unavailable for your role",
         "View is missing or unavailable for your role": "View {{viewName}} is missing or unavailable for your role"
     }
