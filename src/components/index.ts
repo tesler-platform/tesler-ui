@@ -42,3 +42,5 @@ export { default as AssocListPopup } from './widgets/AssocListPopup/AssocListPop
 export { default as PickListPopup } from './widgets/PickListPopup/PickListPopup'
 export { default as FlatTree } from './widgets/FlatTree/FlatTree'
 export { default as FlatTreePopup } from './widgets/FlatTree/FlatTreePopup'
+// Developer
+export { default as DevToolsPanel } from './DevToolsPanel/DevToolsPanel'

@@ -15,18 +15,17 @@
  * limitations under the License.
  */
 
+import { $do, Epic, types } from '../../actions/actions'
 import { Observable } from 'rxjs'
-import { Epic, types } from '../../actions/actions'
 
 /**
- * Fires on successful login; there is no default implementation related to this epic,
- * but it can be used to customize successful login behaivior.
+ * Activates process of role switching
  *
- * @param action$ This epic will fire on {@link ActionPayloadTypes.login | login} action
+ * @param action$ This epic will fire on {@link ActionPayloadTypes.switchRole | switchRole} action
  * @param store Redux store instance
  * @category Epics
  */
-export const loginEpic: Epic = (action$, store) =>
-    action$.ofType(types.login).switchMap(action => {
-        return Observable.empty()
+export const switchRoleEpic: Epic = (action$, store) =>
+    action$.ofType(types.switchRole).switchMap(action => {
+        return Observable.concat([$do.logoutDone(null), $do.login({ login: null, password: null, role: action.payload.role })])
     })
