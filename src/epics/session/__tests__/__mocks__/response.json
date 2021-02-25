@@ -1,0 +1,389 @@
+{
+  "sessionId": "111111",
+  "userId": 1,
+  "login": "vanilla",
+  "lastName": "Snow",
+  "firstName": "John",
+  "patronymic": "Snowich",
+  "fullName": "Snow John Snowich",
+  "principalName": "vanilla@sbl.local",
+  "phone": "+49-163-5553-408",
+  "activeRole": "ADMIN",
+  "roles": [
+    {
+      "type": null,
+      "key": "ADMIN",
+      "value": "Administrator",
+      "description": null,
+      "language": null,
+      "displayOrder": null,
+      "active": true,
+      "cacheLoaderName": null
+    },
+    {
+      "type": null,
+      "key": "Auditor",
+      "value": "Auditor",
+      "description": null,
+      "language": null,
+      "displayOrder": null,
+      "active": true,
+      "cacheLoaderName": null
+    }
+  ],
+  "screens": [
+    {
+      "id": "id1",
+      "name": "dashboard",
+      "text": "Dashboard",
+      "url": "/screen/dashboard",
+      "icon": "bar-chart",
+      "defaultScreen": false,
+      "meta": {
+        "id": "1289810",
+        "errors": null,
+        "vstamp": 0,
+        "name": "dashboard",
+        "title": "Dashboard",
+        "primary": "dashboard",
+        "views": [
+          {
+            "id": 1289724,
+            "name": "dashboard",
+            "template": "Dashboard",
+            "title": "Dashboard",
+            "url": "/screen/dashboard/view/dashboard",
+            "customizable": false,
+            "editable": false,
+            "widgets": [
+              {
+                "id": "1290278",
+                "errors": null,
+                "vstamp": 0,
+                "name": "dashboardHeader",
+                "widgetId": 0,
+                "position": 1,
+                "descriptionTitle": null,
+                "description": null,
+                "snippet": null,
+                "showExportStamp": false,
+                "limit": 0,
+                "type": "Header",
+                "url": "dashboard",
+                "bcName": "dashboard",
+                "title": "Dashboard",
+                "fields": [],
+                "options": {},
+                "pivotFields": null,
+                "axisFields": [],
+                "showCondition": [],
+                "chart": [],
+                "graph": null,
+                "x": null,
+                "y": null,
+                "width": null,
+                "height": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "minWidth": null,
+                "maxWidth": null,
+                "isDraggable": null,
+                "isResizable": null,
+                "gridWidth": 2,
+                "gridBreak": 0,
+                "hide": false
+              }
+            ],
+            "columns": null,
+            "rowHeight": null,
+            "readOnly": false,
+            "ignoreHistory": false,
+            "options": []
+          },
+          {
+            "id": 1289725,
+            "name": "dashboardoutlet",
+            "template": "DashboardView",
+            "title": "Outlet",
+            "url": "/screen/dashboard/view/dashboardoutlet",
+            "customizable": false,
+            "editable": false,
+            "widgets": [
+              {
+                "id": "1289920",
+                "errors": null,
+                "vstamp": 0,
+                "name": "dashboardReturnToDashboardView",
+                "widgetId": 0,
+                "position": 0,
+                "descriptionTitle": null,
+                "description": null,
+                "snippet": null,
+                "showExportStamp": false,
+                "limit": 0,
+                "type": "Form",
+                "url": "dashboard",
+                "bcName": "dashboard",
+                "title": null,
+                "fields": [],
+                "options": {
+                  "actionGroups": {
+                    "include": [
+                      "back-to-dashboard"
+                    ]
+                  }
+                },
+                "pivotFields": null,
+                "axisFields": [],
+                "showCondition": [],
+                "chart": [],
+                "graph": null,
+                "x": null,
+                "y": null,
+                "width": null,
+                "height": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "minWidth": null,
+                "maxWidth": null,
+                "isDraggable": null,
+                "isResizable": null,
+                "gridWidth": 2,
+                "gridBreak": 0,
+                "hide": false
+              }
+            ],
+            "columns": null,
+            "rowHeight": null,
+            "readOnly": false,
+            "ignoreHistory": false,
+            "options": []
+          }
+        ],
+        "bo": {
+          "bc": [
+            {
+              "id": null,
+              "url": "dashboard",
+              "defaultFilter": null,
+              "dimFilterSpec": null,
+              "filterGroups": null,
+              "defaultSort": null,
+              "cursor": "",
+              "page": 1,
+              "limit": 5,
+              "hasNext": false,
+              "parentName": null,
+              "name": "dashboard",
+              "reportPeriod": null,
+              "binds": null,
+              "refresh": false
+            }
+          ]
+        },
+        "navigation": {
+          "menu": [
+            {
+              "id": "c0834fe7041a4442b1028a75ca8e71ed",
+              "hidden": false,
+              "title": "Dashboard",
+              "child": [
+                {
+                  "id": "a2630174a5c744c5a82b63c49a036c2b",
+                  "hidden": false,
+                  "viewName": "dashboard"
+                },
+                {
+                  "id": "46820c2a3931468fa1d77c2f67384434",
+                  "hidden": false,
+                  "viewName": "dashboardoutlet"
+                }
+              ]
+            }
+          ]
+        },
+        "primaries": [
+          "dashboard"
+        ]
+      }
+    },
+    {
+      "id": "id2",
+      "name": "task",
+      "text": "My Tasks",
+      "url": "/screen/task",
+      "icon": "file-add",
+      "defaultScreen": false,
+      "meta": {
+        "id": "1289817",
+        "errors": null,
+        "vstamp": 0,
+        "name": "task",
+        "title": "My Tasks",
+        "primary": "senttasklist",
+        "views": [
+          {
+            "id": 1290921,
+            "name": "senttasklist",
+            "template": "DashboardView",
+            "title": "Sent Tasks",
+            "url": "/screen/task/view/senttasklist",
+            "customizable": false,
+            "editable": false,
+            "widgets": [
+              {
+                "id": "1290259",
+                "errors": null,
+                "vstamp": 0,
+                "name": "sentTaskListHeader",
+                "widgetId": 0,
+                "position": 1,
+                "descriptionTitle": null,
+                "description": null,
+                "snippet": null,
+                "showExportStamp": false,
+                "limit": 0,
+                "type": "Header",
+                "url": null,
+                "bcName": null,
+                "title": "Sent Tasks",
+                "fields": [],
+                "options": {},
+                "pivotFields": null,
+                "axisFields": [],
+                "showCondition": [],
+                "chart": [],
+                "graph": null,
+                "x": null,
+                "y": null,
+                "width": null,
+                "height": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "minWidth": null,
+                "maxWidth": null,
+                "isDraggable": null,
+                "isResizable": null,
+                "gridWidth": 4,
+                "gridBreak": 0,
+                "hide": false
+              }
+            ],
+            "columns": null,
+            "rowHeight": null,
+            "readOnly": false,
+            "ignoreHistory": false,
+            "options": []
+          },
+          {
+            "id": 1290920,
+            "name": "receivedtasklist",
+            "template": "DashboardView",
+            "title": "Received Tasks",
+            "url": "/screen/task/view/receivedtasklist",
+            "customizable": false,
+            "editable": false,
+            "widgets": [
+              {
+                "id": "1290248",
+                "errors": null,
+                "vstamp": 0,
+                "name": "receivingTaskListHeader",
+                "widgetId": 0,
+                "position": 1,
+                "descriptionTitle": null,
+                "description": null,
+                "snippet": null,
+                "showExportStamp": false,
+                "limit": 0,
+                "type": "Header",
+                "url": null,
+                "bcName": null,
+                "title": "Received Tasks",
+                "fields": [],
+                "options": {},
+                "pivotFields": null,
+                "axisFields": [],
+                "showCondition": [],
+                "chart": [],
+                "graph": null,
+                "x": null,
+                "y": null,
+                "width": null,
+                "height": null,
+                "minHeight": null,
+                "maxHeight": null,
+                "minWidth": null,
+                "maxWidth": null,
+                "isDraggable": null,
+                "isResizable": null,
+                "gridWidth": 4,
+                "gridBreak": 0,
+                "hide": false
+              }
+            ],
+            "columns": null,
+            "rowHeight": null,
+            "readOnly": false,
+            "ignoreHistory": false,
+            "options": []
+          }
+        ],
+        "bo": {
+          "bc": [
+            {
+              "id": null,
+              "url": "massOperationApproversListPopup",
+              "defaultFilter": null,
+              "dimFilterSpec": null,
+              "filterGroups": null,
+              "defaultSort": null,
+              "cursor": "",
+              "page": 1,
+              "limit": 5,
+              "hasNext": false,
+              "parentName": null,
+              "name": "massOperationApproversListPopup",
+              "reportPeriod": null,
+              "binds": null,
+              "refresh": false
+            }
+          ]
+        },
+        "navigation": {
+          "menu": [
+            {
+              "id": "678c04cdd40d463b9921cce802ea1c1f",
+              "hidden": false,
+              "viewName": "senttasklist"
+            },
+            {
+              "id": "4999ef42571140008efc3b9a51bae01e",
+              "hidden": false,
+              "viewName": "receivedtasklist"
+            }
+          ]
+        },
+        "primaries": [
+          "senttasklist"
+        ]
+      }
+    }
+  ],
+  "userSettingsVersion": null,
+  "featureSettings": [
+    {
+      "type": null,
+      "key": "FEATURE_FULL_STACKTRACES",
+      "value": "true",
+      "description": null,
+      "language": null,
+      "displayOrder": null,
+      "active": true,
+      "cacheLoaderName": null
+    }
+  ],
+  "systemUrl": null,
+  "timezone": "Asia/Aden",
+  "language": "en"
+}
