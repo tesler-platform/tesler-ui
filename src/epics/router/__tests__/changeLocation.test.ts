@@ -217,6 +217,7 @@ const defaultView: ViewMetaResponse = {
 
 const requestedScreen: SessionScreen = {
     id: null,
+    primary: 'view-default',
     name: 'screen-next',
     text: 'Next Screen',
     url: 'screen/screen-next'
@@ -224,6 +225,7 @@ const requestedScreen: SessionScreen = {
 
 const defaultScreen: SessionScreen = {
     id: null,
+    primary: 'view-default',
     name: 'screen-default',
     text: 'Default Screen',
     url: 'screen/screen-default',

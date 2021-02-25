@@ -199,6 +199,25 @@ export function getRmByForceActive(screenName: string, bcUrl: string, data: Pend
 }
 
 /**
+ * Request for refresh screens, views and widgets meta
+ *
+ * @category Tesler API Endpoints
+ */
+export function refreshMeta() {
+    return axiosGet(buildUrl`bc-registry/refresh-meta`)
+}
+
+/**
+ * Request for role switching
+ *
+ * @param role Code of new role
+ * @category Tesler API Endpoints
+ */
+export function loginByRoleRequest(role: string) {
+    return axiosGet(buildUrl`login?role=${role}`)
+}
+
+/**
  * Returns new cancel token and cancel callback
  */
 export function createCanceler() {
