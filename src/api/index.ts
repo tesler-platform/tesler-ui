@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 export {
+    loginByRoleRequest,
+    refreshMeta,
     fetchBcData,
     fetchBcDataAll,
     fetchRowMeta,
