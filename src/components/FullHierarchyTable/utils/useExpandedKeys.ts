@@ -44,8 +44,18 @@ export function useExpandedKeys(
     searchAncestorsKeys: Set<string>,
     hierarchyDisableDescendants?: boolean
 ) {
+    const haveData = React.useRef(false)
     const [expandedKeys, setExpandedKeys] = React.useState<string[]>([])
     React.useEffect(() => {
+        // we should expand hierarchy one time when it's loaded
+        if (haveData.current || !data.length) {
+            if (!data.length) {
+                haveData.current = false
+            }
+            return
+        }
+        haveData.current = true
+
         /**
          * All ancestors of selected record should be expanded
          */
@@ -59,8 +69,7 @@ export function useExpandedKeys(
         }, [])
         const distinctExpandedKeys = new Set([...expandedKeys, ...(defaultExpandedKeys || emptyArray), ...selectedBranches])
         setExpandedKeys([...Array.from(distinctExpandedKeys)])
-    }, [data]) // should be expanded once per data set, so we can collapse any record and be sure that it will not be
-    // opened again after component rerender
+    }, [defaultExpandedKeys, selectedRecords, data])
 
     /**
      * All ancestors of search result record should be expanded
