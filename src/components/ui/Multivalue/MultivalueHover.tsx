@@ -36,9 +36,9 @@ const Multivalue: React.FunctionComponent<MultivalueHoverProps> = props => {
                     props.displayedValue
                 )}
             </p>
-        ) : (
+        ) : props.onDrillDown ? (
             <Icon className={cn(props.className)} type="left-circle" onClick={props.onDrillDown} />
-        )
+        ) : null
     const fields = props.data.map((multivalueSingleValue, index) => {
         return (
             <div className={styles.multivalueFieldArea} key={index}>
