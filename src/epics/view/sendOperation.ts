@@ -25,6 +25,7 @@ import { buildBcUrl } from '../../utils/strings'
 import { postOperationRoutine } from '../../epics/view'
 import { AxiosError } from 'axios'
 import { customAction } from '../../api/api'
+import { getFilters, getSorters } from '../../utils/filters'
 
 /**
  * Handle any `sendOperation` action which is not part of built-in operations types
@@ -64,6 +65,8 @@ export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store
     const fields = rowMeta?.fields
     const cursor = bc.cursor
     const record = state.data[bcName]?.find(item => item.id === bc.cursor)
+    const filters = state.screen.filters[bcName]
+    const sorters = state.screen.sorters[bcName]
     const pendingRecordChange = state.view.pendingDataChanges[bcName]?.[bc.cursor]
     for (const key in pendingRecordChange) {
         if (fields.find(item => item.key === key && item.disabled)) {
@@ -74,7 +77,14 @@ export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store
     const defaultSaveOperation =
         state.view.widgets?.find(item => item.name === widgetName)?.options?.actionGroups?.defaultSave === action.payload.operationType &&
         action.payload?.onSuccessAction?.type === types.changeLocation
-    const params = confirm ? { _action: operationType, _confirm: confirm } : { _action: operationType }
+    const params: Record<string, string> = {
+        _action: operationType,
+        ...getFilters(filters),
+        ...getSorters(sorters)
+    }
+    if (confirm) {
+        params._confirm = confirm
+    }
     const context = { widgetName: action.payload.widgetName }
     return customAction(screenName, bcUrl, data, context, params)
         .mergeMap(response => {
