@@ -397,11 +397,22 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
             return { ...state, pendingValidationFails: initialState.pendingValidationFails }
         }
         case types.showViewPopup: {
-            const { bcName, calleeBCName, calleeWidgetName, associateFieldKey, assocValueKey, active, isFilter, type } = action.payload
+            const {
+                bcName,
+                calleeBCName,
+                calleeWidgetName,
+                associateFieldKey,
+                assocValueKey,
+                active,
+                isFilter,
+                type,
+                widgetName
+            } = action.payload
             const widgetValueKey = store.view.widgets.find(item => item.bcName === bcName)?.options?.displayedValueKey
             return {
                 ...state,
                 popupData: {
+                    widgetName,
                     type,
                     bcName,
                     calleeBCName,

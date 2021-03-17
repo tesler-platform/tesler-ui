@@ -159,7 +159,7 @@ function mapStateToProps(store: Store, ownProps: WidgetOwnProps) {
     const parent = store.screen.bo.bc[bc?.parentName]
     const hasParent = !!parent
     let showWidget = PopupWidgetTypes.includes(ownProps.meta.type as typeof PopupWidgetTypes[number])
-        ? store.view.popupData.bcName === bcName
+        ? store.view.popupData.widgetName === ownProps.meta.name
         : true
     if (ownProps.meta.showCondition && !Array.isArray(ownProps.meta.showCondition)) {
         showWidget = checkShowCondition(ownProps.meta.showCondition, store.screen.bo.bc, store.data, store.view)

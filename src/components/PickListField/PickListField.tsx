@@ -4,7 +4,10 @@ import { $do } from '../../actions/actions'
 import { connect } from 'react-redux'
 import { PickMap } from '../../interfaces/data'
 import ReadOnlyField from '../ui/ReadOnlyField/ReadOnlyField'
-import { ChangeDataItemPayload, BaseFieldProps } from '../Field/Field'
+import { BaseFieldProps, ChangeDataItemPayload } from '../Field/Field'
+import { Store } from '../../interfaces/store'
+import { WidgetMeta } from '../../interfaces/widget'
+import { WidgetTypes } from '@tesler-ui/schema'
 
 interface IPickListWidgetInputOwnProps extends BaseFieldProps {
     parentBCName: string
@@ -15,6 +18,7 @@ interface IPickListWidgetInputOwnProps extends BaseFieldProps {
 }
 
 interface IPickListWidgetInputProps extends IPickListWidgetInputOwnProps {
+    popupWidget: WidgetMeta
     onChange: (payload: ChangeDataItemPayload) => void
     onClick: (bcName: string, pickMap: PickMap, widgetName?: string) => void
     /**
@@ -56,8 +60,8 @@ const PickListField: React.FunctionComponent<IPickListWidgetInputProps> = props 
     }, [props.pickMap, props.onChange, props.parentBCName, props.cursor])
 
     const handleClick = React.useCallback(() => {
-        props.onClick(props.bcName, props.pickMap, props.widgetName)
-    }, [props.onClick, props.bcName, props.pickMap, props.widgetName])
+        props.onClick(props.bcName, props.pickMap, props.popupWidget.name)
+    }, [props.onClick, props.bcName, props.pickMap, props.popupWidget.name])
 
     return (
         <PickInput
@@ -68,6 +72,14 @@ const PickListField: React.FunctionComponent<IPickListWidgetInputProps> = props 
             placeholder={props.placeholder}
         />
     )
+}
+
+function mapStateToProps(state: Store, ownProps: IPickListWidgetInputOwnProps) {
+    const widgets = state.view.widgets
+    const popupWidget = widgets.find(i => i.bcName === ownProps.bcName && i.type === WidgetTypes.PickListPopup)
+    return {
+        popupWidget
+    }
 }
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -83,6 +95,6 @@ const mapDispatchToProps = (dispatch: any) => ({
 /**
  * @category Components
  */
-const ConnectedPickListField = connect(null, mapDispatchToProps)(PickListField)
+const ConnectedPickListField = connect(mapStateToProps, mapDispatchToProps)(PickListField)
 
 export default ConnectedPickListField
