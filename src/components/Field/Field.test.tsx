@@ -56,6 +56,54 @@ describe('Readonly field drilldown', () => {
         ...fieldProperties,
         bcName: testBcNameNoRowMeta
     }
+    const testPopupBcName = 'testPopup'
+
+    const assocWidget = {
+        id: '1',
+        name: 'assocPopup',
+        position: 4,
+        type: WidgetTypes.AssocListPopup,
+        bcName: testPopupBcName,
+        title: 'Test Assoc',
+        fields: [
+            {
+                title: 'Number',
+                key: 'activeProjectsAmount',
+                type: 'input'
+            },
+            {
+                title: 'Name',
+                key: 'name',
+                type: 'input'
+            }
+        ],
+        gridWidth: 2,
+        gridBreak: 0,
+        hide: false
+    }
+    const pickWidget = {
+        id: '1',
+        name: 'assocPopup',
+        position: 3,
+        type: WidgetTypes.PickListPopup,
+        bcName: testPopupBcName,
+        title: 'Test Pick',
+        fields: [
+            {
+                title: 'Number',
+                key: 'activeProjectsAmount',
+                type: 'input'
+            },
+            {
+                title: 'Name',
+                key: 'name',
+                type: 'input'
+            }
+        ],
+        gridWidth: 2,
+        gridBreak: 0,
+        hide: false
+    }
 
     beforeAll(() => {
         store = mockStore()
@@ -296,7 +344,9 @@ describe('Readonly field drilldown', () => {
     })
 
     it('should render MultivalueField', () => {
+        store.getState().view.widgets = [pickWidget, assocWidget]
         const multivalueFieldMeta: MultivalueFieldMeta = {
+            popupBcName: testPopupBcName,
             key: 'someInput',
             type: FieldType.multivalue,
             label: fieldName
@@ -311,11 +361,12 @@ describe('Readonly field drilldown', () => {
     })
 
     it('should render PickListField', () => {
+        store.getState().view.widgets = [pickWidget, assocWidget]
         const pickListFieldMeta: PickListFieldMeta = {
             key: 'someInput',
             type: FieldType.pickList,
             label: fieldName,
-            popupBcName: 'popupBcName',
+            popupBcName: testPopupBcName,
             pickMap: {}
         }
         const pickListFieldProperties = { ...fieldProperties, readonly: false }

@@ -39,6 +39,30 @@ const fieldProperties = {
     widgetFieldMeta: widgetFieldMeta
 }
 
+const assocWidget = {
+    id: '1',
+    name: 'assocPopup',
+    position: 4,
+    type: 'AssocListPopup',
+    bcName: testPopupBcName,
+    title: 'Test Assoc',
+    fields: [
+        {
+            title: 'Number',
+            key: 'activeProjectsAmount',
+            type: 'input'
+        },
+        {
+            title: 'Name',
+            key: 'name',
+            type: 'input'
+        }
+    ],
+    gridWidth: 2,
+    gridBreak: 0,
+    hide: false
+}
+
 describe('Multivalue test', () => {
     let store: Store<CoreStore> = null
 
@@ -82,6 +106,7 @@ describe('Multivalue test', () => {
                 ]
             }
         }
+        store.getState().view.widgets = [assocWidget]
     })
 
     it('component should render field correctly', () => {
