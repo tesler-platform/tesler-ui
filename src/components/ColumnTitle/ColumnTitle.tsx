@@ -13,7 +13,13 @@ import { FieldType } from '../../interfaces/view'
  */
 export interface ColumnTitle {
     widgetName: string
+    /**
+     * Field meta actually
+     */
     widgetMeta: WidgetListField
+    /**
+     * Field row meta
+     */
     rowMeta: RowMetaField
     components?: {
         filter?: ComponentType<ColumnFilterOwnProps>
