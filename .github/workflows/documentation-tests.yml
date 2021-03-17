@@ -5,13 +5,30 @@ on:
     types: [ created ]
 
 jobs:
+  check-commentator:
+    name: Check if commentator is a member of tesler-team
+    runs-on: ubuntu-latest
+    env:
+      TOKEN: ${{ secrets.READ_MEMBERS_TOKEN }}
+      USER: ${{ secrets.READ_MEMBERS_USER}}
+    outputs:
+      output1: ${{ steps.step1.outputs.member_check }}
+    steps:
+      - name: Grep commentator
+        id: step1
+        run: |
+          result=`curl -u $USER:$TOKEN https://api.github.com/orgs/tesler-platform/teams/tesler-team/members | grep -Eo "(\"login\": \"${{ github.event.comment.user.login }}\")" | wc -l`;
+          echo "number of entries: $result";
+          echo "##[set-output name=member_check;]$result"
+
   send-message:
     name: Send message
     environment: doc
+    needs: check-commentator
     env:
       token: ${{ secrets.EVENT_DISPATCH_TOKEN }}
       user: ${{ secrets.EVENT_DISPATCH_USER }}
-    if: github.event.issue.pull_request != '' && (contains(github.event.comment.body, '/testDoc') || contains(github.event.comment.body, '/withBackTestDoc'))
+    if: github.event.issue.pull_request != '' && (contains(github.event.comment.body, '/testDoc') || contains(github.event.comment.body, '/withBackTestDoc')) && needs.check-commentator.outputs.output1 > 0
     runs-on: ubuntu-latest
     steps:
       - name: Get PR
