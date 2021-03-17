@@ -646,19 +646,46 @@ export class ActionPayloadTypes {
      */
     showViewPopup: {
         /**
+         * BC name of popup widget
+         *
          * @deprecated TODO: Remove in 2.0.0 in favor of widget name
          */
         bcName: string
+        /**
+         * Name of popup widget
+         */
         widgetName?: string
         /**
+         * It's BC name of `caller` widget actually
+         *
          * @deprecated TODO: Remove in 2.0.0 in favor of widget name
          */
         calleeBCName?: string
+        /**
+         * Name of `caller` widget actually
+         *
+         * TODO: 2.0.0 : Rename to `callerWidgetName`
+         */
         calleeWidgetName?: string
+        /**
+         * Popup widget field key associated to `assocValueKey` of caller widget
+         */
         associateFieldKey?: string
+        /**
+         * Caller widget field key associated to `associateFieldKey` of popup widget
+         */
         assocValueKey?: string
+        /**
+         * If `true` then backend's method of association is used
+         */
         active?: boolean
+        /**
+         * Whether popup is used as filter
+         */
         isFilter?: boolean
+        /**
+         * Type of popup
+         */
         type?: PopupType
     } = z
 

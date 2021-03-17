@@ -14,7 +14,13 @@ import { FieldTypeEnum } from '@tesler-ui/schema'
  */
 export interface ColumnTitle {
     widgetName: string
+    /**
+     * Field meta actually
+     */
     widgetMeta: WidgetListField
+    /**
+     * Field row meta
+     */
     rowMeta: RowMetaField
     components?: {
         filter?: ComponentType<ColumnFilterOwnProps>
