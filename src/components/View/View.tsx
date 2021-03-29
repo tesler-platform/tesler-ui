@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react'
 import { connect, useSelector } from 'react-redux'
 import { Store } from '../../interfaces/store'
-import { CustomWidget, CustomWidgetDescriptor, WidgetMeta } from '../../interfaces/widget'
+import { CustomWidget, CustomWidgetDescriptor, CustomWidgetConfiguration, PopupWidgetTypes, WidgetMeta } from '../../interfaces/widget'
 import DashboardLayout from '../ui/DashboardLayout/DashboardLayout'
 import { FileUploadPopup } from '../../components/FileUploadPopup/FileUploadPopup'
 
@@ -28,6 +28,7 @@ export const CustomizationContext: React.Context<{
  */
 export const View: FunctionComponent<ViewProps> = props => {
     let layout: React.ReactNode = null
+    usePopupWidgetTypesExtension(props.customWidgets)
     const fileUploadPopup = useSelector((state: Store) => state.view.popupData?.type === 'file-upload')
     if (props.customLayout) {
         layout = (
@@ -71,3 +72,16 @@ function mapStateToProps(store: Store) {
 const ConnectedView = connect(mapStateToProps)(View)
 
 export default ConnectedView
+
+/**
+ * Add new values to `PopupWidgetTypes` from client application
+ *
+ * @param customWidgets
+ */
+function usePopupWidgetTypesExtension(customWidgets: Record<string, CustomWidgetDescriptor>) {
+    Object.entries(customWidgets).forEach(([widgetType, descriptor]) => {
+        if ((descriptor as CustomWidgetConfiguration).isPopup) {
+            PopupWidgetTypes.push(widgetType)
+        }
+    })
+}

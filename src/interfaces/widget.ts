@@ -55,10 +55,8 @@ export const TableLikeWidgetTypes = [
 
 /**
  * Widgets that are considered `popups` and usually excluded from widgets layout grid
- *
- * TODO: Make extenstion point
  */
-export const PopupWidgetTypes = [WidgetTypes.PickListPopup, WidgetTypes.AssocListPopup, WidgetTypes.FlatTreePopup] as const
+export const PopupWidgetTypes: string[] = [WidgetTypes.PickListPopup, WidgetTypes.AssocListPopup, WidgetTypes.FlatTreePopup]
 
 /**
  * All widget types that display table-like data
@@ -192,15 +190,30 @@ export interface WidgetTextMeta extends WidgetMeta {
  */
 export type WidgetMetaAny = WidgetFormMeta | WidgetTableMeta | WidgetTextMeta | WidgetInfoMeta
 
+/**
+ * Component of custom widget
+ */
 export type CustomWidget = ConnectedComponent<any, any> | FunctionComponent<any>
 
-export type CustomWidgetDescriptor =
-    | CustomWidget
-    | {
-          component: CustomWidget
-          card?: CustomWidget
-      }
+/**
+ * Configuration of custom widget
+ */
+export interface CustomWidgetConfiguration {
+    /**
+     * Whether widget is popup
+     */
+    isPopup?: boolean
+    /**
+     * Component of custom widget
+     */
+    component: CustomWidget
+    /**
+     * Card of widget
+     */
+    card?: CustomWidget
+}
 
+export type CustomWidgetDescriptor = CustomWidget | CustomWidgetConfiguration
 /**
  * Check if descriptor is just a widget, or it has additional data
  */
