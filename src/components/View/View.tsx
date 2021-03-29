@@ -83,9 +83,11 @@ export default ConnectedView
  * @param customWidgets
  */
 function usePopupWidgetTypesExtension(customWidgets: Record<string, CustomWidgetDescriptor>) {
-    Object.entries(customWidgets).forEach(([widgetType, descriptor]) => {
-        if ((descriptor as CustomWidgetConfiguration).isPopup) {
-            PopupWidgetTypes.push(widgetType)
-        }
-    })
+    if (customWidgets) {
+        Object.entries(customWidgets).forEach(([widgetType, descriptor]) => {
+            if ((descriptor as CustomWidgetConfiguration).isPopup) {
+                PopupWidgetTypes.push(widgetType)
+            }
+        })
+    }
 }

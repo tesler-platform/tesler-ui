@@ -57,7 +57,7 @@ export const Widget: FunctionComponent<WidgetProps> = props => {
 
     const customWidget = props.customWidgets?.[props.meta.type]
 
-    const skipCardWrapping = PopupWidgetTypes.includes(props.meta.type as typeof PopupWidgetTypes[number])
+    const skipCardWrapping = PopupWidgetTypes.includes(props.meta.type)
 
     if (skipCardWrapping) {
         return <> {chooseWidgetType(props.meta, props.customWidgets, props.children)} </>
@@ -161,9 +161,7 @@ function mapStateToProps(store: Store, ownProps: WidgetOwnProps) {
     const bc = store.screen.bo.bc[bcName]
     const parent = store.screen.bo.bc[bc?.parentName]
     const hasParent = !!parent
-    let showWidget = PopupWidgetTypes.includes(ownProps.meta.type as typeof PopupWidgetTypes[number])
-        ? store.view.popupData.widgetName === ownProps.meta.name
-        : true
+    let showWidget = PopupWidgetTypes.includes(ownProps.meta.type) ? store.view.popupData.widgetName === ownProps.meta.name : true
     if (ownProps.meta.showCondition && !Array.isArray(ownProps.meta.showCondition)) {
         showWidget = checkShowCondition(ownProps.meta.showCondition, store.screen.bo.bc, store.data, store.view)
     }
