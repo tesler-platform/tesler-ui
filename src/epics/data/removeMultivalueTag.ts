@@ -73,9 +73,7 @@ export function removeMultivalueTagImpl(
 ): Observable<AnyAction> {
     const state = store.getState()
     const { bcName, cursor, popupBcName, associateFieldKey } = action.payload
-    const widget = state.view.widgets.find(
-        item => item.bcName === popupBcName && PopupWidgetTypes.includes(item.type as typeof PopupWidgetTypes[number])
-    )
+    const widget = state.view.widgets.find(item => item.bcName === popupBcName && PopupWidgetTypes.includes(item.type))
     const storeData = ((state?.data[popupBcName] || []) as unknown) as TreeAssociatedRecord[]
     // Merge store data with pending changes
     let data: TreeAssociatedRecord[] = storeData.map(item => {
