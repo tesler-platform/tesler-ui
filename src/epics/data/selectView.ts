@@ -54,7 +54,7 @@ export function selectViewImpl(action: ActionsMap['selectView'], store: Store<Co
     const state = store.getState()
     const bcToLoad: Record<string, WidgetMeta> = {}
     state.view.widgets
-        .filter(widget => !PopupWidgetTypes.includes(widget.type as typeof PopupWidgetTypes[0]))
+        .filter(widget => !PopupWidgetTypes.includes(widget.type))
         .forEach(widget => {
             if (widget.bcName) {
                 let bcName = widget.bcName

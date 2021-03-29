@@ -1,6 +1,5 @@
 import { WidgetShowCondition, WidgetTypes, WidgetOptions, WidgetFormField, WidgetListField, WidgetInfoField } from '@tesler-ui/schema'
-import { ConnectedComponent } from 'react-redux'
-import { FunctionComponent } from 'react'
+import { ComponentType } from 'react'
 export {
     WidgetShowCondition,
     WidgetTypes,
@@ -55,10 +54,8 @@ export const TableLikeWidgetTypes = [
 
 /**
  * Widgets that are considered `popups` and usually excluded from widgets layout grid
- *
- * TODO: Make extenstion point
  */
-export const PopupWidgetTypes = [WidgetTypes.PickListPopup, WidgetTypes.AssocListPopup, WidgetTypes.FlatTreePopup] as const
+export const PopupWidgetTypes: string[] = [WidgetTypes.PickListPopup, WidgetTypes.AssocListPopup, WidgetTypes.FlatTreePopup]
 
 /**
  * All widget types that display table-like data
@@ -192,20 +189,46 @@ export interface WidgetTextMeta extends WidgetMeta {
  */
 export type WidgetMetaAny = WidgetFormMeta | WidgetTableMeta | WidgetTextMeta | WidgetInfoMeta
 
-export type CustomWidget = ConnectedComponent<any, any> | FunctionComponent<any>
+/**
+ * Component of custom widget
+ *
+ * @deprecated TODO: Remove in 2.0.0
+ */
+export type CustomWidget = ComponentType<any>
 
-export type CustomWidgetDescriptor =
-    | CustomWidget
-    | {
-          component: CustomWidget
-          card?: CustomWidget
-      }
+/**
+ * Configuration of custom widget
+ */
+export interface CustomWidgetConfiguration {
+    /**
+     * Whether widget is popup
+     */
+    isPopup?: boolean
+    /**
+     * Component of custom widget
+     */
+    component: CustomWidget
+    /**
+     * Card of widget
+     */
+    card?: CustomWidget
+}
 
+export type CustomWidgetDescriptor = CustomWidget | CustomWidgetConfiguration
 /**
  * Check if descriptor is just a widget, or it has additional data
  */
 export function isCustomWidget(descriptor: CustomWidgetDescriptor): descriptor is CustomWidget {
     return !!descriptor && !('component' in descriptor)
+}
+
+/**
+ * Checks whether @param descriptor is an instance of `CustomWidgetConfiguration`
+ *
+ * @param descriptor custom widget descriptor
+ */
+export function isCustomWidgetConfiguration(descriptor: CustomWidgetDescriptor): descriptor is CustomWidgetConfiguration {
+    return descriptor && 'component' in descriptor
 }
 
 /**

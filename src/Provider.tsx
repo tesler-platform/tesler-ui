@@ -12,6 +12,8 @@ import CustomEpics, { AnyEpic } from './interfaces/customEpics'
 import { CustomMiddlewares } from './interfaces/customMiddlewares'
 import { defaultBuildLocation, defaultParseLocation } from './utils/history'
 import { configureStore } from './utils/configureStore'
+import { CustomWidgetDescriptor } from './interfaces/widget'
+import extendPopupWidgetTypes from './utils/extendPopupWidgetTypes'
 
 export interface ProviderProps<ClientState, ClientActions> {
     children: React.ReactNode
@@ -20,6 +22,7 @@ export interface ProviderProps<ClientState, ClientActions> {
     customEpics?: CustomEpics | AnyEpic
     customMiddlewares?: CustomMiddlewares
     axiosInstance?: AxiosInstance
+    customWidgets?: Record<string, CustomWidgetDescriptor>
     parseLocation?: (loc: Location<any>) => Route // TODO: Combine into configuration object
     buildLocation?: (route: Route) => string // TODO: Combine into configuration object
     useEpics?: boolean
@@ -94,6 +97,9 @@ const Provider = <ClientState extends Partial<CoreStore>, ClientActions extends 
     }
     if (props.buildLocation) {
         buildLocation = props.buildLocation
+    }
+    if (props.customWidgets) {
+        extendPopupWidgetTypes(props.customWidgets)
     }
     return <ReduxProvider store={store}>{props.children}</ReduxProvider>
 }
