@@ -145,12 +145,9 @@ export function bcFetchDataImpl(
         .mergeMap(response => {
             const cursorChange = getCursorChange(response.data, action, cursor, !!anyHierarchyWidget)
             const parentOfNotLazyWidget = widgets.some(item => {
-                return (
-                    state.screen.bo.bc[item.bcName]?.parentName === bcName &&
-                    !PopupWidgetTypes.includes(item.type as typeof PopupWidgetTypes[0])
-                )
+                return state.screen.bo.bc[item.bcName]?.parentName === bcName && !PopupWidgetTypes.includes(item.type)
             })
-            const lazyWidget = PopupWidgetTypes.includes(widget.type as typeof PopupWidgetTypes[0]) && !parentOfNotLazyWidget
+            const lazyWidget = PopupWidgetTypes.includes(widget.type) && !parentOfNotLazyWidget
             const skipLazy = state.view.popupData?.bcName !== widget.bcName
             if (lazyWidget && skipLazy) {
                 return Observable.empty<never>()
@@ -217,13 +214,9 @@ function getChildrenData(action: ActionType, widgets: WidgetMeta[], bcDictionary
     return Observable.concat(
         ...Object.entries(getBcChildren(bcName, widgets, bcDictionary)).map(entry => {
             const [childBcName, widgetNames] = entry
-            const nonLazyWidget = widgets.find(
-                item => widgetNames.includes(item.name) && !PopupWidgetTypes.includes(item.type as typeof PopupWidgetTypes[0])
-            )
+            const nonLazyWidget = widgets.find(item => widgetNames.includes(item.name) && !PopupWidgetTypes.includes(item.type))
             const childWidgetLazy =
-                widgets.every(
-                    item => widgetNames.includes(item.name) && PopupWidgetTypes.includes(item.type as typeof PopupWidgetTypes[0])
-                ) &&
+                widgets.every(item => widgetNames.includes(item.name) && PopupWidgetTypes.includes(item.type)) &&
                 !widgets.some(item => {
                     return bcDictionary[item.bcName]?.parentName === childBcName
                 })
