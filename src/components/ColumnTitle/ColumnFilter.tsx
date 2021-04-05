@@ -27,6 +27,9 @@ export interface ColumnFilterProps extends ColumnFilterOwnProps {
     bcName?: string
     filter: BcFilter
     widget: WidgetMeta
+    /**
+     * Popup widget associated to current BC
+     */
     assocWidget: WidgetMeta
     components?: {
         popup: React.ReactNode
