@@ -88,7 +88,7 @@ export function drillDownImpl(action: ActionsMap['drillDown'], store: Store<Core
             const viewName = nextState.viewName
             // Apply each new filter
             Object.entries(newFilters).forEach(([bcName, filterExpression]) => {
-                const parsedFilters = parseFilters(filterExpression).map(item => ({ ...item, viewName }))
+                const parsedFilters = parseFilters(filterExpression)?.map(item => ({ ...item, viewName }))
                 parsedFilters?.forEach(filter => {
                     bcToUpdate[bcName] = true
                     store.dispatch($do.bcAddFilter({ bcName, filter }))
