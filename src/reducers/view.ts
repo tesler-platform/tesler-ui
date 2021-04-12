@@ -5,7 +5,6 @@ import { Store } from '../interfaces/store'
 import { OperationTypeCrud } from '../interfaces/operation'
 import { buildBcUrl } from '../utils/strings'
 import i18n from 'i18next'
-import { MultivalueFieldMeta, WidgetFormField, WidgetListField } from '@tesler-ui/schema'
 
 const initialState: ViewState = {
     id: null,
@@ -137,7 +136,7 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
             const newPendingChangesDiff: PendingDataItem = {}
             const forceActiveFieldKeys: string[] = []
 
-            // convert the values passed to forceValue to the form of a delta of changes
+            // приведем значения переданные в forcedValue в вид дельты изменений
             rowMeta.fields.forEach(field => {
                 rowMetaForcedValues[field.key] = field.currentValue
                 if (field.forceActive) {
@@ -146,56 +145,21 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
             })
 
             const consolidatedFrontData: PendingDataItem = { ...currentRecordData, ...state.pendingDataChanges[bcName][cursor] }
-            // calculate the "difference" between the consolidated data and the received forcedValue's in favor of the latter
+            // вычислим "разницу" между консолид.данными и полученными forcedValue's в пользу последних
             Object.keys(consolidatedFrontData).forEach(key => {
                 if (rowMetaForcedValues[key] !== undefined && consolidatedFrontData[key] !== rowMetaForcedValues[key]) {
                     newPendingChangesDiff[key] = rowMetaForcedValues[key]
                 }
             })
 
-            // consolidation of the "difference" with the current delta
+            // консолидация полученной разницы с актуальной дельтой
             const newPendingDataChanges = { ...state.pendingDataChanges[bcName][cursor], ...newPendingChangesDiff }
 
-            // show in the list of processed forceActive fields - those that are contained in the new delta
+            // отразим в списке обработанных forceActive полей - те что содержатся в новой дельте
             forceActiveFieldKeys.forEach(key => {
                 if (newPendingDataChanges[key] !== undefined) {
                     handledForceActive[key] = newPendingDataChanges[key]
                 }
-            })
-
-            // find fields keys which may associate popup
-            const forcedKeysForCheck = Object.entries(newPendingDataChanges)
-                .filter(([key, value]) => {
-                    if (Array.isArray(value) && value.length === 0) {
-                        return true
-                    }
-                    return !value
-                })
-                .map(([key, value]) => key)
-                .filter(key => forceActiveFieldKeys.includes(key))
-
-            // find widget related to `forcedKeysForCheck`
-            const widget = state.widgets.find(
-                i =>
-                    i.bcName === bcName &&
-                    // due to we cannot find by widget name
-                    (i.fields as Array<WidgetListField | WidgetFormField>).filter(field => forcedKeysForCheck.includes(field.key))
-                        .length === forcedKeysForCheck.length
-            )
-
-            // find popupBcNames among `forcedKeysForCheck`
-            const popupBcNames = (widget.fields as Array<WidgetListField | WidgetFormField>)
-                .filter(field => forcedKeysForCheck.includes(field.key) && 'popupBcName' in field)
-                .map(i => (i as MultivalueFieldMeta).popupBcName)
-
-            // clear pending changes related to found `popupBcNames`
-            const clearedPopupsPendingChanges: {
-                [bcName: string]: {
-                    [cursor: string]: PendingDataItem
-                }
-            } = {}
-            popupBcNames.forEach(i => {
-                clearedPopupsPendingChanges[i] = {}
             })
 
             return {
@@ -212,7 +176,6 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                 },
                 pendingDataChanges: {
                     ...state.pendingDataChanges,
-                    ...clearedPopupsPendingChanges,
                     [bcName]: {
                         ...(state.pendingDataChanges[bcName] || {}),
                         [cursor]: newPendingDataChanges
