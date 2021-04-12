@@ -53,7 +53,7 @@ const MultivalueField: FunctionComponent<MultivalueFieldProps> = props => {
 
     return (
         <MultivalueTag
-            widgetName={props.assocWidget.name}
+            widgetName={props.assocWidget?.name}
             onPopupOpen={props.onMultivalueAssocOpen}
             onChange={onRemove}
             value={props.defaultValue}
@@ -72,6 +72,7 @@ function mapStateToProps(store: Store, ownProps: MultivalueFieldOwnProps) {
     // const widget = store.view.widgets.find(widget => widget.name === ownProps.widgetName)
     // const bc = store.screen.bo.bc[widget.bcName]
     const popupBcName = ownProps.widgetFieldMeta.popupBcName
+    // TODO 2.0.0: assocWidget should be found by widgetName
     const assocWidget = store.view.widgets.find(widget => widget.bcName === popupBcName && widget.type === WidgetTypes.AssocListPopup)
     return {
         assocWidget,
