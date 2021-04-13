@@ -211,31 +211,33 @@ export interface OperationPostInvokeConfirm {
      */
     type: OperationPostInvokeConfirmType | string
     /**
-     * Title for modal
+     * Body text of a modal actually
+     * TODO 2.0.0 rename correctly
      */
     message: string
     /**
-     * Additional text for modal
+     * Custom modal title actually
+     * TODO 2.0.0 rename correctly
      */
     messageContent?: string
+    /**
+     * Custom label of OK button
+     */
+    okText?: string
+    /**
+     * Custom label of Cancel button
+     */
+    cancelText?: string
 }
 
 /**
  * Modal window operation types
  */
-export interface OperationModalInvokeConfirm {
+export interface OperationModalInvokeConfirm extends OperationPostInvokeConfirm {
     /**
-     * Type of postInvokeConfirm action
+     * Type of confirm action
      */
     type: OperationPostInvokeConfirmType | OperationPreInvokeType | string
-    /**
-     * Title for modal
-     */
-    message: string
-    /**
-     * Additional text for modal
-     */
-    messageContent?: string
 }
 
 /**
