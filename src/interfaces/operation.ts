@@ -205,20 +205,7 @@ export enum OperationPostInvokeConfirmType {
 /**
  * The action that will be performed after the user confirms it
  */
-export interface OperationPostInvokeConfirm {
-    /**
-     * Type of postInvokeConfirm action
-     */
-    type: OperationPostInvokeConfirmType | string
-    /**
-     * Title for modal
-     */
-    message: string
-    /**
-     * Additional text for modal
-     */
-    messageContent?: string
-}
+export type OperationPostInvokeConfirm = OperationModalInvokeConfirm
 
 /**
  * Modal window operation types
@@ -229,13 +216,21 @@ export interface OperationModalInvokeConfirm {
      */
     type: OperationPostInvokeConfirmType | OperationPreInvokeType | string
     /**
-     * Title for modal
+     * Body text of a modal
      */
     message: string
     /**
-     * Additional text for modal
+     * Custom modal title
      */
     messageContent?: string
+    /**
+     * Custom label of OK button
+     */
+    okText?: string
+    /**
+     * Custom label of Cancel button
+     */
+    cancelText?: string
 }
 
 /**

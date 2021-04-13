@@ -71,12 +71,16 @@ const ModalInvoke: React.FunctionComponent<ModalInvokeProps> = props => {
         }
     }
 
+    const okLabel = props.confirmOperation.okText || t('Ok')
+    const cancelLabel = props.confirmOperation.cancelText || t('Cancel')
+
     switch (props.confirmOperation.type) {
         case OperationPreInvokeType.info: {
             const modal = Modal.info({
                 className: styles.modal,
                 title: props.confirmOperation?.messageContent,
-                okText: t('Ok'),
+                okText: okLabel,
+                cancelText: cancelLabel,
                 onOk: () => {
                     props.onOk(props.bcName, props.operationType, props.widgetName, value || 'ok')
                     modal.destroy()
@@ -89,7 +93,8 @@ const ModalInvoke: React.FunctionComponent<ModalInvokeProps> = props => {
             const modal = Modal.error({
                 className: styles.modal,
                 title: props.confirmOperation?.messageContent,
-                okText: t('Ok'),
+                okText: okLabel,
+                cancelText: cancelLabel,
                 onOk: () => {
                     props.onCancel()
                     modal.destroy()
@@ -104,8 +109,8 @@ const ModalInvoke: React.FunctionComponent<ModalInvokeProps> = props => {
                     className={cn(styles.modal, props.className)}
                     visible={true}
                     title={props.confirmOperation?.messageContent || t('Are you sure?')}
-                    okText={t('Ok')}
-                    cancelText={t('Cancel')}
+                    okText={okLabel}
+                    cancelText={cancelLabel}
                     onOk={() => {
                         props.onOk(props.bcName, props.operationType, props.widgetName, value || 'ok')
                     }}
