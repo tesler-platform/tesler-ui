@@ -82,7 +82,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">OperationModalInvokeConfirm</span>
+						<a href="types.operation.operationpostinvokeconfirm.html" class="tsd-signature-type" data-tsd-kind="Interface">OperationPostInvokeConfirm</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">OperationModalInvokeConfirm</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -93,9 +98,11 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.operation.operationmodalinvokeconfirm.html#message" class="tsd-kind-icon">message</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.operation.operationmodalinvokeconfirm.html#messagecontent" class="tsd-kind-icon">message<wbr>Content</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.operation.operationmodalinvokeconfirm.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="types.operation.operationmodalinvokeconfirm.html#canceltext" class="tsd-kind-icon">cancel<wbr>Text</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="types.operation.operationmodalinvokeconfirm.html#message" class="tsd-kind-icon">message</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="types.operation.operationmodalinvokeconfirm.html#messagecontent" class="tsd-kind-icon">message<wbr>Content</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="types.operation.operationmodalinvokeconfirm.html#oktext" class="tsd-kind-icon">ok<wbr>Text</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite"><a href="types.operation.operationmodalinvokeconfirm.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 					</div>
@@ -103,48 +110,85 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="canceltext" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> cancel<wbr>Text</h3>
+					<div class="tsd-signature tsd-kind-icon">cancel<wbr>Text<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="types.operation.operationpostinvokeconfirm.html">OperationPostInvokeConfirm</a>.<a href="types.operation.operationpostinvokeconfirm.html#canceltext">cancelText</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d9fbd0b/src/interfaces/operation.ts#L230">src/interfaces/operation.ts:230</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Custom label of Cancel button</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="message" class="tsd-anchor"></a>
 					<h3>message</h3>
 					<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="types.operation.operationpostinvokeconfirm.html">OperationPostInvokeConfirm</a>.<a href="types.operation.operationpostinvokeconfirm.html#message">message</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/c4ad455/src/interfaces/operation.ts#L234">src/interfaces/operation.ts:234</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d9fbd0b/src/interfaces/operation.ts#L217">src/interfaces/operation.ts:217</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Title for modal</p>
+							<p>Body text of a modal actually
+							TODO 2.0.0 rename correctly</p>
 						</div>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="messagecontent" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> message<wbr>Content</h3>
 					<div class="tsd-signature tsd-kind-icon">message<wbr>Content<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="types.operation.operationpostinvokeconfirm.html">OperationPostInvokeConfirm</a>.<a href="types.operation.operationpostinvokeconfirm.html#messagecontent">messageContent</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/c4ad455/src/interfaces/operation.ts#L238">src/interfaces/operation.ts:238</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d9fbd0b/src/interfaces/operation.ts#L222">src/interfaces/operation.ts:222</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Additional text for modal</p>
+							<p>Custom modal title actually
+							TODO 2.0.0 rename correctly</p>
 						</div>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="oktext" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> ok<wbr>Text</h3>
+					<div class="tsd-signature tsd-kind-icon">ok<wbr>Text<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="types.operation.operationpostinvokeconfirm.html">OperationPostInvokeConfirm</a>.<a href="types.operation.operationpostinvokeconfirm.html#oktext">okText</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d9fbd0b/src/interfaces/operation.ts#L226">src/interfaces/operation.ts:226</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Custom label of OK button</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
 					<a name="type" class="tsd-anchor"></a>
 					<h3>type</h3>
 					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
+						<p>Overrides <a href="types.operation.operationpostinvokeconfirm.html">OperationPostInvokeConfirm</a>.<a href="types.operation.operationpostinvokeconfirm.html#type">type</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/c4ad455/src/interfaces/operation.ts#L230">src/interfaces/operation.ts:230</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d9fbd0b/src/interfaces/operation.ts#L240">src/interfaces/operation.ts:240</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Type of postInvokeConfirm action</p>
+							<p>Type of confirm action</p>
 						</div>
 					</div>
 				</section>
@@ -192,13 +236,19 @@
 					<li class="current tsd-kind-interface tsd-parent-kind-namespace">
 						<a href="types.operation.operationmodalinvokeconfirm.html" class="tsd-kind-icon">Operation<wbr>Modal<wbr>Invoke<wbr>Confirm</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="types.operation.operationmodalinvokeconfirm.html#canceltext" class="tsd-kind-icon">cancel<wbr>Text</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="types.operation.operationmodalinvokeconfirm.html#message" class="tsd-kind-icon">message</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="types.operation.operationmodalinvokeconfirm.html#messagecontent" class="tsd-kind-icon">message<wbr>Content</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="types.operation.operationmodalinvokeconfirm.html#oktext" class="tsd-kind-icon">ok<wbr>Text</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
 								<a href="types.operation.operationmodalinvokeconfirm.html#type" class="tsd-kind-icon">type</a>
 							</li>
 						</ul>
