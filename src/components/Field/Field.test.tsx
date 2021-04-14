@@ -258,13 +258,13 @@ describe('Readonly field drilldown', () => {
     })
 
     it('should render MultivalueHover', () => {
-        const multivalueHoverFieldMeta = { key: 'someInput', type: FieldType.multivalueHover, label: fieldName }
+        const multivalueHoverFieldMeta = { key: 'someInput', type: FieldType.multivalueHover, label: fieldName, bgColor: 'red' }
         const wrapper = mount(
             <Provider store={store}>
                 <Field {...fieldProperties} widgetFieldMeta={multivalueHoverFieldMeta as MultivalueFieldMeta} />
             </Provider>
         )
-        expect(wrapper.find(MultivalueHover).length).toEqual(1)
+        expect(wrapper.find(MultivalueHover).findWhere(item => item.props().backgroundColor === 'red').length).toEqual(1)
     })
 
     it('should render Dictionary', () => {
