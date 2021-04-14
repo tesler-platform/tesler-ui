@@ -84,6 +84,7 @@
 								<li class="tsd-kind-enum tsd-parent-kind-namespace"><a href="../enums/types.widget.paginationmode.html" class="tsd-kind-icon">Pagination<wbr>Mode</a></li>
 								<li class="tsd-kind-enum tsd-parent-kind-namespace tsd-is-external"><a href="../enums/types.widget.positiontypes.html" class="tsd-kind-icon">Position<wbr>Types</a></li>
 								<li class="tsd-kind-enum tsd-parent-kind-namespace tsd-is-external"><a href="../enums/types.widget.widgettypes.html" class="tsd-kind-icon">Widget<wbr>Types</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-namespace"><a href="../interfaces/types.widget.customwidgetconfiguration.html" class="tsd-kind-icon">Custom<wbr>Widget<wbr>Configuration</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-namespace tsd-is-external"><a href="../interfaces/types.widget.layoutcol.html" class="tsd-kind-icon">Layout<wbr>Col</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-namespace tsd-is-external"><a href="../interfaces/types.widget.layoutrow.html" class="tsd-kind-icon">Layout<wbr>Row</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-namespace tsd-is-external"><a href="../interfaces/types.widget.tableoperations.html" class="tsd-kind-icon">Table<wbr>Operations</a></li>
@@ -127,6 +128,7 @@
 								<li class="tsd-kind-type-alias tsd-parent-kind-namespace"><a href="types.widget.html#widgetmetaany" class="tsd-kind-icon">Widget<wbr>Meta<wbr>Any</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-namespace"><a href="types.widget.html#popupwidgettypes" class="tsd-kind-icon">Popup<wbr>Widget<wbr>Types</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="types.widget.html#iscustomwidget" class="tsd-kind-icon">is<wbr>Custom<wbr>Widget</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="types.widget.html#iscustomwidgetconfiguration" class="tsd-kind-icon">is<wbr>Custom<wbr>Widget<wbr>Configuration</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section">
@@ -146,7 +148,7 @@
 					<div class="tsd-signature tsd-kind-icon">Table<wbr>Like<wbr>Widget<wbr>Types<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">readonly </span><a href="../enums/types.widget.widgettypes.html#list" class="tsd-signature-type" data-tsd-kind="Enumeration member">List</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d9fbd0b/src/interfaces/widget.ts#L47">src/interfaces/widget.ts:47</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L46">src/interfaces/widget.ts:46</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -183,20 +185,30 @@
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-namespace">
 					<a name="customwidget" class="tsd-anchor"></a>
 					<h3>Custom<wbr>Widget</h3>
-					<div class="tsd-signature tsd-kind-icon">Custom<wbr>Widget<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ConnectedComponent</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">FunctionComponent</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">Custom<wbr>Widget<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ComponentType</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d9fbd0b/src/interfaces/widget.ts#L195">src/interfaces/widget.ts:195</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L197">src/interfaces/widget.ts:197</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Component of custom widget</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>deprecated</dt>
+							<dd><p>TODO: Remove in 2.0.0</p>
+							</dd>
+						</dl>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-namespace">
 					<a name="customwidgetdescriptor" class="tsd-anchor"></a>
 					<h3>Custom<wbr>Widget<wbr>Descriptor</h3>
-					<div class="tsd-signature tsd-kind-icon">Custom<wbr>Widget<wbr>Descriptor<span class="tsd-signature-symbol">:</span> <a href="types.widget.html#customwidget" class="tsd-signature-type" data-tsd-kind="Type alias">CustomWidget</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>card<span class="tsd-signature-symbol">?: </span><a href="types.widget.html#customwidget" class="tsd-signature-type" data-tsd-kind="Type alias">CustomWidget</a><span class="tsd-signature-symbol">; </span>component<span class="tsd-signature-symbol">: </span><a href="types.widget.html#customwidget" class="tsd-signature-type" data-tsd-kind="Type alias">CustomWidget</a><span class="tsd-signature-symbol"> }</span></div>
+					<div class="tsd-signature tsd-kind-icon">Custom<wbr>Widget<wbr>Descriptor<span class="tsd-signature-symbol">:</span> <a href="types.widget.html#customwidget" class="tsd-signature-type" data-tsd-kind="Type alias">CustomWidget</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/types.widget.customwidgetconfiguration.html" class="tsd-signature-type" data-tsd-kind="Interface">CustomWidgetConfiguration</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d9fbd0b/src/interfaces/widget.ts#L197">src/interfaces/widget.ts:197</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L217">src/interfaces/widget.ts:217</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -368,7 +380,7 @@
 					<div class="tsd-signature tsd-kind-icon">Widget<wbr>Fields<wbr>OrBlocks&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/types.widget.widgetfieldblock.html" class="tsd-signature-type" data-tsd-kind="Interface">WidgetFieldBlock</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d9fbd0b/src/interfaces/widget.ts#L124">src/interfaces/widget.ts:124</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L121">src/interfaces/widget.ts:121</a></li>
 						</ul>
 					</aside>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -414,7 +426,7 @@
 					<div class="tsd-signature tsd-kind-icon">Widget<wbr>Meta<wbr>Any<span class="tsd-signature-symbol">:</span> <a href="../interfaces/types.widget.widgetformmeta.html" class="tsd-signature-type" data-tsd-kind="Interface">WidgetFormMeta</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/types.widget.widgettablemeta.html" class="tsd-signature-type" data-tsd-kind="Interface">WidgetTableMeta</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/types.widget.widgettextmeta.html" class="tsd-signature-type" data-tsd-kind="Interface">WidgetTextMeta</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/types.widget.widgetinfometa.html" class="tsd-signature-type" data-tsd-kind="Interface">WidgetInfoMeta</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d9fbd0b/src/interfaces/widget.ts#L193">src/interfaces/widget.ts:193</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L190">src/interfaces/widget.ts:190</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -426,30 +438,29 @@
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-namespace">
 					<a name="popupwidgettypes" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> Popup<wbr>Widget<wbr>Types</h3>
-					<div class="tsd-signature tsd-kind-icon">Popup<wbr>Widget<wbr>Types<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">readonly </span><a href="../enums/types.widget.widgettypes.html#picklistpopup" class="tsd-signature-type" data-tsd-kind="Enumeration member">PickListPopup</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = ...</span></div>
+					<div class="tsd-signature tsd-kind-icon">Popup<wbr>Widget<wbr>Types<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d9fbd0b/src/interfaces/widget.ts#L61">src/interfaces/widget.ts:61</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L58">src/interfaces/widget.ts:58</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Widgets that are considered <code>popups</code> and usually excluded from widgets layout grid</p>
 						</div>
-						<p>TODO: Make extenstion point</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
 					<a name="iscustomwidget" class="tsd-anchor"></a>
 					<h3>is<wbr>Custom<wbr>Widget</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Custom<wbr>Widget<span class="tsd-signature-symbol">(</span>descriptor<span class="tsd-signature-symbol">: </span><a href="types.widget.html#customwidgetdescriptor" class="tsd-signature-type" data-tsd-kind="Type alias">CustomWidgetDescriptor</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">descriptor</span><span class="tsd-signature-symbol"> is </span><a href="types.widget.html#customwidget" class="tsd-signature-type" data-tsd-kind="Type alias">CustomWidget</a></li>
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Custom<wbr>Widget<span class="tsd-signature-symbol">(</span>descriptor<span class="tsd-signature-symbol">: </span><a href="types.widget.html#customwidgetdescriptor" class="tsd-signature-type" data-tsd-kind="Type alias">CustomWidgetDescriptor</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">descriptor</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">ComponentType</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d9fbd0b/src/interfaces/widget.ts#L207">src/interfaces/widget.ts:207</a></li>
+									<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L221">src/interfaces/widget.ts:221</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -463,7 +474,38 @@
 									<h5>descriptor: <a href="types.widget.html#customwidgetdescriptor" class="tsd-signature-type" data-tsd-kind="Type alias">CustomWidgetDescriptor</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">descriptor</span><span class="tsd-signature-symbol"> is </span><a href="types.widget.html#customwidget" class="tsd-signature-type" data-tsd-kind="Type alias">CustomWidget</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">descriptor</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">ComponentType</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="iscustomwidgetconfiguration" class="tsd-anchor"></a>
+					<h3>is<wbr>Custom<wbr>Widget<wbr>Configuration</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Custom<wbr>Widget<wbr>Configuration<span class="tsd-signature-symbol">(</span>descriptor<span class="tsd-signature-symbol">: </span><a href="types.widget.html#customwidgetdescriptor" class="tsd-signature-type" data-tsd-kind="Type alias">CustomWidgetDescriptor</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">descriptor</span><span class="tsd-signature-symbol"> is </span><a href="../interfaces/types.widget.customwidgetconfiguration.html" class="tsd-signature-type" data-tsd-kind="Interface">CustomWidgetConfiguration</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L230">src/interfaces/widget.ts:230</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Checks whether @param descriptor is an instance of <code>CustomWidgetConfiguration</code></p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>descriptor: <a href="types.widget.html#customwidgetdescriptor" class="tsd-signature-type" data-tsd-kind="Type alias">CustomWidgetDescriptor</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>custom widget descriptor</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">descriptor</span><span class="tsd-signature-symbol"> is </span><a href="../interfaces/types.widget.customwidgetconfiguration.html" class="tsd-signature-type" data-tsd-kind="Interface">CustomWidgetConfiguration</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -480,7 +522,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d9fbd0b/src/interfaces/widget.ts#L217">src/interfaces/widget.ts:217</a></li>
+									<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L240">src/interfaces/widget.ts:240</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -518,6 +560,9 @@
 					</li>
 					<li class=" tsd-kind-enum tsd-parent-kind-namespace tsd-is-external">
 						<a href="../enums/types.widget.widgettypes.html" class="tsd-kind-icon">Widget<wbr>Types</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="../interfaces/types.widget.customwidgetconfiguration.html" class="tsd-kind-icon">Custom<wbr>Widget<wbr>Configuration</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-namespace tsd-is-external">
 						<a href="../interfaces/types.widget.layoutcol.html" class="tsd-kind-icon">Layout<wbr>Col</a>
@@ -650,6 +695,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
 						<a href="types.widget.html#iscustomwidget" class="tsd-kind-icon">is<wbr>Custom<wbr>Widget</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="types.widget.html#iscustomwidgetconfiguration" class="tsd-kind-icon">is<wbr>Custom<wbr>Widget<wbr>Configuration</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
 						<a href="types.widget.html#iswidgetfieldblock" class="tsd-kind-icon">is<wbr>Widget<wbr>Field<wbr>Block</a>

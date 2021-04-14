@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>WidgetFieldBlock | @tesler-ui/core</title>
+	<title>CustomWidgetConfiguration | @tesler-ui/core</title>
 	<meta name="description" content="Documentation for @tesler-ui/core">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -61,10 +61,10 @@
 					<a href="../modules/types.widget.html">widget</a>
 				</li>
 				<li>
-					<a href="types.widget.widgetfieldblock.html">WidgetFieldBlock</a>
+					<a href="types.widget.customwidgetconfiguration.html">CustomWidgetConfiguration</a>
 				</li>
 			</ul>
-			<h1>Interface WidgetFieldBlock&lt;T&gt;</h1>
+			<h1>Interface CustomWidgetConfiguration</h1>
 		</div>
 	</div>
 </header>
@@ -74,28 +74,15 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Description of the list of fields of block type.</p>
+						<p>Configuration of custom widget</p>
 					</div>
-					<dl class="tsd-comment-tags">
-						<dt>deprecated</dt>
-						<dd><p>Used to create a block grouping of fields</p>
-						</dd>
-					</dl>
 				</div>
-			</section>
-			<section class="tsd-panel tsd-type-parameters">
-				<h3>Type parameters</h3>
-				<ul class="tsd-type-parameters">
-					<li>
-						<h4>T</h4>
-					</li>
-				</ul>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">WidgetFieldBlock</span>
+						<span class="target">CustomWidgetConfiguration</span>
 					</li>
 				</ul>
 			</section>
@@ -106,11 +93,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.widget.widgetfieldblock.html#blockid" class="tsd-kind-icon">block<wbr>Id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.widget.widgetfieldblock.html#break" class="tsd-kind-icon">break</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.widget.widgetfieldblock.html#fields" class="tsd-kind-icon">fields</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.widget.widgetfieldblock.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.widget.widgetfieldblock.html#newrow" class="tsd-kind-icon">new<wbr>Row</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.widget.customwidgetconfiguration.html#card" class="tsd-kind-icon">card</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.widget.customwidgetconfiguration.html#component" class="tsd-kind-icon">component</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.widget.customwidgetconfiguration.html#ispopup" class="tsd-kind-icon">is<wbr>Popup</a></li>
 							</ul>
 						</section>
 					</div>
@@ -119,82 +104,48 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="blockid" class="tsd-anchor"></a>
-					<h3>block<wbr>Id</h3>
-					<div class="tsd-signature tsd-kind-icon">block<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="card" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> card</h3>
+					<div class="tsd-signature tsd-kind-icon">card<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ComponentType</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L102">src/interfaces/widget.ts:102</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L214">src/interfaces/widget.ts:214</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Block ID</p>
+							<p>Card of widget</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="break" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> break</h3>
-					<div class="tsd-signature tsd-kind-icon">break<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<a name="component" class="tsd-anchor"></a>
+					<h3>component</h3>
+					<div class="tsd-signature tsd-kind-icon">component<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ComponentType</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L118">src/interfaces/widget.ts:118</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<dl class="tsd-comment-tags">
-							<dt>deprecated</dt>
-							<dd><p>TODO: Remove in 2.0.0, used to ...</p>
-							</dd>
-						</dl>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="fields" class="tsd-anchor"></a>
-					<h3>fields</h3>
-					<div class="tsd-signature tsd-kind-icon">fields<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L110">src/interfaces/widget.ts:110</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L210">src/interfaces/widget.ts:210</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Fields contained in the block</p>
+							<p>Component of custom widget</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="ispopup" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> is<wbr>Popup</h3>
+					<div class="tsd-signature tsd-kind-icon">is<wbr>Popup<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L106">src/interfaces/widget.ts:106</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L206">src/interfaces/widget.ts:206</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Name of the block</p>
+							<p>Whether widget is popup</p>
 						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="newrow" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> new<wbr>Row</h3>
-					<div class="tsd-signature tsd-kind-icon">new<wbr>Row<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/b7ee6ee/src/interfaces/widget.ts#L114">src/interfaces/widget.ts:114</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<dl class="tsd-comment-tags">
-							<dt>deprecated</dt>
-							<dd><p>TODO: Remove in 2.0.0, used to denote a new row in old layout system for forms</p>
-							</dd>
-						</dl>
 					</div>
 				</section>
 			</section>
@@ -211,23 +162,17 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-namespace tsd-has-type-parameter">
-						<a href="types.widget.widgetfieldblock.html" class="tsd-kind-icon">Widget<wbr>Field<wbr>Block</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="types.widget.customwidgetconfiguration.html" class="tsd-kind-icon">Custom<wbr>Widget<wbr>Configuration</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types.widget.widgetfieldblock.html#blockid" class="tsd-kind-icon">block<wbr>Id</a>
+								<a href="types.widget.customwidgetconfiguration.html#card" class="tsd-kind-icon">card</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types.widget.widgetfieldblock.html#break" class="tsd-kind-icon">break</a>
+								<a href="types.widget.customwidgetconfiguration.html#component" class="tsd-kind-icon">component</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types.widget.widgetfieldblock.html#fields" class="tsd-kind-icon">fields</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types.widget.widgetfieldblock.html#name" class="tsd-kind-icon">name</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types.widget.widgetfieldblock.html#newrow" class="tsd-kind-icon">new<wbr>Row</a>
+								<a href="types.widget.customwidgetconfiguration.html#ispopup" class="tsd-kind-icon">is<wbr>Popup</a>
 							</li>
 						</ul>
 					</li>
