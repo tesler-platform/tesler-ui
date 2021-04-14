@@ -7,9 +7,8 @@ import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
 import { Icon, Skeleton, Table } from 'antd'
 import { ColumnProps, TableRowSelection, TableEventListeners } from 'antd/lib/table'
-import { DataItem, MultivalueSingleValue, PendingDataItem } from '../../interfaces/data'
+import { DataItem, PendingDataItem } from '../../interfaces/data'
 import { FieldType } from '../../interfaces/view'
-import MultivalueHover from '../ui/Multivalue/MultivalueHover'
 import Field from '../Field/Field'
 import { useAssocRecords } from '../../hooks/useAssocRecords'
 import { $do } from '../../actions/actions'
@@ -65,7 +64,6 @@ export type FullHierarchyTableAllProps = FullHierarchyTableOwnProps & FullHierar
 type ChildrenAwaredHierarchyItem = FullHierarchyDataItem & { noChildren: boolean }
 
 const emptyData: FullHierarchyDataItem[] = []
-const emptyMultivalue: MultivalueSingleValue[] = []
 const components = { filter: FullHierarchyFilter }
 
 const Exp: FunctionComponent = (props: any) => {
@@ -215,12 +213,20 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
         }
     }, [depthLevel, fields, props.rowMetaFields, maxDepth])
 
+    const processedFields: WidgetListField[] = React.useMemo(
+        () =>
+            fields?.map(item => {
+                return item.type === FieldType.multivalue ? { ...item, type: FieldType.multivalueHover } : item
+            }),
+        [fields]
+    )
+
     const columns: Array<ColumnProps<DataItem>> = React.useMemo(() => {
         return [
             indentColumn,
-            ...fields
-                ?.filter((item: WidgetListField) => item.type !== FieldType.hidden && !item.hidden)
-                .map((item: WidgetListField) => ({
+            ...processedFields
+                ?.filter(item => item.type !== FieldType.hidden && !item.hidden)
+                .map(item => ({
                     title: (
                         <ColumnTitle
                             widgetName={props.meta.name}
@@ -233,22 +239,13 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                     ),
                     key: item.key,
                     dataIndex: item.key,
-                    width: getColumnWidth(item.key, depthLevel, fields, props.rowMetaFields, maxDepth, item.width),
+                    width: getColumnWidth(item.key, depthLevel, processedFields, props.rowMetaFields, maxDepth, item.width),
                     render: (text: string, dataItem: AssociatedItem) => {
-                        if (item.type === FieldType.multivalue) {
-                            return (
-                                <MultivalueHover
-                                    data={(dataItem[item.key] || emptyMultivalue) as MultivalueSingleValue[]}
-                                    displayedValue={item.displayedKey && dataItem[item.displayedKey]}
-                                />
-                            )
-                        }
-
-                        /**
-                         * Column width problems
-                         * https://github.com/ant-design/ant-design/issues/13825
-                         */
                         return (
+                            /**
+                             * Column width problems
+                             * https://github.com/ant-design/ant-design/issues/13825
+                             */
                             <div style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
                                 <Field bcName={bcName} cursor={dataItem.id} widgetName={props.meta.name} widgetFieldMeta={item} readonly />
                             </div>
@@ -256,7 +253,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                     }
                 }))
         ]
-    }, [depthLevel, fields, props.meta.name, textFilters, indentColumn])
+    }, [depthLevel, processedFields, props.meta.name, textFilters, indentColumn])
 
     const handleRow = React.useCallback(
         (record: ChildrenAwaredHierarchyItem, index: number) => {
