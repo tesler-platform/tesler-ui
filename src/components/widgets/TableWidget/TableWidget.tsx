@@ -8,12 +8,11 @@ import { $do } from '../../../actions/actions'
 import { Store } from '../../../interfaces/store'
 import { PaginationMode, WidgetListField, WidgetTableMeta } from '../../../interfaces/widget'
 import { RowMetaField } from '../../../interfaces/rowMeta'
-import { DataItem, MultivalueSingleValue, PendingDataItem } from '../../../interfaces/data'
+import { DataItem, PendingDataItem } from '../../../interfaces/data'
 import { buildBcUrl } from '../../../utils/strings'
 import * as styles from './TableWidget.less'
 import { FieldType, ViewSelectedCell } from '../../../interfaces/view'
-import Field, { emptyMultivalue } from '../../Field/Field'
-import MultivalueHover from '../../ui/Multivalue/MultivalueHover'
+import Field from '../../Field/Field'
 import { Route } from '../../../interfaces/router'
 import { useWidgetOperations } from '../../../hooks'
 import { Operation, OperationGroup } from '../../../interfaces/operation'
@@ -349,10 +348,18 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
         props.onSelectCell(recordId, props.meta.name, fieldKey)
     }
 
+    const processedFields: WidgetListField[] = React.useMemo(
+        () =>
+            props.meta.fields.map(item => {
+                return item.type === FieldType.multivalue ? { ...item, type: FieldType.multivalueHover } : item
+            }),
+        [props.meta.fields]
+    )
+
     const columns: Array<ColumnProps<DataItem>> = React.useMemo(() => {
-        return props.meta.fields
-            .filter((item: WidgetListField) => item.type !== FieldType.hidden && !item.hidden)
-            .map((item: WidgetListField) => {
+        return processedFields
+            .filter(item => item.type !== FieldType.hidden && !item.hidden)
+            .map(item => {
                 const fieldRowMeta = props.rowMetaFields?.find(field => field.key === item.key)
                 return {
                     title: props.columnTitleComponent ? (
@@ -364,15 +371,6 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
                     dataIndex: item.key,
                     width: item.width,
                     render: (text: string, dataItem: DataItem) => {
-                        if (item.type === FieldType.multivalue) {
-                            return (
-                                <MultivalueHover
-                                    data={(dataItem[item.key] || emptyMultivalue) as MultivalueSingleValue[]}
-                                    displayedValue={item.displayedKey && dataItem[item.displayedKey]}
-                                />
-                            )
-                        }
-
                         const editMode =
                             isAllowEdit &&
                             props.selectedCell &&
@@ -380,7 +378,6 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
                             props.meta.name === props.selectedCell.widgetName &&
                             dataItem.id === props.selectedCell.rowId &&
                             props.cursor === props.selectedCell.rowId
-
                         return (
                             <div>
                                 <Field
@@ -407,7 +404,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
                 }
             })
     }, [
-        props.meta.fields,
+        processedFields,
         props.rowMetaFields,
         props.meta.name,
         props.selectedCell,

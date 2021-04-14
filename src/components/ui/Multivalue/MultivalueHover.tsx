@@ -13,6 +13,7 @@ export interface MultivalueHoverProps extends BaseFieldProps {
     displayedValue: DataValue
     onDrillDown?: () => void
     className?: string
+    backgroundColor?: string
 }
 
 /**
@@ -25,7 +26,11 @@ const Multivalue: React.FunctionComponent<MultivalueHoverProps> = props => {
     const filterValue = props.data?.find(bcDataItem => filterKey?.split(',')?.includes(bcDataItem.id))?.value.toString()
     const displayedItem =
         props.displayedValue !== undefined && props.displayedValue !== null ? (
-            <p className={cn(styles.displayedValue, props.className)} onClick={props.onDrillDown}>
+            <p
+                className={cn(styles.displayedValue, { [styles.coloredField]: props.backgroundColor }, props.className)}
+                onClick={props.onDrillDown}
+                style={props.backgroundColor ? { backgroundColor: props.backgroundColor } : null}
+            >
                 {filterValue ? (
                     <SearchHighlight
                         source={(props.displayedValue || '').toString()}

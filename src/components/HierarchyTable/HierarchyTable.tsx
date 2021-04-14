@@ -5,10 +5,9 @@ import { Dispatch } from 'redux'
 import { $do } from '../../actions/actions'
 import { Store } from '../../interfaces/store'
 import Field from '../../components/Field/Field'
-import MultivalueHover from '../../components/ui/Multivalue/MultivalueHover'
 import { buildBcUrl } from '../../utils/strings'
 import { WidgetTableMeta, WidgetListField, WidgetTableHierarchy } from '../../interfaces/widget'
-import { DataItem, MultivalueSingleValue, PendingDataItem } from '../../interfaces/data'
+import { DataItem, PendingDataItem } from '../../interfaces/data'
 import { RowMetaField } from '../../interfaces/rowMeta'
 import { ColumnProps, TableRowSelection, TableEventListeners } from 'antd/lib/table'
 import { Route } from '../../interfaces/router'
@@ -50,8 +49,6 @@ export interface HierarchyTableProps extends HierarchyTableOwnProps {
     onDrillDown?: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void
     onExpand: (bcName: string, nestedBcName: string, cursor: string, route: Route) => void
 }
-
-const emptyMultivalue: MultivalueSingleValue[] = []
 
 export const Exp: FunctionComponent = (props: any) => {
     if (!props.onExpand || props.record.noChildren) {
@@ -215,18 +212,27 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = props => {
     const fieldCustomProps = React.useMemo(() => {
         return { hierarchyDepth: indentLevel + 1 }
     }, [indentLevel])
+
+    const processedFields: WidgetListField[] = React.useMemo(
+        () =>
+            fields.map(item => {
+                return item.type === FieldType.multivalue ? { ...item, type: FieldType.multivalueHover } : item
+            }),
+        [fields]
+    )
+
     const columns: Array<ColumnProps<DataItem>> = React.useMemo(() => {
         return [
             ...indentColumn,
-            ...fields
+            ...processedFields
                 .filter(item => !item.hidden && item.type !== FieldType.hidden)
-                .map((item: WidgetListField, index) => {
+                .map((item, index) => {
                     const itemWidth = isSameBcHierarchy
-                        ? getColumnWidth(item.key, indentLevel, fields, props.rowMetaFields, hierarchyLevels.length, item.width)
+                        ? getColumnWidth(item.key, indentLevel, processedFields, props.rowMetaFields, hierarchyLevels.length, item.width)
                         : item.width
                     const className = isSameBcHierarchy
                         ? styles.sameHierarchyNode
-                        : cn({ [styles[`padding${indentLevel}`]]: fields[0].key === item.key && indentLevel && !item.width })
+                        : cn({ [styles[`padding${indentLevel}`]]: processedFields[0].key === item.key && indentLevel && !item.width })
                     return {
                         title: item.title,
                         key: item.key,
@@ -234,32 +240,22 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = props => {
                         width: itemWidth,
                         className,
                         render: (text: string, dataItem: any) => {
-                            let node: React.ReactNode
-                            if (item.type === FieldType.multivalue) {
-                                node = (
-                                    <MultivalueHover
-                                        data={(dataItem[item.key] || emptyMultivalue) as MultivalueSingleValue[]}
-                                        displayedValue={item.displayedKey && dataItem[item.displayedKey]}
-                                    />
-                                )
-                            } else {
-                                node = (
-                                    <Field
-                                        bcName={bcName}
-                                        cursor={dataItem.id}
-                                        widgetName={props.meta.name}
-                                        widgetFieldMeta={item}
-                                        readonly
-                                        customProps={fieldCustomProps}
-                                    />
-                                )
-                            }
+                            const node: React.ReactNode = (
+                                <Field
+                                    bcName={bcName}
+                                    cursor={dataItem.id}
+                                    widgetName={props.meta.name}
+                                    widgetFieldMeta={item}
+                                    readonly
+                                    customProps={fieldCustomProps}
+                                />
+                            )
                             return hasNested && index === 0 ? <span className={styles.expandPadding}>{node}</span> : node
                         }
                     }
                 })
         ]
-    }, [indentLevel, fields, props.rowMetaFields, hasNested])
+    }, [indentLevel, processedFields, props.rowMetaFields, hasNested])
 
     return (
         <div className={styles.container}>

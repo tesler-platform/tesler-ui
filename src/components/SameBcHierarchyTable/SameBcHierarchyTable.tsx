@@ -5,9 +5,8 @@ import { Dispatch } from 'redux'
 import { $do } from '../../actions/actions'
 import { Store } from '../../interfaces/store'
 import Field from '../../components/Field/Field'
-import MultivalueHover from '../../components/ui/Multivalue/MultivalueHover'
 import { WidgetTableMeta, WidgetListField } from '../../interfaces/widget'
-import { DataItem, MultivalueSingleValue, PendingDataItem } from '../../interfaces/data'
+import { DataItem, PendingDataItem } from '../../interfaces/data'
 import { ColumnProps, TableRowSelection, TableEventListeners } from 'antd/lib/table'
 import { Route } from '../../interfaces/router'
 import { FieldType } from '../../interfaces/view'
@@ -36,8 +35,6 @@ export interface SameBcHierarchyTableProps extends SameBcHierarchyTableOwnProps 
     onDrillDown?: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void
     onExpand: (bcName: string, depth: number, cursor: string) => void
 }
-
-const emptyMultivalue: MultivalueSingleValue[] = []
 
 export const Exp: FunctionComponent = (props: any) => {
     if (!props.onExpand) {
@@ -150,30 +147,31 @@ export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> 
             return null
         }
     }
+
+    const processedFields: WidgetListField[] = React.useMemo(
+        () =>
+            fields.map(item => {
+                return item.type === FieldType.multivalue ? { ...item, type: FieldType.multivalueHover } : item
+            }),
+        [fields]
+    )
+
     const columns: Array<ColumnProps<DataItem>> = React.useMemo(() => {
         return [
             indentColumn,
-            ...fields.map((item: WidgetListField) => ({
+            ...processedFields.map(item => ({
                 title: item.title,
                 key: item.key,
                 dataIndex: item.key,
                 render: (text: string, dataItem: any) => {
-                    if (item.type === FieldType.multivalue) {
-                        return (
-                            <MultivalueHover
-                                data={(dataItem[item.key] || emptyMultivalue) as MultivalueSingleValue[]}
-                                displayedValue={item.displayedKey && dataItem[item.displayedKey]}
-                            />
-                        )
-                    }
-                    if (item.type === FieldType.multifield) {
+                    if ([FieldType.multifield, FieldType.multivalueHover].includes(item.type)) {
                         return <Field bcName={bcName} cursor={dataItem.id} widgetName={props.meta.name} widgetFieldMeta={item} readonly />
                     }
                     return text
                 }
             }))
         ]
-    }, [indentLevel, fields])
+    }, [indentLevel, processedFields])
 
     return (
         <div className={styles.container}>
