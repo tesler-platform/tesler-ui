@@ -1,4 +1,9 @@
-import { createRequiredFieldsMiddleware, hasPendingValidationFails } from '../requiredFieldsMiddleware'
+import {
+    createRequiredFieldsMiddleware,
+    getRequiredFieldsMissing,
+    hasPendingValidationFails,
+    operationRequiresAutosave
+} from '../requiredFieldsMiddleware'
 import { mockStore } from '../../tests/mockStore'
 import { PendingValidationFailsFormat } from '../../interfaces/view'
 import { $do, types } from '../../actions/actions'
@@ -7,6 +12,7 @@ import { Store } from 'redux'
 import { OperationTypeCrud, Operation } from '../../interfaces/operation'
 import { WidgetTypes } from '../../interfaces/widget'
 import { RowMeta } from '../../interfaces/rowMeta'
+import { DataValue } from '@tesler-ui/schema'
 
 describe('requiredFieldsMiddleware', () => {
     let store: Store<CoreStore>
@@ -152,6 +158,55 @@ describe('hasPendingValidationFails old format test', () => {
             }
         }
         expect(hasPendingValidationFails(store, bcName)).toBeTruthy()
+    })
+})
+
+describe('operationRequiresAutosave', () => {
+    it('should ignore save action', () => {
+        expect(
+            operationRequiresAutosave(OperationTypeCrud.save, [
+                { type: OperationTypeCrud.save, scope: 'bc', autoSaveBefore: true, text: 'save' }
+            ])
+        ).toBeFalsy()
+    })
+    it('should ignore save role action', () => {
+        expect(
+            operationRequiresAutosave(OperationTypeCrud.save, [
+                { type: 'type', scope: 'bc', autoSaveBefore: true, text: 'save', actionRole: OperationTypeCrud.save }
+            ])
+        ).toBeFalsy()
+    })
+    it('should react on autoSaveBefore flag 1: return true', () => {
+        expect(operationRequiresAutosave(OperationTypeCrud.associate, [rowMetaAction])).toBeTruthy()
+    })
+    it('should react on autoSaveBefore flag 2: return false', () => {
+        expect(operationRequiresAutosave(OperationTypeCrud.associate, [{ ...rowMetaAction, autoSaveBefore: false }])).toBeFalsy()
+    })
+    it('should react if no actions', () => {
+        expect(operationRequiresAutosave(OperationTypeCrud.associate, null)).toBeFalsy()
+    })
+})
+
+describe('getRequiredFieldsMissing', () => {
+    const data = { id: '1', vstamp: 1, test: 'test' }
+    it('should return null', () => {
+        expect(getRequiredFieldsMissing(data, {}, rowMeta.fields)).toBeFalsy()
+    })
+    it('should react on null', () => {
+        const pending = { test: null as DataValue }
+        expect(getRequiredFieldsMissing(data, pending, rowMeta.fields)).toStrictEqual(pending)
+    })
+    it('should react on undefined', () => {
+        const pending = { test: undefined as DataValue }
+        expect(getRequiredFieldsMissing({ ...data, test: undefined }, pending, rowMeta.fields)).toStrictEqual({ test: null })
+    })
+    it('should react on []', () => {
+        const pending = { test: [] as DataValue }
+        expect(getRequiredFieldsMissing(data, pending, rowMeta.fields)).toStrictEqual(pending)
+    })
+    it('should react on {}', () => {
+        const pending = { test: {} as DataValue }
+        expect(getRequiredFieldsMissing(data, pending, rowMeta.fields)).toStrictEqual({ test: null })
     })
 })
 

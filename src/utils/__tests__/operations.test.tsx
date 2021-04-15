@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { flattenOperations, matchOperationRole } from '../operations'
+import { checkOperationRole, flattenOperations, matchOperationRole } from '../operations'
 import { Operation, OperationTypeCrud } from '../../interfaces/operation'
 import { mockStore } from '../../tests/mockStore'
 import { ActionPayloadTypes } from '../../actions/actions'
@@ -132,3 +132,11 @@ const sendOperationCustom: ActionPayloadTypes['sendOperation'] = {
     operationType: custom.type,
     widgetName: 'widget-example'
 }
+
+test('checkOperationRole', () => {
+    expect(checkOperationRole(create, OperationTypeCrud.create)).toBeTruthy()
+    expect(checkOperationRole(custom, 'custom')).toBeTruthy()
+    expect(checkOperationRole(custom, OperationTypeCrud.save)).toBeFalsy()
+    expect(checkOperationRole(unsave, OperationTypeCrud.cancelCreate)).toBeTruthy()
+    expect(checkOperationRole(create, OperationTypeCrud.save)).toBeFalsy()
+})
