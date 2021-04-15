@@ -11,9 +11,10 @@ import { openButtonWarningNotification } from '../utils/notifications'
 import i18n from 'i18next'
 import { DataItem, PendingDataItem } from '../interfaces/data'
 import { RowMetaField } from '../interfaces/rowMeta'
-import { WidgetField, WidgetFieldBlock, isWidgetFieldBlock, TableLikeWidgetTypes, WidgetTableMeta } from '../interfaces/widget'
-import { flattenOperations } from '../utils/operations'
+import { isWidgetFieldBlock, TableLikeWidgetTypes, WidgetField, WidgetFieldBlock, WidgetTableMeta } from '../interfaces/widget'
+import { checkOperationRole, flattenOperations } from '../utils/operations'
 import { PendingValidationFailsFormat } from '../interfaces/view'
+import { OperationTypeCrud } from '@tesler-ui/schema'
 
 const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) => (next: Dispatch) => (
     action: AnyAction
@@ -85,13 +86,15 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
  * @param operationType Key of operation to check
  * @param actions List of operations and/or operation groups
  */
-function operationRequiresAutosave(operationType: string, actions: Array<Operation | OperationGroup>) {
+export function operationRequiresAutosave(operationType: string, actions: Array<Operation | OperationGroup>) {
     let result = false
     if (!actions) {
         console.error('rowMeta is missing in the middle of "sendOperation" action')
         return result
     }
-    result = flattenOperations(actions).some(action => action.type === operationType && action.autoSaveBefore)
+    result = flattenOperations(actions).some(
+        action => action.type === operationType && action.autoSaveBefore && !checkOperationRole(action, OperationTypeCrud.save)
+    )
     return result
 }
 
@@ -103,7 +106,7 @@ function operationRequiresAutosave(operationType: string, actions: Array<Operati
  * @param pendingChanges Pending record changes which could override record values
  * @param rowMeta Fields meta to check for 'required' flag
  */
-function getRequiredFieldsMissing(record: DataItem, pendingChanges: PendingDataItem, fieldsMeta: RowMetaField[]) {
+export function getRequiredFieldsMissing(record: DataItem, pendingChanges: PendingDataItem, fieldsMeta: RowMetaField[]) {
     const result: PendingDataItem = {}
     fieldsMeta.forEach(field => {
         const value = record?.[field.key] as string

@@ -6,7 +6,7 @@ import { OperationTypeCrud } from '../interfaces/operation'
 import { buildBcUrl } from '../utils/strings'
 import i18n from 'i18next'
 
-const initialState: ViewState = {
+export const initialState: ViewState = {
     id: null,
     name: null,
     url: null,
@@ -93,6 +93,12 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
                     ...state.metaInProgress,
                     [action.payload.bcName]: false
                 }
+            }
+        }
+        case types.bcNewDataSuccess: {
+            return {
+                ...state,
+                selectedCell: initialState.selectedCell
             }
         }
         case types.bcNewDataFail:
