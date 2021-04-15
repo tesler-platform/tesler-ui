@@ -63,3 +63,17 @@ export function matchOperationRole(role: OperationTypeCrud | 'none' | string, pa
     }
     return operation?.actionRole === role
 }
+
+/**
+ * Checks whether operation match to role
+ *
+ * @param operation Operation to check
+ * @param role Expected operation role
+ * @category Utils
+ */
+export function checkOperationRole(operation: Operation, role: OperationTypeCrud | string) {
+    if (operation.type === role) {
+        return true
+    }
+    return operation.actionRole === role
+}
