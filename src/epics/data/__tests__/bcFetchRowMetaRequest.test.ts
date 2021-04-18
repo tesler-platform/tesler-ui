@@ -15,29 +15,26 @@
  * limitations under the License.
  */
 
-import {Store} from 'redux'
-import {Store as CoreStore} from '../../../interfaces/store'
-import {mockStore} from '../../../tests/mockStore'
-import {bcFetchRowMetaRequest} from '../bcFetchRowMetaRequest'
-import {customAction} from '../../../api/api'
+import { Store } from 'redux'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { mockStore } from '../../../tests/mockStore'
+import { bcFetchRowMetaRequestCompatibility, bcFetchRowMetaRequest } from '../bcFetchRowMetaRequest'
+import { customAction } from '../../../api/api'
 import * as api from '../../../api/api'
-import {Observable} from 'rxjs'
-import {$do} from '../../../actions/actions'
-import {ActionsObservable} from 'redux-observable'
-import {WidgetTableMeta, WidgetTypes} from '../../../interfaces/widget'
-import {FieldType} from '../../../interfaces/view'
-import {testEpic} from '../../../tests/testEpic'
-import {RowMeta} from '../../../interfaces/rowMeta'
+import { Observable } from 'rxjs'
+import { $do, Epic, types } from '../../../actions/actions'
+import { ActionsObservable } from 'redux-observable'
+import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
+import { FieldType } from '../../../interfaces/view'
+import { testEpic } from '../../../tests/testEpic'
+import { RowMeta } from '../../../interfaces/rowMeta'
 
 const customActionMock = jest.fn().mockImplementation((...args: Parameters<typeof customAction>) => {
     const [screenName] = args
     if (screenName === 'crash') {
-        throw Error('test request crash')
+        return Observable.throw('test request crash')
     }
-    return Observable.of({
-        row: rowMeta,
-        preInvoke: null
-    })
+    return Observable.of(rowMeta)
 })
 
 const consoleMock = jest.fn()
@@ -60,32 +57,66 @@ describe('bcFetchRowMetaRequest', () => {
         store.getState().screen.screenName = 'test'
     })
 
-    it('sends API request, fires `bcFetchRowMetaSuccess` on success', () => {
+    it('sends API request', () => {
         store.getState().view.widgets[0] = { ...getWidgetMeta() }
         const action = $do.bcFetchRowMeta({
             bcName: 'bcExample',
             widgetName: 'widget-example'
         })
         const epic = bcFetchRowMetaRequest(ActionsObservable.of(action), store)
-        testEpic(epic, (result) => {
+        testEpic(epic, res => {
             expect(customActionMock).toBeCalledWith('test', 'bcExample/1', undefined, canceler.cancelToken)
-            /* expect(result[0]).toEqual(expect.objectContaining($do.bcFetchRowMetaSuccess({
-                bcName: 'bcExample',
-                bcUrl: 'bcExample/1',
-                rowMeta
-            })))
-            */
         })
     })
 
-    it.skip('fires `bcFetchRowMetaFail` and writes console error on error', () => {
-        /* TODO */
+    it('fires `bcFetchRowMetaSuccess` on success', () => {
+        store.getState().view.widgets[0] = { ...getWidgetMeta() }
+        const action = $do.bcFetchRowMeta({
+            bcName: 'bcExample',
+            widgetName: 'widget-example'
+        })
+        testEpic(flow(ActionsObservable.of(action), store), res => {
+            expect(res[0]).toEqual(
+                expect.objectContaining(
+                    $do.bcFetchRowMetaSuccess({
+                        bcName: 'bcExample',
+                        rowMeta,
+                        bcUrl: 'bcExample/1',
+                        cursor: '1'
+                    })
+                )
+            )
+        })
+    })
+
+    it('fires `bcFetchRowMetaFail` and writes console error on error', () => {
+        store.getState().screen.screenName = 'crash'
+        store.getState().view.widgets[0] = { ...getWidgetMeta() }
+        const action = $do.bcFetchRowMeta({
+            bcName: 'bcExample',
+            widgetName: 'widget-example'
+        })
+        testEpic(flow(ActionsObservable.of(action), store), res => {
+            expect(consoleMock).toBeCalledWith('test request crash')
+            expect(res[0]).toEqual(
+                expect.objectContaining(
+                    $do.bcFetchRowMetaFail({
+                        bcName: 'bcExample'
+                    })
+                )
+            )
+        })
     })
 
     it.skip('cancels request and fires `bcFetchRowMetaFail` when parent BC fired `bcSelectRecord`', () => {
         /* TODO */
     })
 })
+
+const flow: Epic = (action$, store) =>
+    action$
+        .ofType(types.bcFetchRowMeta)
+        .mergeMap(action => Observable.concat(...bcFetchRowMetaRequestCompatibility(action, store, ActionsObservable.of(action))))
 
 function getWidgetMeta(): WidgetTableMeta {
     return {
@@ -95,11 +126,13 @@ function getWidgetMeta(): WidgetTableMeta {
         bcName: 'bcExample',
         position: 1,
         gridWidth: null,
-        fields: [{
-            key: 'name',
-            title: 'Test Column',
-            type: FieldType.input
-        }],
+        fields: [
+            {
+                key: 'name',
+                title: 'Test Column',
+                type: FieldType.input
+            }
+        ]
     }
 }
 
@@ -115,8 +148,10 @@ const bcExample = {
 
 const rowMeta: RowMeta = {
     actions: [],
-    fields: [{
-        key: 'id',
-        currentValue: '19248'
-    }]
+    fields: [
+        {
+            key: 'id',
+            currentValue: '19248'
+        }
+    ]
 }
