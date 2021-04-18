@@ -1,6 +1,6 @@
 /*
  * TESLER-UI
- * Copyright (C) 2018-2020 Tesler Contributors
+ * Copyright (C) 2018-2021 Tesler Contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,16 +24,46 @@ import { createCanceler, fetchRowMeta } from '../../api/api'
 import { cancelRequestActionTypes, cancelRequestEpic } from '../../utils/cancelRequestEpic'
 import { ActionsObservable } from 'redux-observable'
 
+/**
+ * Access `row-meta` API endpoint for business component; response will contain information
+ * about operations available for row and additional information about row fields.
+ *
+ * On success, {@link ActionPayloadTypes.bcFetchRowMetaSuccess | bcFetchRowMetaSuccess} action dispatched
+ * to store received row meta.
+ * On failure, console.error called and {@link ActionPayloadTypes.bcFetchRowMetaFail | bcFetchRowMetaFail} action
+ * dispatched to drop fetching state.
+ *
+ * If any action from `cancelRequestActionTypes` array dispatched while this epic is in progress,
+ * this epic will be cancelled and {@link ActionPayloadTypes.bcFetchRowMetaFail | bcFetchRowMetaFail} action
+ * will be dispatched.
+ *
+ * @param action {@link ActionPayloadTypes.bcFetchRowMeta | bcFetchRowMeta}
+ * @param store Store instance
+ * @category Epics
+ */
 export const bcFetchRowMetaRequest: Epic = (action$, store) =>
     action$.ofType(types.bcFetchRowMeta).mergeMap(action => {
         return bcFetchRowMetaRequestImpl(action, store, action$)
     })
 
 /**
+ * Default implementation for `bcFetchRowMetaRequest` epic
  *
- * @param action
- * @param store
- * @param actionObservable
+ * Access `row-meta` API endpoint for business component; response will contain information
+ * about operations available for row and additional information about row fields.
+ *
+ * On success, {@link ActionPayloadTypes.bcFetchRowMetaSuccess | bcFetchRowMetaSuccess} action dispatched
+ * to store received row meta.
+ * On failure, console.error called and {@link ActionPayloadTypes.bcFetchRowMetaFail | bcFetchRowMetaFail} action
+ * dispatched to drop fetching state.
+ *
+ * If any action from `cancelRequestActionTypes` array dispatched while this epic is in progress,
+ * this epic will be cancelled and {@link ActionPayloadTypes.bcFetchRowMetaFail | bcFetchRowMetaFail} action
+ * will be dispatched.
+ *
+ * @param action {@link ActionPayloadTypes.bcFetchRowMeta | bcFetchRowMeta}
+ * @param store Store instance
+ * @param actionObservable Root epic to cancel
  * @category Epics
  */
 export function bcFetchRowMetaRequestImpl(
@@ -41,6 +71,20 @@ export function bcFetchRowMetaRequestImpl(
     store: Store<CoreStore, AnyAction>,
     actionObservable: ActionsObservable<AnyAction>
 ): Observable<AnyAction> {
+    const [cancelFlow, cancelByParentBc, normalFlow] = bcFetchRowMetaRequestCompatibility(action, store, actionObservable)
+    return Observable.race(cancelFlow, cancelByParentBc, normalFlow)
+}
+
+/**
+ * Compatibility for testing cancellable epics
+ *
+ * TODO: Move in `bcFetchRowMetaRequestImpl` in 2.0.0
+ */
+export function bcFetchRowMetaRequestCompatibility(
+    action: ActionsMap['bcFetchRowMeta'],
+    store: Store<CoreStore, AnyAction>,
+    actionObservable: ActionsObservable<AnyAction>
+): Array<Observable<AnyAction>> {
     const state = store.getState()
     const screenName = state.screen.screenName
     const bcName = action.payload.bcName
@@ -66,5 +110,5 @@ export function bcFetchRowMetaRequestImpl(
             console.error(error)
             return Observable.of($do.bcFetchRowMetaFail({ bcName }))
         })
-    return Observable.race(cancelFlow, cancelByParentBc, normalFlow)
+    return [cancelFlow, cancelByParentBc, normalFlow]
 }
