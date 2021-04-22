@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
-import { Dropdown, Icon, Menu, Skeleton, Table } from 'antd'
+import { Table } from 'antd'
 import { ColumnProps, TableProps, TableRowSelection } from 'antd/es/table'
 import ActionLink from '../../ui/ActionLink/ActionLink'
 import { $do } from '../../../actions/actions'
@@ -14,7 +14,6 @@ import * as styles from './TableWidget.less'
 import { FieldType, ViewSelectedCell } from '../../../interfaces/view'
 import Field from '../../Field/Field'
 import { Route } from '../../../interfaces/router'
-import { useWidgetOperations } from '../../../hooks'
 import { Operation, OperationGroup } from '../../../interfaces/operation'
 import ColumnTitle from '../../ColumnTitle/ColumnTitle'
 import cn from 'classnames'
@@ -25,6 +24,8 @@ import { useTranslation } from 'react-i18next'
 import FullHierarchyTable from '../../../components/FullHierarchyTable/FullHierarchyTable'
 import { parseFilters } from '../../../utils/filters'
 import Select from '../../ui/Select/Select'
+import RowOperationsButton from '../../RowOperations/RowOperationsButton'
+import { useRowMenu } from '../../../hooks/useRowMenu'
 
 type AdditionalAntdTableProps = Partial<Omit<TableProps<DataItem>, 'rowSelection'>>
 export interface TableWidgetOwnProps extends AdditionalAntdTableProps {
@@ -60,8 +61,14 @@ export interface TableWidgetProps extends TableWidgetOwnProps {
      */
     pendingDataItem?: PendingDataItem
     hasNext: boolean
-    operations: Array<Operation | OperationGroup>
-    metaInProgress: boolean
+    /**
+     * @deprecated TODO: Remove in 2.0.0 as it's moved to RowOperationsMenu
+     */
+    operations?: Array<Operation | OperationGroup>
+    /**
+     * @deprecated TODO: Remove in 2.0.0 as it's moved to RowOperationsMenu
+     */
+    metaInProgress?: boolean
     filters: BcFilter[]
     filterGroups: FilterGroup[]
     /**
@@ -70,8 +77,14 @@ export interface TableWidgetProps extends TableWidgetOwnProps {
     onDrillDown?: (widgetName: string, bcName: string, cursor: string, fieldKey: string) => void
     // TODO: Remove `route` in 2.0 as it is accessible from the store; remove `bcName`
     onShowAll: (bcName: string, cursor: string, route: Route, widgetName: string) => void
-    onOperationClick: (bcName: string, operationType: string, widgetName: string) => void
-    onSelectRow: (bcName: string, cursor: string) => void
+    /**
+     * @deprecated TODO: Remove in 2.0.0 as it's move to RowOperationsMenu
+     */
+    onOperationClick?: (bcName: string, operationType: string, widgetName: string) => void
+    /**
+     * @deprecated TODO: At the moment not used but might be useful when introducing table select
+     */
+    onSelectRow?: (bcName: string, cursor: string) => void
     onSelectCell: (cursor: string, widgetName: string, fieldKey: string) => void
     onRemoveFilters: (bcName: string) => void
     onApplyFilter: (bcName: string, filter: BcFilter) => void
@@ -103,14 +116,10 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
         selectedCell,
         pendingDataItem,
         hasNext,
-        operations,
-        metaInProgress,
         filters,
         filterGroups,
         onDrillDown,
         onShowAll,
-        onOperationClick,
-        onSelectRow,
         onSelectCell,
         onRemoveFilters,
         onApplyFilter,
@@ -128,221 +137,6 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
     }
     const isAllowEdit = (props.allowEdit ?? true) && !props.meta.options?.readOnly
     const { t } = useTranslation()
-
-    // Refs for row operations popup
-    const floatMenuRef = React.useRef(null)
-    const tableContainerRef = React.useRef(null)
-    const tableBodyRef = React.useRef(null)
-    const floatMenuHoveredRecord = React.useRef('')
-    const floatMenuIsOpened = React.useRef(false)
-    const mouseAboveRow = React.useRef(false)
-    const expectedFloatMenuTopValue = React.useRef('') // menu position after closing
-
-    const onRowMouseEnterHandler = React.useCallback((target: HTMLElement, recordId: string) => {
-        mouseAboveRow.current = true
-
-        // Should compare hovered record id with event target id, because function is called twice, when cursor enters table
-        if (
-            (!props.disableDots && !floatMenuRef.current) ||
-            !tableContainerRef.current ||
-            (floatMenuHoveredRecord.current === recordId && data?.length > 1)
-        ) {
-            return
-        }
-
-        const tableContainerRect = tableContainerRef.current.getBoundingClientRect()
-        const tableRowRect = target.getBoundingClientRect()
-
-        const floatMenuTopValue = `${tableRowRect.top - tableContainerRect.top + 17}px`
-        floatMenuHoveredRecord.current = recordId
-
-        if (!disableDots && data?.length === 1 && floatMenuTopValue === floatMenuRef.current.style.top) {
-            return
-        }
-
-        expectedFloatMenuTopValue.current = floatMenuTopValue
-
-        if (!floatMenuIsOpened.current && floatMenuRef.current) {
-            floatMenuRef.current.style.top = floatMenuTopValue
-        }
-    }, [])
-
-    const onTableMouseEnter = React.useCallback((event: React.MouseEvent<HTMLElement>) => {
-        if (floatMenuRef.current) {
-            floatMenuRef.current.classList.add(styles.showMenu)
-        }
-
-        /*
-         * workaround: Table.onRow.onMouseEnter event isn't fired on chrome after menu disappear, when we select record menu item, that
-         * located above another record.
-         * https://github.com/facebook/react/issues/16566
-         */
-        if (!floatMenuIsOpened.current && tableBodyRef.current) {
-            const elementMouseIsOver = document.elementFromPoint(event.clientX, event.clientY)
-            if (elementMouseIsOver) {
-                let checkElement = elementMouseIsOver
-                while (checkElement) {
-                    if (checkElement === tableBodyRef.current) {
-                        return
-                    }
-
-                    if (checkElement.tagName === 'TR') {
-                        const rowKey = checkElement.getAttribute('data-row-key')
-                        if (rowKey) {
-                            onRowMouseEnterHandler(checkElement as HTMLElement, rowKey)
-                            return
-                        }
-                    }
-
-                    checkElement = checkElement.parentElement
-                }
-            }
-        }
-    }, [])
-
-    const onTableMouseLeave = React.useCallback((event: React.MouseEvent<HTMLElement>) => {
-        if (!floatMenuIsOpened.current && floatMenuRef.current) {
-            if (event.relatedTarget) {
-                let checkElement = event.relatedTarget as HTMLElement
-                while (checkElement) {
-                    if (checkElement === floatMenuRef.current) {
-                        return
-                    }
-                    checkElement = checkElement.parentElement
-                }
-            }
-
-            floatMenuRef.current.classList.remove(styles.showMenu)
-        }
-    }, [])
-
-    const onFloatMenuMouseLeave = React.useCallback((event: React.MouseEvent<HTMLElement>) => {
-        if (!floatMenuIsOpened.current && tableBodyRef.current) {
-            if (event.relatedTarget) {
-                let checkElement = event.relatedTarget as HTMLElement
-                while (checkElement) {
-                    if (checkElement === tableBodyRef.current) {
-                        return
-                    }
-                    checkElement = checkElement.parentElement
-                }
-            }
-
-            floatMenuRef.current.classList.remove(styles.showMenu)
-        }
-    }, [])
-
-    React.useEffect(() => {
-        if (tableContainerRef.current) {
-            const table = tableContainerRef.current.querySelector('.ant-table-tbody')
-            if (table) {
-                tableBodyRef.current = table
-                if (!table.onmouseenter) {
-                    table.onmouseenter = onTableMouseEnter
-                }
-                if (!table.onmouseleave) {
-                    table.onmouseleave = onTableMouseLeave
-                }
-            }
-        }
-    }, [])
-
-    const onTableRow = React.useCallback((record, index) => {
-        return {
-            onMouseEnter: (event: React.MouseEvent<HTMLElement>) => {
-                onRowMouseEnterHandler(event.currentTarget, record.id)
-            },
-            onMouseLeave: () => {
-                mouseAboveRow.current = false
-            }
-        }
-    }, [])
-
-    const onMenuVisibilityChange = React.useCallback(
-        (visibility: boolean) => {
-            floatMenuIsOpened.current = visibility
-            if (visibility) {
-                if (floatMenuHoveredRecord.current && floatMenuHoveredRecord.current !== props.cursor) {
-                    props.onSelectRow(props.meta.bcName, floatMenuHoveredRecord.current)
-                }
-            } else {
-                if (!mouseAboveRow.current && floatMenuRef.current) {
-                    floatMenuRef.current.classList.remove(styles.showMenu)
-                } else if (expectedFloatMenuTopValue.current && floatMenuRef.current) {
-                    floatMenuRef.current.style.top = expectedFloatMenuTopValue.current
-                }
-            }
-        },
-        [props.cursor, props.onSelectRow, props.meta.bcName, props.meta.name]
-    )
-
-    const operationList = useWidgetOperations(props.operations, props.meta)
-
-    const rowActionsMenu = React.useMemo(() => {
-        const menuItemList: React.ReactNode[] = []
-        operationList.forEach((item: Operation | OperationGroup, index) => {
-            if ((item as OperationGroup).actions) {
-                const groupOperations: React.ReactNode[] = []
-                ;(item as OperationGroup).actions.forEach(operation => {
-                    if (operation.scope === 'record') {
-                        groupOperations.push(
-                            <Menu.Item
-                                key={operation.type}
-                                onClick={() => {
-                                    onMenuVisibilityChange(false) // Dropdown bug: doesn't call onVisibleChange on menu item click
-                                    props.onOperationClick(props.meta.bcName, operation.type, props.meta.name)
-                                }}
-                            >
-                                {operation.icon && <Icon type={operation.icon} className={styles.icon} />}
-                                {operation.text}
-                            </Menu.Item>
-                        )
-                    }
-                })
-                if (groupOperations.length) {
-                    menuItemList.push(
-                        <Menu.ItemGroup key={item.type || item.text} title={item.text}>
-                            {groupOperations.map(v => v)}
-                        </Menu.ItemGroup>
-                    )
-                }
-            }
-
-            const ungroupedOperation = item as Operation
-            if (ungroupedOperation.scope === 'record') {
-                menuItemList.push(
-                    <Menu.Item
-                        key={item.type}
-                        onClick={() => {
-                            onMenuVisibilityChange(false) // Dropdown bug: doesn't call onVisibleChange on menu item click
-                            props.onOperationClick(props.meta.bcName, ungroupedOperation.type, props.meta.name)
-                        }}
-                    >
-                        {ungroupedOperation.icon && <Icon type={ungroupedOperation.icon} className={styles.icon} />}
-                        {item.text}
-                    </Menu.Item>
-                )
-            }
-        })
-
-        return (
-            <Menu>
-                {props.metaInProgress ? (
-                    <Menu.Item disabled>
-                        <div className={styles.floatMenuSkeletonWrapper}>
-                            <Skeleton active />
-                        </div>
-                    </Menu.Item>
-                ) : menuItemList.length ? (
-                    menuItemList.map(item => {
-                        return item
-                    })
-                ) : (
-                    <Menu.Item disabled>{t('No operations available')}</Menu.Item>
-                )}
-            </Menu>
-        )
-    }, [operationList, props.meta.name, props.onOperationClick, props.meta.bcName, props.metaInProgress])
 
     const processCellClick = (recordId: string, fieldKey: string) => {
         props.onSelectCell(recordId, props.meta.name, fieldKey)
@@ -475,8 +269,9 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
         )
     }, [props.filterGroups, filterGroupName, filtersExist, props.limitBySelf])
 
+    const [operationsRef, parentRef, onRow] = useRowMenu()
     return (
-        <div className={styles.tableContainer} ref={tableContainerRef}>
+        <div className={styles.tableContainer} ref={parentRef}>
             {props.header ?? defaultHeader}
             <Table
                 className={cn(styles.table, { [styles.tableWithRowMenu]: props.showRowActions })}
@@ -485,25 +280,13 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
                 rowKey="id"
                 rowSelection={props.rowSelection}
                 pagination={false}
-                onRow={props.showRowActions ? onTableRow : null}
+                onRow={onRow}
                 {...rest}
             />
             {!props.disablePagination && (
                 <Pagination bcName={props.meta.bcName} mode={props.paginationMode || PaginationMode.page} widgetName={props.meta.name} />
             )}
-            {props.showRowActions && !props.disableDots && (
-                <div ref={floatMenuRef} className={styles.floatMenu} onMouseLeave={onFloatMenuMouseLeave}>
-                    <Dropdown
-                        placement="bottomRight"
-                        trigger={['click']}
-                        onVisibleChange={onMenuVisibilityChange}
-                        overlay={rowActionsMenu}
-                        getPopupContainer={trigger => trigger.parentElement}
-                    >
-                        <div className={styles.dots}>...</div>
-                    </Dropdown>
-                </div>
-            )}
+            {props.showRowActions && !props.disableDots && <RowOperationsButton meta={props.meta} ref={operationsRef} parent={parentRef} />}
         </div>
     )
 }
@@ -516,7 +299,6 @@ function mapStateToProps(store: Store, ownProps: TableWidgetOwnProps) {
     const cursor = bc?.cursor
     const hasNext = bc?.hasNext
     const limitBySelf = cursor && store.router.bcPath?.includes(`${bcName}/${cursor}`)
-    const operations = store.view.rowMeta[bcName]?.[bcUrl]?.actions
     const filters = store.screen.filters[bcName]
     return {
         data: store.data[ownProps.meta.bcName],
@@ -534,8 +316,6 @@ function mapStateToProps(store: Store, ownProps: TableWidgetOwnProps) {
          * @deprecated
          */
         pendingDataItem: null as PendingDataItem,
-        operations,
-        metaInProgress: !!store.view.metaInProgress[bcName],
         filters,
         filterGroups: bc?.filterGroups
     }
@@ -553,12 +333,6 @@ function mapDispatchToProps(dispatch: Dispatch) {
          * @deprecated TODO: Remove in 2.0
          */
         onDrillDown: null as (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void,
-        onOperationClick: (bcName: string, operationType: string, widgetName: string) => {
-            dispatch($do.sendOperation({ bcName, operationType, widgetName }))
-        },
-        onSelectRow: (bcName: string, cursor: string) => {
-            dispatch($do.bcSelectRecord({ bcName, cursor }))
-        },
         onRemoveFilters: (bcName: string) => {
             dispatch($do.bcRemoveAllFilters({ bcName }))
         },

@@ -24,6 +24,9 @@ export { default as MultiValueListRecord } from './Multivalue/MultiValueListReco
 export { default as TreeVirtualized } from './ui/TreeVirtualized/TreeVirtualized'
 export { default as SearchHighlight } from './ui/SearchHightlight/SearchHightlight'
 export { default as FilterField } from './ui/FilterField/FilterField'
+export { RowOperationsMenu } from './RowOperations/RowOperationsMenu'
+export { default as RowOperationsButton } from './RowOperations/RowOperationsButton'
+
 // Containers
 export { default as TemplatedTitle } from './TemplatedTitle/TemplatedTitle'
 export { default as View } from './View/View'
