@@ -14,9 +14,10 @@ const emptyArray: Array<Operation | OperationGroup> = []
  */
 export function useWidgetOperations(operations: Array<Operation | OperationGroup>, widgetMeta: WidgetMeta, bcName?: string) {
     return useMemo(() => {
+        const isHierarchy = widgetMeta.options?.hierarchy?.length > 0
         const actionGroup: WidgetOperations =
             widgetMeta.options?.actionGroups &&
-            (bcName ? (widgetMeta.options.actionGroups as Record<string, WidgetOperations>)[bcName] : widgetMeta.options.actionGroups)
+            (isHierarchy ? (widgetMeta.options.actionGroups as Record<string, WidgetOperations>)[bcName] : widgetMeta.options.actionGroups)
         if (!actionGroup) {
             return operations || emptyArray
         }
