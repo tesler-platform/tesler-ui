@@ -72,23 +72,29 @@ export const RowOperationsButton: React.ForwardRefRenderFunction<RowOperationsBu
      *
      * @param force - Hides the button even if menu is open
      */
-    const handleMouseLeave = (force?: boolean) => {
-        if (containerRef.current && (!showMenu || force)) {
-            containerRef.current.style.display = 'none'
-        }
-    }
+    const handleMouseLeave = React.useCallback(
+        (force?: boolean) => {
+            if (containerRef.current && (!showMenu || force)) {
+                containerRef.current.style.display = 'none'
+            }
+        },
+        [showMenu]
+    )
 
     /**
      * Links menu visibility to the state and hides the button on closing menu (???)
      *
      * @param visibility
      */
-    const handleVisibleChange = (visibility: boolean) => {
-        setShowMenu(visibility)
-        if (!visibility) {
-            handleMouseLeave(true)
-        }
-    }
+    const handleVisibleChange = React.useCallback(
+        (visibility: boolean) => {
+            setShowMenu(visibility)
+            if (!visibility) {
+                handleMouseLeave(true)
+            }
+        },
+        [handleMouseLeave]
+    )
 
     /**
      * Close menu after operation was selected

@@ -28,36 +28,33 @@ interface FormWidgetProps extends FormWidgetOwnProps {
  * @param props
  * @category Widgets
  */
-export const FormWidget: FunctionComponent<FormWidgetProps> = props => {
+export const FormWidget: FunctionComponent<FormWidgetProps> = ({ meta, fields, missingFields, metaErrors, cursor }) => {
     const hiddenKeys: string[] = []
-    const flattenWidgetFields = useFlatFormFields<WidgetFormField>(props.meta.fields).filter(item => {
+    const flattenWidgetFields = useFlatFormFields<WidgetFormField>(meta.fields).filter(item => {
         const isHidden = item.type === FieldType.hidden || item.hidden
         if (isHidden) {
             hiddenKeys.push(item.key)
         }
         return !isHidden
     })
-    const {
-        meta: { bcName, name },
-        cursor
-    } = props
+    const { bcName, name } = meta
 
-    const fields = React.useMemo(() => {
+    const memoizedFields = React.useMemo(() => {
         return (
             <Row gutter={24}>
-                {props.meta.options?.layout?.rows.map((row, index) => {
+                {meta.options?.layout?.rows.map((row, index) => {
                     return (
                         <Row key={index}>
                             {row.cols
                                 .filter(field => {
-                                    const meta = props.fields?.find(item => item.key === field.fieldKey)
-                                    return meta ? !meta.hidden : true
+                                    const fieldMeta = fields?.find(item => item.key === field.fieldKey)
+                                    return fieldMeta ? !fieldMeta.hidden : true
                                 })
                                 .filter(col => !hiddenKeys.includes(col.fieldKey))
                                 .map((col, colIndex) => {
                                     const field = flattenWidgetFields.find(item => item.key === col.fieldKey)
-                                    const disabled = props.fields?.find(item => item.key === field.key && item.disabled)
-                                    const error = (!disabled && props.missingFields?.[field.key]) || props.metaErrors?.[field.key]
+                                    const disabled = fields?.find(item => item.key === field.key && item.disabled)
+                                    const error = (!disabled && missingFields?.[field.key]) || metaErrors?.[field.key]
                                     return (
                                         <Col
                                             key={colIndex}
@@ -67,7 +64,7 @@ export const FormWidget: FunctionComponent<FormWidgetProps> = props => {
                                             <Form.Item
                                                 label={
                                                     field.type === 'checkbox' ? null : (
-                                                        <TemplatedTitle widgetName={props.meta.name} title={field.label} />
+                                                        <TemplatedTitle widgetName={meta.name} title={field.label} />
                                                     )
                                                 }
                                                 validateStatus={error ? 'error' : undefined}
@@ -78,7 +75,7 @@ export const FormWidget: FunctionComponent<FormWidgetProps> = props => {
                                                     cursor={cursor}
                                                     widgetName={name}
                                                     widgetFieldMeta={field}
-                                                    disableHoverError={props.meta.options?.disableHoverError}
+                                                    disableHoverError={meta.options?.disableHoverError}
                                                 />
                                             </Form.Item>
                                         </Col>
@@ -89,11 +86,11 @@ export const FormWidget: FunctionComponent<FormWidgetProps> = props => {
                 })}
             </Row>
         )
-    }, [bcName, name, cursor, flattenWidgetFields, props.missingFields, props.metaErrors])
+    }, [bcName, name, cursor, flattenWidgetFields, missingFields, metaErrors, hiddenKeys, fields, meta])
 
     return (
         <Form colon={false} layout="vertical">
-            {fields}
+            {memoizedFields}
         </Form>
     )
 }

@@ -50,15 +50,15 @@ export interface FlatTreePopupProps {
  * @param props Widget props
  * @category Widgets
  */
-export const FlatTreePopup: React.FC<FlatTreePopupProps> = props => {
+export const FlatTreePopup: React.FC<FlatTreePopupProps> = ({ meta, children }) => {
     const { multiple, hierarchyGroupSelection, hierarchyGroupDeselection, hierarchyRadioAll, hierarchyRadio: hierarchyRootRadio } =
-        props.meta.options ?? {}
+        meta.options ?? {}
 
-    const bcName = props.meta.bcName
+    const bcName = meta.bcName
     const dispatch = useDispatch()
 
     const { parentBcName, parentCursor } = useSelector((store: Store) => {
-        const parentName = store.screen.bo.bc[props.meta.bcName].parentName
+        const parentName = store.screen.bo.bc[meta.bcName].parentName
         const parentBc = store.screen.bo.bc[parentName]
         return {
             parentBcName: parentName,
@@ -84,30 +84,30 @@ export const FlatTreePopup: React.FC<FlatTreePopupProps> = props => {
         dispatch($do.saveAssociations({ bcNames: [bcName] }))
         dispatch($do.bcCancelPendingChanges({ bcNames: [bcName] }))
         dispatch($do.closeViewPopup(null))
-    }, [bcName])
+    }, [bcName, dispatch])
 
     const handleCancelMultiple = React.useCallback(() => {
         dispatch($do.closeViewPopup(null))
         dispatch($do.bcRemoveAllFilters({ bcName }))
         dispatch($do.bcCancelPendingChanges({ bcNames: [bcName] }))
-    }, [bcName])
+    }, [bcName, dispatch])
 
     const footer = React.useMemo(() => {
         return multiple ? <PopupFooter onAccept={handleConfirmMultiple} onCancel={handleCancelMultiple} /> : null
-    }, [multiple])
+    }, [multiple, handleCancelMultiple, handleConfirmMultiple])
 
     const components = React.useMemo(() => {
         return {
             table: (
-                <FlatTree meta={props.meta} multiple={multiple} onSelect={handleSelect}>
-                    {props.children}
+                <FlatTree meta={meta} multiple={multiple} onSelect={handleSelect}>
+                    {children}
                 </FlatTree>
             ),
             footer
         }
-    }, [props.meta, handleSelect])
+    }, [meta, footer, multiple, children, handleSelect])
 
-    return <PickListPopup widget={props.meta} components={components} disableScroll />
+    return <PickListPopup widget={meta} components={components} disableScroll />
 }
 
 /**

@@ -80,45 +80,41 @@ type PaginationAllProps = PaginationOwnProps & Partial<PaginationStateProps> & P
  *
  * @category Components
  */
-const Pagination: React.FunctionComponent<PaginationAllProps> = props => {
-    const bcName =
-        props.bcName || // TODO: get only from store in 2.0.0
-        useSelector((store: Store) => store.view.widgets.find(item => item.name === props.widgetName)?.bcName)
+const Pagination: React.FunctionComponent<PaginationAllProps> = ({ bcName: propsBcName, widgetName, mode, onChangePage }) => {
+    const storeBcName = useSelector((store: Store) => store.view.widgets.find(item => item.name === widgetName)?.bcName)
+    const bcName = propsBcName || storeBcName // TODO: get only from store in 2.0.0
+
     const hasNext = useSelector((store: Store) => store.screen.bo.bc[bcName]?.hasNext)
     const page = useSelector((store: Store) => store.screen.bo.bc[bcName]?.page)
     const loading = useSelector((store: Store) => store.screen.bo.bc[bcName]?.loading)
     const dispatch = useDispatch()
 
     const onLoadMore = React.useCallback(() => {
-        dispatch($do.bcLoadMore({ bcName, widgetName: props.widgetName }))
-        props.onChangePage?.(page + 1)
-    }, [bcName, props.widgetName, page])
+        dispatch($do.bcLoadMore({ bcName, widgetName }))
+        onChangePage?.(page + 1)
+    }, [bcName, widgetName, page, dispatch, onChangePage])
 
     const onPrevPage = React.useCallback(() => {
         const newPage = page - 1
-        dispatch($do.bcChangePage({ bcName, page: newPage, widgetName: props.widgetName }))
-        if (props.onChangePage) {
-            props.onChangePage(newPage)
-        }
-    }, [bcName, page])
+        dispatch($do.bcChangePage({ bcName, page: newPage, widgetName }))
+        onChangePage?.(newPage)
+    }, [bcName, page, widgetName, dispatch, onChangePage])
 
     const onNextPage = React.useCallback(() => {
         const newPage = page + 1
-        dispatch($do.bcChangePage({ bcName, page: newPage, widgetName: props.widgetName }))
-        if (props.onChangePage) {
-            props.onChangePage(newPage)
-        }
-    }, [bcName, page])
+        dispatch($do.bcChangePage({ bcName, page: newPage, widgetName }))
+        onChangePage?.(newPage)
+    }, [bcName, page, widgetName, dispatch, onChangePage])
 
     const { t } = useTranslation()
 
-    const isRequired = hasNext || (props.mode === PaginationMode.page && page > 1)
+    const isRequired = hasNext || (mode === PaginationMode.page && page > 1)
 
     if (!isRequired) {
         return null
     }
 
-    return props.mode === PaginationMode.page ? (
+    return mode === PaginationMode.page ? (
         <div className={styles.paginationContainer}>
             <Button className={styles.prevButton} disabled={page < 2} onClick={onPrevPage} icon="left" />
             <Button disabled={!hasNext} onClick={onNextPage} icon="right" />

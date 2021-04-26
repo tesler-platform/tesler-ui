@@ -44,71 +44,88 @@ export interface FileUploadActions {
  * @param props
  * @category Components
  */
-const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps & FileUploadActions> = props => {
+const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps & FileUploadActions> = ({
+    fieldName,
+    bcName,
+    cursor,
+    fieldDataItem,
+    fileIdKey,
+    fileSource,
+    fileIdDelta,
+    fileNameDelta,
+    disabled,
+    readOnly,
+    fieldValue,
+    metaError,
+    snapshotKey,
+    snapshotFileIdKey,
+    onStartUpload,
+    onUploadFileDone,
+    onUploadFileFailed,
+    onDeleteFile
+}) => {
     const onUploadSuccess = React.useCallback(
         (response: any, file: UploadFile) => {
-            props.onUploadFileDone({
-                bcName: props.bcName,
-                cursor: props.cursor,
+            onUploadFileDone({
+                bcName,
+                cursor,
                 dataItem: {
-                    [props.fileIdKey]: response.data.id,
-                    [props.fieldName]: response.data.name
+                    [fileIdKey]: response.data.id,
+                    [fieldName]: response.data.name
                 }
             })
         },
-        [props.onUploadFileDone, props.bcName, props.cursor, props.fileIdKey, props.fieldName]
+        [onUploadFileDone, bcName, cursor, fileIdKey, fieldName]
     )
 
     const onFileDelete = React.useCallback(() => {
-        props.onDeleteFile({
-            bcName: props.bcName,
-            cursor: props.cursor,
+        onDeleteFile({
+            bcName,
+            cursor,
             dataItem: {
-                [props.fileIdKey]: null,
-                [props.fieldName]: null
+                [fileIdKey]: null,
+                [fieldName]: null
             }
         })
-    }, [props.onDeleteFile, props.bcName, props.cursor, props.fileIdKey, props.fieldName])
+    }, [onDeleteFile, bcName, cursor, fileIdKey, fieldName])
 
     const onUploadFailed = React.useCallback(
         (error: any, response: any, file: UploadFile) => {
-            props.onUploadFileFailed()
+            onUploadFileFailed()
         },
-        [props.onUploadFileFailed]
+        [onUploadFileFailed]
     )
 
     const { t } = useTranslation()
 
-    const { fileIdDelta, fileNameDelta, fieldValue, disabled } = props
-
     const downloadParams = {
-        source: props.fileSource,
-        id: fileIdDelta || (props.fileIdKey && props.fieldDataItem?.[props.fileIdKey]?.toString())
+        source: fileSource,
+        id: fileIdDelta || (fileIdKey && fieldDataItem?.[fileIdKey]?.toString())
     }
     const uploadParams = {
-        source: props.fileSource
+        source: fileSource
     }
     const downloadUrl = applyParams(getFileUploadEndpoint(), downloadParams)
     const uploadUrl = applyParams(getFileUploadEndpoint(), uploadParams)
 
     const uploadProps = {
-        disabled: disabled,
+        disabled,
         name: 'file',
         action: uploadUrl,
-        onStart: props.onStartUpload,
+        onStart: onStartUpload,
         onError: onUploadFailed,
         onSuccess: onUploadSuccess
     }
     const fileName = fileNameDelta || fieldValue
 
-    if (props.readOnly) {
-        if (props.snapshotKey && props.snapshotFileIdKey) {
+    if (readOnly) {
+        if (snapshotKey && snapshotFileIdKey) {
             const diffDownloadParams = {
-                source: props.fileSource,
-                id: props.fieldDataItem?.[props.snapshotFileIdKey]?.toString()
+                source: fileSource,
+                id: fieldDataItem?.[snapshotFileIdKey]?.toString()
             }
             const diffDownloadUrl = applyParams(getFileUploadEndpoint(), diffDownloadParams)
-            const diffFileName = props.fieldDataItem?.[props.snapshotKey]
+            const diffFileName = fieldDataItem?.[snapshotKey]
 
             if ((diffDownloadParams.id || downloadParams.id) && diffDownloadParams.id !== downloadParams.id) {
                 return (
@@ -155,7 +172,7 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
         ),
 
         uploadButton: (
-            <Upload {...uploadProps} className={cn(styles.uploadButton, { [styles.error]: props.metaError })} key="upload-btn">
+            <Upload {...uploadProps} className={cn(styles.uploadButton, { [styles.error]: metaError })} key="upload-btn">
                 <span title={t('select file')} className={styles.uploadButtonText}>
                     ...
                 </span>
@@ -163,7 +180,7 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
         ),
 
         uploadLink: (
-            <Upload {...uploadProps} className={cn(styles.uploadLink, { [styles.error]: props.metaError })} key="upload-lnk">
+            <Upload {...uploadProps} className={cn(styles.uploadLink, { [styles.error]: metaError })} key="upload-lnk">
                 <span className={styles.uploadLinkText} title={t('select file')}>
                     {t('select file')}
                 </span>
@@ -183,7 +200,7 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
         <div
             className={cn(styles.fileUpload, {
                 [styles.disabled]: disabled,
-                [styles.error]: props.metaError
+                [styles.error]: metaError
             })}
         >
             {disabled ? (

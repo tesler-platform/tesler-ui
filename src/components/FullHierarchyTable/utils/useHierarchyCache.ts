@@ -39,16 +39,17 @@ export function useHierarchyCache(
     depthLevel: number,
     hierarchyDisableDescendants?: boolean
 ) {
+    const isFirstLevel = depthLevel === 1
     React.useEffect(() => {
         const clearSearchCache = () => {
-            if (depthLevel === 1) {
+            if (isFirstLevel) {
                 ancestorsKeysCache.clear(widgetName)
                 descendantsKeysCache.clear(widgetName)
             }
         }
         clearSearchCache()
         return clearSearchCache()
-    }, [widgetName, data, depthLevel === 1])
+    }, [widgetName, data, isFirstLevel])
     const searchedAncestorsKeys: Set<string> = ancestorsKeysCache.getValue(
         () => {
             const result: string[] = []
@@ -80,7 +81,7 @@ export function useHierarchyCache(
                   item => searchedAncestorsKeys.has(item.id) || (!hierarchyDisableDescendants && searchedDescendantsKeys.has(item.id))
               )
             : data
-    }, [searchedAncestorsKeys, searchedDescendantsKeys, data, filters])
+    }, [searchedAncestorsKeys, searchedDescendantsKeys, data, filters, hierarchyDisableDescendants])
     return [filteredData, searchedAncestorsKeys, searchedDescendantsKeys] as const
 }
 

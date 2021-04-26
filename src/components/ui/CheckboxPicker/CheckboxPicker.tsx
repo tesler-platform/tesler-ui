@@ -30,28 +30,25 @@ interface CheckboxPickerProps extends CheckboxPickerOwnProps {
  * @param props
  * @category Components
  */
-const CheckboxPicker = (props: CheckboxPickerProps) => {
-    const { metaField } = props
-
+const CheckboxPicker: React.FC<CheckboxPickerProps> = ({ metaField, bcName, cursor, fieldName, fieldLabel, value, readonly, onChange }) => {
     const handleChange = React.useCallback(
         (event: CheckboxChangeEvent) => {
-            const { bcName, cursor, fieldName } = props
             const dataItem: PendingDataItem = { [fieldName]: event.target.checked }
             const payload: ChangeDataItemPayload = {
                 bcName,
                 cursor,
                 dataItem
             }
-            props.onChange(payload)
+            onChange(payload)
         },
-        [props.onChange, props.bcName, props.cursor, props.fieldName, props.value]
+        [onChange, bcName, cursor, fieldName]
     )
 
     return (
         <div className={styles.container}>
             {
-                <Checkbox checked={props.value as boolean} disabled={metaField?.disabled || props.readonly} onChange={handleChange}>
-                    {props.fieldLabel}
+                <Checkbox checked={value as boolean} disabled={metaField?.disabled || readonly} onChange={handleChange}>
+                    {fieldLabel}
                 </Checkbox>
             }
         </div>

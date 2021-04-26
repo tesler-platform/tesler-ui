@@ -55,30 +55,28 @@ export interface PickListPopupProps extends PickListPopupOwnProps {
  * @param props
  * @category Widgets
  */
-export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopupActions> = props => {
-    const {
-        onChange,
-        onClose,
-
-        widget,
-        components,
-
-        data,
-        pickMap,
-        cursor,
-        parentBCName,
-        bcLoading,
-        rowMetaFields,
-
-        ...rest
-    } = props
-
-    const columns: Array<ColumnProps<DataItem>> = props.widget.fields
+export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopupActions> = ({
+    showed,
+    data,
+    pickMap,
+    cursor,
+    parentBCName,
+    bcLoading,
+    rowMetaFields,
+    widget,
+    className,
+    components,
+    disableScroll,
+    onChange,
+    onClose,
+    ...rest
+}) => {
+    const columns: Array<ColumnProps<DataItem>> = widget.fields
         .filter(item => item.type !== FieldType.hidden && !item.hidden)
         .map(item => {
-            const fieldRowMeta = props.rowMetaFields?.find(field => field.key === item.key)
+            const fieldRowMeta = rowMetaFields?.find(field => field.key === item.key)
             return {
-                title: <ColumnTitle widgetName={props.widget.name} widgetMeta={item} rowMeta={fieldRowMeta} />,
+                title: <ColumnTitle widgetName={widget.name} widgetMeta={item} rowMeta={fieldRowMeta} />,
                 key: item.key,
                 dataIndex: item.key,
                 render: (text, dataItem) => {
@@ -91,65 +89,65 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
         (rowData: DataItem) => {
             return {
                 onClick: (e: React.MouseEvent<HTMLElement>) => {
-                    if (props.cursor) {
-                        Object.keys(props.pickMap).forEach(field => {
-                            props.onChange({
-                                bcName: props.parentBCName,
-                                cursor: props.cursor,
-                                dataItem: { [field]: rowData[props.pickMap[field]] }
+                    if (cursor) {
+                        Object.keys(pickMap).forEach(field => {
+                            onChange({
+                                bcName: parentBCName,
+                                cursor: cursor,
+                                dataItem: { [field]: rowData[pickMap[field]] }
                             })
                         })
                     }
-                    props.onClose()
+                    onClose()
                 }
             }
         },
-        [props.pickMap, props.onChange, props.parentBCName, props.cursor]
+        [pickMap, onChange, parentBCName, cursor, onClose]
     )
 
     const defaultTitle = React.useMemo(
         () => (
             <div>
-                <h1 className={styles.title}>{props.widget.title}</h1>
+                <h1 className={styles.title}>{widget.title}</h1>
             </div>
         ),
-        [props.widget.title]
+        [widget.title]
     )
-    const title = props.components?.title === undefined ? defaultTitle : props.components.title
+    const title = components?.title === undefined ? defaultTitle : components.title
 
     const defaultFooter = React.useMemo(
         () => (
             <div className={styles.footerContainer}>
-                {!props.widget.options?.hierarchyFull && (
+                {!widget.options?.hierarchyFull && (
                     <div className={styles.pagination}>
-                        <Pagination bcName={props.widget.bcName} mode={PaginationMode.page} widgetName={props.widget.name} />
+                        <Pagination bcName={widget.bcName} mode={PaginationMode.page} widgetName={widget.name} />
                     </div>
                 )}
             </div>
         ),
-        [props.widget.options?.hierarchyFull, props.widget.bcName, props.widget.name]
+        [widget.options?.hierarchyFull, widget.bcName, widget.name]
     )
-    const footer = props.components?.footer === undefined ? defaultFooter : props.components.footer
+    const footer = components?.footer === undefined ? defaultFooter : components.footer
 
     const defaultTable =
-        props.widget.options?.hierarchy || props.widget.options?.hierarchyFull ? (
-            props.widget.options.hierarchyFull ? (
-                <FullHierarchyTable meta={props.widget} onRow={onRow} />
+        widget.options?.hierarchy || widget.options?.hierarchyFull ? (
+            widget.options.hierarchyFull ? (
+                <FullHierarchyTable meta={widget} onRow={onRow} />
             ) : (
-                <HierarchyTable meta={props.widget} onRow={onRow} />
+                <HierarchyTable meta={widget} onRow={onRow} />
             )
         ) : (
             <div>
                 {/* TODO: Replace with TableWidget */}
-                <Table className={styles.table} columns={columns} dataSource={props.data} rowKey="id" onRow={onRow} pagination={false} />
+                <Table className={styles.table} columns={columns} dataSource={data} rowKey="id" onRow={onRow} pagination={false} />
             </div>
         )
-    const table = props.bcLoading ? (
+    const table = bcLoading ? (
         <Skeleton loading paragraph={{ rows: 5 }} />
-    ) : props.components?.table === undefined ? (
+    ) : components?.table === undefined ? (
         defaultTable
     ) : (
-        props.components.table
+        components.table
     )
 
     return (
@@ -157,14 +155,14 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
             title={title}
             size="large"
             showed
-            onOkHandler={props.onClose}
-            onCancelHandler={props.onClose}
-            bcName={props.widget.bcName}
-            widgetName={props.widget.name}
-            disablePagination={props.widget.options?.hierarchyFull}
+            onOkHandler={onClose}
+            onCancelHandler={onClose}
+            bcName={widget.bcName}
+            widgetName={widget.name}
+            disablePagination={widget.options?.hierarchyFull}
             footer={footer}
             {...rest}
-            className={cn(props.className, { [styles.disableScroll]: props.disableScroll })}
+            className={cn(className, { [styles.disableScroll]: disableScroll })}
         >
             <div>{table}</div>
         </Popup>

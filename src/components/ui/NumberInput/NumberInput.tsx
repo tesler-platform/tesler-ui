@@ -21,25 +21,15 @@ export interface NumberInputProps extends BaseFieldProps {
  * @category Components
  */
 const NumberInput: React.FunctionComponent<NumberInputProps> = props => {
-    if (props.readOnly) {
-        return (
-            <ReadOnlyField
-                widgetName={props.widgetName}
-                meta={props.meta}
-                className={props.className}
-                backgroundColor={props.backgroundColor}
-                onDrillDown={props.onDrillDown}
-            >
-                {NumberInputFormat.number(props.value, props.digits, props.nullable)}
-            </ReadOnlyField>
-        )
-    }
-
+    const { type, value, digits, nullable, maxInput, onChange } = props
     const inputRef = React.useRef<Input>(null)
 
-    const getDisplayedValueText = (value?: number): string => {
-        return NumberInputFormat[props.type](value !== undefined ? value : props.value, props.digits, props.nullable)
-    }
+    const getDisplayedValueText = React.useCallback(
+        (newValue?: number): string => {
+            return NumberInputFormat[type](value !== undefined ? newValue : value, digits, nullable)
+        },
+        [type, value, digits, nullable]
+    )
 
     const [mode, setMode] = React.useState<'edit' | 'view'>('view')
     const [valueText, setValueText] = React.useState<string>(getDisplayedValueText())
@@ -48,39 +38,41 @@ const NumberInput: React.FunctionComponent<NumberInputProps> = props => {
         if (mode === 'view') {
             setValueText(getDisplayedValueText())
         }
-    }, [mode, props.value])
+    }, [mode, value, getDisplayedValueText])
 
     /**
      * TODO
      *
      * @param text
      */
-    function parseEditedValueText(text: string): number | null {
-        if (props.nullable && text === '') {
-            return null
-        }
-        const value = normalizeValueFormat(text)
-        return fractionsRound(Number(value), props.digits)
-    }
+    const parseEditedValueText = React.useCallback(
+        (text: string) => {
+            if (nullable && text === '') {
+                return null
+            }
+            return fractionsRound(Number(normalizeValueFormat(text)), digits)
+        },
+        [nullable, digits]
+    )
 
     const handleOnBlur = React.useCallback(
         (event: React.FormEvent<HTMLInputElement>) => {
-            const value = parseEditedValueText(event.currentTarget.value)
+            const newValue = parseEditedValueText(event.currentTarget.value)
 
-            if (isNaN(value)) {
-                // TODO: лучше бы ошибку показать а не сбрасывать
+            if (isNaN(newValue)) {
+                // TODO: should show the error instead of clearing
                 setMode('view')
                 setValueText(getDisplayedValueText())
                 return
             }
 
-            if (props.onChange) {
+            if (onChange) {
                 setMode('view')
-                setValueText(getDisplayedValueText(value))
-                props.onChange(value)
+                setValueText(getDisplayedValueText(newValue))
+                onChange(newValue)
             }
         },
-        [props.onChange]
+        [onChange, parseEditedValueText, getDisplayedValueText]
     )
 
     const handleOnFocus = React.useCallback(() => {
@@ -89,15 +81,15 @@ const NumberInput: React.FunctionComponent<NumberInputProps> = props => {
         setTimeout(() => {
             if (inputRef.current?.input) {
                 const target = inputRef.current.input
-                const value = target.value
+                const targetValue = target.value
                 const selectionStart = target.selectionStart
                 const selectionEnd = target.selectionEnd
 
-                const unformatedValue = unformatValue(value)
+                const unformatedValue = unformatValue(targetValue)
                 setMode('edit')
 
                 target.value = unformatedValue
-                const selection = getUnformatedValueSelection(value, selectionStart, selectionEnd)
+                const selection = getUnformatedValueSelection(targetValue, selectionStart, selectionEnd)
                 target.setSelectionRange(selection[0], selection[1])
             }
         }, 0)
@@ -105,18 +97,18 @@ const NumberInput: React.FunctionComponent<NumberInputProps> = props => {
 
     const handleOnChange = React.useCallback(
         (event: React.FormEvent<HTMLInputElement>) => {
-            const value =
-                props.maxInput && event.currentTarget.value.length > props.maxInput
-                    ? event.currentTarget.value.slice(0, props.maxInput)
+            const newValue =
+                maxInput && event.currentTarget.value.length > maxInput
+                    ? event.currentTarget.value.slice(0, maxInput)
                     : event.currentTarget.value
 
-            setValueText(value)
+            setValueText(newValue)
         },
-        [props.maxInput]
+        [maxInput]
     )
 
-    // Отфильтровывает нажатия на недопустимые символы
-    // !! недопустимые символы всеравно могут попасть в поле ввода через вставку из буфера обмена
+    // Filters out incorrect symbols from keyboard
+    // !! this won't work if pasted from the buffer
     const onKeyPress = React.useCallback(
         (event: React.KeyboardEvent<HTMLInputElement>) => {
             const char = String.fromCharCode(event.keyCode || event.charCode)
@@ -140,6 +132,20 @@ const NumberInput: React.FunctionComponent<NumberInputProps> = props => {
         ref: inputRef,
         onKeyPress: onKeyPress,
         autoFocus: props.forceFocus
+    }
+
+    if (props.readOnly) {
+        return (
+            <ReadOnlyField
+                widgetName={props.widgetName}
+                meta={props.meta}
+                className={props.className}
+                backgroundColor={props.backgroundColor}
+                onDrillDown={props.onDrillDown}
+            >
+                {NumberInputFormat.number(props.value, props.digits, props.nullable)}
+            </ReadOnlyField>
+        )
     }
 
     return <Input {...extendedProps} />

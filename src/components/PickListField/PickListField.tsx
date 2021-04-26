@@ -30,44 +30,52 @@ interface IPickListWidgetInputProps extends IPickListWidgetInputOwnProps {
  * @param props
  * @category Components
  */
-const PickListField: React.FunctionComponent<IPickListWidgetInputProps> = props => {
-    if (props.readOnly) {
+const PickListField: React.FunctionComponent<IPickListWidgetInputProps> = ({
+    pickMap,
+    bcName,
+    parentBCName,
+    cursor,
+    widgetName,
+    readOnly,
+    meta,
+    className,
+    backgroundColor,
+    value,
+    disabled,
+    placeholder,
+    onChange,
+    onClick,
+    onDrillDown
+}) => {
+    const handleClear = React.useCallback(() => {
+        Object.keys(pickMap).forEach(field => {
+            onChange({
+                bcName: parentBCName,
+                cursor,
+                dataItem: { [field]: '' }
+            })
+        })
+    }, [pickMap, onChange, parentBCName, cursor])
+
+    const handleClick = React.useCallback(() => {
+        onClick(bcName, pickMap, widgetName)
+    }, [onClick, bcName, pickMap, widgetName])
+
+    if (readOnly) {
         return (
             <ReadOnlyField
-                widgetName={props.widgetName}
-                meta={props.meta}
-                className={props.className}
-                backgroundColor={props.backgroundColor}
-                onDrillDown={props.onDrillDown}
+                widgetName={widgetName}
+                meta={meta}
+                className={className}
+                backgroundColor={backgroundColor}
+                onDrillDown={onDrillDown}
             >
-                {props.value}
+                {value}
             </ReadOnlyField>
         )
     }
 
-    const handleClear = React.useCallback(() => {
-        Object.keys(props.pickMap).forEach(field => {
-            props.onChange({
-                bcName: props.parentBCName,
-                cursor: props.cursor,
-                dataItem: { [field]: '' }
-            })
-        })
-    }, [props.pickMap, props.onChange, props.parentBCName, props.cursor])
-
-    const handleClick = React.useCallback(() => {
-        props.onClick(props.bcName, props.pickMap, props.widgetName)
-    }, [props.onClick, props.bcName, props.pickMap, props.widgetName])
-
-    return (
-        <PickInput
-            disabled={props.disabled}
-            value={props.value}
-            onClick={handleClick}
-            onClear={handleClear}
-            placeholder={props.placeholder}
-        />
-    )
+    return <PickInput disabled={disabled} value={value} onClick={handleClick} onClear={handleClear} placeholder={placeholder} />
 }
 
 const mapDispatchToProps = (dispatch: any) => ({

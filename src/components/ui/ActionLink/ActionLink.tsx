@@ -13,20 +13,20 @@ export interface IActionLinkProps {
  * @param props
  * @category Components
  */
-const ActionLink = (props: IActionLinkProps) => {
+const ActionLink: React.FC<IActionLinkProps> = ({ className, children, onClick }) => {
     const handleClick = React.useCallback(
         (e: React.MouseEvent<HTMLAnchorElement>) => {
             e.preventDefault()
             e.stopPropagation()
-            if (props.onClick) {
-                props.onClick(e)
+            if (onClick) {
+                onClick(e)
             }
         },
-        [props.onClick]
+        [onClick]
     )
     return (
-        <a className={cn(styles.ActionLink, props.className)} onClick={handleClick}>
-            {props.children}
+        <a className={cn(styles.ActionLink, className)} onClick={handleClick}>
+            {children}
         </a>
     )
 }

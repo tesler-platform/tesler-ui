@@ -20,27 +20,26 @@ export interface ValueCellProps {
     onDrillDown: (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void
 }
 const emptyMultivalueField = [] as MultivalueSingleValue[]
-export const InfoCell: React.FunctionComponent<ValueCellProps> = props => {
-    const field = props.flattenWidgetFields.find(item => item.key === props.col.fieldKey)
+export const InfoCell: React.FunctionComponent<ValueCellProps> = ({ flattenWidgetFields, col, row, data, meta, cursor, onDrillDown }) => {
+    const field = flattenWidgetFields.find(item => item.key === col.fieldKey)
     const isMultiValue = field.type === FieldType.multivalue
-
-    const separateDrillDownTitle =
-        field.drillDown && (field.drillDownTitle || (field.drillDownTitleKey && props.data[field.drillDownTitleKey]))
+    const dataId = data.id
+    const separateDrillDownTitle = field.drillDown && (field.drillDownTitle || (field.drillDownTitleKey && data[field.drillDownTitleKey]))
     const handleDrillDown = React.useCallback(() => {
-        props.onDrillDown(props.meta.name, props.data.id, props.meta.bcName, field.key)
-    }, [props.onDrillDown, props.meta.name, props.data.id, props.meta.bcName, field.key])
+        onDrillDown(meta.name, dataId, meta.bcName, field.key)
+    }, [onDrillDown, meta, dataId, field.key])
 
     const ResultField = isMultiValue ? (
-        ((props.data[field.key] || emptyMultivalueField) as MultivalueSingleValue[]).map((multiValueSingleValue, index) => {
+        ((data[field.key] || emptyMultivalueField) as MultivalueSingleValue[]).map((multiValueSingleValue, index) => {
             return <MultiValueListRecord key={index} isFloat={false} multivalueSingleValue={multiValueSingleValue} />
         })
     ) : (
         <>
-            {field.hintKey && props.data[field.hintKey] && <div className={styles.hint}>{props.data[field.hintKey]}</div>}
+            {field.hintKey && data[field.hintKey] && <div className={styles.hint}>{data[field.hintKey]}</div>}
             <Field
-                bcName={props.meta.bcName}
-                cursor={props.cursor}
-                widgetName={props.meta.name}
+                bcName={meta.bcName}
+                cursor={cursor}
+                widgetName={meta.name}
                 widgetFieldMeta={field}
                 className={cn({ [styles.infoWidgetValue]: !!field.bgColorKey })}
                 disableDrillDown={!!separateDrillDownTitle}
@@ -55,10 +54,10 @@ export const InfoCell: React.FunctionComponent<ValueCellProps> = props => {
     )
 
     return (
-        <InfoValueWrapper key={field.key} row={props.row} col={props.col}>
+        <InfoValueWrapper key={field.key} row={row} col={col}>
             {field.label?.length !== 0 && (
                 <div className={styles.labelArea}>
-                    <TemplatedTitle widgetName={props.meta.name} title={field.label} />
+                    <TemplatedTitle widgetName={meta.name} title={field.label} />
                 </div>
             )}
             <div className={styles.fieldData}>{ResultField}</div>
