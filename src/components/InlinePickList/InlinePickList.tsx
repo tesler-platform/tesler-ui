@@ -35,70 +35,90 @@ interface InlinePickListProps extends InlinePickListOwnProps {
  * @param props
  * @category Components
  */
-const InlinePickList: React.FunctionComponent<InlinePickListProps> = props => {
+const InlinePickList: React.FunctionComponent<InlinePickListProps> = ({
+    searchSpec,
+    popupBcName,
+    widgetName,
+    pickMap,
+    disabled,
+    data,
+    bcName,
+    cursor,
+    readOnly,
+    className,
+    meta,
+    backgroundColor,
+    value,
+    placeholder,
+    fieldName,
+    onClick,
+    onChange,
+    onSearch,
+    onDrillDown
+}) => {
     const { t } = useTranslation()
-
-    if (props.readOnly) {
-        return (
-            <ReadOnlyField
-                widgetName={props.widgetName}
-                meta={props.meta}
-                className={props.className}
-                backgroundColor={props.backgroundColor}
-                onDrillDown={props.onDrillDown}
-            >
-                {props.value}
-            </ReadOnlyField>
-        )
-    }
 
     const [searchTerm, setSearchTerm] = React.useState('')
     const debouncedSearchTerm = useDebounce(searchTerm, 500)
 
     React.useEffect(() => {
         if (debouncedSearchTerm) {
-            props.onSearch(props.popupBcName, props.searchSpec, searchTerm)
+            onSearch(popupBcName, searchSpec, searchTerm)
         }
-    }, [debouncedSearchTerm])
+    }, [debouncedSearchTerm, onSearch, popupBcName, searchSpec, searchTerm])
 
     const handleClick = React.useCallback(() => {
-        if (!props.disabled) {
-            props.onClick(props.popupBcName, props.pickMap, props.widgetName)
+        if (!disabled) {
+            onClick(popupBcName, pickMap, widgetName)
         }
-    }, [props.disabled, props.popupBcName, props.pickMap])
+    }, [disabled, popupBcName, pickMap, onClick, widgetName])
 
     const handleChange = React.useCallback(
         (valueKey: string) => {
-            const row = props.data.find(item => item.id === valueKey)
-            Object.keys(props.pickMap).forEach(field => {
-                props.onChange({
-                    bcName: props.bcName,
-                    cursor: props.cursor,
-                    dataItem: { [field]: row ? row[props.pickMap[field]] : '' }
+            const row = data.find(item => item.id === valueKey)
+            Object.keys(pickMap).forEach(field => {
+                onChange({
+                    bcName,
+                    cursor,
+                    dataItem: { [field]: row ? row[pickMap[field]] : '' }
                 })
             })
         },
-        [props.onChange, props.pickMap, props.bcName, props.cursor, props.data]
+        [onChange, pickMap, bcName, cursor, data]
     )
+
+    if (readOnly) {
+        return (
+            <ReadOnlyField
+                widgetName={widgetName}
+                meta={meta}
+                className={className}
+                backgroundColor={backgroundColor}
+                onDrillDown={onDrillDown}
+            >
+                {value}
+            </ReadOnlyField>
+        )
+    }
 
     return (
         <span className={styles.inlinePickList}>
             <Select
-                disabled={props.disabled}
-                value={props.value}
-                allowClear={!!props.value}
+                disabled={disabled}
+                value={value}
+                allowClear={!!value}
                 showSearch
-                placeholder={props.placeholder ?? t('Enter value')}
+                placeholder={placeholder ?? t('Enter value')}
                 defaultActiveFirstOption={false}
                 showArrow={false}
                 filterOption={false}
                 onSearch={setSearchTerm}
                 onChange={handleChange}
                 notFoundContent={null}
-                className={props.className}
+                className={className}
             >
-                {props.data.map(item => {
-                    const title = item[props.pickMap[props.fieldName]] as string
+                {data.map(item => {
+                    const title = item[pickMap[fieldName]] as string
                     return (
                         <Select.Option title={title} key={item.id} value={item.id}>
                             <span>{title}</span>
@@ -106,10 +126,7 @@ const InlinePickList: React.FunctionComponent<InlinePickListProps> = props => {
                     )
                 })}
             </Select>
-            <span
-                className={cn(styles.buttonContainer, { [styles.disabledButton]: props.disabled })}
-                onClick={!props.disabled ? handleClick : null}
-            >
+            <span className={cn(styles.buttonContainer, { [styles.disabledButton]: disabled })} onClick={!disabled ? handleClick : null}>
                 <Icon type="paper-clip" />
             </span>
         </span>

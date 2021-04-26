@@ -129,8 +129,8 @@ module.exports = {
         "react/jsx-no-useless-fragment": "error",
         "react/jsx-pascal-case": "error",
         "react/prop-types": "off",
-        "react-hooks/rules-of-hooks": "off",
-        "react-hooks/exhaustive-deps": "off",
+        "react-hooks/rules-of-hooks": 1,
+        "react-hooks/exhaustive-deps": 1,
     },
     "settings": {
         "react": {

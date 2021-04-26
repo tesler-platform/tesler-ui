@@ -36,10 +36,10 @@ export function useMatchingNodes<T extends TreeNodeAscending>(
 ) {
     const { matchingNodes, ancestors } = React.useMemo(() => {
         return getMatchingNodes(nodes, searchPredicate)
-    }, [nodes, searchPredicate, setExpandedNodes])
+    }, [nodes, searchPredicate])
     React.useEffect(() => {
         setExpandedNodes(ancestors)
-    }, [ancestors])
+    }, [ancestors, setExpandedNodes])
     return matchingNodes
 }
 

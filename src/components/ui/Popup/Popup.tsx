@@ -70,7 +70,7 @@ export const Popup: FunctionComponent<PopupProps> = props => {
                 </div>
             </div>
         ),
-        [disablePagination, bcName, widgetName, onOkHandler, onCancelHandler, defaultOkText, defaultCancelText]
+        [disablePagination, bcName, widgetName, onOkHandler, onCancelHandler, defaultOkText, defaultCancelText, t]
     )
 
     return (

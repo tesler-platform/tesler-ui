@@ -17,51 +17,62 @@ export interface RadioButtonProps extends BaseFieldProps {
  * @param props
  * @category Components
  */
-const RadioButton: React.FunctionComponent<RadioButtonProps> = props => {
-    if (props.readOnly) {
-        const readOnlyValue = props.value ?? ''
+const RadioButton: React.FunctionComponent<RadioButtonProps> = ({
+    value,
+    values,
+    style,
+    readOnly,
+    widgetName,
+    meta,
+    className,
+    backgroundColor,
+    disabled,
+    onChange,
+    onDrillDown
+}) => {
+    const handleOnChange = React.useCallback(
+        (e: RadioChangeEvent) => {
+            let newValue: string
+
+            if (values) {
+                const valueId = Number(e.target.value)
+                newValue = values[valueId]?.value
+                onChange?.(newValue || '')
+            }
+        },
+        [values, onChange]
+    )
+
+    let valueIndex: number
+
+    if (value && values) {
+        valueIndex = values.findIndex(v => v.value === value)
+    }
+
+    if (readOnly) {
+        const readOnlyValue = value ?? ''
 
         return (
             <ReadOnlyField
-                widgetName={props.widgetName}
-                meta={props.meta}
-                className={props.className}
-                backgroundColor={props.backgroundColor}
-                onDrillDown={props.onDrillDown}
+                widgetName={widgetName}
+                meta={meta}
+                className={className}
+                backgroundColor={backgroundColor}
+                onDrillDown={onDrillDown}
             >
                 {readOnlyValue}
             </ReadOnlyField>
         )
     }
 
-    const handleOnChange = React.useCallback(
-        (e: RadioChangeEvent) => {
-            let value: string
-            const values = props.values
-
-            if (values) {
-                const valueId = Number(e.target.value)
-                value = values[valueId]?.value
-                props.onChange?.(value || '')
-            }
-        },
-        [props.values, props.onChange]
-    )
-
-    let valueIndex: number
-
-    if (props.value && props.values) {
-        valueIndex = props.values.findIndex(v => v.value === props.value)
-    }
-
     return (
         <Radio.Group
             onChange={handleOnChange}
-            disabled={props.disabled}
-            value={valueIndex >= 0 ? valueIndex.toString() : props.value}
-            className={props.className}
+            disabled={disabled}
+            value={valueIndex >= 0 ? valueIndex.toString() : value}
+            className={className}
         >
-            {props.values?.map((el, index) => (
+            {values?.map((el, index) => (
                 <Radio value={index.toString()} key={index}>
                     <span>
                         {el.icon && getIconByParams(el.icon)}

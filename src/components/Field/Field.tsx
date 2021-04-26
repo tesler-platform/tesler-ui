@@ -117,46 +117,60 @@ const emptyFieldMeta = [] as any
  * @param props
  * @category Components
  */
-export const Field: FunctionComponent<FieldProps> = props => {
+export const Field: FunctionComponent<FieldProps> = ({
+    bcName,
+    widgetName,
+    widgetFieldMeta,
+    cursor,
+    forcedValue,
+    pendingValue,
+    data,
+    rowFieldMeta,
+    disableDrillDown,
+    className,
+    metaError,
+    readonly: readOnly,
+    historyMode,
+    forceFocus,
+    showErrorPopup,
+    suffixClassName,
+    tooltipPlacement,
+    customProps,
+    onChange,
+    onDrillDown
+}) => {
     const [localValue, setLocalValue] = React.useState(null)
     let resultField: React.ReactChild = null
-    const drillDownUrl = useDrillDownUrl(props.bcName, props.widgetFieldMeta, props.cursor)
+    const drillDownUrl = useDrillDownUrl(bcName, widgetFieldMeta, cursor)
 
-    const value =
-        'forcedValue' in props
-            ? props.forcedValue
-            : props.pendingValue !== undefined
-            ? props.pendingValue
-            : props.data?.[props.widgetFieldMeta.key]
+    const value = forcedValue ? forcedValue : pendingValue !== undefined ? pendingValue : data?.[widgetFieldMeta.key]
 
-    const disabled = props.rowFieldMeta ? props.rowFieldMeta.disabled : true
+    const disabled = rowFieldMeta ? rowFieldMeta.disabled : true
 
-    const placeholder = props.rowFieldMeta?.placeholder
+    const placeholder = rowFieldMeta?.placeholder
 
     const handleChange = React.useCallback(
         eventValue => {
-            const dataItem = { [props.widgetFieldMeta.key]: eventValue }
+            const dataItem = { [widgetFieldMeta.key]: eventValue }
             setLocalValue(null)
-            props.onChange({ bcName: props.bcName, cursor: props.cursor, dataItem })
+            onChange({ bcName, cursor, dataItem })
         },
-        [props.bcName, props.cursor, props.widgetFieldMeta.key]
+        [bcName, cursor, widgetFieldMeta.key, onChange]
     )
 
     const handleInputChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         setLocalValue(event.target.value)
     }, [])
 
-    const bgColor = props.widgetFieldMeta.bgColorKey
-        ? (props.data?.[props.widgetFieldMeta.bgColorKey] as string)
-        : props.widgetFieldMeta.bgColor
+    const bgColor = widgetFieldMeta.bgColorKey ? (data?.[widgetFieldMeta.bgColorKey] as string) : widgetFieldMeta.bgColor
 
     const handleDrilldown = React.useMemo(() => {
-        return !props.disableDrillDown && drillDownUrl
+        return !disableDrillDown && drillDownUrl
             ? () => {
-                  props.onDrillDown(props.widgetName, props.data?.id, props.bcName, props.widgetFieldMeta.key)
+                  onDrillDown(widgetName, data?.id, bcName, widgetFieldMeta.key)
               }
             : null
-    }, [props.disableDrillDown, drillDownUrl, props.widgetName, props.data?.id, props.bcName, props.widgetFieldMeta.key])
+    }, [disableDrillDown, drillDownUrl, widgetName, data?.id, bcName, widgetFieldMeta.key, onDrillDown])
 
     const handleInputBlur = React.useCallback(() => {
         if (localValue != null) {
@@ -165,24 +179,24 @@ export const Field: FunctionComponent<FieldProps> = props => {
     }, [localValue, handleChange])
 
     const commonProps: BaseFieldProps = {
-        cursor: props.cursor,
-        widgetName: props.widgetName,
-        meta: props.widgetFieldMeta,
-        className: cn(props.className),
-        metaError: props.metaError,
+        cursor,
+        widgetName,
+        meta: widgetFieldMeta,
+        className: cn(className),
+        metaError,
         disabled,
         placeholder,
-        readOnly: props.readonly,
+        readOnly,
         backgroundColor: bgColor,
         onDrillDown: handleDrilldown
     }
     const commonInputProps: any = {
-        cursor: props.cursor,
-        meta: props.widgetFieldMeta,
-        className: cn(props.className),
+        cursor,
+        meta: widgetFieldMeta,
+        className,
         disabled,
         placeholder,
-        readOnly: props.readonly
+        readOnly
     }
 
     Object.keys(commonProps).forEach(key => {
@@ -197,19 +211,11 @@ export const Field: FunctionComponent<FieldProps> = props => {
         }
     })
 
-    if (!props.historyMode && props.widgetFieldMeta.snapshotKey && simpleDiffSupportedFieldTypes.includes(props.widgetFieldMeta.type)) {
-        return (
-            <HistoryField
-                fieldMeta={props.widgetFieldMeta}
-                data={props.data}
-                bcName={props.bcName}
-                cursor={props.cursor}
-                widgetName={props.widgetName}
-            />
-        )
+    if (!historyMode && widgetFieldMeta.snapshotKey && simpleDiffSupportedFieldTypes.includes(widgetFieldMeta.type)) {
+        return <HistoryField fieldMeta={widgetFieldMeta} data={data} bcName={bcName} cursor={cursor} widgetName={widgetName} />
     }
 
-    switch (props.widgetFieldMeta.type) {
+    switch (widgetFieldMeta.type) {
         case FieldType.date:
         case FieldType.dateTime:
         case FieldType.dateTimeWithSeconds:
@@ -218,8 +224,8 @@ export const Field: FunctionComponent<FieldProps> = props => {
                     {...commonProps}
                     onChange={handleChange}
                     value={(value || '').toString()}
-                    showTime={props.widgetFieldMeta.type === FieldType.dateTime}
-                    showSeconds={props.widgetFieldMeta.type === FieldType.dateTimeWithSeconds}
+                    showTime={widgetFieldMeta.type === FieldType.dateTime}
+                    showSeconds={widgetFieldMeta.type === FieldType.dateTimeWithSeconds}
                 />
             )
             break
@@ -229,10 +235,10 @@ export const Field: FunctionComponent<FieldProps> = props => {
                     {...commonProps}
                     value={value as number}
                     type={NumberTypes.number}
-                    digits={props.widgetFieldMeta.digits}
-                    nullable={props.widgetFieldMeta.nullable}
+                    digits={widgetFieldMeta.digits}
+                    nullable={widgetFieldMeta.nullable}
                     onChange={handleChange}
-                    forceFocus={props.forceFocus}
+                    forceFocus={forceFocus}
                 />
             )
             break
@@ -242,10 +248,10 @@ export const Field: FunctionComponent<FieldProps> = props => {
                     {...commonProps}
                     value={value as number}
                     type={NumberTypes.money}
-                    digits={props.widgetFieldMeta.digits}
-                    nullable={props.widgetFieldMeta.nullable}
+                    digits={widgetFieldMeta.digits}
+                    nullable={widgetFieldMeta.nullable}
                     onChange={handleChange}
-                    forceFocus={props.forceFocus}
+                    forceFocus={forceFocus}
                 />
             )
             break
@@ -255,10 +261,10 @@ export const Field: FunctionComponent<FieldProps> = props => {
                     {...commonProps}
                     value={value as number}
                     type={NumberTypes.percent}
-                    digits={props.widgetFieldMeta.digits}
-                    nullable={props.widgetFieldMeta.nullable}
+                    digits={widgetFieldMeta.digits}
+                    nullable={widgetFieldMeta.nullable}
                     onChange={handleChange}
-                    forceFocus={props.forceFocus}
+                    forceFocus={forceFocus}
                 />
             )
             break
@@ -267,10 +273,10 @@ export const Field: FunctionComponent<FieldProps> = props => {
                 <Dictionary
                     {...commonProps}
                     value={value as any}
-                    values={props.rowFieldMeta ? props.rowFieldMeta.values : []}
-                    fieldName={props.widgetFieldMeta.key}
+                    values={rowFieldMeta ? rowFieldMeta.values : []}
+                    fieldName={widgetFieldMeta.key}
                     onChange={handleChange}
-                    multiple={props.widgetFieldMeta.multiple}
+                    multiple={widgetFieldMeta.multiple}
                 />
             )
             break
@@ -278,10 +284,10 @@ export const Field: FunctionComponent<FieldProps> = props => {
             resultField = (
                 <TextArea
                     {...commonProps}
-                    maxInput={props.widgetFieldMeta.maxInput}
+                    maxInput={widgetFieldMeta.maxInput}
                     defaultValue={value as any}
                     onChange={handleChange}
-                    className={cn({ [readOnlyFieldStyles.error]: props.metaError })}
+                    className={cn({ [readOnlyFieldStyles.error]: metaError })}
                 />
             )
             break
@@ -289,12 +295,12 @@ export const Field: FunctionComponent<FieldProps> = props => {
             resultField = (
                 <MultiField
                     {...commonProps}
-                    fields={props.widgetFieldMeta.fields}
-                    data={props.data}
-                    bcName={props.bcName}
-                    cursor={props.cursor}
-                    widgetName={props.widgetName}
-                    style={props.widgetFieldMeta.style}
+                    fields={widgetFieldMeta.fields}
+                    data={data}
+                    bcName={bcName}
+                    cursor={cursor}
+                    widgetName={widgetName}
+                    style={widgetFieldMeta.style}
                 />
             )
             break
@@ -302,10 +308,10 @@ export const Field: FunctionComponent<FieldProps> = props => {
             resultField = (
                 <MultivalueField
                     {...commonProps}
-                    widgetName={props.widgetName}
+                    widgetName={widgetName}
                     defaultValue={Array.isArray(value) && value.length > 0 ? (value as MultivalueSingleValue[]) : emptyMultivalue}
-                    widgetFieldMeta={props.widgetFieldMeta}
-                    bcName={props.bcName}
+                    widgetFieldMeta={widgetFieldMeta}
+                    bcName={bcName}
                 />
             )
             break
@@ -313,14 +319,14 @@ export const Field: FunctionComponent<FieldProps> = props => {
             const pickListField = (
                 <PickListField
                     {...commonProps}
-                    parentBCName={props.bcName}
-                    bcName={props.widgetFieldMeta.popupBcName}
-                    cursor={props.cursor}
+                    parentBCName={bcName}
+                    bcName={widgetFieldMeta.popupBcName}
+                    cursor={cursor}
                     value={value as any}
-                    pickMap={props.widgetFieldMeta.pickMap}
+                    pickMap={widgetFieldMeta.pickMap}
                 />
             )
-            resultField = props.readonly ? (
+            resultField = readOnly ? (
                 pickListField
             ) : (
                 <InteractiveInput suffix={handleDrilldown && <Icon type="link" />} onSuffixClick={handleDrilldown}>
@@ -333,16 +339,16 @@ export const Field: FunctionComponent<FieldProps> = props => {
             const pickListField = (
                 <InlinePickList
                     {...commonProps}
-                    fieldName={props.widgetFieldMeta.key}
-                    searchSpec={props.widgetFieldMeta.searchSpec}
-                    bcName={props.bcName}
-                    popupBcName={props.widgetFieldMeta.popupBcName}
-                    cursor={props.cursor}
+                    fieldName={widgetFieldMeta.key}
+                    searchSpec={widgetFieldMeta.searchSpec}
+                    bcName={bcName}
+                    popupBcName={widgetFieldMeta.popupBcName}
+                    cursor={cursor}
                     value={value as string}
-                    pickMap={props.widgetFieldMeta.pickMap}
+                    pickMap={widgetFieldMeta.pickMap}
                 />
             )
-            resultField = props.readonly ? (
+            resultField = readOnly ? (
                 pickListField
             ) : (
                 <InteractiveInput suffix={handleDrilldown && <Icon type="link" />} onSuffixClick={handleDrilldown}>
@@ -355,12 +361,12 @@ export const Field: FunctionComponent<FieldProps> = props => {
             resultField = (
                 <CheckboxPicker
                     {...commonProps}
-                    fieldName={props.widgetFieldMeta.key}
-                    fieldLabel={props.widgetFieldMeta.label}
+                    fieldName={widgetFieldMeta.key}
+                    fieldLabel={widgetFieldMeta.label}
                     value={value}
-                    bcName={props.bcName}
-                    cursor={props.cursor}
-                    readonly={props.readonly}
+                    bcName={bcName}
+                    cursor={cursor}
+                    readonly={readOnly}
                 />
             )
             break
@@ -368,15 +374,15 @@ export const Field: FunctionComponent<FieldProps> = props => {
             resultField = (
                 <FileUpload
                     {...commonProps}
-                    fieldName={props.widgetFieldMeta.key}
-                    bcName={props.bcName}
-                    cursor={props.cursor}
-                    fieldDataItem={props.data}
+                    fieldName={widgetFieldMeta.key}
+                    bcName={bcName}
+                    cursor={cursor}
+                    fieldDataItem={data}
                     fieldValue={value as string}
-                    fileIdKey={props.widgetFieldMeta.fileIdKey}
-                    fileSource={props.widgetFieldMeta.fileSource}
-                    snapshotKey={props.widgetFieldMeta.snapshotKey}
-                    snapshotFileIdKey={props.widgetFieldMeta.snapshotFileIdKey}
+                    fileIdKey={widgetFieldMeta.fileIdKey}
+                    fileSource={widgetFieldMeta.fileSource}
+                    snapshotKey={widgetFieldMeta.snapshotKey}
+                    snapshotFileIdKey={widgetFieldMeta.snapshotFileIdKey}
                 />
             )
             break
@@ -385,13 +391,13 @@ export const Field: FunctionComponent<FieldProps> = props => {
                 <MultivalueHover
                     {...commonProps}
                     data={(value || emptyMultivalue) as MultivalueSingleValue[]}
-                    displayedValue={props.widgetFieldMeta.displayedKey && props.data?.[props.widgetFieldMeta.displayedKey]}
+                    displayedValue={widgetFieldMeta.displayedKey && data?.[widgetFieldMeta.displayedKey]}
                 />
             )
             break
         case FieldType.hint:
             resultField = (
-                <ReadOnlyField {...commonProps} className={cn(props.className, readOnlyFieldStyles.hint)}>
+                <ReadOnlyField {...commonProps} className={cn(className, readOnlyFieldStyles.hint)}>
                     {value}
                 </ReadOnlyField>
             )
@@ -401,17 +407,17 @@ export const Field: FunctionComponent<FieldProps> = props => {
                 <RadioButton
                     {...commonProps}
                     value={value as any}
-                    values={props.rowFieldMeta?.values || emptyFieldMeta}
+                    values={rowFieldMeta?.values || emptyFieldMeta}
                     onChange={handleChange}
                 />
             )
             break
         default:
-            resultField = props.readonly ? (
+            resultField = readOnly ? (
                 <ReadOnlyField {...commonProps}>{value}</ReadOnlyField>
             ) : (
                 <InteractiveInput
-                    suffixClassName={props.suffixClassName}
+                    suffixClassName={suffixClassName}
                     suffix={handleDrilldown && <Icon type="link" />}
                     onSuffixClick={handleDrilldown}
                 >
@@ -420,18 +426,18 @@ export const Field: FunctionComponent<FieldProps> = props => {
                         value={localValue !== null ? localValue : value ? String(value) : ''}
                         onChange={handleInputChange}
                         onBlur={handleInputBlur}
-                        autoFocus={props.forceFocus}
-                        maxLength={props.widgetFieldMeta.maxInput}
+                        autoFocus={forceFocus}
+                        maxLength={widgetFieldMeta.maxInput}
                     />
                 </InteractiveInput>
             )
     }
-    if (props.metaError && props.showErrorPopup) {
+    if (metaError && showErrorPopup) {
         return (
             <Tooltip
-                placement={props.tooltipPlacement}
+                placement={tooltipPlacement}
                 overlayClassName={styles.error}
-                title={props.metaError}
+                title={metaError}
                 getPopupContainer={trigger => trigger.parentElement}
             >
                 <div>
@@ -444,12 +450,12 @@ export const Field: FunctionComponent<FieldProps> = props => {
         <CustomizationContext.Consumer>
             {context => {
                 const customFields = context.customFields
-                if (customFields?.[props.widgetFieldMeta.type] || customFields?.[props.widgetFieldMeta.key]) {
-                    const CustomComponent = customFields?.[props.widgetFieldMeta.type] || customFields?.[props.widgetFieldMeta.key]
+                if (customFields?.[widgetFieldMeta.type] || customFields?.[widgetFieldMeta.key]) {
+                    const CustomComponent = customFields?.[widgetFieldMeta.type] || customFields?.[widgetFieldMeta.key]
                     return (
                         <CustomComponent
                             {...commonProps}
-                            customProps={props.customProps}
+                            customProps={customProps}
                             value={value}
                             onBlur={handleInputBlur}
                             onChange={handleChange}
