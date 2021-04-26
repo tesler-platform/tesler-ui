@@ -28,6 +28,6 @@ export function useSingleSelect(pickListDescriptor: PickMap, bcName: string, par
             dispatch($do.closeViewPopup(null))
             dispatch($do.bcRemoveAllFilters({ bcName }))
         },
-        [pickListDescriptor, parentCursor, bcName, parentBcName]
+        [pickListDescriptor, parentCursor, bcName, parentBcName, dispatch]
     )
 }

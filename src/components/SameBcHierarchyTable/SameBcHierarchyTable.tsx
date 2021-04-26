@@ -61,21 +61,33 @@ const emptyData: AssociatedItem[] = []
  * @deprecated TODO: Will be removed in 2.0.0
  * @category Components
  */
-export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> = props => {
-    const bcName = props.meta.bcName
+export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> = ({
+    depth = 1,
+    meta,
+    data,
+    pendingChanges,
+    selectable,
+    assocValueKey,
+    cursor,
+    loading,
+    onDeselectAll,
+    onSelectAll,
+    onSelect,
+    onExpand,
+    onRow
+}) => {
+    const { bcName, name: widgetName, fields, options = {} } = meta
 
-    const hierarchyGroupSelection = props.meta.options?.hierarchyGroupSelection
-    const hierarchyRadioAll = props.meta.options?.hierarchyRadioAll
-    const hierarchyDisableRoot = props.meta.options?.hierarchyDisableRoot
+    const hierarchyGroupSelection = options?.hierarchyGroupSelection
+    const hierarchyRadioAll = options?.hierarchyRadioAll
+    const hierarchyDisableRoot = options?.hierarchyDisableRoot
+    const indentLevel = depth - 1
+    const hasNested = data?.length
 
-    const depthLevel = props.depth || 1
-    const indentLevel = depthLevel - 1
-    const hasNested = props.data?.length
-
-    const selectedRecords = useAssocRecords(props.data, props.pendingChanges, hierarchyRadioAll)
+    const selectedRecords = useAssocRecords(data, pendingChanges, hierarchyRadioAll)
 
     const rowSelection: TableRowSelection<DataItem> = React.useMemo(() => {
-        if (props.selectable) {
+        if (selectable) {
             return {
                 type: 'checkbox',
                 selectedRowKeys: selectedRecords.map(item => item.id),
@@ -83,35 +95,48 @@ export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> 
                     const dataItem = {
                         ...record,
                         _associate: selected,
-                        _value: record[props.assocValueKey]
+                        _value: record[assocValueKey]
                     }
 
                     if (hierarchyRadioAll) {
-                        props.onDeselectAll(bcName, depthLevel)
+                        onDeselectAll(bcName, depth)
                     }
-                    if (props.cursor === record.id && hierarchyGroupSelection) {
-                        props.onSelectAll(bcName, depthLevel + 1, props.assocValueKey, selected)
+                    if (cursor === record.id && hierarchyGroupSelection) {
+                        onSelectAll(bcName, depth + 1, assocValueKey, selected)
                     }
 
-                    props.onSelect(bcName, depthLevel, dataItem, props.meta.name, props.assocValueKey)
+                    onSelect(bcName, depth, dataItem, widgetName, assocValueKey)
                 }
             }
         }
         return undefined
-    }, [bcName, props.onSelect, props.cursor, selectedRecords, props.assocValueKey])
+    }, [
+        bcName,
+        onSelect,
+        cursor,
+        selectedRecords,
+        assocValueKey,
+        depth,
+        hierarchyGroupSelection,
+        hierarchyRadioAll,
+        onSelectAll,
+        onDeselectAll,
+        selectable,
+        widgetName
+    ])
 
     const [userClosedRecords, setUserClosedRecords] = React.useState([])
     const expandedRowKeys = React.useMemo(() => {
-        if (userClosedRecords.includes(props.cursor)) {
+        if (userClosedRecords.includes(cursor)) {
             return emptyArray
         }
-        return [props.cursor]
-    }, [props.cursor, userClosedRecords])
+        return [cursor]
+    }, [cursor, userClosedRecords])
 
     const handleExpand = (expanded: boolean, dataItem: DataItem) => {
         if (expanded) {
             setUserClosedRecords(userClosedRecords.filter(item => item !== dataItem.id))
-            props.onExpand(bcName, depthLevel, dataItem.id)
+            onExpand(bcName, depth, dataItem.id)
         } else {
             setUserClosedRecords([...userClosedRecords, dataItem.id])
         }
@@ -119,22 +144,20 @@ export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> 
 
     // Вложенный уровень иерархии рисуется новой таблицей
     const nested = (record: DataItem, index: number, indent: number, expanded: boolean) => {
-        if (record.id !== props.cursor) {
+        if (record.id !== cursor) {
             return null
         }
         return (
             <ConnectedHierarchyTable
-                meta={props.meta}
-                selectable={props.selectable}
-                assocValueKey={props.assocValueKey}
+                meta={meta}
+                selectable={selectable}
+                assocValueKey={assocValueKey}
                 onDrillDown={null}
-                depth={depthLevel + 1}
-                onRow={props.onRow}
+                depth={depth + 1}
+                onRow={onRow}
             />
         )
     }
-
-    const fields = props.meta.fields
 
     // Уровни иерархии отбиваются отступом через пустую колонку с вычисляемой шириной
     const indentColumn = {
@@ -165,13 +188,13 @@ export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> 
                 dataIndex: item.key,
                 render: (text: string, dataItem: any) => {
                     if ([FieldType.multifield, FieldType.multivalueHover].includes(item.type)) {
-                        return <Field bcName={bcName} cursor={dataItem.id} widgetName={props.meta.name} widgetFieldMeta={item} readonly />
+                        return <Field bcName={bcName} cursor={dataItem.id} widgetName={widgetName} widgetFieldMeta={item} readonly />
                     }
                     return text
                 }
             }))
         ]
-    }, [indentLevel, processedFields])
+    }, [indentColumn, processedFields, widgetName, bcName])
 
     return (
         <div className={styles.container}>
@@ -181,17 +204,17 @@ export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> 
                 rowKey="id"
                 columns={columns}
                 pagination={false}
-                showHeader={depthLevel === 1}
+                showHeader={depth === 1}
                 expandIcon={hasNested ? (Exp as any) : undefined}
-                defaultExpandedRowKeys={[props.cursor]}
+                defaultExpandedRowKeys={[cursor]}
                 expandedRowKeys={expandedRowKeys}
                 onExpand={hasNested ? handleExpand : undefined}
-                dataSource={props.data}
+                dataSource={data}
                 expandedRowRender={hasNested ? nested : undefined}
                 expandIconAsCell={false}
-                expandIconColumnIndex={props.onRow ? 0 : 1}
-                loading={props.loading}
-                onRow={!(hierarchyDisableRoot && depthLevel === 1) && props.onRow}
+                expandIconColumnIndex={onRow ? 0 : 1}
+                loading={loading}
+                onRow={!(hierarchyDisableRoot && depth === 1) && onRow}
             />
         </div>
     )
