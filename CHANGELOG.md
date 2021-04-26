@@ -1,14 +1,32 @@
+# Version 1.29.0 (April 26, 2021)
+
+## Features
+
+* `<HierarchyTable />` now supports row operations for nested nodes; `<RowOperationsButton />`, `useRowMenu` and `<RowOperationsMenu />` are now exported as a building blocks to add row operations for custom tables ([#638](https://github.com/tesler-platform/tesler-ui/pull/638))
+* Filters and sorters are added to `custom-action` request params ([#616](https://github.com/tesler-platform/tesler-ui/issues/616))
+* `<ModalInvoke />` buttons labels are now customizable ([#633](https://github.com/tesler-platform/tesler-ui/issues/633))
+* `<Provider />` now have `customWidgets` prop for extending widgets outside of regular widgets flow (i.e. popup widgets) ([#623](https://github.com/tesler-platform/tesler-ui/issues/623))
+* `<MultivalueHover />` field now renders from `<Field />` and supports all appropriate props ([#635](https://github.com/tesler-platform/tesler-ui/issues/635))
+* Store snapshot and application screenshot can now be exported when application error occurs; this feature can be enabled by setting `store.view.exportStateEnabled` to `true` ([#532](https://github.com/tesler-platform/tesler-ui/issues/532))
+
+## Fixes
+
+* Trying to drilldown through link with filters set to clear crashes the app ([#627](https://github.com/tesler-platform/tesler-ui/issues/627))
+* `<FullHierarchyTable />` excessively expands when row meta is fetched ([#611](https://github.com/tesler-platform/tesler-ui/pull/611))
+* `<MultivalueHover />` should not show arrow icon when no drilldown handler available ([#613](https://github.com/tesler-platform/tesler-ui/pull/613))
+* `bcNewDataSuccess` should reset `selectedCell`; `operationRequiresAutosave` of requiredFields middleware should ignore save operations ([#612](https://github.com/tesler-platform/tesler-ui/issues/612))
+
 # Version 1.28.3 (Febraury 20, 2021)
 
 ## Fixes
 
-* Stale data fetch epic can crash the application.
+* Stale data fetch epic can crash the application ([#607](https://github.com/tesler-platform/tesler-ui/pull/607)).
 
 # Version 1.28.2 (Febraury 20, 2021)
 
 ## Fixes
 
-* `bcFetchData` used a first available widget when resolving child business component instead of a first available non-lazy widget.
+* `bcFetchData` used a first available widget when resolving child business component instead of a first available non-lazy widget ([#605](https://github.com/tesler-platform/tesler-ui/pull/605)).
 
 # Version 1.28.1 (Febraury 19, 2021)
 
