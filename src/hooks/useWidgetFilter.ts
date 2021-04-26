@@ -36,5 +36,5 @@ export function useWidgetFilters(widgetName: string, fieldKey: string) {
 export function useWidgetHighlightFilter(widgetName: string, fieldKey: string) {
     const filters = useWidgetFilters(widgetName, fieldKey)
     const filter = filters[0]
-    return React.useMemo(() => filter, [filters[0]])
+    return React.useMemo(() => filter, [filter])
 }

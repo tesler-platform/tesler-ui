@@ -118,6 +118,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
         hasNext,
         filters,
         filterGroups,
+        columnTitleComponent,
         onDrillDown,
         onShowAll,
         onSelectCell,
@@ -126,6 +127,10 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
         onForceUpdate,
         ...rest
     } = props
+    /**
+     * TODO: What's the difference between props.meta.name and props.widgetName?
+     */
+    const { bcName: widgetBcName, name: widgetMetaName, fields } = meta
     if (props.meta.options) {
         if (props.meta.options.hierarchyFull) {
             return <FullHierarchyTable meta={props.meta} />
@@ -138,28 +143,31 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
     const isAllowEdit = (props.allowEdit ?? true) && !props.meta.options?.readOnly
     const { t } = useTranslation()
 
-    const processCellClick = (recordId: string, fieldKey: string) => {
-        props.onSelectCell(recordId, props.meta.name, fieldKey)
-    }
+    const processCellClick = React.useCallback(
+        (recordId: string, fieldKey: string) => {
+            onSelectCell(recordId, widgetMetaName, fieldKey)
+        },
+        [onSelectCell, widgetMetaName]
+    )
 
     const processedFields: WidgetListField[] = React.useMemo(
         () =>
-            props.meta.fields.map(item => {
+            fields.map(item => {
                 return item.type === FieldType.multivalue ? { ...item, type: FieldType.multivalueHover } : item
             }),
-        [props.meta.fields]
+        [fields]
     )
 
     const columns: Array<ColumnProps<DataItem>> = React.useMemo(() => {
         return processedFields
             .filter(item => item.type !== FieldType.hidden && !item.hidden)
             .map(item => {
-                const fieldRowMeta = props.rowMetaFields?.find(field => field.key === item.key)
+                const fieldRowMeta = rowMetaFields?.find(field => field.key === item.key)
                 return {
-                    title: props.columnTitleComponent ? (
-                        props.columnTitleComponent({ widgetName: props.meta.name, widgetMeta: item, rowMeta: fieldRowMeta })
+                    title: columnTitleComponent ? (
+                        columnTitleComponent({ widgetName: widgetMetaName, widgetMeta: item, rowMeta: fieldRowMeta })
                     ) : (
-                        <ColumnTitle widgetName={props.meta.name} widgetMeta={item} rowMeta={fieldRowMeta} />
+                        <ColumnTitle widgetName={widgetMetaName} widgetMeta={item} rowMeta={fieldRowMeta} />
                     ),
                     key: item.key,
                     dataIndex: item.key,
@@ -167,18 +175,18 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
                     render: (text: string, dataItem: DataItem) => {
                         const editMode =
                             isAllowEdit &&
-                            props.selectedCell &&
-                            item.key === props.selectedCell.fieldKey &&
-                            props.meta.name === props.selectedCell.widgetName &&
-                            dataItem.id === props.selectedCell.rowId &&
-                            props.cursor === props.selectedCell.rowId
+                            selectedCell &&
+                            item.key === selectedCell.fieldKey &&
+                            widgetMetaName === selectedCell.widgetName &&
+                            dataItem.id === selectedCell.rowId &&
+                            cursor === selectedCell.rowId
                         return (
                             <div>
                                 <Field
                                     data={dataItem}
-                                    bcName={props.meta.bcName}
+                                    bcName={widgetBcName}
                                     cursor={dataItem.id}
-                                    widgetName={props.meta.name}
+                                    widgetName={widgetMetaName}
                                     widgetFieldMeta={item}
                                     readonly={!editMode}
                                     forceFocus={editMode}
@@ -198,15 +206,15 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
                 }
             })
     }, [
+        columnTitleComponent,
         processedFields,
-        props.rowMetaFields,
-        props.meta.name,
-        props.selectedCell,
-        props.cursor,
+        processCellClick,
+        widgetBcName,
+        rowMetaFields,
+        widgetMetaName,
+        cursor,
         isAllowEdit,
-        props.selectedCell?.fieldKey,
-        props.selectedCell?.rowId,
-        props.selectedCell?.widgetName
+        selectedCell
     ])
 
     const resultColumns = React.useMemo(() => {
@@ -221,25 +229,25 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
     const [filterGroupName, setFilterGroupName] = React.useState(null)
     const filtersExist = !!props.filters?.length
 
-    const handleShowAll = () => {
-        props.onShowAll(props.meta.bcName, props.cursor, null, props.widgetName)
-    }
+    const handleShowAll = React.useCallback(() => {
+        onShowAll(widgetBcName, cursor, null, widgetName)
+    }, [onShowAll, widgetBcName, cursor, widgetName])
 
-    const handleRemoveFilters = () => {
-        props.onRemoveFilters(props.meta.bcName)
-        props.onForceUpdate(props.meta.bcName)
-    }
+    const handleRemoveFilters = React.useCallback(() => {
+        onRemoveFilters(widgetBcName)
+        onForceUpdate(widgetBcName)
+    }, [onRemoveFilters, onForceUpdate, widgetBcName])
 
     const handleAddFilters = React.useMemo(() => {
         return (value: string) => {
-            const filterGroup = props.filterGroups.find(item => item.name === value)
+            const filterGroup = filterGroups.find(item => item.name === value)
             const parsedFilters = parseFilters(filterGroup.filters)
             setFilterGroupName(filterGroup.name)
-            props.onRemoveFilters(props.meta.bcName)
-            parsedFilters.forEach(item => props.onApplyFilter(props.meta.bcName, item))
-            props.onForceUpdate(props.meta.bcName)
+            onRemoveFilters(widgetBcName)
+            parsedFilters.forEach(item => onApplyFilter(widgetBcName, item))
+            onForceUpdate(widgetBcName)
         }
-    }, [props.filterGroups, props.meta.bcName])
+    }, [filterGroups, widgetBcName, setFilterGroupName, onRemoveFilters, onApplyFilter, onForceUpdate])
 
     React.useEffect(() => {
         if (!filtersExist) {
@@ -250,13 +258,13 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
     const defaultHeader = React.useMemo(() => {
         return (
             <div className={styles.filtersContainer}>
-                {!!props.filterGroups?.length && (
+                {!!filterGroups?.length && (
                     <Select
                         value={filterGroupName ?? t('Show all').toString()}
                         onChange={handleAddFilters}
                         dropdownMatchSelectWidth={false}
                     >
-                        {props.filterGroups.map(group => (
+                        {filterGroups.map(group => (
                             <Select.Option key={group.name} value={group.name}>
                                 <span>{group.name}</span>
                             </Select.Option>
@@ -267,7 +275,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
                 {props.limitBySelf && <ActionLink onClick={handleShowAll}> {t('Show all records')} </ActionLink>}
             </div>
         )
-    }, [props.filterGroups, filterGroupName, filtersExist, props.limitBySelf])
+    }, [filterGroups, filterGroupName, filtersExist, props.limitBySelf, t, handleAddFilters, handleRemoveFilters, handleShowAll])
 
     const [operationsRef, parentRef, onRow] = useRowMenu()
     return (

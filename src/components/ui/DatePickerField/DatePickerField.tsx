@@ -35,37 +35,34 @@ const isoLocalFormatter = (date: Moment) => date.format('YYYY-MM-DD[T]HH:mm:ss')
  * @param props
  * @category Components
  */
-const DatePickerField: React.FunctionComponent<IDatePickerFieldProps> = props => {
-    const { disabled, value, showTime, showSeconds, monthYear } = props
-
-    if (props.readOnly) {
-        const datePickerFormat = DatePickerFieldFormat(value, showTime, showSeconds, monthYear)
-        return (
-            <ReadOnlyField
-                widgetName={props.widgetName}
-                meta={props.meta}
-                className={props.className}
-                backgroundColor={props.backgroundColor}
-                onDrillDown={props.onDrillDown}
-            >
-                {datePickerFormat}
-            </ReadOnlyField>
-        )
-    }
-
+const DatePickerField: React.FunctionComponent<IDatePickerFieldProps> = ({
+    disabled,
+    value,
+    showTime,
+    showSeconds,
+    monthYear,
+    widgetName,
+    meta,
+    className,
+    backgroundColor,
+    readOnly,
+    onDrillDown,
+    onChange,
+    ...props
+}) => {
     const dateFormatter = props.dateFormatter ? props.dateFormatter : isoLocalFormatter
     const datePickerRef = React.useRef(null)
     const handleChange = React.useCallback(
         (date: moment.Moment) => {
-            if (props.onChange) {
-                if (props.monthYear) {
-                    props.onChange(date ? dateFormatter(date.startOf('month')) : null)
+            if (onChange) {
+                if (monthYear) {
+                    onChange(date ? dateFormatter(date.startOf('month')) : null)
                 } else {
-                    props.onChange(date ? dateFormatter(date) : null)
+                    onChange(date ? dateFormatter(date) : null)
                 }
             }
         },
-        [props.onChange, props.monthYear]
+        [onChange, monthYear, dateFormatter]
     )
     const getCalendarContainer = React.useCallback((triggerNode: Element) => props.calendarContainer, [props.calendarContainer])
 
@@ -79,21 +76,36 @@ const DatePickerField: React.FunctionComponent<IDatePickerFieldProps> = props =>
 
     const extendedProps: DatePickerProps & RefAttributes<any> = {
         ...props,
-        className: cn(styles.datePicker, props.className),
+        className: cn(styles.datePicker, className),
         value: momentObject,
         disabled: disabled,
         format,
         onChange: handleChange,
         showTime: timeOptions,
         style: {
-            backgroundColor: props.backgroundColor
+            backgroundColor
         },
         getCalendarContainer: props.calendarContainer ? getCalendarContainer : null,
         ref: datePickerRef
     }
 
-    if (props.disabled) {
+    if (disabled) {
         extendedProps.open = false
+    }
+
+    if (readOnly) {
+        const datePickerFormat = DatePickerFieldFormat(value, showTime, showSeconds, monthYear)
+        return (
+            <ReadOnlyField
+                widgetName={widgetName}
+                meta={meta}
+                className={className}
+                backgroundColor={backgroundColor}
+                onDrillDown={onDrillDown}
+            >
+                {datePickerFormat}
+            </ReadOnlyField>
+        )
     }
 
     return monthYear ? <DatePicker.MonthPicker {...extendedProps} /> : <DatePicker {...extendedProps} />

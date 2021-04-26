@@ -90,6 +90,6 @@ export function useExpandedKeys(
         hierarchyDisableDescendants
             ? setExpandedKeys(Array.from(searchResultBranches))
             : setExpandedKeys(prev => [...prev, ...Array.from(distinctExpandedKeys)])
-    }, [filters, data, searchAncestorsKeys])
+    }, [filters, data, searchAncestorsKeys, hierarchyDisableDescendants])
     return [expandedKeys, setExpandedKeys] as const
 }

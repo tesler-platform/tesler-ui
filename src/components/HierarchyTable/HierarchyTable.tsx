@@ -68,24 +68,45 @@ const emptyData: AssociatedItem[] = []
  * @param props
  * @category Components
  */
-export const HierarchyTable: FunctionComponent<HierarchyTableProps> = ({ onRow, ...props }) => {
-    const bcName = props.nestedByBc || props.meta.bcName
+export const HierarchyTable: FunctionComponent<HierarchyTableProps> = ({
+    meta,
+    nestedByBc,
+    hierarchyLevels,
+    nestedBcName,
+    indentLevel,
+    data,
+    selectable,
+    pendingChanges,
+    assocValueKey,
+    childData,
+    cursor,
+    route,
+    rowMetaFields,
+    loading,
+    showPagination,
+    onRow,
+    onSelect,
+    onSelectAll,
+    onDeselectAll,
+    onExpand
+}) => {
+    const { bcName: widgetBcName, name: widgetName, options = {} } = meta
+    const bcName = nestedByBc || widgetBcName
 
-    const { hierarchyGroupSelection, hierarchyRadio, hierarchyRadioAll, hierarchyDisableRoot } = props.meta.options ?? {}
+    const { hierarchyGroupSelection, hierarchyRadio, hierarchyRadioAll, hierarchyDisableRoot } = options ?? {}
 
     // TODO: Simplify all this
-    const { hierarchyLevels, nestedBcName, indentLevel } = props
-    const hierarchyLevel = props.nestedByBc ? hierarchyLevels.find(item => item.bcName === props.nestedByBc) : null
+    const hierarchyLevel = nestedByBc ? hierarchyLevels.find(item => item.bcName === nestedByBc) : null
     const nestedHierarchyDescriptor = hierarchyLevel
         ? hierarchyLevels[hierarchyLevels.findIndex(item => item === hierarchyLevel) + 1]
         : hierarchyLevels[0]
     const hasNested = indentLevel < hierarchyLevels.length
 
     const isRadio = hierarchyLevel?.radio || (!hierarchyLevel && hierarchyRadio)
-    const selectedRecords = useAssocRecords(props.data, props.pendingChanges, isRadio)
+    const selectedRecords = useAssocRecords(data, pendingChanges, isRadio)
 
     const rowSelection: TableRowSelection<DataItem> = React.useMemo(() => {
-        if (props.selectable && !(indentLevel === 0 && hierarchyDisableRoot)) {
+        if (selectable && !(indentLevel === 0 && hierarchyDisableRoot)) {
             return {
                 type: 'checkbox',
                 selectedRowKeys: selectedRecords.map(item => item.id),
@@ -93,21 +114,21 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = ({ onRow, 
                     const dataItem = {
                         ...record,
                         _associate: selected,
-                        _value: hierarchyLevel ? record[hierarchyLevel.assocValueKey] : record[props.assocValueKey]
+                        _value: hierarchyLevel ? record[hierarchyLevel.assocValueKey] : record[assocValueKey]
                     }
 
                     const isRadioAll = hierarchyRadioAll
                     if (selected && !isRadioAll) {
                         if (isRadio && selectedRecords.length) {
                             const prevSelected = selectedRecords[0]
-                            props.onSelect(bcName, { ...prevSelected, _associate: false }, props.meta.name, props.assocValueKey)
+                            onSelect(bcName, { ...prevSelected, _associate: false }, widgetName, assocValueKey)
                         }
 
                         const radioAncestorAndSameBcName: string[] = []
-                        ;[props.meta.bcName, ...hierarchyLevels.map(item => item.bcName)].some(feBcName => {
+                        ;[widgetBcName, ...hierarchyLevels.map(item => item.bcName)].some(feBcName => {
                             if (
-                                (feBcName === props.meta.bcName && hierarchyRadio) ||
-                                (feBcName !== props.meta.bcName && hierarchyLevels.find(v => v.bcName === feBcName).radio)
+                                (feBcName === widgetBcName && hierarchyRadio) ||
+                                (feBcName !== widgetBcName && hierarchyLevels.find(v => v.bcName === feBcName).radio)
                             ) {
                                 radioAncestorAndSameBcName.push(feBcName)
                             }
@@ -116,36 +137,56 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = ({ onRow, 
                         })
 
                         if (radioAncestorAndSameBcName.length) {
-                            props.onDeselectAll(radioAncestorAndSameBcName)
+                            onDeselectAll(radioAncestorAndSameBcName)
                         }
                     }
 
                     if (isRadioAll) {
-                        props.onDeselectAll([props.meta.bcName, ...hierarchyLevels.map(item => item.bcName)])
+                        onDeselectAll([widgetBcName, ...hierarchyLevels.map(item => item.bcName)])
                     }
-                    if (nestedHierarchyDescriptor && props.cursor === record.id && hierarchyGroupSelection) {
-                        props.onSelectAll(nestedHierarchyDescriptor.bcName, nestedHierarchyDescriptor.assocValueKey, selected)
+                    if (nestedHierarchyDescriptor && cursor === record.id && hierarchyGroupSelection) {
+                        onSelectAll(nestedHierarchyDescriptor.bcName, nestedHierarchyDescriptor.assocValueKey, selected)
                     }
-                    props.onSelect(bcName, dataItem, props.meta.name, props.assocValueKey)
+                    onSelect(bcName, dataItem, widgetName, assocValueKey)
                 }
             }
         }
         return undefined
-    }, [bcName, props.onSelect, props.cursor, selectedRecords, props.assocValueKey])
+    }, [
+        bcName,
+        onSelect,
+        cursor,
+        selectedRecords,
+        assocValueKey,
+        hierarchyDisableRoot,
+        hierarchyGroupSelection,
+        hierarchyLevel,
+        hierarchyLevels,
+        hierarchyRadio,
+        hierarchyRadioAll,
+        indentLevel,
+        isRadio,
+        nestedHierarchyDescriptor,
+        onDeselectAll,
+        onSelectAll,
+        selectable,
+        widgetName,
+        widgetBcName
+    ])
 
     const [currentCursor, setCurrentCursor] = React.useState(undefined)
     const [noChildRecords, setNoChildRecords] = React.useState([])
     const tableRecords = React.useMemo(() => {
-        return props.data?.map(item => {
+        return data?.map(item => {
             return {
                 ...item,
                 noChildren: noChildRecords.includes(item.id)
             }
         })
-    }, [currentCursor, props.data, noChildRecords])
+    }, [data, noChildRecords])
     const [userClosedRecords, setUserClosedRecords] = React.useState([])
     const expandedRowKeys = React.useMemo(() => {
-        if (currentCursor && !props.childData?.length) {
+        if (currentCursor && !childData?.length) {
             if (!noChildRecords.includes(currentCursor)) {
                 setNoChildRecords([...noChildRecords, currentCursor])
             }
@@ -155,13 +196,13 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = ({ onRow, 
             setNoChildRecords(noChildRecords.filter(item => item !== currentCursor))
         }
         return !currentCursor || userClosedRecords.includes(currentCursor) ? emptyArray : [currentCursor]
-    }, [currentCursor, userClosedRecords, props.childData])
+    }, [currentCursor, userClosedRecords, childData, noChildRecords])
 
     const handleExpand = (expanded: boolean, dataItem: DataItem) => {
         if (expanded) {
             setCurrentCursor(dataItem.id)
             setUserClosedRecords(userClosedRecords.filter(item => item !== dataItem.id))
-            props.onExpand(props.nestedByBc || props.meta.bcName, nestedBcName, dataItem.id, props.route)
+            onExpand(nestedByBc || meta.bcName, nestedBcName, dataItem.id, route)
         } else {
             setUserClosedRecords([...userClosedRecords, dataItem.id])
         }
@@ -173,14 +214,14 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = ({ onRow, 
 
     // Expanded nodes rendered as nested table component
     const nested = (record: DataItem, index: number, indent: number, expanded: boolean) => {
-        if (record.id !== props.cursor) {
+        if (record.id !== cursor) {
             return null
         }
         return (
             <ConnectedHierarchyTable
-                meta={props.meta}
-                selectable={props.selectable}
-                parentBcName={props.nestedByBc || props.meta.bcName}
+                meta={meta}
+                selectable={selectable}
+                parentBcName={bcName}
                 assocValueKey={nestedHierarchyDescriptor.assocValueKey}
                 nestedByBc={nestedBcName}
                 onDrillDown={null}
@@ -188,8 +229,8 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = ({ onRow, 
             />
         )
     }
-    const isSameBcHierarchy = props.meta.options?.hierarchySameBc
-    const fields = hierarchyLevel ? hierarchyLevel.fields : props.meta.fields
+    const isSameBcHierarchy = meta.options?.hierarchySameBc
+    const fields = hierarchyLevel ? hierarchyLevel.fields : meta.fields
     const withHierarchyShift = fields.some(field => field.hierarchyShift === true)
 
     /**
@@ -230,7 +271,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = ({ onRow, 
                 .filter(item => !item.hidden && item.type !== FieldType.hidden)
                 .map((item, index) => {
                     const itemWidth = isSameBcHierarchy
-                        ? getColumnWidth(item.key, indentLevel, processedFields, props.rowMetaFields, hierarchyLevels.length, item.width)
+                        ? getColumnWidth(item.key, indentLevel, processedFields, rowMetaFields, hierarchyLevels.length, item.width)
                         : item.width
                     const className = isSameBcHierarchy
                         ? styles.sameHierarchyNode
@@ -246,7 +287,7 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = ({ onRow, 
                                 <Field
                                     bcName={bcName}
                                     cursor={dataItem.id}
-                                    widgetName={props.meta.name}
+                                    widgetName={widgetName}
                                     widgetFieldMeta={item}
                                     readonly
                                     customProps={fieldCustomProps}
@@ -257,8 +298,19 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = ({ onRow, 
                     }
                 })
         ]
-    }, [indentLevel, processedFields, props.rowMetaFields, hasNested])
-    const showOperations = props.meta.options?.actionGroups
+    }, [
+        indentLevel,
+        processedFields,
+        rowMetaFields,
+        hasNested,
+        bcName,
+        fieldCustomProps,
+        indentColumn,
+        isSameBcHierarchy,
+        hierarchyLevels.length,
+        widgetName
+    ])
+    const showOperations = meta.options?.actionGroups
     const [operationsRef, tableRef, onHover] = useRowMenu()
     const handleRow = React.useCallback(
         (record: DataItem, index: number) => {
@@ -277,22 +329,20 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = ({ onRow, 
                 rowKey="id"
                 columns={columns}
                 pagination={false}
-                showHeader={!props.nestedByBc}
+                showHeader={!nestedByBc}
                 expandIcon={hasNested ? (Exp as any) : undefined}
-                defaultExpandedRowKeys={[props.cursor]}
+                defaultExpandedRowKeys={[cursor]}
                 expandedRowKeys={expandedRowKeys}
                 onExpand={hasNested ? handleExpand : undefined}
                 dataSource={tableRecords}
                 expandedRowRender={hasNested ? nested : undefined}
                 expandIconAsCell={false}
                 expandIconColumnIndex={rowSelection ? 1 : 0}
-                loading={props.loading}
+                loading={loading}
                 onRow={handleRow}
             />
-            {props.showPagination && (
-                <Pagination bcName={bcName} mode={PaginationMode.page} onChangePage={resetCursor} widgetName={props.meta.name} />
-            )}
-            {showOperations && <RowOperationsButton meta={props.meta} bcName={bcName} parent={tableRef} ref={operationsRef} />}
+            {showPagination && <Pagination bcName={bcName} mode={PaginationMode.page} onChangePage={resetCursor} widgetName={meta.name} />}
+            {showOperations && <RowOperationsButton meta={meta} bcName={bcName} parent={tableRef} ref={operationsRef} />}
         </div>
     )
 }

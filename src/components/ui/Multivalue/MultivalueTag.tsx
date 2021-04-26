@@ -27,18 +27,27 @@ export interface MultivalueTagProps {
  * @param props
  * @category Components
  */
-const MultivalueTag: React.FunctionComponent<MultivalueTagProps> = props => {
-    const loading = props.loading
+const MultivalueTag: React.FunctionComponent<MultivalueTagProps> = ({
+    loading,
+    disabled,
+    onPopupOpen,
+    bcName,
+    widgetName,
+    page,
+    widgetFieldMeta,
+    metaError,
+    value,
+    placeholder,
+    onChange
+}) => {
     const handleOpen = React.useCallback(() => {
-        const { disabled, onPopupOpen, bcName, widgetName, page, widgetFieldMeta } = props
         if (!disabled) {
             onPopupOpen(bcName, widgetFieldMeta, page, widgetName)
         }
-    }, [props.disabled, props.onPopupOpen, props.bcName, props.page, props.widgetFieldMeta, props.widgetName])
+    }, [disabled, onPopupOpen, bcName, page, widgetFieldMeta, widgetName])
 
     const handleDeleteTag = React.useCallback(
         (recordId: string) => {
-            const { value, disabled, onChange } = props
             if (!disabled) {
                 onChange(
                     value.filter(item => item.id !== recordId),
@@ -46,23 +55,23 @@ const MultivalueTag: React.FunctionComponent<MultivalueTagProps> = props => {
                 )
             }
         },
-        [props.onChange, props.value, props.disabled]
+        [onChange, value, disabled]
     )
 
     return (
         <div
-            className={cn(styles.multivalue, { [styles.disabled]: props.disabled, [styles.error]: props.metaError })}
-            onClick={loading && props.disabled ? undefined : handleOpen}
+            className={cn(styles.multivalue, { [styles.disabled]: disabled, [styles.error]: metaError })}
+            onClick={loading && disabled ? undefined : handleOpen}
         >
-            <div data-text={props.placeholder} className={cn(styles.enabled, { [styles.disabled]: props.disabled })}>
-                {(props.value || []).map(val => {
+            <div data-text={placeholder} className={cn(styles.enabled, { [styles.disabled]: disabled })}>
+                {(value || []).map(val => {
                     return (
                         <Tag
                             onClick={e => {
                                 e.stopPropagation()
                             }}
                             title={val.value}
-                            closable={!props.disabled && !loading}
+                            closable={!disabled && !loading}
                             id={val.id}
                             key={val.id}
                             onClose={() => {
@@ -74,7 +83,7 @@ const MultivalueTag: React.FunctionComponent<MultivalueTagProps> = props => {
                     )
                 })}
             </div>
-            <div className={cn(styles.iconContainer, { [styles.disabled]: props.disabled })}>
+            <div className={cn(styles.iconContainer, { [styles.disabled]: disabled })}>
                 <Icon type={loading ? 'loading' : 'folder-open'} spin={loading} />
             </div>
         </div>
