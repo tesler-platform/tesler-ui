@@ -48,8 +48,8 @@ export function useExpandedKeys(
     const [expandedKeys, setExpandedKeys] = React.useState<string[]>([])
     React.useEffect(() => {
         // we should expand hierarchy one time when it's loaded
-        if (haveData.current || !data.length) {
-            if (!data.length) {
+        if (haveData.current || !data?.length) {
+            if (!data?.length) {
                 haveData.current = false
             }
             return
