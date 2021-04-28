@@ -91,6 +91,13 @@ export const RowOperationsButton: React.ForwardRefRenderFunction<RowOperationsBu
     }
 
     /**
+     * Close menu after operation was selected
+     */
+    const handleMenuClosed = React.useCallback(() => {
+        handleVisibleChange(false)
+    }, [handleVisibleChange])
+
+    /**
      * Anchor button popup to container element
      */
     const handlePopupContainer = React.useCallback(() => {
@@ -107,7 +114,7 @@ export const RowOperationsButton: React.ForwardRefRenderFunction<RowOperationsBu
             <Dropdown
                 placement="bottomRight"
                 trigger={['click']}
-                overlay={<RowOperationsMenu meta={meta} bcName={bcName} />}
+                overlay={<RowOperationsMenu meta={meta} bcName={bcName} onSelect={handleMenuClosed} />}
                 onVisibleChange={handleVisibleChange}
                 getPopupContainer={handlePopupContainer}
             >
