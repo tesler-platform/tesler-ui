@@ -1,3 +1,10 @@
+# Version 1.29.1 (April 28, 2021)
+
+## Fixes
+
+* `<RowOperationsMenu />` incorrecly reads clicked operation name ([#642](https://github.com/tesler-platform/tesler-ui/pull/642))
+* `useExpandedKeys` hook should not crash when data is empty ([#643](https://github.com/tesler-platform/tesler-ui/pull/643))
+
 # Version 1.29.0 (April 26, 2021)
 
 ## Features
