@@ -76,11 +76,7 @@ describe('`<RowOperationsMenu />`', () => {
         )
         expect(mockDispatch).toBeCalledTimes(0)
         act(() => {
-            wrapper
-                .find(Menu.Item)
-                .at(0)
-                .props()
-                .onClick({ item: { type: 'callTheBanners' }, key: null, keyPath: null, domEvent: null })
+            wrapper.find(Menu.Item).at(0).props().onClick({ item: null, key: 'callTheBanners', keyPath: null, domEvent: null })
         })
         wrapper.update()
         expect(mockDispatch).toBeCalledWith(

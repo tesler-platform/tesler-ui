@@ -23,6 +23,10 @@ interface RowOperationsMenuProps {
      * Use when business component differs from widget's (e.g. hierarchies nested level)
      */
     bcName?: string
+    /**
+     * Callback when selecting an operation
+     */
+    onSelect?: (operationKey: string) => void
 }
 
 /**
@@ -32,7 +36,7 @@ interface RowOperationsMenuProps {
  *
  * @param props - Component properties
  */
-export const RowOperationsMenu: React.FC<RowOperationsMenuProps> = ({ meta, bcName: hierarchyBc, ...rest }) => {
+export const RowOperationsMenu: React.FC<RowOperationsMenuProps> = ({ meta, bcName: hierarchyBc, onSelect, ...rest }) => {
     const { t } = useTranslation()
     const dispatch = useDispatch()
     const bcName = hierarchyBc || meta.bcName
@@ -49,10 +53,10 @@ export const RowOperationsMenu: React.FC<RowOperationsMenuProps> = ({ meta, bcNa
 
     const handleClick = React.useCallback(
         (param: ClickParam) => {
-            const item = param.item as Operation
-            dispatch($do.sendOperation({ bcName, operationType: item.type, widgetName: meta.name }))
+            dispatch($do.sendOperation({ bcName, operationType: param.key, widgetName: meta.name }))
+            onSelect?.(param.key)
         },
-        [meta.name, bcName, dispatch]
+        [meta.name, bcName, onSelect, dispatch]
     )
 
     const menuItem = React.useCallback(
