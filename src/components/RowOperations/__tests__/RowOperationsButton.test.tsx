@@ -1,5 +1,5 @@
 import React from 'react'
-import { Icon } from 'antd'
+import { Button } from 'antd'
 import RowOperationsButton from '../RowOperationsButton'
 import { mockStore } from '../../../tests/mockStore'
 import { Store } from 'redux'
@@ -26,7 +26,7 @@ describe(`<RowOperationsButton />`, () => {
                 <Component />
             </Provider>
         )
-        const button = wrapper.findWhere(item => item.name() === Icon.name && item.hasClass(styles.dots))
+        const button = wrapper.findWhere(item => item.name() === Button.name && item.hasClass(styles.dots))
         expect(wrapper.find(RowOperationsButton).length).toBe(1)
         expect(wrapper.find(`.${styles.floatMenu}`).length).toBe(1)
         expect(button.length).toBe(1)
@@ -58,7 +58,7 @@ describe(`<RowOperationsButton />`, () => {
             </Provider>
         )
         const seniorButton = wrapper.find(`.${styles.floatMenu}`).getDOMNode()
-        const button = wrapper.findWhere(item => item.name() === Icon.name && item.hasClass(styles.dots))
+        const button = wrapper.findWhere(item => item.name() === Button.name && item.hasClass(styles.dots))
         expect(mockDispatch).toBeCalledTimes(0)
         expect(wrapper.find(RowOperationsMenu).length).toBe(0)
         wrapper.find('#second').simulate('mouseenter')
