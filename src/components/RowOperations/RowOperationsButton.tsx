@@ -1,5 +1,5 @@
 import React, { MutableRefObject } from 'react'
-import { Dropdown, Icon } from 'antd'
+import { Button, Dropdown } from 'antd'
 import { WidgetTableMeta } from '../../interfaces/widget'
 import styles from './RowOperationsButton.less'
 import { useDispatch } from 'react-redux'
@@ -118,7 +118,8 @@ export const RowOperationsButton: React.ForwardRefRenderFunction<RowOperationsBu
                 onVisibleChange={handleVisibleChange}
                 getPopupContainer={handlePopupContainer}
             >
-                <Icon type="ellipsis" className={styles.dots} onClick={handleFetchMeta} />
+                {/*<Icon type="ellipsis" className={styles.dots} onClick={handleFetchMeta} />*/}
+                <Button icon="ellipsis" className={styles.dots} onClick={handleFetchMeta} />
             </Dropdown>
         </div>
     )
