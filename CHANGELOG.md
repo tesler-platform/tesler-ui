@@ -1,8 +1,14 @@
+# Version 1.29.2 (May 7, 2021)
+
+## Fixes
+
+* `<RowOperationsButton />` should open menu in IE ([#646](https://github.com/tesler-platform/tesler-ui/pull/646))
+
 # Version 1.29.1 (April 28, 2021)
 
 ## Fixes
 
-* `<RowOperationsMenu />` incorrecly reads clicked operation name ([#642](https://github.com/tesler-platform/tesler-ui/pull/642))
+* `<RowOperationsMenu />` incorrectly reads clicked operation name ([#642](https://github.com/tesler-platform/tesler-ui/pull/642))
 * `useExpandedKeys` hook should not crash when data is empty ([#643](https://github.com/tesler-platform/tesler-ui/pull/643))
 
 # Version 1.29.0 (April 26, 2021)
