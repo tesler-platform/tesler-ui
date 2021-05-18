@@ -162,12 +162,12 @@ describe('hasPendingValidationFails old format test', () => {
 })
 
 describe('operationRequiresAutosave', () => {
-    it('should ignore save action', () => {
+    it('should return true on save action', () => {
         expect(
             operationRequiresAutosave(OperationTypeCrud.save, [
                 { type: OperationTypeCrud.save, scope: 'bc', autoSaveBefore: true, text: 'save' }
             ])
-        ).toBeFalsy()
+        ).toBeTruthy()
     })
     it('should ignore save role action', () => {
         expect(
