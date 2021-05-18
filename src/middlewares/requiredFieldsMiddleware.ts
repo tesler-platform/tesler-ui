@@ -12,9 +12,8 @@ import i18n from 'i18next'
 import { DataItem, PendingDataItem } from '../interfaces/data'
 import { RowMetaField } from '../interfaces/rowMeta'
 import { isWidgetFieldBlock, TableLikeWidgetTypes, WidgetField, WidgetFieldBlock, WidgetTableMeta } from '../interfaces/widget'
-import { checkOperationRole, flattenOperations } from '../utils/operations'
+import { flattenOperations } from '../utils/operations'
 import { PendingValidationFailsFormat } from '../interfaces/view'
-import { OperationTypeCrud } from '@tesler-ui/schema'
 
 const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction>, CoreStore>) => (next: Dispatch) => (
     action: AnyAction
@@ -92,9 +91,7 @@ export function operationRequiresAutosave(operationType: string, actions: Array<
         console.error('rowMeta is missing in the middle of "sendOperation" action')
         return result
     }
-    result = flattenOperations(actions).some(
-        action => action.type === operationType && action.autoSaveBefore && !checkOperationRole(action, OperationTypeCrud.save)
-    )
+    result = flattenOperations(actions).some(action => action.type === operationType && action.autoSaveBefore)
     return result
 }
 
