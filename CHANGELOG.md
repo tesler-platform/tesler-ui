@@ -1,3 +1,9 @@
+# Version 1.29.3 (May 19, 2021)
+
+## Fixes
+
+* `requiredFieldsMiddleware` should check required fields on save operation ([#654](https://github.com/tesler-platform/tesler-ui/issues/654))
+
 # Version 1.29.2 (May 7, 2021)
 
 ## Fixes
