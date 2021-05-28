@@ -48,7 +48,18 @@ export function session(state = initialState, action: AnyAction): Session {
             return { ...state, loginSpin: true, errorMsg: null }
         }
         case types.loginDone: {
-            return { ...state, loginSpin: false, active: true, screens: action.payload.screens || [] }
+            const loginResponse = action.payload
+            return {
+                ...state,
+                activeRole: loginResponse.activeRole,
+                roles: loginResponse.roles,
+                firstName: loginResponse.firstName,
+                lastName: loginResponse.lastName,
+                login: loginResponse.login,
+                loginSpin: false,
+                active: true,
+                screens: loginResponse.screens || []
+            }
         }
         case types.loginFail: {
             return { ...state, loginSpin: false, errorMsg: action.payload.errorMsg }
