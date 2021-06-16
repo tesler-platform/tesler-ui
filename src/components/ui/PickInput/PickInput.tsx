@@ -18,34 +18,30 @@ export interface PickInputProps {
  * @param props
  * @category Components
  */
-const PickInput: React.FunctionComponent<PickInputProps> = props => {
+const PickInput: React.FunctionComponent<PickInputProps> = ({ disabled, value, placeholder, className, loading, onClick, onClear }) => {
     const handleClick = React.useCallback(() => {
-        if (!props.disabled && props.onClick) {
-            props.onClick()
+        if (!disabled && onClick) {
+            onClick()
         }
-    }, [props.disabled, props.onClick])
+    }, [disabled, onClick])
 
     const { t } = useTranslation()
 
-    const clearButton = props.onClear && !props.disabled && props.value ? <Icon type="close-circle" onClick={props.onClear} /> : null
+    const clearButton = onClear && !disabled && value ? <Icon type="close-circle" onClick={onClear} /> : null
 
     return (
         <Input
-            disabled={props.disabled}
+            disabled={disabled}
             readOnly
-            placeholder={props.placeholder ?? t('Select value')}
-            value={props.value || ''}
+            placeholder={placeholder ?? t('Select value')}
+            value={value || ''}
             suffix={clearButton}
-            className={props.className}
+            className={className}
             addonAfter={
-                props.loading ? (
+                loading ? (
                     <Icon type="loading" spin />
                 ) : (
-                    <Icon
-                        className={props.disabled ? styles.disabledButton : null}
-                        type="paper-clip"
-                        onClick={!props.disabled ? handleClick : null}
-                    />
+                    <Icon className={disabled ? styles.disabledButton : null} type="paper-clip" onClick={!disabled ? handleClick : null} />
                 )
             }
         />

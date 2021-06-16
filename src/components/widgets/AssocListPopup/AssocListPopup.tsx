@@ -73,40 +73,39 @@ type AssociatedItemTag = Omit<AssociatedItem, 'vstamp'> & {
  * @param props
  * @category Widgets
  */
-export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActions> = props => {
-    const {
-        onCancel,
-        onClose,
-        onSave,
-        bcFilters,
-        onFilter,
-        onRemoveFilter,
-        onDeleteTag,
+export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActions> = ({
+    onCancel,
+    onClose,
+    onSave,
+    bcFilters,
+    onFilter,
+    onRemoveFilter,
+    onDeleteTag,
+    onDeleteAssociations,
+    data,
+    width,
+    components,
+    widget,
 
-        width,
-        components,
-        widget,
+    assocValueKey,
+    associateFieldKey,
+    bcLoading,
+    pendingDataChanges,
+    isFilter,
+    calleeBCName,
+    calleeWidgetName,
+    ...rest
+}) => {
+    const pendingBcNames = widget.options?.hierarchy
+        ? [widget.bcName, ...widget.options?.hierarchy.map(item => item.bcName)]
+        : [widget.bcName]
 
-        assocValueKey,
-        associateFieldKey,
-        bcLoading,
-        pendingDataChanges,
-        isFilter,
-        calleeBCName,
-        calleeWidgetName,
-        ...rest
-    } = props
-
-    const pendingBcNames = props.widget.options?.hierarchy
-        ? [props.widget.bcName, ...props.widget.options?.hierarchy.map(item => item.bcName)]
-        : [props.widget.bcName]
-
-    const selectedRecords = useAssocRecords(props.data, props.pendingDataChanges)
+    const selectedRecords = useAssocRecords(data, pendingDataChanges)
 
     const saveData = React.useCallback(() => {
         onSave(pendingBcNames)
         onClose()
-    }, [onSave, onClose])
+    }, [pendingBcNames, onSave, onClose])
 
     const viewName = useSelector((store: Store) => {
         return store.view.name
@@ -115,25 +114,25 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
     const filterData = React.useCallback(() => {
         const filterValue = selectedRecords.map(item => item.id)
         if (filterValue.length > 0) {
-            onFilter(props.calleeBCName, {
+            onFilter(calleeBCName, {
                 type: FilterType.equalsOneOf,
-                fieldName: props.associateFieldKey,
+                fieldName: associateFieldKey,
                 value: filterValue,
                 viewName,
-                widgetName: props.calleeWidgetName
+                widgetName: calleeWidgetName
             })
         } else {
-            const currentFilters = bcFilters?.find(filterItem => filterItem.fieldName === props.associateFieldKey)?.value
+            const currentFilters = bcFilters?.find(filterItem => filterItem.fieldName === associateFieldKey)?.value
             currentFilters
-                ? onRemoveFilter?.(props.calleeBCName, {
+                ? onRemoveFilter?.(calleeBCName, {
                       type: FilterType.equalsOneOf,
-                      fieldName: props.associateFieldKey,
+                      fieldName: associateFieldKey,
                       value: currentFilters
                   })
                 : $do.emptyAction(null)
         }
         onClose()
-    }, [onFilter, onRemoveFilter, bcFilters, onClose, props.calleeBCName, props.associateFieldKey, selectedRecords])
+    }, [onFilter, onRemoveFilter, bcFilters, onClose, calleeBCName, associateFieldKey, selectedRecords, calleeWidgetName, viewName])
 
     const cancelData = React.useCallback(() => {
         onCancel()
@@ -142,18 +141,12 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
 
     const handleDeleteTag = React.useCallback(
         (val: DataItem) => {
-            if (props.widget.options?.hierarchyGroupDeselection) {
-                props.onDeleteAssociations(props.widget.bcName, val.id, (val.level as number) + 1, props.assocValueKey, false)
+            if (widget.options?.hierarchyGroupDeselection) {
+                onDeleteAssociations(widget.bcName, val.id, (val.level as number) + 1, assocValueKey, false)
             }
-            props.onDeleteTag(
-                props.widget.bcName,
-                val.level as number,
-                props.widget.name,
-                { ...val, _associate: false } as AssociatedItem,
-                props.assocValueKey
-            )
+            onDeleteTag(widget.bcName, val.level as number, widget.name, { ...val, _associate: false } as AssociatedItem, assocValueKey)
         },
-        [props.onDeleteTag, props.widget, props.pendingDataChanges, props.assocValueKey, props.onDeleteAssociations]
+        [onDeleteTag, widget, assocValueKey, onDeleteAssociations]
     )
 
     // Tag values limit
@@ -161,7 +154,7 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
     const visibleTags = selectedRecords
         .map(item => ({
             ...item,
-            _value: String(item[props.assocValueKey] || ''),
+            _value: String(item[assocValueKey] || ''),
             _closable: true
         }))
         .slice(0, tagLimit)
@@ -169,15 +162,15 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
     const tags: AssociatedItemTag[] =
         selectedRecords.length > tagLimit
             ? [...visibleTags, { id: 'control', _associate: false, _value: `... ${hiddenTagsCount}` }]
-            : selectedRecords.map(item => ({ ...item, _value: String(item[props.assocValueKey] || ''), _closable: true }))
+            : selectedRecords.map(item => ({ ...item, _value: String(item[assocValueKey] || ''), _closable: true }))
 
     const defaultTitle = tags.length ? (
         <div>
             <div>
-                <h1 className={styles.title}>{props.widget.title}</h1>
+                <h1 className={styles.title}>{widget.title}</h1>
             </div>
             <div className={styles.tagArea}>
-                {props.assocValueKey &&
+                {assocValueKey &&
                     tags?.map(val => {
                         return (
                             <Tag
@@ -196,39 +189,39 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
             </div>
         </div>
     ) : (
-        props.widget.title
+        widget.title
     )
 
-    const title = props.components?.title === undefined ? defaultTitle : props.components.title
+    const title = components?.title === undefined ? defaultTitle : components.title
 
     const defaultTable =
-        props.widget.options?.hierarchy || props.widget.options?.hierarchyFull ? (
-            props.widget.options.hierarchyFull ? (
-                <FullHierarchyTable meta={props.widget} assocValueKey={props.assocValueKey} selectable />
+        widget.options?.hierarchy || widget.options?.hierarchyFull ? (
+            widget.options.hierarchyFull ? (
+                <FullHierarchyTable meta={widget} assocValueKey={assocValueKey} selectable />
             ) : (
-                <HierarchyTable meta={props.widget} assocValueKey={props.assocValueKey} selectable />
+                <HierarchyTable meta={widget} assocValueKey={assocValueKey} selectable />
             )
         ) : (
-            <AssocTable meta={props.widget} disablePagination={true} />
+            <AssocTable meta={widget} disablePagination={true} />
         )
 
-    const table = props.components?.table === undefined ? defaultTable : props.components.table
+    const table = components?.table === undefined ? defaultTable : components.table
 
     return (
         <Popup
             title={title}
             showed
-            width={props.width}
+            width={width}
             size="large"
-            onOkHandler={props.isFilter ? filterData : saveData}
+            onOkHandler={isFilter ? filterData : saveData}
             onCancelHandler={cancelData}
-            bcName={props.widget.bcName}
-            widgetName={props.widget.name}
-            disablePagination={props.widget.options?.hierarchyFull}
-            footer={props.components?.footer}
+            bcName={widget.bcName}
+            widgetName={widget.name}
+            disablePagination={widget.options?.hierarchyFull}
+            footer={components?.footer}
             {...rest}
         >
-            {props.bcLoading ? <Skeleton loading paragraph={{ rows: 5 }} /> : { ...table }}
+            {bcLoading ? <Skeleton loading paragraph={{ rows: 5 }} /> : { ...table }}
         </Popup>
     )
 }

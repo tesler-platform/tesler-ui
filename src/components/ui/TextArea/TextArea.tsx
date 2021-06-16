@@ -23,36 +23,23 @@ export interface TextAreaProps extends BaseFieldProps, AdditionalAntdTextAreaPro
  * @param props
  * @category Components
  */
-export const TextArea: React.FunctionComponent<TextAreaProps> = props => {
-    if (props.readOnly) {
-        return (
-            <ReadOnlyField
-                widgetName={props.widgetName}
-                meta={props.meta}
-                className={props.className}
-                backgroundColor={props.backgroundColor}
-                onDrillDown={props.onDrillDown}
-            >
-                {props.defaultValue}
-            </ReadOnlyField>
-        )
-    }
-
-    const {
-        defaultValue,
-        maxInput,
-        onChange,
-        popover,
-        disabled,
-        readOnly,
-        style,
-        minRows,
-        maxRows,
-        className,
-        backgroundColor,
-        onDrillDown,
-        ...rest
-    } = props
+export const TextArea: React.FunctionComponent<TextAreaProps> = ({
+    defaultValue,
+    maxInput,
+    onChange,
+    popover,
+    disabled,
+    readOnly,
+    style,
+    minRows = 5,
+    maxRows = 10,
+    className,
+    backgroundColor,
+    widgetName,
+    meta,
+    onDrillDown,
+    ...rest
+}) => {
     const inputRef = React.useRef<Input>(null)
     const textAreaRef = React.useRef<InputDefaultClass>(null)
 
@@ -60,9 +47,9 @@ export const TextArea: React.FunctionComponent<TextAreaProps> = props => {
 
     const popoverTextAreaBlurHandler = React.useCallback(
         (event: React.FormEvent<HTMLTextAreaElement>) => {
-            props.onChange(event.currentTarget.value)
+            onChange(event.currentTarget.value)
         },
-        [props.onChange]
+        [onChange]
     )
 
     const popoverHideHandler = React.useCallback(() => {
@@ -79,19 +66,33 @@ export const TextArea: React.FunctionComponent<TextAreaProps> = props => {
             // Access to private-field, for fixing IE11 bug:
             // While first opening cursor should take place at the end of text, but it appears at the start
             // TODO: find out bug solution without refusing of animation
-            if (props.defaultValue) {
+            if (defaultValue) {
                 const textArea = (textAreaRef.current as any).textAreaRef as HTMLTextAreaElement
-                textArea.setSelectionRange(props.defaultValue.length, props.defaultValue.length)
+                textArea.setSelectionRange(defaultValue.length, defaultValue.length)
             }
         }
-    }, [])
+    }, [defaultValue])
 
     React.useEffect(() => {
         textAreaRef.current.setValue(defaultValue ?? '')
     }, [defaultValue])
     const autosize = React.useMemo(() => {
-        return { minRows: props.minRows || 5, maxRows: props.maxRows || 10 }
-    }, [props.minRows, props.maxRows])
+        return { minRows, maxRows }
+    }, [minRows, maxRows])
+
+    if (readOnly) {
+        return (
+            <ReadOnlyField
+                widgetName={widgetName}
+                meta={meta}
+                className={className}
+                backgroundColor={backgroundColor}
+                onDrillDown={onDrillDown}
+            >
+                {defaultValue}
+            </ReadOnlyField>
+        )
+    }
 
     if (popover) {
         const rcTooltipProps = { afterVisibleChange: onTextAreaShowed }
@@ -119,7 +120,7 @@ export const TextArea: React.FunctionComponent<TextAreaProps> = props => {
                 visible={popoverVisible}
                 onVisibleChange={popoverVisibleChangeHandler}
             >
-                <Input readOnly={true} value={defaultValue} style={props.style} className={styles.pointer} ref={inputRef} />
+                <Input readOnly={true} value={defaultValue} style={style} className={styles.pointer} ref={inputRef} />
             </Popover>
         )
     } else {
@@ -130,8 +131,8 @@ export const TextArea: React.FunctionComponent<TextAreaProps> = props => {
                 autoSize={autosize}
                 disabled={disabled}
                 onBlur={popoverTextAreaBlurHandler}
-                style={props.style}
-                className={props.className}
+                style={style}
+                className={className}
                 maxLength={maxInput}
                 {...rest}
             />

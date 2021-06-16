@@ -82,7 +82,8 @@ export function useMultipleSelect(
             hierarchyRootRadio,
             selectedRecords,
             widget,
-            assocValueKey
+            assocValueKey,
+            dispatch
         ]
     )
 }
