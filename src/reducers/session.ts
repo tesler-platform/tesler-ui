@@ -19,6 +19,7 @@ import { AnyAction, types } from '../actions/actions'
 import { Session } from '../interfaces/session'
 
 export const initialState: Session = {
+    devPanelEnabled: false,
     activeRole: null,
     roles: null,
     firstName: '',
@@ -51,6 +52,7 @@ export function session(state = initialState, action: AnyAction): Session {
             const loginResponse = action.payload
             return {
                 ...state,
+                devPanelEnabled: loginResponse.devPanelEnabled,
                 activeRole: loginResponse.activeRole,
                 roles: loginResponse.roles,
                 firstName: loginResponse.firstName,

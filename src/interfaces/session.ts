@@ -13,6 +13,10 @@ export interface UserRole {
 }
 
 export interface Session {
+    /**
+     * Whether dev tools panel is shown
+     */
+    devPanelEnabled?: boolean
     activeRole?: string
     roles?: UserRole[]
     /**
@@ -34,6 +38,7 @@ export interface Session {
 }
 
 export interface LoginResponse extends TeslerResponse {
+    devPanelEnabled?: boolean
     activeRole?: string
     roles?: UserRole[]
     firstName?: string
