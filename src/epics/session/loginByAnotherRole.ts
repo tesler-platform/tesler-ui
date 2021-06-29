@@ -69,6 +69,7 @@ export function loginByAnotherRoleEpicImpl(action: ActionsMap['login'], store: S
             }
             return Observable.of(
                 $do.loginDone({
+                    devPanelEnabled: data.devPanelEnabled,
                     activeRole: data.activeRole,
                     roles: data.roles,
                     screens: data.screens,
