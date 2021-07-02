@@ -1,4 +1,4 @@
-import { ApplicationErrorType, BusinessError, SystemError } from 'interfaces/view'
+import { ApplicationErrorType, BusinessError, SystemError } from '../../../interfaces/view'
 import { shallow } from 'enzyme'
 import * as React from 'react'
 import { ErrorPopup } from './ErrorPopup'

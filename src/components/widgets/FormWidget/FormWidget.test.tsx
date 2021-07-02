@@ -1,7 +1,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import { FormWidget } from './FormWidget'
-import { WidgetFormMeta, WidgetTypes } from 'interfaces/widget'
+import { WidgetFormMeta, WidgetTypes } from '../../../interfaces/widget'
 
 const widgetMeta = {
     name: '1',
