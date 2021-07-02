@@ -6,7 +6,7 @@ import { Icon } from 'antd'
 import { Store } from 'redux'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { mockStore } from '../../../tests/mockStore'
-import { WidgetListField, WidgetMeta, WidgetTypes } from 'interfaces/widget'
+import { WidgetListField, WidgetMeta, WidgetTypes } from '../../../interfaces/widget'
 import { FieldType } from '../../../interfaces/view'
 import { $do } from '../../../actions/actions'
 

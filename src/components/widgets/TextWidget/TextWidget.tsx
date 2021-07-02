@@ -1,5 +1,5 @@
 import React from 'react'
-import { WidgetTextMeta } from 'interfaces/widget'
+import { WidgetTextMeta } from '../../../interfaces/widget'
 import styles from './TextWidget.less'
 import marked from 'marked'
 import parse from 'html-react-parser'
