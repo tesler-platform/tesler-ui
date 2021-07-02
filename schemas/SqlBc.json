@@ -224,6 +224,10 @@
             },
             "type": "object"
         },
+        "Record<string,WidgetOperations>": {
+            "description": "Construct a type with a set of properties K of type T",
+            "type": "object"
+        },
         "Record<string,string>": {
             "description": "Construct a type with a set of properties K of type T",
             "type": "object"
@@ -1307,8 +1311,14 @@
         "WidgetOptions": {
             "properties": {
                 "actionGroups": {
-                    "$ref": "#/definitions/WidgetOperations",
-                    "description": "Operations description in `options` of widget meta, which allows its availability."
+                    "anyOf": [
+                        {
+                            "$ref": "#/definitions/WidgetOperations"
+                        },
+                        {
+                            "$ref": "#/definitions/Record<string,WidgetOperations>"
+                        }
+                    ]
                 },
                 "disableHoverError": {
                     "description": "Disable tooltip with error text",
