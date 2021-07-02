@@ -1,5 +1,5 @@
 import { Store } from 'redux'
-import { Store as CoreStore } from 'interfaces/store'
+import { Store as CoreStore } from '../../../../interfaces/store'
 import { mockStore } from '../../../../tests/mockStore'
 import { mount } from 'enzyme'
 import * as React from 'react'

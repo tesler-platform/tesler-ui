@@ -2,7 +2,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { Table } from 'antd'
 import { FullHierarchyTable, FullHierarchyTableAllProps, FullHierarchyTableOwnProps, FullHierarchyDataItem } from './FullHierarchyTable'
-import { WidgetTypes, WidgetTableMeta } from 'interfaces/widget'
+import { WidgetTypes, WidgetTableMeta } from '../../interfaces/widget'
 import { FieldType } from '../../interfaces/view'
 import { BcFilter, FilterType } from '../../interfaces/filters'
 

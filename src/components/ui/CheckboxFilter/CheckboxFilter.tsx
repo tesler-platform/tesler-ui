@@ -18,7 +18,7 @@
 import React from 'react'
 import { Checkbox } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
-import { DataValue } from 'interfaces/data'
+import { DataValue } from '../../../interfaces/data'
 import cn from 'classnames'
 import styles from './CheckboxFilter.less'
 

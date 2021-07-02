@@ -1,12 +1,12 @@
 import React, { ReactElement } from 'react'
 import { shallow } from 'enzyme'
 import { TableWidget, TableWidgetProps } from './TableWidget'
-import { WidgetTableMeta, WidgetTypes } from 'interfaces/widget'
-import { FieldType } from 'interfaces/view'
-import { DataItem } from 'interfaces/data'
-import { RowMetaField } from 'interfaces/rowMeta'
-import { BcFilter, FilterGroup } from 'interfaces/filters'
-import { RouteType } from 'interfaces/router'
+import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
+import { FieldType } from '../../../interfaces/view'
+import { DataItem } from '../../../interfaces/data'
+import { RowMetaField } from '../../../interfaces/rowMeta'
+import { BcFilter, FilterGroup } from '../../../interfaces/filters'
+import { RouteType } from '../../../interfaces/router'
 import { Table } from 'antd'
 
 describe('TableWidget test', () => {

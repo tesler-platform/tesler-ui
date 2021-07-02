@@ -28,8 +28,8 @@ import { testEpic } from '../../../tests/testEpic'
 import { $do } from '../../../actions/actions'
 import { OperationTypeCrud, OperationError, OperationPostInvokeShowMessage, OperationPostInvokeType } from '../../../interfaces/operation'
 import { DataItem, WidgetTypes } from '@tesler-ui/schema'
-import { WidgetTableMeta } from 'interfaces/widget'
-import { AppNotificationType } from 'interfaces/objectMap'
+import { WidgetTableMeta } from '../../../interfaces/widget'
+import { AppNotificationType } from '../../../interfaces/objectMap'
 
 const saveBcDataApiMock = jest.fn().mockImplementation((...args: Parameters<typeof saveBcData>) => {
     const [screenName] = args
