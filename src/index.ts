@@ -232,3 +232,12 @@ export { userDrillDownImpl } from './epics/router/userDrillDown'
  * Autosave middleware utils
  */
 export { autosaveRoutine }
+
+export {
+    WidgetTypesEnum as WidgetTypes,
+    RecordSnapshotStateEnum as RecordSnapshotState,
+    OperationTypeCrudEnum as OperationTypeCrud,
+    DrillDownTypeEnum as DrillDownType,
+    PositionTypesEnum as PositionTypes,
+    FieldTypeEnum as FieldType
+} from '@tesler-ui/schema'

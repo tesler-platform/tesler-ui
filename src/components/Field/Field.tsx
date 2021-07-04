@@ -31,6 +31,7 @@ import { InteractiveInput } from '../ui/InteractiveInput/InteractiveInput'
 import HistoryField from '../../components/ui/HistoryField/HistoryField'
 import { TooltipPlacement } from 'antd/es/tooltip'
 import { useDrillDownUrl } from '../../hooks/useDrillDownUrl'
+import { FieldTypeEnum } from '@tesler-ui/schema'
 
 interface FieldOwnProps {
     widgetFieldMeta: WidgetField
@@ -94,6 +95,20 @@ export interface ChangeDataItemPayload {
 export const emptyMultivalue: MultivalueSingleValue[] = []
 
 const simpleDiffSupportedFieldTypes = [
+    FieldTypeEnum.input,
+    FieldTypeEnum.text,
+    FieldTypeEnum.hint,
+    FieldTypeEnum.number,
+    FieldTypeEnum.money,
+    FieldTypeEnum.percent,
+    FieldTypeEnum.date,
+    FieldTypeEnum.dateTime,
+    FieldTypeEnum.dateTimeWithSeconds,
+    FieldTypeEnum.checkbox,
+    FieldTypeEnum.pickList,
+    FieldTypeEnum.inlinePickList,
+    FieldTypeEnum.dictionary,
+    FieldTypeEnum.radio,
     FieldType.input,
     FieldType.text,
     FieldType.hint,
