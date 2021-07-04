@@ -7,6 +7,7 @@ import ColumnSort from './ColumnSort'
 import styles from './ColumnTitle.less'
 import TemplatedTitle from '../TemplatedTitle/TemplatedTitle'
 import { FieldType } from '../../interfaces/view'
+import { FieldTypeEnum } from '@tesler-ui/schema'
 
 /**
  * TODO: Rename to ColumnTitleProps in 2.0.0
@@ -27,7 +28,14 @@ export interface ColumnTitle {
     className?: string
 }
 
-export const notSortableFields: readonly FieldType[] = [
+export const notSortableFields: Readonly<Array<FieldType | FieldTypeEnum>> = [
+    FieldTypeEnum.multivalue,
+    FieldTypeEnum.multivalueHover,
+    FieldTypeEnum.multifield,
+    FieldTypeEnum.hidden,
+    FieldTypeEnum.fileUpload,
+    FieldTypeEnum.inlinePickList,
+    FieldTypeEnum.hint,
     FieldType.multivalue,
     FieldType.multivalueHover,
     FieldType.multifield,
