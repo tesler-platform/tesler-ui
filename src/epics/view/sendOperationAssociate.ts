@@ -50,7 +50,7 @@ export const sendOperationAssociate: Epic = (action$, store) =>
  */
 export function sendOperationAssociateImpl(action: ActionsMap['sendOperation'], store: Store<CoreStore>) {
     return $do.showViewPopup({
-        // TODO: bcKey will not be optional in 2.0.0
+        // TODO: 2.0.0 bcKey and bcName will be removed in favor `widgetName`
         bcName: action.payload.bcKey ? `${action.payload.bcKey}` : `${action.payload.bcName}Assoc`,
         calleeBCName: action.payload.bcName,
         active: true,

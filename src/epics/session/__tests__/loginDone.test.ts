@@ -16,12 +16,12 @@
  */
 
 import { Store } from 'redux'
-import { Store as CoreStore } from '../../interfaces/store'
-import { mockStore } from '../../tests/mockStore'
-import { loginEpic } from './loginDone'
-import { $do } from '../../actions/actions'
+import { Store as CoreStore } from '../../../interfaces/store'
+import { mockStore } from '../../../tests/mockStore'
+import { loginEpic } from '../loginDone'
+import { $do } from '../../../actions/actions'
 import { ActionsObservable } from 'redux-observable'
-import { testEpic } from '../../tests/testEpic'
+import { testEpic } from '../../../tests/testEpic'
 
 describe('`loginDone` epic', () => {
     let store: Store<CoreStore> = null

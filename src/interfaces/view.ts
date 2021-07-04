@@ -160,6 +160,12 @@ export interface PopupData {
      */
     bcName?: string
     /**
+     * Name of popup widget
+     *
+     * TODO: Move to inherited interfaces (not all popups display widgets)
+     */
+    widgetName?: string
+    /**
      * TODO: Description + move to AssocPopupDescriptor
      */
     associateFieldKey?: string

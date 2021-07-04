@@ -17,6 +17,7 @@
 
 import { $do } from '../../actions/actions'
 import { session, initialState } from '../session'
+import { SessionScreen } from '../../interfaces/session'
 
 describe('session reducer', () => {
     it('sets login spinner and clears session error message on `login` action', () => {
@@ -29,13 +30,19 @@ describe('session reducer', () => {
 
     it('sets session active, clears login spinner and sets screens available for the session on `loginDone` action', () => {
         const state = { ...initialState, loginSpin: true }
-        const screens = [{ id: '1', name: '1', text: '1', url: '1' }]
+        const screens: SessionScreen[] = [{ id: '1', name: '1', text: '1', url: '1', primary: '' }]
         expect(state.active).toBe(false)
-        let nextState = session(state, $do.loginDone({ screens }))
+        let nextState = session(
+            state,
+            $do.loginDone({ screens, activeRole: null, firstName: null, lastName: null, login: null, roles: null })
+        )
         expect(nextState.loginSpin).toBe(false)
         expect(nextState.active).toBe(true)
         expect(nextState.screens).toEqual(screens)
-        nextState = session(state, $do.loginDone({ screens: null }))
+        nextState = session(
+            state,
+            $do.loginDone({ screens: null, activeRole: null, firstName: null, lastName: null, login: null, roles: null })
+        )
         expect(nextState.screens.length).toBe(0)
     })
 
@@ -45,5 +52,11 @@ describe('session reducer', () => {
         const nextState = session(state, $do.loginFail({ errorMsg: 'Your password expired' }))
         expect(nextState.loginSpin).toBe(false)
         expect(nextState.errorMsg).toBe('Your password expired')
+    })
+
+    it('should switch Debug Mode', () => {
+        const state = { ...initialState }
+        const nextState = session(state, $do.switchDebugMode(true))
+        expect(nextState.debugMode).toBe(true)
     })
 })

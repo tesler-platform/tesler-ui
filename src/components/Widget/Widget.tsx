@@ -24,6 +24,7 @@ import { DataState } from '../../interfaces/data'
 import { buildBcUrl } from '../../utils/strings'
 import FlatTreePopup from '../widgets/FlatTree/FlatTreePopup'
 import FlatTree from '../widgets/FlatTree/FlatTree'
+import DebugPanel from '../DebugPanel/DebugPanel'
 
 interface WidgetOwnProps {
     meta: WidgetMeta | WidgetMetaAny
@@ -33,6 +34,7 @@ interface WidgetOwnProps {
 }
 
 interface WidgetProps extends WidgetOwnProps {
+    debugMode?: boolean
     loading?: boolean
     parentCursor?: string
     customWidgets?: Record<string, CustomWidgetDescriptor>
@@ -91,6 +93,7 @@ export const Widget: FunctionComponent<WidgetProps> = props => {
             <Card meta={props.meta}>
                 {showSkeleton && <Skeleton loading paragraph={skeletonParams} />}
                 {!showSkeleton && spinnerElement}
+                {props.debugMode && <DebugPanel widgetMeta={props.meta} />}
             </Card>
         )
     }
@@ -99,6 +102,7 @@ export const Widget: FunctionComponent<WidgetProps> = props => {
             <h2 className={styles.title}>{props.meta.title}</h2>
             {showSkeleton && <Skeleton loading paragraph={skeletonParams} />}
             {!showSkeleton && spinnerElement}
+            {props.debugMode && <DebugPanel widgetMeta={props.meta} />}
         </div>
     )
 }
@@ -158,13 +162,14 @@ function mapStateToProps(store: Store, ownProps: WidgetOwnProps) {
     const bc = store.screen.bo.bc[bcName]
     const parent = store.screen.bo.bc[bc?.parentName]
     const hasParent = !!parent
-    let showWidget = PopupWidgetTypes.includes(ownProps.meta.type) ? store.view.popupData.bcName === bcName : true
+    let showWidget = PopupWidgetTypes.includes(ownProps.meta.type) ? store.view.popupData.widgetName === ownProps.meta.name : true
     if (ownProps.meta.showCondition && !Array.isArray(ownProps.meta.showCondition)) {
         showWidget = checkShowCondition(ownProps.meta.showCondition, store.screen.bo.bc, store.data, store.view)
     }
     const bcUrl = buildBcUrl(bcName, true)
     const rowMeta = bcUrl && store.view.rowMeta[bcName]?.[bcUrl]
     return {
+        debugMode: store.session.debugMode,
         loading: bc?.loading,
         parentCursor: hasParent && parent.cursor,
         showWidget,

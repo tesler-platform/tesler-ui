@@ -1,16 +1,25 @@
 import { $do, types } from '../../actions/actions'
 import { configureStore } from '../configureStore'
 import * as router from '../../Provider'
+import { LoginResponse } from '../../interfaces/session'
 
 jest.spyOn(router, 'parseLocation').mockImplementation(() => {
     return { screenName: null, viewName: null, type: null, path: null, params: null }
 })
 
+const loginResponce: LoginResponse = {
+    screens: null,
+    activeRole: null,
+    roles: null,
+    firstName: null,
+    lastName: null,
+    login: null
+}
 describe('configureStore', () => {
     it('handles built-in actions by built-in reducers', () => {
         const store = configureStore({}, null, false, null)
         expect(store.getState().session.active).toBe(false)
-        store.dispatch($do.loginDone({ screens: null }))
+        store.dispatch($do.loginDone(loginResponce))
         expect(store.getState().session.active).toBe(true)
     })
 
@@ -34,7 +43,7 @@ describe('configureStore', () => {
             null
         )
         expect(storeInstance.getState().session.active).toBe(false)
-        storeInstance.dispatch($do.loginDone({ screens: null }))
+        storeInstance.dispatch($do.loginDone(loginResponce))
         expect(storeInstance.getState().session.active).toBe(true)
         expect(mock).toBeCalledWith('success')
     })
@@ -59,7 +68,7 @@ describe('configureStore', () => {
             null
         )
         expect(storeInstance.getState().session.active).toBe(false)
-        storeInstance.dispatch($do.loginDone({ screens: null }))
+        storeInstance.dispatch($do.loginDone(loginResponce))
         expect(storeInstance.getState().session.active).toBe(false)
         expect(mock).toBeCalledWith('success')
     })
@@ -82,7 +91,7 @@ describe('configureStore', () => {
             null
         )
         expect(storeInstance.getState().customSlice).toBe(0)
-        storeInstance.dispatch($do.loginDone({ screens: null }))
+        storeInstance.dispatch($do.loginDone(loginResponce))
         expect(storeInstance.getState().customSlice).toBe(1)
     })
 })

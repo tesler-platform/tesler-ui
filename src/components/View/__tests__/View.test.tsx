@@ -7,6 +7,8 @@ import { Provider } from 'react-redux'
 import { WidgetMeta, WidgetTypes } from '../../../interfaces/widget'
 import { mockStore } from '../../../tests/mockStore'
 import { DashboardLayout } from '../../index'
+import DebugPanel from '../../DebugPanel/DebugPanel'
+import ViewInfoLabel from '../../DebugPanel/components/ViewInfoLabel'
 
 describe('View testing', () => {
     let store: Store<CoreStore> = null
@@ -16,6 +18,15 @@ describe('View testing', () => {
             name: 'name',
             bcName: 'bcName',
             type: WidgetTypes.List,
+            title: 'title',
+            position: 1,
+            gridWidth: 2,
+            fields: []
+        },
+        {
+            name: 'popupName',
+            bcName: 'bcName',
+            type: WidgetTypes.PickListPopup,
             title: 'title',
             position: 1,
             gridWidth: 2,
@@ -60,5 +71,16 @@ describe('View testing', () => {
             </Provider>
         )
         expect(wrapper.find(DashboardLayout).props().customSpinner === customSpinner).toBeTruthy()
+    })
+
+    it('should render developer info', () => {
+        store.getState().session.debugMode = true
+        const wrapper = mount(
+            <Provider store={store}>
+                <View />
+            </Provider>
+        )
+        expect(wrapper.find(ViewInfoLabel).length).toBe(1)
+        expect(wrapper.find(DebugPanel).length).toBe(widgets.length)
     })
 })
