@@ -1,11 +1,11 @@
 import React, { FunctionComponent } from 'react'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import { Dispatch } from 'redux'
 import { Store } from '../../interfaces/store'
 import { $do } from '../../actions/actions'
 import { MultivalueSingleValue } from '../../interfaces/data'
 import MultivalueTag from '../ui/Multivalue/MultivalueTag'
-import { MultivalueFieldMeta, WidgetMeta } from '../../interfaces/widget'
+import { MultivalueFieldMeta } from '../../interfaces/widget'
 import { WidgetTypes } from '@tesler-ui/schema'
 
 export interface MultivalueFieldOwnProps {
@@ -19,7 +19,6 @@ export interface MultivalueFieldOwnProps {
 }
 
 export interface MultivalueFieldProps extends MultivalueFieldOwnProps {
-    assocWidget: WidgetMeta
     cursor: string
     page: number
     popupBcName: string
@@ -47,13 +46,18 @@ export interface MultivalueFieldProps extends MultivalueFieldOwnProps {
  * @category Components
  */
 const MultivalueField: FunctionComponent<MultivalueFieldProps> = props => {
+    // TODO 2.0.0: assocWidget should be found by widgetName
+    const assocWidget = useSelector((store: Store) =>
+        store.view.widgets.find(widget => widget.bcName === props.popupBcName && widget.type === WidgetTypes.AssocListPopup)
+    )
+
     const onRemove = (newValue: MultivalueSingleValue[], removedItem: MultivalueSingleValue) => {
         props.onRemove(props.bcName, props.popupBcName, props.cursor, props.fieldKey, newValue, removedItem)
     }
 
     return (
         <MultivalueTag
-            widgetName={props.assocWidget?.name}
+            widgetName={assocWidget?.name}
             onPopupOpen={props.onMultivalueAssocOpen}
             onChange={onRemove}
             value={props.defaultValue}
@@ -72,10 +76,7 @@ function mapStateToProps(store: Store, ownProps: MultivalueFieldOwnProps) {
     // const widget = store.view.widgets.find(widget => widget.name === ownProps.widgetName)
     // const bc = store.screen.bo.bc[widget.bcName]
     const popupBcName = ownProps.widgetFieldMeta.popupBcName
-    // TODO 2.0.0: assocWidget should be found by widgetName
-    const assocWidget = store.view.widgets.find(widget => widget.bcName === popupBcName && widget.type === WidgetTypes.AssocListPopup)
     return {
-        assocWidget,
         cursor: store.screen.bo.bc[ownProps.bcName]?.cursor,
         page: 0,
         popupBcName: popupBcName,
