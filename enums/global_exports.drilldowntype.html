@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>PositionTypes | @tesler-ui/core</title>
+	<title>DrillDownType | @tesler-ui/core</title>
 	<meta name="description" content="Documentation for @tesler-ui/core">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,16 +55,13 @@
 					<a href="../index.html">@tesler-ui/core</a>
 				</li>
 				<li>
-					<a href="../modules/types.html">Types</a>
+					<a href="../modules/global_exports.html">Global Exports</a>
 				</li>
 				<li>
-					<a href="../modules/types.widget.html">widget</a>
-				</li>
-				<li>
-					<a href="types.widget.positiontypes.html">PositionTypes</a>
+					<a href="global_exports.drilldowntype.html">DrillDownType</a>
 				</li>
 			</ul>
-			<h1>Enumeration PositionTypes</h1>
+			<h1>Enumeration DrillDownType</h1>
 		</div>
 	</div>
 </header>
@@ -74,7 +71,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Description of possible positioning options</p>
+						<p>Types of drilldowns in the application, specified by Tesler API</p>
 					</div>
 				</div>
 			</section>
@@ -85,9 +82,11 @@
 						<section class="tsd-index-section tsd-is-external">
 							<h3>Enumeration members</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external"><a href="types.widget.positiontypes.html#bottom" class="tsd-kind-icon">Bottom</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external"><a href="types.widget.positiontypes.html#top" class="tsd-kind-icon">Top</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external"><a href="types.widget.positiontypes.html#topandbottom" class="tsd-kind-icon">Top<wbr>And<wbr>Bottom</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external"><a href="global_exports.drilldowntype.html#external" class="tsd-kind-icon">external</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external"><a href="global_exports.drilldowntype.html#externalnew" class="tsd-kind-icon">external<wbr>New</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external"><a href="global_exports.drilldowntype.html#inner" class="tsd-kind-icon">inner</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external"><a href="global_exports.drilldowntype.html#relative" class="tsd-kind-icon">relative</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external"><a href="global_exports.drilldowntype.html#relativenew" class="tsd-kind-icon">relative<wbr>New</a></li>
 							</ul>
 						</section>
 					</div>
@@ -96,34 +95,79 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
 				<h2>Enumeration members</h2>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external">
-					<a name="bottom" class="tsd-anchor"></a>
-					<h3>Bottom</h3>
-					<div class="tsd-signature tsd-kind-icon">Bottom<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;Bottom&quot;</span></div>
+					<a name="external" class="tsd-anchor"></a>
+					<h3>external</h3>
+					<div class="tsd-signature tsd-kind-icon">external<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;external&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in node_modules/@tesler-ui/schema/dist/interfaces/widget.d.ts:144</li>
+							<li>Defined in node_modules/@tesler-ui/schema/dist/interfaces/router.d.ts:46</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>An external redirect, i.e. <code>http://${external}</code></p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external">
-					<a name="top" class="tsd-anchor"></a>
-					<h3>Top</h3>
-					<div class="tsd-signature tsd-kind-icon">Top<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;Top&quot;</span></div>
+					<a name="externalnew" class="tsd-anchor"></a>
+					<h3>external<wbr>New</h3>
+					<div class="tsd-signature tsd-kind-icon">external<wbr>New<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;externalNew&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in node_modules/@tesler-ui/schema/dist/interfaces/widget.d.ts:143</li>
+							<li>Defined in node_modules/@tesler-ui/schema/dist/interfaces/router.d.ts:50</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>An external redirect, i.e. <code>http://${external}</code> that opens in a new browser tab</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external">
-					<a name="topandbottom" class="tsd-anchor"></a>
-					<h3>Top<wbr>And<wbr>Bottom</h3>
-					<div class="tsd-signature tsd-kind-icon">Top<wbr>And<wbr>Bottom<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;TopAndBottom&quot;</span></div>
+					<a name="inner" class="tsd-anchor"></a>
+					<h3>inner</h3>
+					<div class="tsd-signature tsd-kind-icon">inner<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;inner&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in node_modules/@tesler-ui/schema/dist/interfaces/widget.d.ts:145</li>
+							<li>Defined in node_modules/@tesler-ui/schema/dist/interfaces/router.d.ts:34</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Drilldown to inner entity of the application (screen, view), i.e. url will be places after route hash sy: <code>#/${inner}</code></p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external">
+					<a name="relative" class="tsd-anchor"></a>
+					<h3>relative</h3>
+					<div class="tsd-signature tsd-kind-icon">relative<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;relative&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in node_modules/@tesler-ui/schema/dist/interfaces/router.d.ts:38</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Drilldown to an url relative to the current url: <code>/${relative}</code></p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external">
+					<a name="relativenew" class="tsd-anchor"></a>
+					<h3>relative<wbr>New</h3>
+					<div class="tsd-signature tsd-kind-icon">relative<wbr>New<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;relativeNew&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in node_modules/@tesler-ui/schema/dist/interfaces/router.d.ts:42</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Drilldown to an url relative to the current url: <code>/${relative}</code> that opens in a new browser tab</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -133,23 +177,35 @@
 					<li class=" ">
 						<a href="../index.html">Modules</a>
 					</li>
+					<li class="current tsd-kind-module">
+						<a href="../modules/global_exports.html">Global <wbr>Exports</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/types.html">Types</a>
+					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-enum tsd-parent-kind-namespace tsd-is-external">
-						<a href="types.widget.positiontypes.html" class="tsd-kind-icon">Position<wbr>Types</a>
+					<li class="current tsd-kind-enum tsd-parent-kind-module tsd-is-external">
+						<a href="global_exports.drilldowntype.html" class="tsd-kind-icon">Drill<wbr>Down<wbr>Type</a>
 						<ul>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external">
-								<a href="types.widget.positiontypes.html#bottom" class="tsd-kind-icon">Bottom</a>
+								<a href="global_exports.drilldowntype.html#external" class="tsd-kind-icon">external</a>
 							</li>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external">
-								<a href="types.widget.positiontypes.html#top" class="tsd-kind-icon">Top</a>
+								<a href="global_exports.drilldowntype.html#externalnew" class="tsd-kind-icon">external<wbr>New</a>
 							</li>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external">
-								<a href="types.widget.positiontypes.html#topandbottom" class="tsd-kind-icon">Top<wbr>And<wbr>Bottom</a>
+								<a href="global_exports.drilldowntype.html#inner" class="tsd-kind-icon">inner</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external">
+								<a href="global_exports.drilldowntype.html#relative" class="tsd-kind-icon">relative</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum tsd-is-external">
+								<a href="global_exports.drilldowntype.html#relativenew" class="tsd-kind-icon">relative<wbr>New</a>
 							</li>
 						</ul>
 					</li>
