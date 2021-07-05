@@ -1,12 +1,11 @@
 import React from 'react'
 import PickInput from '../ui/PickInput/PickInput'
 import { $do } from '../../actions/actions'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import { PickMap } from '../../interfaces/data'
 import ReadOnlyField from '../ui/ReadOnlyField/ReadOnlyField'
 import { BaseFieldProps, ChangeDataItemPayload } from '../Field/Field'
 import { Store } from '../../interfaces/store'
-import { WidgetMeta } from '../../interfaces/widget'
 import { WidgetTypes } from '@tesler-ui/schema'
 
 interface IPickListWidgetInputOwnProps extends BaseFieldProps {
@@ -18,7 +17,6 @@ interface IPickListWidgetInputOwnProps extends BaseFieldProps {
 }
 
 interface IPickListWidgetInputProps extends IPickListWidgetInputOwnProps {
-    popupWidget: WidgetMeta
     onChange: (payload: ChangeDataItemPayload) => void
     onClick: (bcName: string, pickMap: PickMap, widgetName?: string) => void
     /**
@@ -35,6 +33,9 @@ interface IPickListWidgetInputProps extends IPickListWidgetInputOwnProps {
  * @category Components
  */
 const PickListField: React.FunctionComponent<IPickListWidgetInputProps> = props => {
+    const popupWidget = useSelector((store: Store) =>
+        store.view.widgets.find(i => i.bcName === props.bcName && i.type === WidgetTypes.PickListPopup)
+    )
     if (props.readOnly) {
         return (
             <ReadOnlyField
@@ -60,8 +61,8 @@ const PickListField: React.FunctionComponent<IPickListWidgetInputProps> = props 
     }, [props.pickMap, props.onChange, props.parentBCName, props.cursor])
 
     const handleClick = React.useCallback(() => {
-        props.onClick(props.bcName, props.pickMap, props.popupWidget.name)
-    }, [props.onClick, props.bcName, props.pickMap, props.popupWidget.name])
+        props.onClick(props.bcName, props.pickMap, popupWidget.name)
+    }, [props.onClick, props.bcName, props.pickMap, popupWidget.name])
 
     return (
         <PickInput
@@ -72,14 +73,6 @@ const PickListField: React.FunctionComponent<IPickListWidgetInputProps> = props 
             placeholder={props.placeholder}
         />
     )
-}
-
-function mapStateToProps(state: Store, ownProps: IPickListWidgetInputOwnProps) {
-    const widgets = state.view.widgets
-    const popupWidget = widgets.find(i => i.bcName === ownProps.bcName && i.type === WidgetTypes.PickListPopup)
-    return {
-        popupWidget
-    }
 }
 
 const mapDispatchToProps = (dispatch: any) => ({
@@ -95,6 +88,6 @@ const mapDispatchToProps = (dispatch: any) => ({
 /**
  * @category Components
  */
-const ConnectedPickListField = connect(mapStateToProps, mapDispatchToProps)(PickListField)
+const ConnectedPickListField = connect(null, mapDispatchToProps)(PickListField)
 
 export default ConnectedPickListField
