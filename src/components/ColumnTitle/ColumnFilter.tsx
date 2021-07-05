@@ -1,6 +1,6 @@
 import React from 'react'
 import { Popover } from 'antd'
-import { connect, useDispatch } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import { RowMetaField } from '../../interfaces/rowMeta'
 import { MultivalueFieldMeta, WidgetField, WidgetListField, WidgetMeta } from '../../interfaces/widget'
 import styles from './ColumnFilter.less'
@@ -27,10 +27,6 @@ export interface ColumnFilterProps extends ColumnFilterOwnProps {
     bcName?: string
     filter: BcFilter
     widget: WidgetMeta
-    /**
-     * Popup widget associated to current BC
-     */
-    assocWidget: WidgetMeta
     components?: {
         popup: React.ReactNode
     }
@@ -57,23 +53,31 @@ export const ColumnFilter: React.FC<ColumnFilterProps> = props => {
         setValue(props.filter?.value)
     }, [props.filter?.value])
 
+    const assocWidget = useSelector((store: Store) =>
+        store.view.widgets.find(
+            item => item.bcName === (props.widgetMeta as PickListFieldMeta).popupBcName && item.type === WidgetTypes.AssocListPopup
+        )
+    )
+
     const isPickList = props.widgetMeta.type === FieldType.pickList
     const isMultivalue = props.widgetMeta.type === FieldType.multivalue || isPickList
-    const fieldMeta = props.widget?.fields.find((field: WidgetField) => field.key === props.widgetMeta.key) as MultivalueFieldMeta
 
+    const fieldMeta = props.widget?.fields.find((field: WidgetField) => field.key === props.widgetMeta.key) as
+        | MultivalueFieldMeta
+        | PickListFieldMeta
+    const fieldMetaMultivalue = fieldMeta as MultivalueFieldMeta
+    const fieldMetaPickListField = fieldMeta as PickListFieldMeta
     const handleVisibleChange = (eventVisible: boolean) => {
         if (isMultivalue && eventVisible) {
             setVisible(false)
             dispatch(
                 $do.showViewPopup({
                     bcName: fieldMeta.popupBcName,
-                    widgetName: !isPickList ? props.widget?.name : props.assocWidget.name,
+                    widgetName: !isPickList ? props.widget?.name : assocWidget.name,
                     calleeBCName: props.widget?.bcName,
                     calleeWidgetName: props.widget?.name,
-                    assocValueKey: !isPickList
-                        ? fieldMeta.assocValueKey
-                        : ((fieldMeta as unknown) as PickListFieldMeta).pickMap[fieldMeta.key],
-                    associateFieldKey: !isPickList ? fieldMeta.associateFieldKey : fieldMeta.key,
+                    assocValueKey: !isPickList ? fieldMetaMultivalue.assocValueKey : fieldMetaPickListField.pickMap[fieldMeta.key],
+                    associateFieldKey: !isPickList ? fieldMetaMultivalue.associateFieldKey : fieldMeta.key,
                     isFilter: true
                 })
             )
@@ -121,14 +125,9 @@ export const ColumnFilter: React.FC<ColumnFilterProps> = props => {
  */
 export function mapStateToProps(store: Store, ownProps: ColumnFilterOwnProps) {
     const widget = store.view.widgets.find(item => item.name === ownProps.widgetName)
-    const assocWidget = store.view.widgets.find(
-        item =>
-            item.bcName === ((ownProps.widgetMeta as unknown) as PickListFieldMeta).popupBcName && item.type === WidgetTypes.AssocListPopup
-    )
     const bcName = widget?.bcName
     const filter = store.screen.filters[bcName]?.find(item => item.fieldName === ownProps.widgetMeta.key)
     return {
-        assocWidget,
         widget,
         filter,
         bcName

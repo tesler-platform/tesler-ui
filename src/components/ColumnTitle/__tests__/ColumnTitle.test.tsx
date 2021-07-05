@@ -40,8 +40,8 @@ describe('`<ColumnTitle />`', () => {
 
     it('renders `<ColumnSort />` only for supported field types', () => {
         notSortableFields
-            .map((type, index) => (
-                <ColumnTitle key={index} widgetName={null} widgetMeta={{ ...widgetFieldMeta, type: type as any }} rowMeta={fieldRowMeta} />
+            .map((type: any, index) => (
+                <ColumnTitle key={index} widgetName={null} widgetMeta={{ ...widgetFieldMeta, type }} rowMeta={fieldRowMeta} />
             ))
             .forEach(component => {
                 const wrapperNotSupported = shallow(component)
