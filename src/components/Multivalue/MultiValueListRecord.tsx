@@ -8,7 +8,6 @@ import styles from './MultiValueListRecord.less'
 import { DrillDownType } from '../../interfaces/router'
 import { store } from '../../Provider'
 import ActionLink from '../ui/ActionLink/ActionLink'
-import { DrillDownTypeEnum } from '@tesler-ui/schema'
 
 export interface MultiValueListRecordOwnProps {
     multivalueSingleValue: MultivalueSingleValue
@@ -16,7 +15,7 @@ export interface MultiValueListRecordOwnProps {
 }
 
 export interface MultiValueListRecordProps extends MultiValueListRecordOwnProps {
-    onDrillDown: (drillDownUrl: string, drillDownType: DrillDownType | DrillDownTypeEnum) => void
+    onDrillDown: (drillDownUrl: string, drillDownType: DrillDownType) => void
 }
 
 const MultiValueListRecord: FunctionComponent<MultiValueListRecordProps> = props => {

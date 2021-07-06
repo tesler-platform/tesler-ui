@@ -396,10 +396,10 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@tesler-ui/schema@0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@tesler-ui/schema/-/schema-0.3.3.tgz#634cba01429fa579288158e60eeadbda71a1fb58"
-  integrity sha512-ugMx5hFQtwO6tN4ijy2j0umguQa394Dfj6jVFZrNsyMJDKc6cJm6DzE0wtrn6ULQy68TN5cwN92cC6uv2U2Jmw==
+"@tesler-ui/schema@0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@tesler-ui/schema/-/schema-0.3.2.tgz#90901eca62454748beb4f5a9971f0caefc3b84ff"
+  integrity sha512-11kFjWS9GOZZq8ShmLiB30m+Hm/8pTjbVIJPLQHc78FOXgEXnLdis8PXfR0/YsSWKjRbckQ03mqVav/62nSBbg==
   dependencies:
     json-stable-stringify "^1.0.1"
     path "^0.12.7"

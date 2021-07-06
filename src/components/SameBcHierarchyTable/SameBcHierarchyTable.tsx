@@ -13,7 +13,6 @@ import { FieldType } from '../../interfaces/view'
 import styles from './SameBcHierarchyTable.less'
 import { AssociatedItem } from '../../interfaces/operation'
 import { useAssocRecords } from '../../hooks/useAssocRecords'
-import { FieldTypeEnum } from '@tesler-ui/schema'
 
 interface SameBcHierarchyTableOwnProps {
     meta: WidgetTableMeta
@@ -165,11 +164,7 @@ export const SameBcHierarchyTable: FunctionComponent<SameBcHierarchyTableProps> 
                 key: item.key,
                 dataIndex: item.key,
                 render: (text: string, dataItem: any) => {
-                    if (
-                        [FieldType.multifield, FieldType.multivalueHover, FieldTypeEnum.multifield, FieldTypeEnum.multivalueHover].includes(
-                            item.type
-                        )
-                    ) {
+                    if ([FieldType.multifield, FieldType.multivalueHover].includes(item.type)) {
                         return <Field bcName={bcName} cursor={dataItem.id} widgetName={props.meta.name} widgetFieldMeta={item} readonly />
                     }
                     return text
