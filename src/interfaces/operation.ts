@@ -147,7 +147,7 @@ export enum OperationPreInvokeType {
 /**
  * A type of action which fires after user's operation
  */
-export const enum OperationPostInvokeType {
+export enum OperationPostInvokeType {
     /**
      * BC's refresh. It leads to cursor dropping, data refresh of current BC and its children
      */

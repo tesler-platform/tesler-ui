@@ -2,6 +2,15 @@
   "name": "@tesler-ui/core",
   "version": "1.29.3",
   "main": "tesler-ui-core.js",
+  "exports": {
+    ".": "./tesler-ui-core.js",
+    "./interfaces/widget": "./interfaces/widget.js",
+    "./interfaces/filters": "./interfaces/filters.js",
+    "./interfaces/objectMap": "./interfaces/objectMap.js",
+    "./interfaces/operation": "./interfaces/operation.js",
+    "./interfaces/router": "./interfaces/router.js",
+    "./interfaces/view": "./interfaces/view.js"
+  },
   "homepage": "https://tesler.io/",
   "types": "index.d.ts",
   "author": "tesler",
@@ -79,7 +88,7 @@
     "webpack-rxjs-externals": "1.1.0"
   },
   "dependencies": {
-    "@tesler-ui/schema": "0.3.3",
+    "@tesler-ui/schema": "0.3.4",
     "classnames": "2.2.6",
     "core-js": "3.1.4",
     "diff": "4.0.2",

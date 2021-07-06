@@ -24,7 +24,7 @@ export interface TeslerResponse {
 /**
  * Types of notification messages
  */
-export const enum AppNotificationType {
+export enum AppNotificationType {
     success = 'success',
     info = 'info',
     warning = 'warning',
