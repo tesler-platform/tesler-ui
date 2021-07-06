@@ -24,7 +24,15 @@ const es2015modules = [
 module.exports = (env, options) => {
     env = env || {}
     return  {
-        entry: ['./src/index.ts'],
+        entry: {
+            'tesler-ui-core': './src/index.ts',
+            'interfaces/widget': './src/interfaces/widget.ts',
+            'interfaces/filters': './src/interfaces/filters.ts',
+            'interfaces/objectMap': './src/interfaces/objectMap.ts',
+            'interfaces/operation': './src/interfaces/operation.ts',
+            'interfaces/router': './src/interfaces/router.ts',
+            'interfaces/view': './src/interfaces/view.ts'
+        },
         mode: options.mode || 'development',
         devServer: {
             writeToDisk: false,
@@ -32,7 +40,7 @@ module.exports = (env, options) => {
         },
         output: {
             path: path.resolve(__dirname, 'dist'),
-            filename: 'tesler-ui-core.js',
+            filename: '[name].js',
             library: '',
             libraryTarget: 'commonjs'
         },

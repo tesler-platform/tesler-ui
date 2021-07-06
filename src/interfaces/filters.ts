@@ -1,6 +1,6 @@
 import { DataValue } from './data'
 
-export const enum FilterType {
+export enum FilterType {
     equals = 'equals',
     greaterThan = 'greaterThan',
     lessThan = 'lessThan',
