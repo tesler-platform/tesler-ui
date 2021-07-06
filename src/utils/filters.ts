@@ -2,7 +2,6 @@ import { BcFilter, BcSorter, FilterType } from '../interfaces/filters'
 import { DataValue } from '../interfaces/data'
 import qs from 'query-string'
 import { FieldType } from '../interfaces/view'
-import { FieldTypeEnum } from '@tesler-ui/schema'
 
 /**
  * Maps an input array of BcFilter objects into a dictionary of GET-request params
@@ -131,19 +130,15 @@ export function parseSorters(sorters: string) {
  *
  * @param fieldType Field type
  */
-export function getFilterType(fieldType: FieldType | FieldTypeEnum) {
+export function getFilterType(fieldType: FieldType) {
     switch (fieldType) {
-        case FieldTypeEnum.dictionary:
         case FieldType.dictionary: {
             return FilterType.equalsOneOf
         }
-        case FieldTypeEnum.checkbox:
         case FieldType.checkbox: {
             return FilterType.specified
         }
-        case FieldTypeEnum.input:
         case FieldType.input:
-        case FieldTypeEnum.text:
         case FieldType.text: {
             return FilterType.contains
         }
