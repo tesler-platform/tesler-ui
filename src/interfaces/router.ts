@@ -25,7 +25,7 @@ export interface Route {
     bcPath?: string
 }
 
-export const enum RouteType {
+export enum RouteType {
     screen = 'screen',
     default = 'default',
     router = 'router',

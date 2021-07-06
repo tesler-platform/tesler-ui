@@ -244,7 +244,7 @@ export function isWidgetFieldBlock(item: any): item is WidgetFieldBlock<any> {
 /**
  * Type of pagination, either page numbers or "Load More" button
  */
-export const enum PaginationMode {
+export enum PaginationMode {
     page = 'page',
     loadMore = 'loadMore'
 }
