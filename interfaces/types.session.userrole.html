@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Route | @tesler-ui/core</title>
+	<title>UserRole | @tesler-ui/core</title>
 	<meta name="description" content="Documentation for @tesler-ui/core">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -58,13 +58,13 @@
 					<a href="../modules/types.html">Types</a>
 				</li>
 				<li>
-					<a href="../modules/types.router.html">router</a>
+					<a href="../modules/types.session.html">session</a>
 				</li>
 				<li>
-					<a href="types.router.route.html">Route</a>
+					<a href="types.session.userrole.html">UserRole</a>
 				</li>
 			</ul>
-			<h1>Interface Route</h1>
+			<h1>Interface UserRole</h1>
 		</div>
 	</div>
 </header>
@@ -75,7 +75,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Route</span>
+						<span class="target">UserRole</span>
 					</li>
 				</ul>
 			</section>
@@ -86,12 +86,14 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.router.route.html#bcpath" class="tsd-kind-icon">bc<wbr>Path</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.router.route.html#params" class="tsd-kind-icon">params</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.router.route.html#path" class="tsd-kind-icon">path</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.router.route.html#screenname" class="tsd-kind-icon">screen<wbr>Name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.router.route.html#type" class="tsd-kind-icon">type</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.router.route.html#viewname" class="tsd-kind-icon">view<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.session.userrole.html#active" class="tsd-kind-icon">active</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.session.userrole.html#cacheloadername" class="tsd-kind-icon">cache<wbr>Loader<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.session.userrole.html#description" class="tsd-kind-icon">description</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.session.userrole.html#displayorder" class="tsd-kind-icon">display<wbr>Order</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.session.userrole.html#key" class="tsd-kind-icon">key</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.session.userrole.html#language" class="tsd-kind-icon">language</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.session.userrole.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types.session.userrole.html#value" class="tsd-kind-icon">value</a></li>
 							</ul>
 						</section>
 					</div>
@@ -100,62 +102,82 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="bcpath" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> bc<wbr>Path</h3>
-					<div class="tsd-signature tsd-kind-icon">bc<wbr>Path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="active" class="tsd-anchor"></a>
+					<h3>active</h3>
+					<div class="tsd-signature tsd-kind-icon">active<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d32c71b/src/interfaces/router.ts#L25">src/interfaces/router.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d32c71b/src/interfaces/session.ts#L11">src/interfaces/session.ts:11</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="params" class="tsd-anchor"></a>
-					<h3>params</h3>
-					<div class="tsd-signature tsd-kind-icon">params<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<a name="cacheloadername" class="tsd-anchor"></a>
+					<h3>cache<wbr>Loader<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">cache<wbr>Loader<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d32c71b/src/interfaces/router.ts#L22">src/interfaces/router.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d32c71b/src/interfaces/session.ts#L12">src/interfaces/session.ts:12</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="path" class="tsd-anchor"></a>
-					<h3>path</h3>
-					<div class="tsd-signature tsd-kind-icon">path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="description" class="tsd-anchor"></a>
+					<h3>description</h3>
+					<div class="tsd-signature tsd-kind-icon">description<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d32c71b/src/interfaces/router.ts#L21">src/interfaces/router.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d32c71b/src/interfaces/session.ts#L8">src/interfaces/session.ts:8</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="screenname" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> screen<wbr>Name</h3>
-					<div class="tsd-signature tsd-kind-icon">screen<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="displayorder" class="tsd-anchor"></a>
+					<h3>display<wbr>Order</h3>
+					<div class="tsd-signature tsd-kind-icon">display<wbr>Order<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d32c71b/src/interfaces/router.ts#L23">src/interfaces/router.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d32c71b/src/interfaces/session.ts#L10">src/interfaces/session.ts:10</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="key" class="tsd-anchor"></a>
+					<h3>key</h3>
+					<div class="tsd-signature tsd-kind-icon">key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d32c71b/src/interfaces/session.ts#L6">src/interfaces/session.ts:6</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="language" class="tsd-anchor"></a>
+					<h3>language</h3>
+					<div class="tsd-signature tsd-kind-icon">language<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d32c71b/src/interfaces/session.ts#L9">src/interfaces/session.ts:9</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="type" class="tsd-anchor"></a>
 					<h3>type</h3>
-					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <a href="../enums/types.router.routetype.html" class="tsd-signature-type" data-tsd-kind="Enumeration">RouteType</a></div>
+					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d32c71b/src/interfaces/router.ts#L20">src/interfaces/router.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d32c71b/src/interfaces/session.ts#L5">src/interfaces/session.ts:5</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="viewname" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> view<wbr>Name</h3>
-					<div class="tsd-signature tsd-kind-icon">view<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="value" class="tsd-anchor"></a>
+					<h3>value</h3>
+					<div class="tsd-signature tsd-kind-icon">value<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d32c71b/src/interfaces/router.ts#L24">src/interfaces/router.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/tesler-platform/tesler-ui/blob/d32c71b/src/interfaces/session.ts#L7">src/interfaces/session.ts:7</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -171,34 +193,43 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-namespace tsd-is-external">
-						<a href="../enums/types.router.drilldowntype.html" class="tsd-kind-icon">Drill<wbr>Down<wbr>Type</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="types.session.loginresponse.html" class="tsd-kind-icon">Login<wbr>Response</a>
 					</li>
-					<li class=" tsd-kind-enum tsd-parent-kind-namespace">
-						<a href="../enums/types.router.routetype.html" class="tsd-kind-icon">Route<wbr>Type</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="types.session.session.html" class="tsd-kind-icon">Session</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+						<a href="types.session.sessionscreen.html" class="tsd-kind-icon">Session<wbr>Screen</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types.router.route.html" class="tsd-kind-icon">Route</a>
+						<a href="types.session.userrole.html" class="tsd-kind-icon">User<wbr>Role</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types.router.route.html#bcpath" class="tsd-kind-icon">bc<wbr>Path</a>
+								<a href="types.session.userrole.html#active" class="tsd-kind-icon">active</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types.router.route.html#params" class="tsd-kind-icon">params</a>
+								<a href="types.session.userrole.html#cacheloadername" class="tsd-kind-icon">cache<wbr>Loader<wbr>Name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types.router.route.html#path" class="tsd-kind-icon">path</a>
+								<a href="types.session.userrole.html#description" class="tsd-kind-icon">description</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types.router.route.html#screenname" class="tsd-kind-icon">screen<wbr>Name</a>
+								<a href="types.session.userrole.html#displayorder" class="tsd-kind-icon">display<wbr>Order</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types.router.route.html#type" class="tsd-kind-icon">type</a>
+								<a href="types.session.userrole.html#key" class="tsd-kind-icon">key</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types.router.route.html#viewname" class="tsd-kind-icon">view<wbr>Name</a>
+								<a href="types.session.userrole.html#language" class="tsd-kind-icon">language</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="types.session.userrole.html#type" class="tsd-kind-icon">type</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="types.session.userrole.html#value" class="tsd-kind-icon">value</a>
 							</li>
 						</ul>
 					</li>
