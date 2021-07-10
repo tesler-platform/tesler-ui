@@ -11,7 +11,7 @@ import { buildBcUrl } from '../utils/strings'
  * drilldown link, for example if object is removed.
  * @category Hooks
  */
-export function useDrillDownUrl(bcName: string, fieldMeta: WidgetFieldBase, cursor: string): string | null {
+export function useDrillDownUrl(bcName: string, fieldMeta: WidgetFieldBase, cursor: string): string | boolean | null {
     const drillDownLink = useSelector((store: Store) => {
         if (!fieldMeta.drillDown) {
             return null
@@ -23,7 +23,8 @@ export function useDrillDownUrl(bcName: string, fieldMeta: WidgetFieldBase, curs
             return null
         }
         const rowFieldMeta = rowMeta.fields?.find(field => field.key === fieldMeta.key)
-        return (record?.[fieldMeta?.drillDownKey] as string) || rowFieldMeta?.drillDown || null
+        const alwaysShowDrilldown = fieldMeta?.drillDown && !fieldMeta?.drillDownKey
+        return (record?.[fieldMeta?.drillDownKey] as string) || rowFieldMeta?.drillDown || alwaysShowDrilldown
     })
     return drillDownLink
 }
