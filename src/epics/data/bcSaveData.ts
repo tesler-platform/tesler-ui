@@ -27,6 +27,7 @@ import { AxiosError } from 'axios'
 import { openButtonWarningNotification } from '../../utils/notifications'
 import i18n from 'i18next'
 import { saveBcData } from '../../api/api'
+import { postOperationRoutine } from '../view'
 
 /**
  * Post record's pending changes to `save data` API endpoint.
@@ -123,16 +124,7 @@ export function bcSaveDataImpl(action: ActionsMap['sendOperation'], store: Store
                 Observable.of($do.bcSaveDataSuccess({ bcName, cursor, dataItem: responseDataItem })),
                 Observable.of($do.bcFetchRowMeta({ widgetName, bcName })),
                 Observable.of(...fetchChildrenBcData),
-                postInvoke
-                    ? Observable.of(
-                          $do.processPostInvoke({
-                              bcName,
-                              widgetName,
-                              postInvoke,
-                              cursor: responseDataItem.id
-                          })
-                      )
-                    : Observable.empty<never>(),
+                ...postOperationRoutine(widgetName, postInvoke, null, action.payload.operationType, bcName, responseDataItem.id),
                 action.payload.onSuccessAction ? Observable.of(action.payload.onSuccessAction) : Observable.empty<never>()
             )
         })
