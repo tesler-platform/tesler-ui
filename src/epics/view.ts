@@ -204,6 +204,7 @@ export const showAllTableRecordsInit: Epic = (action$, store) =>
  * @param preInvoke Response pre-invoke
  * @param operationType Which operation was performed
  * @param bcName
+ * @param cursor BC's cursor
  * @category Utils
  */
 export function postOperationRoutine(
@@ -211,12 +212,13 @@ export function postOperationRoutine(
     postInvoke: OperationPostInvokeAny,
     preInvoke: OperationPreInvoke,
     operationType: string,
-    bcName: string // TODO: Remove in 2.0.0
+    bcName: string, // TODO: Remove in 2.0.0
+    cursor?: string
 ) {
     const postInvokeConfirm = Object.values(OperationPostInvokeConfirmType).includes(postInvoke?.type as OperationPostInvokeConfirmType)
     const result: AnyAction[] = []
     if (postInvoke) {
-        result.push($do.processPostInvoke({ bcName, postInvoke, widgetName }))
+        result.push($do.processPostInvoke({ bcName, postInvoke, widgetName, cursor }))
     }
     if (postInvokeConfirm) {
         result.push(
