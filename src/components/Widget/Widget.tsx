@@ -178,7 +178,6 @@ function mapStateToProps(store: Store, ownProps: WidgetOwnProps) {
     }
 }
 
-
 /**
  * TODO
  *
