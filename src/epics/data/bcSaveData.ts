@@ -18,7 +18,13 @@
 import { ActionsMap, $do, AnyAction, types, Epic } from '../../actions/actions'
 import { Store } from 'redux'
 import { Store as CoreStore } from '../../interfaces/store'
-import { OperationTypeCrud, OperationErrorEntity, OperationError } from '../../interfaces/operation'
+import {
+    OperationTypeCrud,
+    OperationErrorEntity,
+    OperationError,
+    OperationPostInvokeConfirm,
+    OperationPostInvokeConfirmType
+} from '../../interfaces/operation'
 import { matchOperationRole } from '../../utils/operations'
 import { buildBcUrl } from '../../utils/strings'
 import { getBcChildren } from '../../utils/bc'
@@ -28,6 +34,8 @@ import { openButtonWarningNotification } from '../../utils/notifications'
 import i18n from 'i18next'
 import { saveBcData } from '../../api/api'
 import { postOperationRoutine } from '../view'
+
+const postActionTypesTorestorePendingChanges = [OperationPostInvokeConfirmType.confirm, OperationPostInvokeConfirmType.confirmText]
 
 /**
  * Post record's pending changes to `save data` API endpoint.
@@ -90,8 +98,10 @@ export const bcSaveDataEpic: Epic = (action$, store) =>
  * @category Epics
  */
 export function bcSaveDataImpl(action: ActionsMap['sendOperation'], store: Store<CoreStore, AnyAction>) {
+    console.log('---')
     const state = store.getState()
     const bcName = action.payload.bcName
+    const confirm = action.payload.confirmOperation?.type || action.payload.confirm
     const bcUrl = buildBcUrl(bcName, true)
     const widgetName = action.payload.widgetName
     const cursor = state.screen.bo.bc[bcName].cursor
@@ -110,20 +120,37 @@ export function bcSaveDataImpl(action: ActionsMap['sendOperation'], store: Store
         }
     }
 
+    const params: Record<string, string> = {}
+    if (confirm) {
+        params._confirm = confirm
+    }
+
     const fetchChildrenBcData = Object.entries(getBcChildren(bcName, state.view.widgets, state.screen.bo.bc)).map(entry => {
         const [childBcName, widgetNames] = entry
         return $do.bcFetchDataRequest({ bcName: childBcName, widgetName: widgetNames[0] })
     })
 
     const context = { widgetName: action.payload.widgetName }
-    return saveBcData(state.screen.screenName, bcUrl, { ...pendingChanges, vstamp: dataItem.vstamp }, context)
+    return saveBcData(state.screen.screenName, bcUrl, { ...pendingChanges, vstamp: dataItem.vstamp }, context, params)
         .mergeMap(data => {
             const postInvoke = data.postActions[0]
             const responseDataItem = data.record
             return Observable.concat(
                 Observable.of($do.bcSaveDataSuccess({ bcName, cursor, dataItem: responseDataItem })),
+                postActionTypesTorestorePendingChanges.includes(
+                    (postInvoke as OperationPostInvokeConfirm)?.type as OperationPostInvokeConfirmType
+                )
+                    ? // (postInvoke as OperationPostInvokeConfirm)?.type === OperationPostInvokeConfirmType.confirm
+                      Observable.of($do.changeDataItem({ bcName, cursor, dataItem: pendingChanges }))
+                    : Observable.empty<never>(),
                 Observable.of($do.bcFetchRowMeta({ widgetName, bcName })),
                 Observable.of(...fetchChildrenBcData),
+                // postActionTypesTorestorePendingChanges.includes(
+                //     (postInvoke as OperationPostInvokeConfirm)?.type as OperationPostInvokeConfirmType
+                // )
+                //     ? // (postInvoke as OperationPostInvokeConfirm)?.type === OperationPostInvokeConfirmType.confirm
+                //       Observable.of($do.changeDataItem({ bcName, cursor, dataItem: pendingChanges }))
+                //     : Observable.empty<never>(),
                 ...postOperationRoutine(widgetName, postInvoke, null, action.payload.operationType, bcName, responseDataItem.id),
                 action.payload.onSuccessAction ? Observable.of(action.payload.onSuccessAction) : Observable.empty<never>()
             )
