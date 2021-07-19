@@ -51,33 +51,37 @@ yarn lint --fix
 
 ```tsx
 // Connected component template
-import React, { FunctionComponent } from 'react'
-import { Dispatch } from 'redux'
-import { connect } from 'react-redux'
+import React, { useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import cn from 'classnames'
 import { $do } from '../../actions/actions'
 import { Store } from '../../interfaces/store'
-import styles from './Container.less'
+import styles from './Component.less'
 
-export interface ContainerOwnProps {
+export interface ComponentProps {
     className?: string
     bcName: string
 }
 
-export interface ContainerProps extends ContainerOwnProps {
-    cursor: string
-    onEmptyAction: () => void
-    onClick: (test: string) => void
-}
+export const Component = ({
+    className,
+    bcName
+}: ComponentProps) => {
 
-export const Container: FunctionComponent<ContainerProps> = (props) => {
+    const cursor = useSelector((store: Store) => store.screen.bo.bc[bcName].cursor)
+    const dispatch = useDispatch()
+
+    const handleEmptyAction = useCallback(() => {
+        dispatch($do.emptyAction(null)
+    }, [dispatch])
+    
     const handleAction = React.useCallback(() => {
-        props.onClick('Test')
-    }, [props.onClick])
+        dispatch($do.someAction({ test: 'Test' }))
+    }, [dispatch])
 
-    return <div className={cn(styles.container, props.className)}>
-        <h2>Cursor - {props.cursor}</h2>
-        <button onClick={props.onEmptyAction}>
+    return <div className={cn(styles.container, className)}>
+        <h2>Cursor - {cursor}</h2>
+        <button onClick={handleEmptyAction}>
             Empty action
         </button>
         <button onClick={handleAction}>
@@ -85,35 +89,18 @@ export const Container: FunctionComponent<ContainerProps> = (props) => {
         </button>
     </div>
 }
-
-function mapStateToProps(store: Store, ownProps: ContainerOwnProps) {
-    return {
-        cursor: store.screen.bo.bc[ownProps.bcName].cursor
-    }
-}
-
-function mapDispatchToProps(dispatch: Dispatch) {
-    return {
-        onEmptyAction: () => dispatch($do.emptyAction(null)),
-        onAction: (test: string) => {
-            dispatch($do.someAction({ test }))
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Container)
 ```
 
 ```tsx
 // Non-connected component template
-import React, {FunctionComponent} from 'react'
+import React from 'react'
 import cn from 'classnames'
 
 export interface ComponentProps {
     className?: string
 }
 
-export const Component: FunctionComponent<ComponentProps> = (props) => {
+export const Component: FunctionComponent<ComponentProps> = ({ className }: ComponentProps) => {
     return <div className={cn(styles.container, props.className)}>
         Test
     </div>
@@ -126,15 +113,8 @@ export default React.memo(Component)
 * Use cn helper for complex or conditional classnames
 * Visual components should accept className as a property and apply it to the root element
 * Always specify `key` property when you render an array of components
-* Components not wrapped into `connect` function should always be exported with memoization helper 
 * Helper functions for component should be located below render function
 * Avoid renderComponentPart functions, prefer render on site or extraction into different component
-
-## Redux
-
-* Always ensure that your `mapStateToProps` function has reference consistency, e.g. it is forbidden to return an object
-with properties that are recreated after every action: avoid Array.prototype.map, empty objects/arrays {}/[] or formed from spread operator, etc. Prefer handling missing values inside render function.
-* Do not use memoization helper for connected components as `connect` function already provide this functionalty.
 
 ## CSS/LESS
 
