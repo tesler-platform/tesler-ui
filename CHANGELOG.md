@@ -1,3 +1,15 @@
+# Version 1.30.0 (Jule 19, 2021)
+
+# Features
+
+* DevTools panel ([#610](https://github.com/tesler-platform/tesler-ui/pull/610))
+* `pickList` fields now use `AssocListPopup` widget for filtering ([#619](https://github.com/tesler-platform/tesler-ui/issues/619))
+* Better support for Create React App and other applications relying on typescript `isolatedModules` flag set to true ([#660](https://github.com/tesler-platform/tesler-ui/pull/660))
+
+# Fixes
+
+* Malformed url parameters were treated as part of `bcPath` which lead to failing requests to Tesler API ([#663](https://github.com/tesler-platform/tesler-ui/issues/663))
+
 # Version 1.29.3 (May 19, 2021)
 
 ## Fixes
