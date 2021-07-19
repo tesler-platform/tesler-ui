@@ -86,6 +86,9 @@ export function defaultParseLocation(loc: Location<any>): Route {
     if (path.endsWith('/')) {
         path = path.substring(0, path.length - 1)
     }
+    if (path?.includes('&') && !path?.includes('?')) {
+        path = path.substring(0, path.indexOf('&'))
+    }
     const params = qs.parse(loc.search)
     const tokens = path.split('/').map(decodeURIComponent)
 
@@ -111,11 +114,11 @@ export function defaultParseLocation(loc: Location<any>): Route {
 
     return {
         type: type,
-        path: path,
-        params: params,
-        screenName: screenName,
-        viewName: viewName,
-        bcPath: bcPath
+        path,
+        params,
+        screenName,
+        viewName,
+        bcPath
     }
 }
 
