@@ -60,7 +60,7 @@ export const ColumnFilter: React.FC<ColumnFilterProps> = props => {
     )
 
     const isPickList = props.widgetMeta.type === FieldType.pickList
-    const isMultivalue = props.widgetMeta.type === FieldType.multivalue || isPickList
+    const isMultivalue = [FieldType.multivalue, FieldType.multivalueHover].includes(props.widgetMeta.type) || isPickList
 
     const fieldMeta = props.widget?.fields.find((field: WidgetField) => field.key === props.widgetMeta.key) as
         | MultivalueFieldMeta
@@ -73,7 +73,7 @@ export const ColumnFilter: React.FC<ColumnFilterProps> = props => {
             dispatch(
                 $do.showViewPopup({
                     bcName: fieldMeta.popupBcName,
-                    widgetName: !isPickList ? props.widget?.name : assocWidget.name,
+                    widgetName: assocWidget?.name,
                     calleeBCName: props.widget?.bcName,
                     calleeWidgetName: props.widget?.name,
                     assocValueKey: !isPickList ? fieldMetaMultivalue.assocValueKey : fieldMetaPickListField.pickMap[fieldMeta.key],
