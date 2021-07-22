@@ -66,8 +66,8 @@ describe('httpError409', () => {
     })
 })
 
-function getError() {
-    const error: AxiosError = {
+function getError(): AxiosError {
+    return {
         config: null,
         isAxiosError: true,
         name: 'test',
@@ -80,5 +80,4 @@ function getError() {
             config: null
         }
     }
-    return error
 }

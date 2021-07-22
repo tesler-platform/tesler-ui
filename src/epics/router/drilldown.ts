@@ -22,11 +22,10 @@ import { Store as CoreStore } from '../../interfaces/store'
 import { DrillDownType } from '../../interfaces/router'
 import qs from 'query-string'
 import { parseFilters, parseSorters } from '../../utils/filters'
-import { defaultParseLocation } from '../../utils/history'
+import { defaultParseLocation, makeRelativeUrl } from '../../utils/history'
 import { shallowCompare } from '../../utils/redux'
 import { historyObj } from '../../reducers/router'
 import { parsePath } from 'history'
-import { makeRelativeUrl } from '../../utils/history'
 
 export const drillDown: Epic = (action$, store) =>
     action$.ofType(types.drillDown).switchMap(action => {
