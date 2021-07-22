@@ -55,11 +55,11 @@ describe('getIncludedOperations', () => {
 describe('shouldPickOperation', () => {
     it('should handle groups', () => {
         expect(shouldPickOperation({ ...baseOperation, type: 'operation1' }, ['operation1'], null)).toBe(true)
-    }),
-        it('should exclude', () => {
-            expect(shouldPickOperation({ ...baseOperation, type: 'operation1' }, null, ['operation1', 'operation3'])).toBe(false)
-            expect(shouldPickOperation({ ...baseOperation, type: 'operation2' }, null, ['operation1', 'operation3'])).toBe(true)
-        })
+    })
+    it('should exclude', () => {
+        expect(shouldPickOperation({ ...baseOperation, type: 'operation1' }, null, ['operation1', 'operation3'])).toBe(false)
+        expect(shouldPickOperation({ ...baseOperation, type: 'operation2' }, null, ['operation1', 'operation3'])).toBe(true)
+    })
     it('should include', () => {
         expect(shouldPickOperation({ ...baseOperation, type: 'operation1' }, ['operation1', 'operation3'], null)).toBe(true)
         expect(shouldPickOperation({ ...baseOperation, type: 'operation2' }, ['operation1', 'operation3'], null)).toBe(false)
