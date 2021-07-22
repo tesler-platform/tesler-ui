@@ -280,7 +280,7 @@ export function view(state = initialState, action: AnyAction, store: Store): Vie
         case types.dropAllAssociationsSameBc: {
             const pendingDataChanges = { ...state.pendingDataChanges }
 
-            Object.entries({ ...store.depthData, 1: store.data }).map(([depthLevelKey, depthLevelData]) => {
+            Object.entries({ ...store.depthData, 1: store.data }).forEach(([depthLevelKey, depthLevelData]) => {
                 const depthLevel = Number(depthLevelKey)
                 const pendingBcChanges: Record<string, PendingDataItem> = {}
                 if (depthLevel >= action.payload.depthFrom && depthLevelData[action.payload.bcName]) {
