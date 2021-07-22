@@ -1,9 +1,8 @@
 import React from 'react'
 import { Input, Popover, Button } from 'antd'
-import InputDefaultClass from 'antd/lib/input/TextArea'
+import InputDefaultClass, { TextAreaProps as AntdTextAreaProps } from 'antd/lib/input/TextArea'
 import styles from './TextArea.less'
 import ReadOnlyField from '../ReadOnlyField/ReadOnlyField'
-import { TextAreaProps as AntdTextAreaProps } from 'antd/lib/input/TextArea'
 import { BaseFieldProps } from '../../Field/Field'
 
 type AdditionalAntdTextAreaProps = Partial<Omit<AntdTextAreaProps, 'onChange'>>

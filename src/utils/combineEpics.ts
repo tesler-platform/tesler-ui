@@ -49,7 +49,6 @@ export const combineEpics = (customEpics: CustomEpics) => {
             }
             // Assigned custom implementation means it'll override the core implementation
             resultSliceEpics.push(customImplementation)
-            return
         })
         if (customEpics[coreSlice]) {
             Object.entries(customEpics[coreSlice]).forEach(entry => {

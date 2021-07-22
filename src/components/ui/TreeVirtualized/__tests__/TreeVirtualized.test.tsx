@@ -140,7 +140,7 @@ describe('<TreeVirtualized />', () => {
 })
 
 function getTreeSample() {
-    const tree = [
+    return [
         { id: '1', name: 'one', parentId: '0', level: 1 },
         { id: '11', name: 'four', parentId: '1', level: 2 },
         { id: '12', name: 'five', parentId: '1', level: 2 },
@@ -154,5 +154,4 @@ function getTreeSample() {
         { id: '31', name: 'seven', parentId: '3', level: 2 },
         { id: '32', name: 'lucky Eight', parentId: '3', level: 2 }
     ]
-    return tree
 }

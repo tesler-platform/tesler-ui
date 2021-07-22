@@ -26,7 +26,7 @@ import { ViewMetaResponse, ApplicationError, PopupType } from '../interfaces/vie
 import { DataItem, MultivalueSingleValue, PendingDataItem, PickMap } from '../interfaces/data'
 import { Store as CoreStore } from '../interfaces/store'
 import { RowMeta } from '../interfaces/rowMeta'
-import { ObjectMap, AppNotificationType } from '../interfaces/objectMap'
+import { AppNotificationType } from '../interfaces/objectMap'
 import {
     OperationPostInvokeAny,
     OperationTypeCrud,
@@ -583,7 +583,7 @@ export class ActionPayloadTypes {
      * TODO
      */
     bcChangeCursors: {
-        cursorsMap: ObjectMap<string>
+        cursorsMap: Record<string, string>
         keepDelta?: boolean
     } = z
 
