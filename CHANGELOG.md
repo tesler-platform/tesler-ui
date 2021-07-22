@@ -1,4 +1,10 @@
-# Version 1.30.0 (Jule 19, 2021)
+# Version 1.30.1 (July 23, 2021)
+
+## Fixes
+
+* `<ColumnFilter />` fails to open filtration popup for multivalue fields
+
+# Version 1.30.0 (July 19, 2021)
 
 # Features
 
