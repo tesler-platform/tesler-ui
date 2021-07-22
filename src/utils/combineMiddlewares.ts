@@ -46,7 +46,6 @@ export function combineMiddlewares(coreMiddlewares: CoreMiddlewares, customMiddl
         // Assigned custom implementation means it'll override the core implementation
         if (customMiddleware) {
             resultMiddlewares.push(customMiddleware as Middleware)
-            return
         }
     })
     return [...resultMiddlewares, ...customMiddlewaresAfter]

@@ -59,7 +59,7 @@ export function autosaveRoutine(action: AnyAction, store: MiddlewareAPI<Dispatch
         /**
          * save `baseBcName`'s BC
          */
-        const baseWidget = baseBcName && state.view.widgets.find((v: WidgetMeta) => v.bcName === baseBcName)
+        const baseWidget = state.view.widgets.find((v: WidgetMeta) => v.bcName === baseBcName)
         return next(
             $do.sendOperation({
                 bcName: baseBcName,

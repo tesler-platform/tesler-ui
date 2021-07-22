@@ -22,12 +22,12 @@ describe('hierarchySearchTest', () => {
     it('memoizes results', () => {
         const cache = new HierarchySearchCache()
         const memoizedFunction = jest.fn(() => expectedResult)
-        let value = cache.getValue(memoizedFunction, 'test', data, filters)
+        const value = cache.getValue(memoizedFunction, 'test', data, filters)
         expect(value).toBe(expectedResult)
         expect(memoizedFunction).toBeCalledTimes(1)
-        value = cache.getValue(memoizedFunction, 'test', data, filters)
-        value = cache.getValue(memoizedFunction, 'test', data, filters)
-        value = cache.getValue(memoizedFunction, 'test', data, filters)
+        cache.getValue(memoizedFunction, 'test', data, filters)
+        cache.getValue(memoizedFunction, 'test', data, filters)
+        cache.getValue(memoizedFunction, 'test', data, filters)
         expect(memoizedFunction).toBeCalledTimes(1)
     })
     it('early returns for empty data or filters', () => {

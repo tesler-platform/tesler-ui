@@ -94,8 +94,8 @@ describe('httpError418', () => {
     })
 })
 
-function getAxiosError() {
-    const result: AxiosError<OperationError> = {
+function getAxiosError(): AxiosError<OperationError> {
+    return {
         config: null,
         isAxiosError: true,
         name: 'test',
@@ -113,7 +113,6 @@ function getAxiosError() {
             config: null
         }
     }
-    return result
 }
 
 const applicationError: BusinessError = {

@@ -166,52 +166,10 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
                       }
                   }
         }
-        case types.sendOperationSuccess: {
-            return {
-                ...state,
-                bo: {
-                    ...state.bo,
-                    bc: {
-                        ...state.bo.bc,
-                        [action.payload.bcName]: {
-                            ...state.bo.bc[action.payload.bcName],
-                            loading: false
-                        }
-                    }
-                }
-            }
-        }
+        case types.sendOperationSuccess:
         case types.bcDeleteDataFail:
-        case types.sendOperationFail: {
-            return {
-                ...state,
-                bo: {
-                    ...state.bo,
-                    bc: {
-                        ...state.bo.bc,
-                        [action.payload.bcName]: {
-                            ...state.bo.bc[action.payload.bcName],
-                            loading: false
-                        }
-                    }
-                }
-            }
-        }
-        case types.bcSaveDataSuccess: {
-            return {
-                ...state,
-                bo: {
-                    ...state.bo,
-                    bc: {
-                        ...state.bo.bc,
-                        [action.payload.bcName]: {
-                            ...state.bo.bc[action.payload.bcName],
-                            loading: false
-                        }
-                    }
-                }
-            }
-        }
+        case types.sendOperationFail:
+        case types.bcSaveDataSuccess:
         case types.bcSaveDataFail: {
             return {
                 ...state,

@@ -1,7 +1,6 @@
 import React from 'react'
 import { Row, Col } from 'antd'
 import { CustomWidgetDescriptor, WidgetMeta } from '../../../interfaces/widget'
-import { ObjectMap } from '../../../interfaces/objectMap'
 import Widget from '../../Widget/Widget'
 
 export interface DashboardLayoutProps {
@@ -49,7 +48,7 @@ export function DashboardLayout(props: DashboardLayoutProps) {
  * @param skipWidgetTypes
  */
 function groupByRow(widgets: WidgetMeta[], skipWidgetTypes: string[]) {
-    const byRow: ObjectMap<WidgetMeta[]> = {}
+    const byRow: Record<string, WidgetMeta[]> = {}
     widgets
         .filter(item => {
             return !skipWidgetTypes.includes(item.type)

@@ -182,8 +182,7 @@ export enum OperationPostInvokeType {
     /**
      * Инициировать удаление записей
      *
-     * @deprecated TODO: Бэк должен сам их удалить и в ответе возвращать список удаленных
-     * Не использовать и убрать с Досье, когда определимся с форматом ответов
+     * @deprecated TODO: Remove in 2.0.0
      */
     postDelete = 'postDelete'
 }

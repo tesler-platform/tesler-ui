@@ -4,12 +4,11 @@ import { Dispatch } from 'redux'
 import { TableRowSelection } from 'antd/lib/table'
 import TableWidget from '../../widgets/TableWidget/TableWidget'
 import { Store } from '../../../interfaces/store'
-import { WidgetTableMeta } from '../../../interfaces/widget'
+import { WidgetTableMeta, PaginationMode } from '../../../interfaces/widget'
 import { AssociatedItem } from '../../../interfaces/operation'
 import { DataItem, PendingDataItem } from '../../../interfaces/data'
 import { useAssocRecords } from '../../../hooks/useAssocRecords'
 import { $do } from '../../../actions/actions'
-import { PaginationMode } from '../../../interfaces/widget'
 
 export interface AssocTableOwnProps {
     meta: WidgetTableMeta

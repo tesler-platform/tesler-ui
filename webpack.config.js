@@ -1,8 +1,6 @@
 const path = require('path')
-// const webpack = require('webpack');
 const tsImportPluginFactory = require('ts-import-plugin')
 const rxjsExternals = require('webpack-rxjs-externals')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 /* Dependencies from package.json that ship in ES2015 module format */
@@ -10,19 +8,7 @@ const es2015modules = [
     'marked'
 ].map((item) => path.resolve(__dirname, 'node_modules', item))
 
-// function extract(rules) {
-//     if (env.production) {
-//         return ExtractStyles.extract({
-//             publicPath: '../',
-//             use: rules,
-//             fallback: 'style-loader',
-//         })
-//     }
-//     return [{ loader: 'style-loader' }].concat(rules);
-// }
-
-module.exports = (env, options) => {
-    env = env || {}
+module.exports = (_env, options) => {
     return  {
         entry: {
             'tesler-ui-core': './src/index.ts',
@@ -124,8 +110,7 @@ module.exports = (env, options) => {
                             happyPackMode: false,
                             experimentalWatchApi: false,
                             compilerOptions: {
-                                sourceMap: true,
-                                // transpileOnly: true,
+                                sourceMap: true
                             }
                         }
                     }
@@ -178,7 +163,6 @@ module.exports = (env, options) => {
             ]
         },
         plugins: [
-            // new CleanWebpackPlugin(),
             new CopyWebpackPlugin([
                 { from: 'package.json' },
                 { from: 'README.md' },
