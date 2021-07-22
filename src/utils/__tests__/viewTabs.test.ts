@@ -61,9 +61,9 @@ describe('getReferencedView', () => {
         expect(getReferencedView((sample[2] as ViewNavigationGroup).child[0])).toMatch(
             ((sample[2] as ViewNavigationGroup).child[0] as ViewNavigationGroup).defaultView
         )
-    }),
-        it('should return first available view when not specified', () => {
-            expect(getReferencedView(sample[0])).toMatch('viewA')
-            expect(getReferencedView(sample[2])).toMatch('viewC_1_2')
-        })
+    })
+    it('should return first available view when not specified', () => {
+        expect(getReferencedView(sample[0])).toMatch('viewA')
+        expect(getReferencedView(sample[2])).toMatch('viewC_1_2')
+    })
 })
