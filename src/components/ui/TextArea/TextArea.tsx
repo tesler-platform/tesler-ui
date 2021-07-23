@@ -73,7 +73,7 @@ export const TextArea: React.FunctionComponent<TextAreaProps> = ({
     }, [defaultValue])
 
     React.useEffect(() => {
-        textAreaRef.current.setValue(defaultValue ?? '')
+        textAreaRef.current?.setValue(defaultValue ?? '')
     }, [defaultValue])
     const autosize = React.useMemo(() => {
         return { minRows, maxRows }
