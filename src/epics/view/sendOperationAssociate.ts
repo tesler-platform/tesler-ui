@@ -54,6 +54,6 @@ export function sendOperationAssociateImpl(action: ActionsMap['sendOperation'], 
         bcName: action.payload.bcKey ? `${action.payload.bcKey}` : `${action.payload.bcName}Assoc`,
         calleeBCName: action.payload.bcName,
         active: true,
-        widgetName: action.payload.widgetName
+        calleeWidgetName: action.payload.widgetName
     })
 }
