@@ -1,3 +1,10 @@
+# Version 1.30.2 (July 26, 2021)
+
+## Fixes
+
+* `<TextArea />` crashes if first rendered in read-only mode ([#674](https://github.com/tesler-platform/tesler-ui/pull/674))
+* `sendOperationAssociate` and `<InlinePickList />` call `showViewPopup` with incorrect `widgetName`; `<Widget />` should fallback to `bcName` check if there is no `widgetName` in `popupData` ([#675](https://github.com/tesler-platform/tesler-ui/pull/675))
+
 # Version 1.30.1 (July 23, 2021)
 
 ## Fixes
