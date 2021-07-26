@@ -145,7 +145,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
         return dispatch($do.changeDataItem(payload))
     },
     onClick: (bcName: string, pickMap: PickMap, widgetName?: string) => {
-        dispatch($do.showViewPopup({ bcName, widgetName }))
+        dispatch($do.showViewPopup({ bcName }))
         dispatch($do.viewPutPickMap({ map: pickMap, bcName }))
     },
     onSearch: (bcName: string, searchSpec: string, searchString: string) => {
