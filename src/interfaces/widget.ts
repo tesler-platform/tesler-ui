@@ -211,7 +211,7 @@ export interface CustomWidgetConfiguration {
     /**
      * Card of widget
      */
-    card?: ComponentType<any>
+    card?: ComponentType<any> | null
 }
 
 export type CustomWidgetDescriptor = CustomWidget | CustomWidgetConfiguration
