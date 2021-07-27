@@ -36,6 +36,7 @@ export { default as ModalInvoke } from './ModalInvoke/ModalInvoke'
 export { default as PickListField } from './PickListField/PickListField'
 // Busines-widgets
 export { default as FormWidget } from './widgets/FormWidget/FormWidget'
+export { default as InfoWidget } from './widgets/InfoWidget/InfoWidget'
 export { default as TableWidget } from './widgets/TableWidget/TableWidget'
 export { default as TextWidget } from './widgets/TextWidget/TextWidget'
 export { default as AssocListPopup } from './widgets/AssocListPopup/AssocListPopup'

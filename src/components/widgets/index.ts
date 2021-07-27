@@ -1,4 +1,5 @@
 export * as FormWidget from './FormWidget/FormWidget'
 export * as TableWidget from './TableWidget/TableWidget'
+export * as InfoWidget from './InfoWidget/InfoWidget'
 export { default as FlatTree } from './FlatTree/FlatTree'
 export { default as FlatTreePopup } from './FlatTree/FlatTreePopup'

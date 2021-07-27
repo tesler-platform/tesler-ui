@@ -11,12 +11,12 @@ import { $do } from '../../../actions/actions'
 import { connect } from 'react-redux'
 import InfoRow from './components/InfoRow'
 
-interface InfoWidgetOwnProps {
+export interface InfoWidgetOwnProps {
     meta: WidgetInfoMeta
     containerStyle?: string
 }
 
-interface InfoWidgetProps extends InfoWidgetOwnProps {
+export interface InfoWidgetProps extends InfoWidgetOwnProps {
     cursor: string
     data: DataItem
     fields: RowMetaField[]
@@ -24,11 +24,12 @@ interface InfoWidgetProps extends InfoWidgetOwnProps {
 }
 
 /**
+ * Displays data as flat table
  *
  * @param props
  * @category Widgets
  */
-const InfoWidget: React.FunctionComponent<InfoWidgetProps> = props => {
+export const InfoWidget: React.FunctionComponent<InfoWidgetProps> = props => {
     const options = props.meta.options
     const hiddenKeys: string[] = []
     const flattenWidgetFields = useFlatFormFields<WidgetInfoField>(props.meta.fields).filter(item => {
