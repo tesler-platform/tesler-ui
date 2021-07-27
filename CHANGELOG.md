@@ -1,3 +1,9 @@
+# Version 1.30.3 (July 27, 2021)
+
+## Fixes
+
+* `null` is added as possible value of `CustomWidgetConfiguration.card` for CRA compatibility ([#678](https://github.com/tesler-platform/tesler-ui/issues/678))
+
 # Version 1.30.2 (July 26, 2021)
 
 ## Fixes
