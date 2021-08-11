@@ -26,7 +26,7 @@ const NumberInput: React.FunctionComponent<NumberInputProps> = props => {
 
     const getDisplayedValueText = React.useCallback(
         (newValue?: number): string => {
-            return NumberInputFormat[type](value !== undefined ? newValue : value, digits, nullable)
+            return NumberInputFormat[type](newValue !== undefined ? newValue : value, digits, nullable)
         },
         [type, value, digits, nullable]
     )
