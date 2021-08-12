@@ -1,3 +1,9 @@
+# Version 1.30.4 (August 12, 2021)
+
+## Fixes
+
+* NumberInput is reanimated after being broken by [#641](https://github.com/tesler-platform/tesler-ui/issues/641) ([#682](https://github.com/tesler-platform/tesler-ui/issues/682))
+
 # Version 1.30.3 (July 27, 2021)
 
 ## Fixes
