@@ -366,3 +366,5 @@ export interface OperationErrorEntity {
     fields: Record<string, string>
     id: string
 }
+
+export type RequestType = 'data' | 'row-meta' | 'force-active'

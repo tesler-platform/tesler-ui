@@ -1,5 +1,6 @@
 import { ScreenMetaResponse } from './screen'
 import { TeslerResponse } from './objectMap'
+import { RequestType } from './operation'
 
 export interface UserRole {
     type: string
@@ -35,6 +36,7 @@ export interface Session {
     screens: SessionScreen[]
     loginSpin: boolean
     errorMsg?: string
+    pendingRequests?: PendingRequest[]
 }
 
 export interface LoginResponse extends TeslerResponse {
@@ -58,4 +60,9 @@ export interface SessionScreen {
     meta?: ScreenMetaResponse
     icon?: string
     notification?: number
+}
+
+export interface PendingRequest {
+    requestId: string
+    type: RequestType
 }

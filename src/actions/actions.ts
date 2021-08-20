@@ -19,7 +19,7 @@ import * as util from './actions-utils'
 import { ActionsObservable as rActionsObservable } from 'redux-observable'
 import { Observable } from 'rxjs/Observable'
 import { Store } from 'redux'
-import { LoginResponse, SessionScreen } from '../interfaces/session'
+import { LoginResponse, SessionScreen, PendingRequest } from '../interfaces/session'
 import { Action as HistoryAction } from 'history'
 import { DrillDownType, Route } from '../interfaces/router'
 import { ViewMetaResponse, ApplicationError, PopupType } from '../interfaces/view'
@@ -1185,6 +1185,20 @@ export class ActionPayloadTypes {
      */
     switchRole: {
         role: string
+    } = z
+
+    /**
+     * Add pending request for tracking and blocking race conditions
+     */
+    addPendingRequest: {
+        request: PendingRequest
+    } = z
+
+    /**
+     * Remove pending request
+     */
+    removePendingRequest: {
+        requestId: string
     } = z
 }
 
