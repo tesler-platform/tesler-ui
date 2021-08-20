@@ -299,10 +299,10 @@ export function screen(state = initialState, action: AnyAction, store: Store): S
             }
         }
         case types.bcAddFilter: {
-            const { bcName, filter } = action.payload
+            const { bcName, filter, widgetName } = action.payload
             const isDate = store.view.widgets
-                .find(item => item.name === action.payload.widgetName)
-                ?.fields.find((item: WidgetField) => item.type === FieldType.date && item.key === action.payload.filter.fieldName)
+                .find(item => item.name === widgetName)
+                ?.fields.find((item: WidgetField) => item.type === FieldType.date && item.key === filter.fieldName)
             const newFilter = isDate ? { ...filter, value: correctDateFilter(filter.value as string) } : filter
             const prevFilters = state.filters[bcName] || []
             const prevFilter = prevFilters.find(item => item.fieldName === filter.fieldName && item.type === filter.type)
@@ -315,8 +315,8 @@ export function screen(state = initialState, action: AnyAction, store: Store): S
                     ...state.bo,
                     bc: {
                         ...state.bo.bc,
-                        [action.payload.bcName]: {
-                            ...state.bo.bc[action.payload.bcName],
+                        [bcName]: {
+                            ...state.bo.bc[bcName],
                             page: 1
                         }
                     }
@@ -415,7 +415,7 @@ export function screen(state = initialState, action: AnyAction, store: Store): S
 }
 
 /**
- * Date fields are filtred by the way of selecting of local timestamp in calendar, transforming it into zero timezoned timestamp
+ * Date fields are filtered by the way of selecting of local timestamp in calendar, transforming it into zero timezoned timestamp
  * and passing it as `equals` filter to Tesler API where it transformed to a day range;
  *
  * This can create problems as transforming local calendar value to zero timezoned timestamp can leave us with previous or next day.
