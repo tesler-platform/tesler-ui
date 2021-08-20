@@ -130,7 +130,7 @@ export const getRowMetaByForceActive: Epic = (action$, store) =>
                     })
             )
         }
-        return Observable.empty<never>()
+        return isPickListPopup ? closePopup : Observable.empty<never>()
     })
 
 /**
