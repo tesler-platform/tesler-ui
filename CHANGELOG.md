@@ -1,3 +1,10 @@
+
+# Version 1.30.6 (August 20, 2021)
+
+## Fixes
+
+* `<PickListPopup />` not closing for non force-active fields after 1.30.5 ([#688](https://github.com/tesler-platform/tesler-ui/pull/688))
+
 # Version 1.30.5 (August 20, 2021)
 
 ## Fixes
