@@ -1,3 +1,10 @@
+# Version 1.30.5 (August 20, 2021)
+
+## Fixes
+
+* `<PickListPopup />` called upon force-active field should not close until row meta is fetched after selecting the value and should not fire row meta request twice ([#686](https://github.com/tesler-platform/tesler-ui/pull/686))
+* Date filters should use locally selected date even if actual timestamp falls off to another day due to the timezone ([#685](https://github.com/tesler-platform/tesler-ui/pull/685))
+
 # Version 1.30.4 (August 12, 2021)
 
 ## Fixes
