@@ -1027,6 +1027,13 @@ export class ActionPayloadTypes {
      * TODO
      */
     bcAddFilter: {
+        /**
+         * TODO: Will be mandatory in 2.0.0
+         */
+        widgetName?: string
+        /**
+         * @deprecated TODO: Remove in 2.0.0 in favor of widgetName
+         */
         bcName: string
         filter: BcFilter
     } = z

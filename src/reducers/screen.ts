@@ -4,8 +4,10 @@ import { BcMeta, BcMetaState } from '../interfaces/bc'
 import { OperationTypeCrud } from '../interfaces/operation'
 import { parseFilters, parseSorters } from '../utils/filters'
 import { BcFilter, BcSorter } from '../interfaces/filters'
+import { Store } from 'interfaces/store'
+import { WidgetField, FieldType } from '@tesler-ui/schema'
 
-const initialState: ScreenState = {
+export const initialState: ScreenState = {
     screenName: null,
     bo: { activeBcName: null, bc: {} },
     cachedBc: {},
@@ -25,7 +27,7 @@ const initialState: ScreenState = {
  * @param action Redux action
  * @param store Store instance for read-only access of different branches of Redux store
  */
-export function screen(state = initialState, action: AnyAction): ScreenState {
+export function screen(state = initialState, action: AnyAction, store: Store): ScreenState {
     switch (action.type) {
         case types.selectScreen: {
             const bcDictionary: Record<string, BcMeta> = {}
@@ -298,11 +300,15 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
         }
         case types.bcAddFilter: {
             const { bcName, filter } = action.payload
+            const isDate = store.view.widgets
+                .find(item => item.name === action.payload.widgetName)
+                ?.fields.find((item: WidgetField) => item.type === FieldType.date && item.key === action.payload.filter.fieldName)
+            const newFilter = isDate ? { ...filter, value: correctDateFilter(filter.value as string) } : filter
             const prevFilters = state.filters[bcName] || []
             const prevFilter = prevFilters.find(item => item.fieldName === filter.fieldName && item.type === filter.type)
             const newFilters = prevFilter
-                ? prevFilters.map(item => (item === prevFilter ? { ...prevFilter, value: filter.value } : item))
-                : [...prevFilters, filter]
+                ? prevFilters.map(item => (item === prevFilter ? { ...prevFilter, value: newFilter.value } : item))
+                : [...prevFilters, newFilter]
             return {
                 ...state,
                 bo: {
@@ -406,6 +412,26 @@ export function screen(state = initialState, action: AnyAction): ScreenState {
         default:
             return state
     }
+}
+
+/**
+ * Date fields are filtred by the way of selecting of local timestamp in calendar, transforming it into zero timezoned timestamp
+ * and passing it as `equals` filter to Tesler API where it transformed to a day range;
+ *
+ * This can create problems as transforming local calendar value to zero timezoned timestamp can leave us with previous or next day.
+ * This function detects if the filter value hits such cases and correts the value to 00:00 of local day
+ *
+ * @param timestamp Zero timezoned timestamp, e.g. `2021-08-19T22:07:16.192Z`
+ */
+function correctDateFilter(timestamp: string) {
+    const originalDate = new Date(timestamp)
+    const newDate = new Date(
+        originalDate.getFullYear(),
+        originalDate.getMonth(),
+        originalDate.getDate(),
+        -(originalDate.getTimezoneOffset() / 60)
+    )
+    return newDate.toISOString()
 }
 
 const operationsHandledLocally: string[] = [OperationTypeCrud.associate, OperationTypeCrud.fileUpload]
