@@ -87,7 +87,7 @@ export interface TableWidgetProps extends TableWidgetOwnProps {
     onSelectRow?: (bcName: string, cursor: string) => void
     onSelectCell: (cursor: string, widgetName: string, fieldKey: string) => void
     onRemoveFilters: (bcName: string) => void
-    onApplyFilter: (bcName: string, filter: BcFilter) => void
+    onApplyFilter: (bcName: string, filter: BcFilter, widgetName?: string) => void
     onForceUpdate: (bcName: string) => void
 }
 
@@ -244,10 +244,10 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
             const parsedFilters = parseFilters(filterGroup.filters)
             setFilterGroupName(filterGroup.name)
             onRemoveFilters(widgetBcName)
-            parsedFilters.forEach(item => onApplyFilter(widgetBcName, item))
+            parsedFilters.forEach(item => onApplyFilter(widgetBcName, item, widgetName))
             onForceUpdate(widgetBcName)
         }
-    }, [filterGroups, widgetBcName, setFilterGroupName, onRemoveFilters, onApplyFilter, onForceUpdate])
+    }, [filterGroups, widgetBcName, widgetName, setFilterGroupName, onRemoveFilters, onApplyFilter, onForceUpdate])
 
     React.useEffect(() => {
         if (!filtersExist) {
@@ -344,8 +344,8 @@ function mapDispatchToProps(dispatch: Dispatch) {
         onRemoveFilters: (bcName: string) => {
             dispatch($do.bcRemoveAllFilters({ bcName }))
         },
-        onApplyFilter: (bcName: string, filter: BcFilter) => {
-            dispatch($do.bcAddFilter({ bcName, filter }))
+        onApplyFilter: (bcName: string, filter: BcFilter, widgetName?: string) => {
+            dispatch($do.bcAddFilter({ bcName, filter, widgetName }))
         },
         onForceUpdate: (bcName: string) => {
             dispatch($do.bcForceUpdate({ bcName }))

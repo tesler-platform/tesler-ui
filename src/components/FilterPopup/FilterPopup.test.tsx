@@ -94,7 +94,8 @@ describe('`<FilterPopup />`', () => {
             expect.objectContaining(
                 $do.bcAddFilter({
                     bcName: 'bcExample',
-                    filter: expect.objectContaining(presetFilter)
+                    filter: expect.objectContaining(presetFilter),
+                    widgetName: 'widget-example'
                 })
             )
         )
