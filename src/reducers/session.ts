@@ -30,7 +30,8 @@ export const initialState: Session = {
     active: false,
     loginSpin: false,
     errorMsg: null,
-    screens: []
+    screens: [],
+    pendingRequests: []
 }
 
 /**
@@ -68,6 +69,15 @@ export function session(state = initialState, action: AnyAction): Session {
         }
         case types.switchDebugMode: {
             return { ...state, debugMode: action.payload }
+        }
+        case types.addPendingRequest: {
+            return { ...state, pendingRequests: [...state.pendingRequests, action.payload.request] }
+        }
+        case types.removePendingRequest: {
+            return {
+                ...state,
+                pendingRequests: state.pendingRequests.filter(item => item.requestId !== action.payload.requestId)
+            }
         }
         default:
             return state
