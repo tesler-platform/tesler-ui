@@ -1,14 +1,14 @@
 import React, { FunctionComponent } from 'react'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import { $do } from '../../../actions/actions'
 import { Store } from '../../../interfaces/store'
 import { WidgetTableMeta, PaginationMode } from '../../../interfaces/widget'
 import Popup, { PopupProps } from '../../ui/Popup/Popup'
 import { createMapDispatchToProps } from '../../../utils/redux'
 import styles from './PickListPopup.less'
-import { Table, Skeleton } from 'antd'
+import { Table, Skeleton, Spin } from 'antd'
 import { ColumnProps } from 'antd/es/table'
-import { DataItem, PickMap } from '../../../interfaces/data'
+import { DataItem, PickMap, PendingDataItem } from '../../../interfaces/data'
 import { ChangeDataItemPayload } from '../../Field/Field'
 import HierarchyTable from '../../../components/HierarchyTable/HierarchyTable'
 import FullHierarchyTable from '../../FullHierarchyTable/FullHierarchyTable'
@@ -70,6 +70,7 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
     onClose,
     ...rest
 }) => {
+    const pending = useSelector((store: Store) => store.session.pendingRequests?.filter(item => item.type === 'force-active'))
     const columns: Array<ColumnProps<DataItem>> = widget.fields
         .filter(item => item.type !== FieldType.hidden && !item.hidden)
         .map(item => {
@@ -89,15 +90,16 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
             return {
                 onClick: (e: React.MouseEvent<HTMLElement>) => {
                     if (cursor) {
+                        const dataItem: PendingDataItem = {}
                         Object.keys(pickMap).forEach(field => {
-                            onChange({
-                                bcName: parentBCName,
-                                cursor: cursor,
-                                dataItem: { [field]: rowData[pickMap[field]] }
-                            })
+                            dataItem[field] = rowData[pickMap[field]]
+                        })
+                        onChange({
+                            bcName: parentBCName,
+                            cursor,
+                            dataItem
                         })
                     }
-                    onClose()
                 }
             }
         },
@@ -161,9 +163,9 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
             disablePagination={widget.options?.hierarchyFull}
             footer={footer}
             {...rest}
-            className={cn(className, { [styles.disableScroll]: disableScroll })}
+            className={cn(styles.container, className, { [styles.disableScroll]: disableScroll })}
         >
-            <div>{table}</div>
+            <Spin spinning={pending?.length > 0}>{table}</Spin>
         </Popup>
     )
 }
