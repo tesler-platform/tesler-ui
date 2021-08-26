@@ -350,6 +350,7 @@ export type OperationScope = 'bc' | 'record' | 'page' | 'associate'
 
 export interface AssociatedItem extends DataItem {
     _associate: boolean
+    _hidden?: boolean
 }
 
 export interface OperationError {

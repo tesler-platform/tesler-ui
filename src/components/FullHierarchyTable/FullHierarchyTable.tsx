@@ -146,7 +146,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
     const tableRecords = React.useMemo<ChildrenAwaredHierarchyItem[]>(() => {
         return displayedData
             ?.filter(dataItem => {
-                return dataItem.level === depth && (dataItem.level === 1 || dataItem.parentId === parentId)
+                return dataItem.level === depth && (dataItem.level === 1 || dataItem.parentId === parentId) && !dataItem._hidden
             })
             .map(filteredItem => {
                 return {

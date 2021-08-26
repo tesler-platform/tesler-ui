@@ -176,12 +176,14 @@ export const HierarchyTable: FunctionComponent<HierarchyTableProps> = ({
     const [currentCursor, setCurrentCursor] = React.useState(undefined)
     const [noChildRecords, setNoChildRecords] = React.useState([])
     const tableRecords = React.useMemo(() => {
-        return data?.map(item => {
-            return {
-                ...item,
-                noChildren: noChildRecords.includes(item.id)
-            }
-        })
+        return data
+            ?.filter(dataItem => !dataItem._hidden)
+            ?.map(item => {
+                return {
+                    ...item,
+                    noChildren: noChildRecords.includes(item.id)
+                }
+            })
     }, [data, noChildRecords])
     const [userClosedRecords, setUserClosedRecords] = React.useState([])
     const expandedRowKeys = React.useMemo(() => {
