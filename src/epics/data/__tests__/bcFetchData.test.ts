@@ -172,6 +172,13 @@ describe('bcFetchDataEpic', () => {
     it('does not fetch lazy widgets', () => {
         store.getState().screen.bo.bc.bcChild = bcChild
         store.getState().screen.bo.bc.bcLazyChild = bcLazyChild
+        store.getState().screen.bo.bc.bcHidden = bcHidden
+        store.getState().screen.bo.bc.bcHiddenParent = bcHiddenParent
+        store.getState().screen.bo.bc.bcHiddenChild = bcHiddenChild
+        store.getState().screen.bo.bc.bcVisibleChild = bcVisibleChild
+        store.getState().data.bcHidden = [{ id: '50', vstamp: 0, test: '8' }]
+        store.getState().data.bcHiddenParent = [{ id: '50', vstamp: 0, test: '8' }]
+        store.getState().data.bcExample = [{ id: '1', vstamp: 0, test: '8' }]
         store.getState().view.widgets = [
             getWidgetMeta(),
             {
@@ -184,8 +191,51 @@ describe('bcFetchDataEpic', () => {
                 ...getWidgetMeta(),
                 bcName: 'bcChild',
                 name: 'child-widget'
+            },
+            {
+                ...getWidgetMeta(),
+                showCondition: {
+                    bcName: 'bcHidden',
+                    isDefault: false,
+                    params: {
+                        fieldKey: 'test',
+                        value: '9'
+                    }
+                }
+            },
+            {
+                ...getWidgetMeta(),
+                bcName: 'bcHiddenChild',
+                name: 'hidden-child-widget',
+                showCondition: {
+                    bcName: 'bcExample',
+                    isDefault: false,
+                    params: {
+                        fieldKey: 'test',
+                        value: '9'
+                    }
+                }
+            },
+            {
+                ...getWidgetMeta(),
+                bcName: 'bcHiddenParent',
+                name: 'hidden-parent-widget',
+                showCondition: {
+                    bcName: 'bcHiddenParent',
+                    isDefault: false,
+                    params: {
+                        fieldKey: 'test',
+                        value: '9'
+                    }
+                }
+            },
+            {
+                ...getWidgetMeta(),
+                bcName: 'bcVisibleChild',
+                name: 'child-of-hidden-widget'
             }
         ]
+
         const action = $do.bcFetchDataRequest({ widgetName: 'widget-example', bcName: 'bcExample' })
         testEpic(flow(ActionsObservable.of(action), store), res => {
             expect(res.length).toBe(4)
@@ -197,6 +247,23 @@ describe('bcFetchDataEpic', () => {
                     $do.bcFetchDataRequest({
                         bcName: 'bcChild',
                         widgetName: 'child-widget',
+                        ignorePageLimit: false,
+                        keepDelta: undefined
+                    })
+                )
+            )
+        })
+        const action2 = $do.bcFetchDataRequest({ widgetName: 'child-of-hidden-widget', bcName: 'bcHiddenParent' })
+        testEpic(flow(ActionsObservable.of(action2), store), res => {
+            expect(res.length).toBe(4)
+            expect(res[0].type).toBe(types.bcChangeCursors)
+            expect(res[1].type).toBe(types.bcFetchDataSuccess)
+            expect(res[2].type).toBe(types.bcFetchRowMeta)
+            expect(res[3]).toEqual(
+                expect.objectContaining(
+                    $do.bcFetchDataRequest({
+                        bcName: 'bcVisibleChild',
+                        widgetName: 'child-of-hidden-widget',
                         ignorePageLimit: false,
                         keepDelta: undefined
                     })
@@ -260,4 +327,34 @@ const bcLazyChild = {
     name: 'bcLazyChild',
     parentName: 'bcExample',
     url: 'bcExample/:id/bcLazyChild/:id'
+}
+
+const bcHidden = {
+    ...bcExample,
+    name: 'bcHidden',
+    url: 'bcHidden/:id',
+    cursor: '50'
+}
+
+const bcHiddenParent = {
+    ...bcExample,
+    name: 'bcHiddenParent',
+    url: 'bcHiddenParent/:id',
+    cursor: '50'
+}
+
+const bcVisibleChild = {
+    ...bcExample,
+    name: 'bcVisibleChild',
+    parentName: 'bcHiddenParent',
+    url: 'bcHiddenParent/:id/bcVisibleChild/:id',
+    cursor: '1'
+}
+
+const bcHiddenChild = {
+    ...bcExample,
+    name: 'bcHiddenChild',
+    parentName: 'bcExample',
+    url: 'bcExample/:id/bcHiddenChild/:id',
+    cursor: '50'
 }

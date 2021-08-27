@@ -26,7 +26,7 @@ import { ActionsObservable } from 'redux-observable'
 import { DataItem, WidgetTypes } from '@tesler-ui/schema'
 import { getFilters, getSorters } from '../../utils/filters'
 import { PopupWidgetTypes, WidgetMeta } from '../../interfaces/widget'
-import { getBcChildren } from '../../utils/bc'
+import { getBcChildren, checkShowCondition } from '../../utils/bc'
 import { BcMetaState } from '../../interfaces/bc'
 
 /**
@@ -147,13 +147,24 @@ export function bcFetchDataImpl(
             const parentOfNotLazyWidget = widgets.some(item => {
                 return state.screen.bo.bc[item.bcName]?.parentName === bcName && !PopupWidgetTypes.includes(item.type)
             })
-            const lazyWidget = PopupWidgetTypes.includes(widget.type) && !parentOfNotLazyWidget
+
+            const isWidgetHidden = (w: WidgetMeta) => {
+                return checkShowCondition(
+                    w.showCondition,
+                    state.screen.bo.bc[w.showCondition?.bcName]?.cursor,
+                    state.data[w.showCondition?.bcName],
+                    state.view.pendingDataChanges
+                )
+            }
+
+            const showCondition = isWidgetHidden(widget)
+            const lazyWidget = (!showCondition || PopupWidgetTypes.includes(widget.type)) && !parentOfNotLazyWidget
             const skipLazy = state.view.popupData?.bcName !== widget.bcName
             if (lazyWidget && skipLazy) {
                 return Observable.empty<never>()
             }
             const fetchChildren = response.data?.length
-                ? getChildrenData(action, widgets, state.screen.bo.bc, !!anyHierarchyWidget)
+                ? getChildrenData(action, widgets, state.screen.bo.bc, !!anyHierarchyWidget, isWidgetHidden)
                 : Observable.empty<never>()
             const fetchRowMeta = Observable.of<AnyAction>($do.bcFetchRowMeta({ widgetName, bcName }))
 
@@ -207,32 +218,41 @@ function getCursorChange(data: DataItem[], action: ActionType, prevCursor: strin
  * @param bcDictionary
  * @param isHierarchy
  */
-function getChildrenData(action: ActionType, widgets: WidgetMeta[], bcDictionary: Record<string, BcMetaState>, isHierarchy: boolean) {
+function getChildrenData(
+    action: ActionType,
+    widgets: WidgetMeta[],
+    bcDictionary: Record<string, BcMetaState>,
+    isHierarchy: boolean,
+    showConditionCheck: (widget: WidgetMeta) => boolean
+) {
     const { bcName } = action.payload
     const { ignorePageLimit } = (action as ActionsMap[typeof types.bcFetchDataRequest]).payload
     const { keepDelta } = (action as ActionsMap[typeof types.bcFetchDataRequest]).payload
     return Observable.concat(
-        ...Object.entries(getBcChildren(bcName, widgets, bcDictionary)).map(entry => {
-            const [childBcName, widgetNames] = entry
-            const nonLazyWidget = widgets.find(item => widgetNames.includes(item.name) && !PopupWidgetTypes.includes(item.type))
-            const childWidgetLazy =
-                widgets.every(item => widgetNames.includes(item.name) && PopupWidgetTypes.includes(item.type)) &&
-                !widgets.some(item => {
-                    return bcDictionary[item.bcName]?.parentName === childBcName
+        ...Object.entries(getBcChildren(bcName, widgets, bcDictionary))
+            .filter(([childBcName, widgetNames]) => {
+                const nonLazyWidget = widgets.find(item => {
+                    return widgetNames.includes(item.name) && !PopupWidgetTypes.includes(item.type) && showConditionCheck(item)
                 })
-            const skipLazy = action.type !== types.showViewPopup
-            if (!nonLazyWidget || (childWidgetLazy && skipLazy)) {
-                return Observable.empty<never>()
-            }
-            return Observable.of(
-                $do.bcFetchDataRequest({
-                    bcName: childBcName,
-                    widgetName: nonLazyWidget.name,
-                    ignorePageLimit: ignorePageLimit || action.type === types.showViewPopup,
-                    keepDelta: isHierarchy || keepDelta
+                const ignoreLazyLoad = action.type === types.showViewPopup
+                if (ignoreLazyLoad) {
+                    return true
+                }
+                return !!nonLazyWidget
+            })
+            .map(([childBcName, widgetNames]) => {
+                const nonLazyWidget = widgets.find(item => {
+                    return widgetNames.includes(item.name) && !PopupWidgetTypes.includes(item.type) && showConditionCheck(item)
                 })
-            )
-        })
+                return Observable.of(
+                    $do.bcFetchDataRequest({
+                        bcName: childBcName,
+                        widgetName: nonLazyWidget.name,
+                        ignorePageLimit: ignorePageLimit || action.type === types.showViewPopup,
+                        keepDelta: isHierarchy || keepDelta
+                    })
+                )
+            })
     )
 }
 

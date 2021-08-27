@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-import { WidgetMeta } from '../interfaces/widget'
+import { WidgetMeta, WidgetShowCondition } from '../interfaces/widget'
 import { BcMetaState } from '../interfaces/bc'
+import { DataItem, PendingDataItem } from '../interfaces/data'
 
 /**
  * Find all widgets referencing or descendant from specified origin BC
@@ -74,4 +75,38 @@ function getHierarchyChildBc(originBcName: string, hierarchyWidget: WidgetMeta) 
     const childHierarchyBcIndex = nestedBcNames.findIndex(item => item === originBcName)
     const childHierarchyBcName = nestedBcNames[childHierarchyBcIndex + 1]
     return [childHierarchyBcName, hierarchyWidget.name]
+}
+
+/**
+ * Check specified show condition for the widget
+ *
+ * Condition is true (and widget is visible) if currently active record for condition business component has a value of the specific
+ * field matching the condition; pending values are also enough for the condition to be true.
+ * Condition is also true when it explicitly declared as default condition, if it's empty or of the legacy array format
+ *
+ * Otherwise the condition is false and the widget is hidden.
+ *
+ * @param condition Widget showCondition to check
+ * @param cursor Id of active record for business component in condition
+ * @param data An array of data items to check for condition
+ * @param pendingDataChanges Pending data changes of the currently active view
+ */
+export function checkShowCondition(
+    condition: WidgetShowCondition,
+    cursor: string,
+    data: DataItem[],
+    pendingDataChanges: Record<string, Record<string, PendingDataItem>>
+) {
+    const { bcName, isDefault, params } = condition || {}
+    const emptyCondition = !condition || Array.isArray(condition)
+    if (emptyCondition || isDefault) {
+        return true
+    }
+    const record = cursor && data?.find(item => item.id === cursor)
+    const actualValue = record?.[params.fieldKey]
+    if (!actualValue) {
+        return true
+    }
+    const pendingValue = pendingDataChanges?.[bcName]?.[cursor]?.[params.fieldKey]
+    return pendingValue !== undefined ? pendingValue === params.value : actualValue === params.value
 }
