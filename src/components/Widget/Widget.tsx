@@ -2,15 +2,7 @@ import React, { FunctionComponent } from 'react'
 import { connect } from 'react-redux'
 import { Skeleton, Spin } from 'antd'
 import { Store } from '../../interfaces/store'
-import {
-    WidgetTypes,
-    WidgetShowCondition,
-    CustomWidgetDescriptor,
-    isCustomWidget,
-    WidgetMetaAny,
-    WidgetMeta,
-    PopupWidgetTypes
-} from '../../interfaces/widget'
+import { WidgetTypes, CustomWidgetDescriptor, isCustomWidget, WidgetMetaAny, WidgetMeta, PopupWidgetTypes } from '../../interfaces/widget'
 import TableWidget from '../widgets/TableWidget/TableWidget'
 import TextWidget from '../widgets/TextWidget/TextWidget'
 import FormWidget from '../widgets/FormWidget/FormWidget'
@@ -18,13 +10,11 @@ import InfoWidget from '../widgets/InfoWidget/InfoWidget'
 import styles from './Widget.less'
 import AssocListPopup from '../widgets/AssocListPopup/AssocListPopup'
 import PickListPopup from '../widgets/PickListPopup/PickListPopup'
-import { BcMetaState } from '../../interfaces/bc'
-import { ViewState } from '../../interfaces/view'
-import { DataState } from '../../interfaces/data'
 import { buildBcUrl } from '../../utils/strings'
 import FlatTreePopup from '../widgets/FlatTree/FlatTreePopup'
 import FlatTree from '../widgets/FlatTree/FlatTree'
 import DebugPanel from '../DebugPanel/DebugPanel'
+import { checkShowCondition } from '../../utils/bc'
 
 interface WidgetOwnProps {
     meta: WidgetMeta | WidgetMetaAny
@@ -165,8 +155,15 @@ function mapStateToProps(store: Store, ownProps: WidgetOwnProps) {
     const legacyPopupCheck = store.view.popupData.bcName === bcName
     const newPopupCheck = store.view.popupData.widgetName ? store.view.popupData.widgetName === ownProps.meta.name : legacyPopupCheck
     let showWidget = PopupWidgetTypes.includes(ownProps.meta.type) ? newPopupCheck : true
-    if (ownProps.meta.showCondition && !Array.isArray(ownProps.meta.showCondition)) {
-        showWidget = checkShowCondition(ownProps.meta.showCondition, store.screen.bo.bc, store.data, store.view)
+    if (
+        !checkShowCondition(
+            ownProps.meta.showCondition,
+            store.screen.bo.bc[bcName]?.cursor,
+            store.data[bcName],
+            store.view.pendingDataChanges
+        )
+    ) {
+        showWidget = false
     }
     const bcUrl = buildBcUrl(bcName, true)
     const rowMeta = bcUrl && store.view.rowMeta[bcName]?.[bcUrl]
@@ -178,26 +175,6 @@ function mapStateToProps(store: Store, ownProps: WidgetOwnProps) {
         rowMetaExists: !!rowMeta,
         dataExists: !!store.data[bcName]
     }
-}
-
-/**
- * TODO
- *
- * @param condition
- * @param bcMap
- * @param data
- * @param view
- */
-function checkShowCondition(condition: WidgetShowCondition, bcMap: Record<string, BcMetaState>, data: DataState, view: ViewState) {
-    const { bcName, isDefault, params } = condition
-    if (isDefault) {
-        return true
-    }
-    const cursor = bcMap[bcName]?.cursor
-    const record = cursor && data[bcName]?.find(item => item.id === cursor)
-    const actualValue = record?.[params.fieldKey]
-    const pendingValue = view.pendingDataChanges[bcName]?.[cursor]?.[params.fieldKey]
-    return pendingValue !== undefined ? pendingValue === params.value : actualValue === params.value
 }
 
 /**

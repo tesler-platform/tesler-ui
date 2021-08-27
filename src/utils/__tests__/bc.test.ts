@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-import { getBcChildren } from '../bc'
-import { WidgetTypes, WidgetTableMeta } from '../../interfaces/widget'
+import { getBcChildren, checkShowCondition } from '../bc'
+import { WidgetTypes, WidgetTableMeta, WidgetShowCondition } from '../../interfaces/widget'
+import { DataItem } from '@tesler-ui/schema'
 
 describe('requestBcChildren', () => {
     it('returns all direct children for specified bc and all descendant widgets', () => {
@@ -63,6 +64,60 @@ describe('requestBcChildren', () => {
                 'bcHierarchy-2': ['widget-example-same', 'widget-hierarchy']
             })
         )
+    })
+})
+
+describe.only('checkShowCondition', () => {
+    const showCondition: WidgetShowCondition = {
+        bcName: 'bcExample',
+        isDefault: false,
+        params: {
+            fieldKey: 'test',
+            value: '9'
+        }
+    }
+    const matchingData: DataItem[] = [{ id: '50', vstamp: 0, test: '9' }]
+    const notMatchingData: DataItem[] = [{ id: '50', vstamp: 0, test: '8' }]
+
+    it('should return false when data value of active record does not match the condition', () => {
+        const pendingDataChanges = {}
+        expect(checkShowCondition(showCondition, '50', matchingData, pendingDataChanges)).toBe(true)
+        expect(checkShowCondition(showCondition, '50', notMatchingData, pendingDataChanges)).toBe(false)
+    })
+
+    it('should return false when pending value of active record does not match the condition', () => {
+        expect(checkShowCondition(showCondition, '50', matchingData, null)).toBe(true)
+        const pendingDataChanges = {
+            bcExample: {
+                '50': {
+                    test: '8'
+                }
+            }
+        }
+        expect(checkShowCondition(showCondition, '50', matchingData, pendingDataChanges)).toBe(false)
+    })
+
+    it('should return true when pending value is matching even if data value is not', () => {
+        expect(checkShowCondition(showCondition, '50', notMatchingData, null)).toBe(false)
+        const pendingDataChanges = {
+            bcExample: {
+                '50': {
+                    test: '9'
+                }
+            }
+        }
+        expect(checkShowCondition(showCondition, '50', notMatchingData, pendingDataChanges)).toBe(true)
+    })
+
+    it('should return true by default', () => {
+        expect(checkShowCondition({ ...showCondition, isDefault: true }, '50', notMatchingData, null)).toBe(true)
+        expect(checkShowCondition(null, '50', notMatchingData, null)).toBe(true)
+        expect(checkShowCondition([] as any, '50', notMatchingData, null)).toBe(true)
+    })
+
+    it('does not crash if no data or active record present', () => {
+        expect(checkShowCondition(showCondition, '50', null, null)).toBe(true)
+        expect(checkShowCondition(showCondition, '49', notMatchingData, null)).toBe(true)
     })
 })
 
