@@ -86,6 +86,24 @@ describe('Field with default card', () => {
         const widgetAfter = wrapper.find(Widget)
         expect(widgetAfter.find(Skeleton).length).toBe(1)
     })
+
+    it('should not render when showCondition is false', () => {
+        const wrapper = mount(
+            <Provider store={store}>
+                <Widget
+                    meta={{
+                        ...widgetMeta,
+                        showCondition: {
+                            bcName: exampleBcName,
+                            isDefault: false,
+                            params: { fieldKey: 'test', value: 'never' }
+                        }
+                    }}
+                />
+            </Provider>
+        )
+        expect(wrapper.isEmptyRender()).toEqual(true)
+    })
 })
 
 describe('Determine widget component', () => {

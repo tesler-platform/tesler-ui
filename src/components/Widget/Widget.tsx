@@ -158,8 +158,8 @@ function mapStateToProps(store: Store, ownProps: WidgetOwnProps) {
     if (
         !checkShowCondition(
             ownProps.meta.showCondition,
-            store.screen.bo.bc[bcName]?.cursor,
-            store.data[bcName],
+            store.screen.bo.bc[ownProps.meta.showCondition?.bcName]?.cursor,
+            store.data[ownProps.meta.showCondition?.bcName],
             store.view.pendingDataChanges
         )
     ) {
