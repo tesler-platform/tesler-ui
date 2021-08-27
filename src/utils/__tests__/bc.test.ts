@@ -67,7 +67,7 @@ describe('requestBcChildren', () => {
     })
 })
 
-describe.only('checkShowCondition', () => {
+describe('checkShowCondition', () => {
     const showCondition: WidgetShowCondition = {
         bcName: 'bcExample',
         isDefault: false,
@@ -116,8 +116,10 @@ describe.only('checkShowCondition', () => {
     })
 
     it('does not crash if no data or active record present', () => {
-        expect(checkShowCondition(showCondition, '50', null, null)).toBe(true)
-        expect(checkShowCondition(showCondition, '49', notMatchingData, null)).toBe(true)
+        expect(checkShowCondition(null, '50', null, null)).toBe(true)
+        expect(checkShowCondition([] as any, '50', notMatchingData, null)).toBe(true)
+        expect(checkShowCondition(showCondition, '50', null, null)).toBe(false)
+        expect(checkShowCondition(showCondition, '49', notMatchingData, null)).toBe(false)
     })
 })
 
