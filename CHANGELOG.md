@@ -1,8 +1,14 @@
+# Version 1.31.1 (August 27, 2021)
+
+## Fixes
+
+* `checkShowCondition` should return false when active record is unavailable; `<Widget />` should call `checkShowCondition` with business component from the `showCondition` instead of widget itself ([#695](https://github.com/tesler-platform/tesler-ui/pull/695))
+
 # Version 1.31.0 (August 27, 2021)
 
 ## Features
 
-* Lazy load for widgets hidden by `showCondition`
+* Lazy load for widgets hidden by `showCondition` ([#693](https://github.com/tesler-platform/tesler-ui/pull/693))
 
 # Version 1.30.6 (August 20, 2021)
 
