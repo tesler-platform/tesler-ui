@@ -1,3 +1,8 @@
+# Version 1.31.0 (August 27, 2021)
+
+## Features
+
+* Lazy load for widgets hidden by `showCondition`
 
 # Version 1.30.6 (August 20, 2021)
 
