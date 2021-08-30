@@ -149,10 +149,11 @@ export function bcFetchDataImpl(
             })
 
             const isWidgetHidden = (w: WidgetMeta) => {
+                const dataToCheck = bcName === w.showCondition?.bcName ? response.data : state.data[w.showCondition?.bcName]
                 return checkShowCondition(
                     w.showCondition,
                     state.screen.bo.bc[w.showCondition?.bcName]?.cursor,
-                    state.data[w.showCondition?.bcName],
+                    dataToCheck,
                     state.view.pendingDataChanges
                 )
             }
