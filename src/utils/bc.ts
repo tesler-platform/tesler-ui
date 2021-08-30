@@ -103,10 +103,10 @@ export function checkShowCondition(
         return true
     }
     const record = cursor && data?.find(item => item.id === cursor)
-    const actualValue = record?.[params.fieldKey]
-    if (!actualValue) {
+    if (!record) {
         return false
     }
+    const actualValue = record?.[params.fieldKey]
     const pendingValue = pendingDataChanges?.[bcName]?.[cursor]?.[params.fieldKey]
     return pendingValue !== undefined ? pendingValue === params.value : actualValue === params.value
 }
