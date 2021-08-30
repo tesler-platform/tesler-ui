@@ -1,3 +1,10 @@
+# Version 1.31.2 (August 30, 2021)
+
+## Fixes
+
+* `checkShowCondition` should not return false when checked field value is falsy
+* lazy show condition check in `bcFetchData` should look into response in case epic fetching data for the same business component as in `showCondition`
+
 # Version 1.31.1 (August 27, 2021)
 
 ## Fixes
