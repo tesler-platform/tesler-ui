@@ -1,10 +1,9 @@
 import React, { FunctionComponent } from 'react'
-import { connect, useSelector } from 'react-redux'
+import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { $do } from '../../../actions/actions'
 import { Store } from '../../../interfaces/store'
 import { WidgetTableMeta, PaginationMode } from '../../../interfaces/widget'
 import Popup, { PopupProps } from '../../ui/Popup/Popup'
-import { createMapDispatchToProps } from '../../../utils/redux'
 import styles from './PickListPopup.less'
 import { Table, Skeleton, Spin } from 'antd'
 import { ColumnProps } from 'antd/es/table'
@@ -19,9 +18,17 @@ import { FieldType } from '../../../interfaces/view'
 import Pagination from '../../ui/Pagination/Pagination'
 import cn from 'classnames'
 
+const emptyObject = {}
+
 export interface PickListPopupActions {
-    onChange: (payload: ChangeDataItemPayload) => void
-    onClose: () => void
+    /**
+     * @deprecated
+     */
+    onChange?: (payload: ChangeDataItemPayload) => void
+    /**
+     * @deprecated
+     */
+    onClose?: () => void
 }
 
 export interface PickListPopupOwnProps extends Omit<PopupProps, 'bcName' | 'children' | 'showed'> {
@@ -41,12 +48,34 @@ export interface PickListPopupProps extends PickListPopupOwnProps {
      */
     showed?: boolean
 
-    data: DataItem[]
-    pickMap: PickMap
-    cursor: string
-    parentBCName: string
-    bcLoading: boolean
-    rowMetaFields: RowMetaField[]
+    /**
+     * @deprecated
+     */
+    data?: DataItem[]
+    /**
+     * @deprecated
+     */
+    pickMap?: PickMap
+    /**
+     * @deprecated
+     */
+    cursor?: string
+    /**
+     * @deprecated
+     */
+    parentBCName?: string
+    /**
+     * @deprecated
+     */
+    bcLoading?: boolean
+    /**
+     * @deprecated
+     */
+    handledForceActive?: PendingDataItem
+    /**
+     * @deprecated
+     */
+    rowMetaFields?: RowMetaField[]
 }
 
 /**
@@ -55,22 +84,45 @@ export interface PickListPopupProps extends PickListPopupOwnProps {
  * @category Widgets
  */
 export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopupActions> = ({
-    showed,
-    data,
-    pickMap,
-    cursor,
-    parentBCName,
-    bcLoading,
-    rowMetaFields,
+    showed: showedDeprecated,
+    data: dataDeprecated,
+    pickMap: pickMapDeprecated,
+    cursor: cursorDeprecated,
+    parentBCName: parentBCNameDeprecated,
+    bcLoading: bcLoadingDeprecated,
+    rowMetaFields: rowMetaFieldsDeprecated,
+    handledForceActive: handledForceActiveDeprecated,
     widget,
     className,
     components,
     disableScroll,
-    onChange,
-    onClose,
+    onChange: onChangeDeprecated,
+    onClose: onCloseDeprecated,
     ...rest
 }) => {
-    const pending = useSelector((store: Store) => store.session.pendingRequests?.filter(item => item.type === 'force-active'))
+    const { bcName, title } = widget
+    const { pending, handledForceActive, pickMap, data, cursor, parentBCName, bcLoading, rowMetaFields } = useSelector((state: Store) => {
+        const bcUrl = buildBcUrl(bcName, true)
+        const bc = state.screen.bo.bc[bcName]
+        const pBCName = bc?.parentName
+        return {
+            pending: state.session.pendingRequests?.filter(item => item.type === 'force-active'),
+            handledForceActive: state.view.handledForceActive[bcName]?.[bc.cursor] || emptyObject,
+            pickMap: state.view.pickMap,
+            data: state.data[bcName],
+            cursor: state.screen.bo.bc[pBCName]?.cursor,
+            parentBCName: bc?.parentName,
+            bcLoading: bc?.loading,
+            rowMetaFields: bcUrl && state.view.rowMeta[bcName]?.[bcUrl]?.fields
+        }
+    }, shallowEqual)
+    const dispatch = useDispatch()
+    const onChange = React.useCallback((payload: ChangeDataItemPayload) => dispatch($do.changePopupValueAndClose(payload)), [dispatch])
+    const onClose = React.useCallback(() => {
+        dispatch($do.viewClearPickMap(null))
+        dispatch($do.closeViewPopup(null))
+        dispatch($do.bcRemoveAllFilters({ bcName }))
+    }, [dispatch, bcName])
     const columns: Array<ColumnProps<DataItem>> = widget.fields
         .filter(item => item.type !== FieldType.hidden && !item.hidden)
         .map(item => {
@@ -103,30 +155,23 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
                 }
             }
         },
-        [pickMap, onChange, parentBCName, cursor, onClose]
+        [pickMap, onChange, parentBCName, cursor, rowMetaFields, handledForceActive]
     )
 
-    const defaultTitle = React.useMemo(
-        () => (
-            <div>
-                <h1 className={styles.title}>{widget.title}</h1>
-            </div>
-        ),
-        [widget.title]
-    )
-    const title = components?.title === undefined ? defaultTitle : components.title
+    const defaultTitle = React.useMemo(() => <h1 className={styles.title}>{title}</h1>, [title])
+    const titleComponent = components?.title === undefined ? defaultTitle : components.title
 
     const defaultFooter = React.useMemo(
         () => (
             <div className={styles.footerContainer}>
                 {!widget.options?.hierarchyFull && (
                     <div className={styles.pagination}>
-                        <Pagination bcName={widget.bcName} mode={PaginationMode.page} widgetName={widget.name} />
+                        <Pagination bcName={bcName} mode={PaginationMode.page} widgetName={widget.name} />
                     </div>
                 )}
             </div>
         ),
-        [widget.options?.hierarchyFull, widget.bcName, widget.name]
+        [widget.options?.hierarchyFull, bcName, widget.name]
     )
     const footer = components?.footer === undefined ? defaultFooter : components.footer
 
@@ -153,12 +198,12 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
 
     return (
         <Popup
-            title={title}
+            title={titleComponent}
             size="large"
             showed
             onOkHandler={onClose}
             onCancelHandler={onClose}
-            bcName={widget.bcName}
+            bcName={bcName}
             widgetName={widget.name}
             disablePagination={widget.options?.hierarchyFull}
             footer={footer}
@@ -170,45 +215,9 @@ export const PickListPopup: FunctionComponent<PickListPopupProps & PickListPopup
     )
 }
 
-function mapStateToProps(store: Store, props: PickListPopupOwnProps) {
-    const bcName = props.widget.bcName
-    const bcUrl = buildBcUrl(bcName, true)
-    const fields = bcUrl && store.view.rowMeta[bcName]?.[bcUrl]?.fields
-    const bc = store.screen.bo.bc[bcName]
-    const parentBCName = bc?.parentName
-    return {
-        pickMap: store.view.pickMap,
-        data: store.data[props.widget.bcName],
-        cursor: store.screen.bo.bc[parentBCName]?.cursor,
-        parentBCName: bc?.parentName,
-        bcLoading: bc?.loading,
-        rowMetaFields: fields
-    }
-}
-
-const mapDispatchToProps = createMapDispatchToProps(
-    (props: PickListPopupOwnProps) => {
-        return {
-            bcName: props.widget.bcName
-        }
-    },
-    ctx => {
-        return {
-            onChange: (payload: ChangeDataItemPayload) => {
-                ctx.dispatch($do.changeDataItem(payload))
-            },
-            onClose: () => {
-                ctx.dispatch($do.viewClearPickMap(null))
-                ctx.dispatch($do.closeViewPopup(null))
-                ctx.dispatch($do.bcRemoveAllFilters({ bcName: ctx.props.bcName }))
-            }
-        }
-    }
-)
-
 /**
  * @category Widgets
  */
-const PickListPopupConnected = connect(mapStateToProps, mapDispatchToProps)(PickListPopup)
+const PickListPopupConnected = React.memo(PickListPopup)
 
 export default PickListPopupConnected

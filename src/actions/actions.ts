@@ -1207,6 +1207,23 @@ export class ActionPayloadTypes {
     removePendingRequest: {
         requestId: string
     } = z
+
+    /**
+     * Change popup value and close
+     */
+    changePopupValueAndClose: {
+        bcName: string
+        cursor: string
+        dataItem: PendingDataItem
+        disableRetry?: boolean
+    } = z
+
+    /**
+     * Announces that pop up is ready to be closed
+     */
+    popupCloseReady: {
+        bcName: string
+    } = z
 }
 
 // action-types
