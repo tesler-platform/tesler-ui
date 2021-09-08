@@ -153,7 +153,7 @@ export interface WidgetTableMeta extends WidgetMeta {
  */
 export interface WidgetInfoMeta extends WidgetMeta {
     /**
-     * Unambiguous marker for JSON file specifing widget type
+     * Unambiguous marker for JSON file specifying widget type
      */
     type: WidgetTypes.Info
     /**
@@ -171,7 +171,7 @@ export interface WidgetInfoMeta extends WidgetMeta {
  */
 export interface WidgetTextMeta extends WidgetMeta {
     /**
-     * Unambiguous marker for JSON file specifing widget type
+     * Unambiguous marker for JSON file specifying widget type
      */
     type: WidgetTypes.Text
     /**
@@ -182,6 +182,30 @@ export interface WidgetTextMeta extends WidgetMeta {
      * Title text
      */
     descriptionTitle: string
+}
+
+/**
+ * Options configuration for widgets displaying NavigationTabs
+ */
+export interface NavigationOptions extends WidgetOptions {
+    /**
+     * Level of menu
+     */
+    navigationLevel?: number
+}
+
+/**
+ * Configuration for widgets displaying NavigationTabs
+ */
+export interface NavigationWidgetMeta extends WidgetMeta {
+    /**
+     * Unambiguous marker for JSON file specifying widget type
+     */
+    type: WidgetTypes.NavigationTabs | WidgetTypes.ViewNavigation
+    /**
+     * Options for customizing widget
+     */
+    options: NavigationOptions
 }
 
 /**

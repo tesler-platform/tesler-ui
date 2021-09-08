@@ -21,7 +21,6 @@ import {
     ViewNavigationItem,
     ViewNavigationGroup,
     isViewNavigationGroup,
-    NavigationLevel,
     NavigationTab
 } from '../interfaces/navigation'
 import { breadthFirstSearch } from './breadthFirst'
@@ -37,7 +36,7 @@ const emptyArray: NavigationTab[] = []
  */
 export function getViewTabs(
     navigation: Array<Exclude<MenuItem, ViewNavigationCategory>>,
-    level: NavigationLevel,
+    level: number,
     activeView?: string
 ): NavigationTab[] {
     if (!activeView && level > 1) {

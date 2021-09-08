@@ -552,10 +552,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@tesler-ui/schema@0.3.4":
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/@tesler-ui/schema/-/schema-0.3.4.tgz#9647efa97102921bedc3296873535c56c5ba33dc"
-  integrity sha512-depDp0up1YXa03EbaEYU18oz2bvfDqtfcIHV/yAup0gX66mB0uyBs6Wu1H3RB6nykRkmWEd4m9dUg5uvpQJGcg==
+"@tesler-ui/schema@0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@tesler-ui/schema/-/schema-0.4.0.tgz#7118fae41934ab154d9e3fd51aa963c95ac2430a"
+  integrity sha512-7JSGC4WPaIoXdPlkazgXBb8ZxCSwT3kJitqowL9s1qdQeZKKuhm0fczH30zzM9cHk6XU/aPO4yw4K0qUcu5rkg==
   dependencies:
     json-stable-stringify "^1.0.1"
     path "^0.12.7"

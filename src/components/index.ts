@@ -26,6 +26,7 @@ export { default as SearchHighlight } from './ui/SearchHightlight/SearchHightlig
 export { default as FilterField } from './ui/FilterField/FilterField'
 export { RowOperationsMenu } from './RowOperations/RowOperationsMenu'
 export { default as RowOperationsButton } from './RowOperations/RowOperationsButton'
+export { default as NavigationTabs } from './ui/NavigationTabs/NavigationTabs'
 
 // Containers
 export { default as TemplatedTitle } from './TemplatedTitle/TemplatedTitle'
@@ -34,7 +35,7 @@ export { default as Widget } from './Widget/Widget'
 export { default as Field } from './Field/Field'
 export { default as ModalInvoke } from './ModalInvoke/ModalInvoke'
 export { default as PickListField } from './PickListField/PickListField'
-// Busines-widgets
+// Business-widgets
 export { default as FormWidget } from './widgets/FormWidget/FormWidget'
 export { default as TableWidget } from './widgets/TableWidget/TableWidget'
 export { default as TextWidget } from './widgets/TextWidget/TextWidget'
@@ -42,5 +43,7 @@ export { default as AssocListPopup } from './widgets/AssocListPopup/AssocListPop
 export { default as PickListPopup } from './widgets/PickListPopup/PickListPopup'
 export { default as FlatTree } from './widgets/FlatTree/FlatTree'
 export { default as FlatTreePopup } from './widgets/FlatTree/FlatTreePopup'
+export { default as ViewNavigationWidget } from './widgets/ViewNavigationWidget/ViewNavigationWidget'
+export { default as NavigationTabsWidget } from './widgets/NavigationTabsWidget/NavigationTabsWidget'
 // Developer
 export { default as DevToolsPanel } from './DevToolsPanel/DevToolsPanel'
