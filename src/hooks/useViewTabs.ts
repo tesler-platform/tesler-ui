@@ -18,7 +18,7 @@ import { useSelector, shallowEqual } from 'react-redux'
 import { Store } from '../interfaces/store'
 import { getViewTabs } from '../utils/viewTabs'
 import { ViewMetaResponse } from '../interfaces/view'
-import { MenuItem, ViewNavigationCategory, NavigationLevel } from '../interfaces/navigation'
+import { MenuItem, ViewNavigationCategory } from '../interfaces/navigation'
 
 interface UseViewTabsState {
     activeView: string
@@ -40,7 +40,7 @@ function mapStateToProps(store: Store): UseViewTabsState {
  * @param depth 1 for top level navigation; 2, 3, 4 for SecondLevelMenu, ThirdLevelMenu and FourthLevelMenu
  * @category Hooks
  */
-export function useViewTabs(depth: NavigationLevel) {
+export function useViewTabs(depth: number) {
     const state: UseViewTabsState = useSelector(mapStateToProps, shallowEqual)
     const items = getViewTabs(state.navigation, depth, state.activeView)
     return items.map(item => {
