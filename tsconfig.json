@@ -12,7 +12,7 @@
             "*": [
               "*",
               "generated/*",
-              "src/*",
+              "./src/*",
               "node_modules/*"
             ]
         },
