@@ -148,7 +148,20 @@ export function bcFetchDataImpl(
                 return state.screen.bo.bc[item.bcName]?.parentName === bcName && !PopupWidgetTypes.includes(item.type)
             })
 
-            const isWidgetHidden = (w: WidgetMeta) => {
+            const isWidgetVisible = (w: WidgetMeta) => {
+                // check whether BC names from action payload, showCondition and current widget are relatives
+                // if positive check skip `checkShowCondition` call
+                if (w.showCondition?.bcName === state.screen.bo.bc[w.bcName]?.parentName) {
+                    let parentName = state.screen.bo.bc[w.showCondition?.bcName]?.parentName
+                    let parent = parentName === bcName
+                    while (!parent && parentName) {
+                        parentName = state.screen.bo.bc[parentName]?.parentName
+                        parent = parentName === bcName
+                    }
+                    if (parent) {
+                        return true
+                    }
+                }
                 const dataToCheck = bcName === w.showCondition?.bcName ? response.data : state.data[w.showCondition?.bcName]
                 return checkShowCondition(
                     w.showCondition,
@@ -158,14 +171,13 @@ export function bcFetchDataImpl(
                 )
             }
 
-            const showCondition = isWidgetHidden(widget)
-            const lazyWidget = (!showCondition || PopupWidgetTypes.includes(widget.type)) && !parentOfNotLazyWidget
+            const lazyWidget = (!isWidgetVisible(widget) || PopupWidgetTypes.includes(widget.type)) && !parentOfNotLazyWidget
             const skipLazy = state.view.popupData?.bcName !== widget.bcName
             if (lazyWidget && skipLazy) {
                 return Observable.empty<never>()
             }
             const fetchChildren = response.data?.length
-                ? getChildrenData(action, widgets, state.screen.bo.bc, !!anyHierarchyWidget, isWidgetHidden)
+                ? getChildrenData(action, widgets, state.screen.bo.bc, !!anyHierarchyWidget, isWidgetVisible)
                 : Observable.empty<never>()
             const fetchRowMeta = Observable.of<AnyAction>($do.bcFetchRowMeta({ widgetName, bcName }))
 
