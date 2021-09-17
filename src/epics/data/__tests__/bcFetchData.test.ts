@@ -279,6 +279,37 @@ describe('bcFetchDataEpic', () => {
             expect(res.length).toBe(0)
         })
     })
+
+    it('should load data of hierarchy of BCs', () => {
+        store.getState().screen.bo.bc.bcChild = bcChild
+        store.getState().screen.bo.bc.bcChildOfChild = bcChildOfChild
+        store.getState().screen.bo.bc.lastChild = lastChild
+        store.getState().view.widgets[0] = {
+            ...getWidgetMeta(),
+            showCondition: {
+                bcName: bcChildOfChild.name,
+                isDefault: false,
+                params: {
+                    fieldKey: 'test',
+                    value: '9'
+                }
+            },
+            bcName: lastChild.name
+        }
+        const action = $do.bcFetchDataRequest({ widgetName: 'widget-example', bcName: 'bcExample' })
+        testEpic(flow(ActionsObservable.of(action), store), res => {
+            expect(res.pop()).toEqual(
+                expect.objectContaining(
+                    $do.bcFetchDataRequest({
+                        bcName: 'bcChild',
+                        widgetName: 'widget-example',
+                        ignorePageLimit: false,
+                        keepDelta: undefined
+                    })
+                )
+            )
+        })
+    })
 })
 
 /** */
@@ -320,6 +351,19 @@ const bcChild = {
     name: 'bcChild',
     parentName: 'bcExample',
     url: 'bcExample/:id/bcChild/:id'
+}
+
+const bcChildOfChild = {
+    ...bcExample,
+    name: 'bcChildOfChild',
+    parentName: 'bcChild',
+    url: 'bcExample/:id/bcChild/:id/bcChildOfChild/:id'
+}
+const lastChild = {
+    ...bcExample,
+    name: 'lastChild',
+    parentName: 'bcChildOfChild',
+    url: 'bcExample/:id/bcChild/:id/bcChildOfChild/:id/lastChild/:id'
 }
 
 const bcLazyChild = {
