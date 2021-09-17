@@ -109,6 +109,7 @@ const FileUpload: React.FunctionComponent<FileUploadOwnProps & FileUploadProps &
     const uploadUrl = applyParams(getFileUploadEndpoint(), uploadParams)
 
     const uploadProps = {
+        withCredentials: true,
         disabled,
         name: 'file',
         action: uploadUrl,
