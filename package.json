@@ -89,7 +89,7 @@
     "webpack-rxjs-externals": "1.1.0"
   },
   "dependencies": {
-    "@tesler-ui/schema": "0.4.0",
+    "@tesler-ui/schema": "^0.5.0",
     "classnames": "2.2.6",
     "core-js": "3.1.4",
     "diff": "4.0.2",

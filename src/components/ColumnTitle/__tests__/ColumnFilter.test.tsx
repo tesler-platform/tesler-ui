@@ -18,7 +18,7 @@
 import React from 'react'
 import { Store } from 'redux'
 import { mount } from 'enzyme'
-import { Popover } from 'antd'
+import { Popover, DatePicker } from 'antd'
 import * as redux from 'react-redux'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { mockStore } from '../../../tests/mockStore'
@@ -136,12 +136,34 @@ describe('`<ColumnFilter />`', () => {
         wrapper.find(Popover).childAt(0).simulate('click')
         expect(wrapper.find(FilterPopup).props().value).toBe(presetFilter.value)
     })
+
+    it('uses another column for filtration when `filterBy` is specified', () => {
+        const content = (
+            <redux.Provider store={store}>
+                <ColumnFilter
+                    widgetMeta={{ ...widgetFieldMeta, filterBy: 'anotherKey' }}
+                    widgetName="widget-name"
+                    rowMeta={fieldRowMeta}
+                />
+                )
+            </redux.Provider>
+        )
+        const wrapper = mount(content)
+        wrapper.find(Popover).childAt(0).simulate('click')
+        expect(wrapper.find(DatePicker)).toHaveLength(1)
+    })
 })
 
 const widgetFieldMeta: WidgetListField = {
     key: 'key',
     title: 'Test Column',
     type: FieldType.input
+}
+
+const filterByField: WidgetListField = {
+    key: 'anotherKey',
+    title: 'Another Field',
+    type: FieldType.dateTime
 }
 
 const widget: WidgetMeta = {
@@ -151,7 +173,7 @@ const widget: WidgetMeta = {
     bcName: 'bcExample',
     position: 1,
     gridWidth: null,
-    fields: [widgetFieldMeta]
+    fields: [widgetFieldMeta, filterByField]
 }
 
 const fieldRowMeta: RowMetaField = {
