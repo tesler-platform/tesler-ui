@@ -140,11 +140,7 @@ describe('`<ColumnFilter />`', () => {
     it('uses another column for filtration when `filterBy` is specified', () => {
         const content = (
             <redux.Provider store={store}>
-                <ColumnFilter
-                    widgetMeta={{ ...widgetFieldMeta, filterBy: 'anotherKey' }}
-                    widgetName="widget-name"
-                    rowMeta={fieldRowMeta}
-                />
+                <ColumnFilter widgetMeta={{ ...widgetFieldMeta, filterBy: 'anotherKey' }} widgetName="widget-name" rowMeta={fieldRowMeta} />
                 )
             </redux.Provider>
         )

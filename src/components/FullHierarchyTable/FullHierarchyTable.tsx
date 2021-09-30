@@ -15,7 +15,6 @@ import { $do } from '../../actions/actions'
 import { BcFilter, FilterType } from '../../interfaces/filters'
 import { buildBcUrl } from '../../utils/strings'
 import { RowMetaField } from '../../interfaces/rowMeta'
-import FullHierarchyFilter from './FullHierarchyFilter'
 import ColumnTitle from '../ColumnTitle/ColumnTitle'
 import cn from 'classnames'
 import { useHierarchyCache } from './utils/useHierarchyCache'
@@ -64,7 +63,6 @@ export type FullHierarchyTableAllProps = FullHierarchyTableOwnProps & FullHierar
 type ChildrenAwaredHierarchyItem = FullHierarchyDataItem & { noChildren: boolean }
 
 const emptyData: FullHierarchyDataItem[] = []
-const components = { filter: FullHierarchyFilter }
 
 const Exp: FunctionComponent = (props: any) => {
     if (!props.onExpand || props.record.noChildren) {
@@ -251,12 +249,7 @@ export const FullHierarchyTable: React.FunctionComponent<FullHierarchyTableAllPr
                 ?.filter(item => item.type !== FieldType.hidden && !item.hidden)
                 .map(item => ({
                     title: (
-                        <ColumnTitle
-                            widgetName={widgetName}
-                            widgetMeta={item}
-                            rowMeta={rowMetaFields?.find(rm => rm.key === item.key)}
-                            components={components}
-                        >
+                        <ColumnTitle widgetName={widgetName} widgetMeta={item} rowMeta={rowMetaFields?.find(rm => rm.key === item.key)}>
                             {item.title}
                         </ColumnTitle>
                     ),
