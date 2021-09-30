@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { Popover } from 'antd'
-import { connect, useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RowMetaField } from '../../interfaces/rowMeta'
-import { MultivalueFieldMeta, WidgetField, WidgetListField, WidgetMeta } from '../../interfaces/widget'
+import { MultivalueFieldMeta, WidgetListField, WidgetMeta } from '../../interfaces/widget'
 import styles from './ColumnFilter.less'
 import { $do } from '../../actions/actions'
 import { Store } from '../../interfaces/store'
@@ -14,6 +14,9 @@ import FilterPopup from '../FilterPopup/FilterPopup'
 import FilterField from '../ui/FilterField/FilterField'
 import { PickListFieldMeta, WidgetTypes } from '@tesler-ui/schema'
 
+/**
+ * @deprecated TODO: Remove in 2.0.0 by merging with ColumnFilterProps
+ */
 export interface ColumnFilterOwnProps {
     widgetName: string
     widgetMeta: WidgetListField
@@ -25,8 +28,14 @@ export interface ColumnFilterProps extends ColumnFilterOwnProps {
      * @deprecated TODO: Remove in 2.0.0 in favor of widget
      */
     bcName?: string
-    filter: BcFilter
-    widget: WidgetMeta
+    /**
+     * @deprecated TODO: Remove in 2.0.0, handled internally
+     */
+    filter?: BcFilter
+    /**
+     * @deprecated TODO: Remove in 2.0.0, handled internaly
+     */
+    widget?: WidgetMeta
     components?: {
         popup: React.ReactNode
     }
@@ -44,29 +53,30 @@ export interface ColumnFilterProps extends ColumnFilterOwnProps {
     onMultivalueAssocOpen?: (bcName: string, calleeBCName: string, assocValueKey: string, associateFieldKey: string) => void
 }
 
-export const ColumnFilter: React.FC<ColumnFilterProps> = props => {
-    const [value, setValue] = React.useState(props.filter?.value)
+export function ColumnFilter({ widgetName, widgetMeta, rowMeta, components }: ColumnFilterProps) {
+    const widget = useSelector((store: Store) => store.view.widgets.find(item => item.name === widgetName))
+    const bcName = widget?.bcName
+    const filter = useSelector((store: Store) => store.screen.filters[bcName]?.find(item => item.fieldName === widgetMeta.key))
+    const [value, setValue] = React.useState(filter?.value)
     const [visible, setVisible] = React.useState(false)
     const dispatch = useDispatch()
 
     React.useEffect(() => {
-        setValue(props.filter?.value)
-    }, [props.filter?.value])
+        setValue(filter?.value)
+    }, [filter?.value])
 
     const assocWidget = useSelector((store: Store) =>
         store.view.widgets.find(
-            item => item.bcName === (props.widgetMeta as PickListFieldMeta).popupBcName && item.type === WidgetTypes.AssocListPopup
+            item => item.bcName === (widgetMeta as PickListFieldMeta).popupBcName && item.type === WidgetTypes.AssocListPopup
         )
     )
 
-    const isPickList = props.widgetMeta.type === FieldType.pickList
-    const isMultivalue = [FieldType.multivalue, FieldType.multivalueHover].includes(props.widgetMeta.type) || isPickList
-
-    const fieldMeta = props.widget?.fields.find((field: WidgetField) => field.key === props.widgetMeta.key) as
-        | MultivalueFieldMeta
-        | PickListFieldMeta
-    const fieldMetaMultivalue = fieldMeta as MultivalueFieldMeta
-    const fieldMetaPickListField = fieldMeta as PickListFieldMeta
+    const isPickList = widgetMeta.type === FieldType.pickList
+    const isMultivalue = [FieldType.multivalue, FieldType.multivalueHover].includes(widgetMeta.type) || isPickList
+ 
+    const fieldMeta = widgetMeta as MultivalueFieldMeta | PickListFieldMeta
+    const fieldMetaMultivalue = widgetMeta as MultivalueFieldMeta
+    const fieldMetaPickListField = widgetMeta as PickListFieldMeta
     const handleVisibleChange = (eventVisible: boolean) => {
         if (isMultivalue && eventVisible) {
             setVisible(false)
@@ -74,8 +84,8 @@ export const ColumnFilter: React.FC<ColumnFilterProps> = props => {
                 $do.showViewPopup({
                     bcName: fieldMeta.popupBcName,
                     widgetName: assocWidget?.name,
-                    calleeBCName: props.widget?.bcName,
-                    calleeWidgetName: props.widget?.name,
+                    calleeBCName: widget?.bcName,
+                    calleeWidgetName: widget?.name,
                     assocValueKey: !isPickList ? fieldMetaMultivalue.assocValueKey : fieldMetaPickListField.pickMap[fieldMeta.key],
                     associateFieldKey: !isPickList ? fieldMetaMultivalue.associateFieldKey : fieldMeta.key,
                     isFilter: true
@@ -86,10 +96,10 @@ export const ColumnFilter: React.FC<ColumnFilterProps> = props => {
         }
     }
 
-    const content = props.components?.popup ?? (
+    const content = components?.popup ?? (
         <FilterPopup
-            widgetName={props.widgetName}
-            fieldKey={props.widgetMeta.key}
+            widgetName={widgetName}
+            fieldKey={widgetMeta.key}
             value={value}
             onApply={() => {
                 setVisible(false)
@@ -98,7 +108,7 @@ export const ColumnFilter: React.FC<ColumnFilterProps> = props => {
                 setVisible(false)
             }}
         >
-            <FilterField widgetFieldMeta={props.widgetMeta} rowFieldMeta={props.rowMeta} value={value} onChange={setValue} />
+            <FilterField widgetFieldMeta={widgetMeta} rowFieldMeta={rowMeta} value={value} onChange={setValue} />
         </FilterPopup>
     )
 
@@ -110,7 +120,7 @@ export const ColumnFilter: React.FC<ColumnFilterProps> = props => {
             onVisibleChange={handleVisibleChange}
         >
             <div
-                className={cn(styles.icon, { [styles.active]: props.filter?.value?.toString()?.length > 0 })}
+                className={cn(styles.icon, { [styles.active]: filter?.value?.toString()?.length > 0 })}
                 dangerouslySetInnerHTML={{ __html: filterIcon }}
             />
         </Popover>
@@ -118,23 +128,6 @@ export const ColumnFilter: React.FC<ColumnFilterProps> = props => {
 }
 
 /**
- * Create ColumnFilter props
- *
- * @param store Store instance for read-only access of different branches of Redux store
- * @param ownProps ColumnFilter component props
- */
-export function mapStateToProps(store: Store, ownProps: ColumnFilterOwnProps) {
-    const widget = store.view.widgets.find(item => item.name === ownProps.widgetName)
-    const bcName = widget?.bcName
-    const filter = store.screen.filters[bcName]?.find(item => item.fieldName === ownProps.widgetMeta.key)
-    return {
-        widget,
-        filter,
-        bcName
-    }
-}
-
-/**
  * @category Components
  */
-export default connect(mapStateToProps)(ColumnFilter)
+export default memo(ColumnFilter)
