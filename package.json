@@ -1,6 +1,6 @@
 {
   "name": "@tesler-ui/core",
-  "version": "1.31.2",
+  "version": "1.32.0",
   "main": "tesler-ui-core.js",
   "exports": {
     ".": "./tesler-ui-core.js",

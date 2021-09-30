@@ -1,3 +1,13 @@
+# Version 1.32.0 (September 30, 2021)
+
+## Features
+
+* New widget types: `ViewNavigation` and `NavigationTabs` intended for displaying view navigation as a fixed menu or as a standalone widget respectively ([#702](https://github.com/tesler-platform/tesler-ui/issues/702))
+
+## Fixes
+
+* `bcFetchData` should load data of hierarchy of BCs ([#707](https://github.com/tesler-platform/tesler-ui/pull/707))
+
 # Version 1.31.2 (August 30, 2021)
 
 ## Fixes
