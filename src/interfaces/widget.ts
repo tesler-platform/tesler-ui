@@ -211,7 +211,7 @@ export interface NavigationWidgetMeta extends WidgetMeta {
 /**
  * A widget configuration of any known type
  */
-export type WidgetMetaAny = WidgetFormMeta | WidgetTableMeta | WidgetTextMeta | WidgetInfoMeta
+export type WidgetMetaAny = WidgetFormMeta | WidgetTableMeta | WidgetTextMeta | WidgetInfoMeta | NavigationWidgetMeta
 
 /**
  * Component of custom widget
