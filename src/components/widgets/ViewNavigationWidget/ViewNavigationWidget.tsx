@@ -16,10 +16,12 @@
  */
 
 import React from 'react'
-import NavigationTabs from '../../ui/NavigationTabs/NavigationTabs'
+import NavigationTabsWidget, { NavigationTabsWidgetProps } from '../NavigationTabsWidget/NavigationTabsWidget'
 
-function ViewNavigationWidget() {
-    return <NavigationTabs navigationLevel={1} />
+export type ViewNavigationWidgetProps = NavigationTabsWidgetProps
+
+function ViewNavigationWidget(props: ViewNavigationWidgetProps) {
+    return <NavigationTabsWidget {...props} />
 }
 
 export default React.memo(ViewNavigationWidget)

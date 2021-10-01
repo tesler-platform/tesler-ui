@@ -247,3 +247,69 @@ describe('Widget spinner testing', () => {
         expect(wrapper.find(Spin).length).toBe(0)
     })
 })
+
+describe('Choose widget', () => {
+    it('render NavigationTabsWidget', () => {
+        const wrapper = shallow(
+            <SimpleWidget
+                showWidget={true}
+                rowMetaExists={true}
+                dataExists={true}
+                meta={{
+                    ...widgetMeta,
+                    type: WidgetTypes.NavigationTabs
+                }}
+            />
+        )
+        expect(wrapper.find('Memo(NavigationTabsWidget)').length).toBe(1)
+    })
+
+    it('should render children', () => {
+        const wrapper = shallow(
+            <SimpleWidget
+                showWidget={true}
+                rowMetaExists={true}
+                dataExists={true}
+                meta={{
+                    ...widgetMeta,
+                    type: WidgetTypes.ViewNavigation
+                }}
+            >
+                <div className="SimpleWidgetChild">SimpleWidgetChild</div>
+            </SimpleWidget>
+        )
+        expect(wrapper.find('.SimpleWidgetChild').length).toBe(1)
+    })
+
+    it('should render FlatTree', () => {
+        const wrapper = shallow(
+            <SimpleWidget
+                showWidget={true}
+                rowMetaExists={true}
+                dataExists={true}
+                meta={{
+                    ...widgetMeta,
+                    title: 'FlatTree!',
+                    type: WidgetTypes.FlatTree
+                }}
+            />
+        )
+        expect(wrapper.find('Memo()').findWhere(i => i.props().meta.type === WidgetTypes.FlatTree).length).toBe(1)
+    })
+
+    it('should render TextWidget', () => {
+        const wrapper = shallow(
+            <SimpleWidget
+                showWidget={true}
+                rowMetaExists={true}
+                dataExists={true}
+                meta={{
+                    ...widgetMeta,
+                    title: 'Text!',
+                    type: WidgetTypes.Text
+                }}
+            />
+        )
+        expect(wrapper.find('TextWidget').length).toBe(1)
+    })
+})
