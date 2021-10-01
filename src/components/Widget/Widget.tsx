@@ -15,6 +15,7 @@ import FlatTreePopup from '../widgets/FlatTree/FlatTreePopup'
 import FlatTree from '../widgets/FlatTree/FlatTree'
 import DebugPanel from '../DebugPanel/DebugPanel'
 import { checkShowCondition } from '../../utils/bc'
+import NavigationTabsWidget from '../widgets/NavigationTabsWidget/NavigationTabsWidget'
 
 interface WidgetOwnProps {
     meta: WidgetMeta | WidgetMetaAny
@@ -142,6 +143,8 @@ function chooseWidgetType(
             return <FlatTree meta={knownWidgetMeta} />
         case WidgetTypes.FlatTreePopup:
             return <FlatTreePopup meta={knownWidgetMeta} />
+        case WidgetTypes.NavigationTabs:
+            return <NavigationTabsWidget meta={knownWidgetMeta} />
         default:
             return children
     }
