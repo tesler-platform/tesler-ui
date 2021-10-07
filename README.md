@@ -1,5 +1,5 @@
 
-# Tesler UI &middot; [![Build status](https://github.com/tesler-platform/tesler-ui/workflows/Build/badge.svg)](https://github.com/tesler-platform/tesler-ui/actions?query=workflow%3ABuild) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=tesler-platform_tesler-ui&metric=coverage)](https://sonarcloud.io/dashboard?id=tesler-platform_tesler-ui)
+# Tesler UI &middot; [![Build status](https://github.com/tesler-platform/tesler-ui/workflows/Build/badge.svg)](https://github.com/tesler-platform/tesler-ui/actions?query=workflow%3ABuild) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tesler-platform_tesler-ui&metric=alert_status)](https://sonarcloud.io/dashboard?id=tesler-platform_tesler-ui) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=tesler-platform_tesler-ui&metric=coverage)](https://sonarcloud.io/dashboard?id=tesler-platform_tesler-ui)
 
 
 Tesler UI is an open source library that supplies user interaction support for Tesler framework in form of React components, Redux reducers and redux-observable epics for handling asynchronous actions.
