@@ -98,6 +98,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="types.widget.widgetfieldbase.html#bgcolorkey" class="tsd-kind-icon">bg<wbr>Color<wbr>Key</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="types.widget.widgetfieldbase.html#drilldown" class="tsd-kind-icon">drill<wbr>Down</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="types.widget.widgetfieldbase.html#drilldownkey" class="tsd-kind-icon">drill<wbr>Down<wbr>Key</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="types.widget.widgetfieldbase.html#filterby" class="tsd-kind-icon">filter<wbr>By</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="types.widget.widgetfieldbase.html#hidden" class="tsd-kind-icon">hidden</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="types.widget.widgetfieldbase.html#hierarchyshift" class="tsd-kind-icon">hierarchy<wbr>Shift</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="types.widget.widgetfieldbase.html#key" class="tsd-kind-icon">key</a></li>
@@ -148,9 +149,24 @@
 					<div class="tsd-signature tsd-kind-icon">drill<wbr>Down<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in node_modules/@tesler-ui/schema/dist/interfaces/widget.d.ts:180</li>
+							<li>Defined in node_modules/@tesler-ui/schema/dist/interfaces/widget.d.ts:182</li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+					<a name="filterby" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> filter<wbr>By</h3>
+					<div class="tsd-signature tsd-kind-icon">filter<wbr>By<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in node_modules/@tesler-ui/schema/dist/interfaces/widget.d.ts:186</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>When assigned with another field key, this another will be used for filtration purposes</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
 					<a name="hidden" class="tsd-anchor"></a>
@@ -173,13 +189,14 @@
 					<div class="tsd-signature tsd-kind-icon">hierarchy<wbr>Shift<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in node_modules/@tesler-ui/schema/dist/interfaces/widget.d.ts:179</li>
+							<li>Defined in node_modules/@tesler-ui/schema/dist/interfaces/widget.d.ts:181</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Shift value of different hierarchy level</p>
 						</div>
+						<p>TODO: Project-specific, has no support in Tesler backend</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
@@ -265,6 +282,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
 								<a href="types.widget.widgetfieldbase.html#drilldownkey" class="tsd-kind-icon">drill<wbr>Down<wbr>Key</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+								<a href="types.widget.widgetfieldbase.html#filterby" class="tsd-kind-icon">filter<wbr>By</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
 								<a href="types.widget.widgetfieldbase.html#hidden" class="tsd-kind-icon">hidden</a>
