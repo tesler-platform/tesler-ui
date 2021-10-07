@@ -7,6 +7,8 @@
 ## Fixes
 
 * `useViewTabs` hook does not respect `hidden flag` ([#716](https://github.com/tesler-platform/tesler-ui/issues/716))
+* `<ViewNavigationWidget />` should accept various values of navigationLevel ([#715](https://github.com/tesler-platform/tesler-ui/pull/715))
+* `<NavigationTabsWidget />` should be processed in regular widgets flow ([#715](https://github.com/tesler-platform/tesler-ui/pull/715))
 
 # Version 1.32.0 (September 30, 2021)
 
