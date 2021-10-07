@@ -17,7 +17,7 @@
 
 import { $do } from '../../actions/actions'
 import { session, initialState } from '../session'
-import { SessionScreen } from '../../interfaces/session'
+import { SessionScreen, Session, PendingRequest } from '../../interfaces/session'
 
 describe('session reducer', () => {
     it('sets login spinner and clears session error message on `login` action', () => {
@@ -58,5 +58,18 @@ describe('session reducer', () => {
         const state = { ...initialState }
         const nextState = session(state, $do.switchDebugMode(true))
         expect(nextState.debugMode).toBe(true)
+    })
+
+    it('handles pending requests', () => {
+        const state: Session = { ...initialState, pendingRequests: [] }
+        const request1: PendingRequest = { type: 'force-active', requestId: '183ff8de-d43b-489d-b978-13220d10dcac' }
+        const request2: PendingRequest = { type: 'force-active', requestId: '283ff8de-d43b-489d-b978-13220d10dcac' }
+        let nextState = session(state, $do.addPendingRequest({ request: request1 }))
+        expect(nextState.pendingRequests[0]).toBe(request1)
+        nextState = session(nextState, $do.addPendingRequest({ request: request2 }))
+        expect(nextState.pendingRequests[1]).toBe(request2)
+        nextState = session(nextState, $do.removePendingRequest({ requestId: request1.requestId }))
+        expect(nextState.pendingRequests[0]).toBe(request2)
+        expect(nextState.pendingRequests.length).toBe(1)
     })
 })
