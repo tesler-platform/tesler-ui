@@ -50,4 +50,10 @@ export interface NavigationTab {
      * Displayed title: either view name or a group name
      */
     title?: string
+    /**
+     * When true, menu item will not be visible
+     *
+     * It's still will be accessible through direct link though
+     */
+    hidden?: boolean
 }
