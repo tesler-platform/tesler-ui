@@ -5,6 +5,10 @@
     },
     {
       "viewName": "bankcard"
+    },
+    {
+      "viewName": "hiddenTest",
+      "hidden": true
     }
   ]
 }
