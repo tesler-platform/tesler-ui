@@ -1,3 +1,13 @@
+# Version 1.33.0 (October 7, 2021)
+
+## Features
+
+* `<ColumnFilter />` now uses filterBy widget field parameter to determine if some other field should be used for displaying filtration control ([#711](https://github.com/tesler-platform/tesler-ui/issues/711))
+
+## Fixes
+
+* `useViewTabs` hook does not respect `hidden flag` ([#716](https://github.com/tesler-platform/tesler-ui/issues/716))
+
 # Version 1.32.0 (September 30, 2021)
 
 ## Features
