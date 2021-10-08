@@ -1,3 +1,9 @@
+# Version 1.33.1 (October 8, 2021)
+
+## Fixes
+
+* `<NavigationTabsWidget />` should provide a reasonable default of 1 when `navigationLevel` option is missing
+
 # Version 1.33.0 (October 7, 2021)
 
 ## Features
