@@ -24,13 +24,7 @@ export interface NavigationTabsWidgetProps {
 }
 
 function NavigationTabsWidget({ meta }: NavigationTabsWidgetProps) {
-    const navigationLevel = meta.options?.navigationLevel
-
-    if (!navigationLevel) {
-        return null
-    }
-
-    return <NavigationTabs navigationLevel={navigationLevel} />
+    return <NavigationTabs navigationLevel={meta.options?.navigationLevel ?? 1} />
 }
 
 export default React.memo(NavigationTabsWidget)
