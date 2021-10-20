@@ -105,7 +105,7 @@
   },
   "peerDependencies": {
     "antd": "^3.26.18",
-    "axios": "^0.19.0",
+    "axios": "0.19.0",
     "moment": "^2.24.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
