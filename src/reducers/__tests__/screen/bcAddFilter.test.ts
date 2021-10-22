@@ -14,13 +14,14 @@ describe(`bcAddFilter reducer`, () => {
             bcName: 'bcExample',
             widgetName: 'text',
             filter: {
-                fieldName: 'key',
+                fieldName: 'startDateTime',
                 type: FilterType.equals,
-                value: `2021-08-19T23:15:17.498-03:00`
+                value: [`2021-09-13T11:22:29.255Z`, `2021-09-27T11:22:29.255Z`]
             }
         })
         const newState = screen(initialState, action, store)
-        expect(newState.filters.bcExample[0].value).toBe(`2021-08-20T00:00:00.000Z`)
+        expect(newState.filters.bcExample[0].value).toBe(`2021-09-13T00:00:00.000Z`)
+        expect(newState.filters.bcExample[1].value).toBe(`2021-09-27T00:00:00.000Z`)
     })
 })
 

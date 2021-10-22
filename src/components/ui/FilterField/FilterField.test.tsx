@@ -25,8 +25,10 @@ import { FieldType } from '../../../interfaces/view'
 import { RowMetaField } from '../../../interfaces/rowMeta'
 import { CheckboxFilter } from '../CheckboxFilter/CheckboxFilter'
 
+const { RangePicker } = DatePicker
+
 describe('`<ColumnFilterControl />`', () => {
-    it('renders `<DatePicker />` for date', () => {
+    it('renders `<RangePicker />` for date', () => {
         const onChange = jest.fn()
         const wrapper = mount(
             <ColumnFilterControl
@@ -36,10 +38,11 @@ describe('`<ColumnFilterControl />`', () => {
                 onChange={onChange}
             />
         )
-        expect(wrapper.find(DatePicker)).toHaveLength(1)
-        const now = moment()
-        wrapper.find(DatePicker).invoke('onChange')(now, null)
-        expect(onChange).toBeCalledWith(now.toISOString())
+        expect(wrapper.find(RangePicker)).toHaveLength(1)
+        const startDateTime = moment()
+        const endDateTime = moment()
+        wrapper.find(RangePicker).invoke('onChange')([startDateTime, endDateTime], null)
+        expect(onChange).toBeCalledWith([startDateTime.toISOString(), endDateTime.toISOString()])
     })
     it('renders `<CheckboxFilter />` for dictionary', () => {
         const onChange = jest.fn()

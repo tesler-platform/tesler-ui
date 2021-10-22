@@ -30,6 +30,8 @@ import FilterPopup from '../../FilterPopup/FilterPopup'
 import { types as coreActions, $do } from '../../../actions/actions'
 import { FilterType, BcFilter } from '../../../interfaces/filters'
 
+const { RangePicker } = DatePicker
+
 const useDispatch = jest.fn()
 jest.spyOn(redux, 'useDispatch').mockImplementation(() => {
     return useDispatch
@@ -146,7 +148,7 @@ describe('`<ColumnFilter />`', () => {
         )
         const wrapper = mount(content)
         wrapper.find(Popover).childAt(0).simulate('click')
-        expect(wrapper.find(DatePicker)).toHaveLength(1)
+        expect(wrapper.find(RangePicker)).toHaveLength(1)
     })
 })
 
