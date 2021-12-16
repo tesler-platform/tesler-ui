@@ -3,7 +3,7 @@ import { Modal, Button } from 'antd'
 import { useTranslation } from 'react-i18next'
 import Pagination from '../../ui/Pagination/Pagination'
 import { PaginationMode } from '../../../interfaces/widget'
-import * as styles from './Popup.less'
+import styles from './Popup.less'
 import { ModalProps } from 'antd/lib/modal'
 import cn from 'classnames'
 

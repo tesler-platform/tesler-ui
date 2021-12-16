@@ -12,7 +12,7 @@ import { Skeleton, Tag } from 'antd'
 import FullHierarchyTable from '../../FullHierarchyTable/FullHierarchyTable'
 import { AssociatedItem } from '../../../interfaces/operation'
 import { BcFilter, FilterType } from '../../../interfaces/filters'
-import * as styles from '../../ui/Popup/Popup.less'
+import styles from '../../ui/Popup/Popup.less'
 import { useAssocRecords } from '../../../hooks/useAssocRecords'
 
 export interface IAssocListRecord {
@@ -221,7 +221,7 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
             footer={components?.footer}
             {...rest}
         >
-            {bcLoading ? <Skeleton loading paragraph={{ rows: 5 }} /> : { ...table }}
+            {bcLoading ? <Skeleton loading paragraph={{ rows: 5 }} /> : { table }}
         </Popup>
     )
 }

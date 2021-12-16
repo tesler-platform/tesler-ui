@@ -9,7 +9,7 @@ import { useWidgetOperations } from '../../hooks/useWidgetOperations'
 import { WidgetMeta } from '../../interfaces/widget'
 import { ClickParam } from 'antd/lib/menu'
 import { useTranslation } from 'react-i18next'
-import * as styles from './RowOperationsMenu.less'
+import styles from './RowOperationsMenu.less'
 
 /**
  * {@link RowOperationsMenu | RowOperationsMenu} properties

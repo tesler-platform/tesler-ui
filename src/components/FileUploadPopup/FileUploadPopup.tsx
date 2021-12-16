@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { Store } from '../../interfaces/store'
 import { Popup } from '../../components/ui/Popup/Popup'
 import { $do } from '../../actions/actions'
-import * as styles from './FileUploadPopup.less'
+import styles from './FileUploadPopup.less'
 import { getFileUploadEndpoint } from '../../utils/api'
 
 /**

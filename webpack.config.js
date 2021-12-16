@@ -107,8 +107,7 @@ module.exports = (_env, options) => {
                                     ]
                                 }
                             },
-                            happyPackMode: false,
-                            experimentalWatchApi: false,
+                            experimentalFileCaching: false,
                             compilerOptions: {
                                 sourceMap: true
                             }
@@ -123,10 +122,12 @@ module.exports = (_env, options) => {
                     use: [
                         { loader: 'style-loader' },
                         { loader: 'css-loader', options: {
-                            modules: true,
-                            localIdentName: '[name]__[local]___[hash:base64:5]'
+                            modules: {
+                                auto: true,
+                                localIdentName: '[name]__[local]___[hash:base64:5]'
+                            },
                         } },
-                        { loader: 'less-loader', options: { javascriptEnabled: true } }
+                        { loader: 'less-loader', options: { lessOptions: { javascriptEnabled: true } } }
                     ]
                 },
                 {
