@@ -10,7 +10,7 @@ import { PaginationMode, WidgetListField, WidgetTableMeta } from '../../../inter
 import { RowMetaField } from '../../../interfaces/rowMeta'
 import { DataItem, PendingDataItem } from '../../../interfaces/data'
 import { buildBcUrl } from '../../../utils/strings'
-import * as styles from './TableWidget.less'
+import styles from './TableWidget.less'
 import { FieldType, ViewSelectedCell } from '../../../interfaces/view'
 import Field from '../../Field/Field'
 import { Route } from '../../../interfaces/router'
