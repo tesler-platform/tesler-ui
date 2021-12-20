@@ -303,11 +303,11 @@ const mapDispatchToProps = createMapDispatchToProps(
             },
             onFilter: (bcName: string, filter: BcFilter) => {
                 ctx.dispatch($do.bcAddFilter({ bcName, filter }))
-                ctx.dispatch($do.bcForceUpdate({ bcName }))
+                ctx.dispatch($do.bcForceUpdate({ bcName, widgetName: filter.widgetName }))
             },
             onRemoveFilter: (bcName: string, filter: BcFilter) => {
                 ctx.dispatch($do.bcRemoveFilter({ bcName, filter }))
-                ctx.dispatch($do.bcForceUpdate({ bcName }))
+                ctx.dispatch($do.bcForceUpdate({ bcName, widgetName: filter.widgetName }))
             }
         }
     }

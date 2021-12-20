@@ -99,7 +99,9 @@ describe('`<FilterPopup />`', () => {
                 })
             )
         )
-        expect(useDispatch.mock.calls[1][0]).toEqual(expect.objectContaining($do.bcForceUpdate({ bcName: 'bcExample' })))
+        expect(useDispatch.mock.calls[1][0]).toEqual(
+            expect.objectContaining($do.bcForceUpdate({ bcName: 'bcExample', widgetName: 'widget-example' }))
+        )
         expect(onApply).toBeCalled()
     })
 
@@ -122,7 +124,9 @@ describe('`<FilterPopup />`', () => {
                 })
             )
         )
-        expect(useDispatch.mock.calls[1][0]).toEqual(expect.objectContaining($do.bcForceUpdate({ bcName: 'bcExample' })))
+        expect(useDispatch.mock.calls[1][0]).toEqual(
+            expect.objectContaining($do.bcForceUpdate({ bcName: 'bcExample', widgetName: 'widget-example' }))
+        )
         expect(onApply).toBeCalled()
     })
 
@@ -145,7 +149,9 @@ describe('`<FilterPopup />`', () => {
                 })
             )
         )
-        expect(useDispatch.mock.calls[1][0]).toEqual(expect.objectContaining($do.bcForceUpdate({ bcName: 'bcExample' })))
+        expect(useDispatch.mock.calls[1][0]).toEqual(
+            expect.objectContaining($do.bcForceUpdate({ bcName: 'bcExample', widgetName: 'widget-example' }))
+        )
         expect(onCancel).toBeCalled()
     })
 

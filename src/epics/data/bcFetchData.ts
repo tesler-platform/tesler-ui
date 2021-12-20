@@ -78,7 +78,7 @@ export function bcFetchDataImpl(
     const bcName = action.payload.bcName
     const bc = state.screen.bo.bc[bcName]
     const { cursor, page } = bc
-    const limit = widgets.find(i => i.bcName === bcName)?.limit || bc.limit
+    const limit = widgets.find(i => i.bcName === widgetName)?.limit || bc.limit
     const sorters = state.screen.sorters[bcName]
     /**
      * If popup has the same bc as initiator no data fetching required, it will be
