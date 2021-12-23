@@ -88,7 +88,7 @@ export interface TableWidgetProps extends TableWidgetOwnProps {
     onSelectCell: (cursor: string, widgetName: string, fieldKey: string) => void
     onRemoveFilters: (bcName: string) => void
     onApplyFilter: (bcName: string, filter: BcFilter, widgetName?: string) => void
-    onForceUpdate: (bcName: string) => void
+    onForceUpdate: (bcName: string, widgetName: string) => void
 }
 
 /**
@@ -235,8 +235,8 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
 
     const handleRemoveFilters = React.useCallback(() => {
         onRemoveFilters(widgetBcName)
-        onForceUpdate(widgetBcName)
-    }, [onRemoveFilters, onForceUpdate, widgetBcName])
+        onForceUpdate(widgetBcName, widgetMetaName)
+    }, [onRemoveFilters, widgetBcName, onForceUpdate, widgetMetaName])
 
     const handleAddFilters = React.useMemo(() => {
         return (value: string) => {
@@ -245,9 +245,9 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
             setFilterGroupName(filterGroup.name)
             onRemoveFilters(widgetBcName)
             parsedFilters.forEach(item => onApplyFilter(widgetBcName, item, widgetName))
-            onForceUpdate(widgetBcName)
+            onForceUpdate(widgetBcName, widgetMetaName)
         }
-    }, [filterGroups, widgetBcName, widgetName, setFilterGroupName, onRemoveFilters, onApplyFilter, onForceUpdate])
+    }, [filterGroups, onRemoveFilters, widgetBcName, onForceUpdate, widgetMetaName, onApplyFilter, widgetName])
 
     React.useEffect(() => {
         if (!filtersExist) {
@@ -347,8 +347,8 @@ function mapDispatchToProps(dispatch: Dispatch) {
         onApplyFilter: (bcName: string, filter: BcFilter, widgetName?: string) => {
             dispatch($do.bcAddFilter({ bcName, filter, widgetName }))
         },
-        onForceUpdate: (bcName: string) => {
-            dispatch($do.bcForceUpdate({ bcName }))
+        onForceUpdate: (bcName: string, widgetName: string) => {
+            dispatch($do.bcForceUpdate({ bcName, widgetName }))
         }
     }
 }

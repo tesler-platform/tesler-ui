@@ -77,7 +77,7 @@ export const FilterPopup: React.FC<FilterPopupProps> = props => {
         }
         // FullHierarchy has its own implementation of data search without backend query filtered data
         if (!widget.options?.hierarchyFull) {
-            dispatch($do.bcForceUpdate({ bcName: widget.bcName }))
+            dispatch($do.bcForceUpdate({ bcName: widget.bcName, widgetName: widget.name }))
         }
         props.onApply?.()
     }
@@ -87,7 +87,7 @@ export const FilterPopup: React.FC<FilterPopupProps> = props => {
         if (filter) {
             dispatch($do.bcRemoveFilter({ bcName: widget.bcName, filter }))
             if (!widget.options?.hierarchyFull) {
-                dispatch($do.bcForceUpdate({ bcName: widget.bcName }))
+                dispatch($do.bcForceUpdate({ bcName: widget.bcName, widgetName: widget.name }))
             }
         }
         props.onCancel?.()

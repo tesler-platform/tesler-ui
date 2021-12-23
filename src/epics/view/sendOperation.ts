@@ -102,7 +102,7 @@ export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store
                     : Observable.empty<never>()
                 : Observable.concat(
                       Observable.of($do.sendOperationSuccess({ bcName, cursor })),
-                      Observable.of($do.bcForceUpdate({ bcName })),
+                      Observable.of($do.bcForceUpdate({ bcName, widgetName })),
                       ...postOperationRoutine(widgetName, postInvoke, preInvoke, operationType, bcName)
                   )
         })

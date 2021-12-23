@@ -85,7 +85,7 @@ describe('fileUploadConfirm', () => {
             expect(result[1]).toEqual(
                 expect.objectContaining({
                     type: coreActions.bcForceUpdate,
-                    payload: { bcName: 'bcExample' }
+                    payload: { bcName: 'bcExample', widgetName: 'widget-example' }
                 })
             )
             expect(result[2]).toEqual(
