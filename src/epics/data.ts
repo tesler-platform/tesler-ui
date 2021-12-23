@@ -21,6 +21,7 @@ import { getBcChildren } from '../utils/bc'
 import { bcSelectDepthRecord } from './data/bcSelectDepthRecord'
 import { bcFetchDataEpic } from './data/bcFetchData'
 import { bcSaveDataEpic } from './data/bcSaveData'
+import { saveAssociationsActive } from './data/saveAssociationsActive'
 
 /**
  *
@@ -217,43 +218,6 @@ export const saveAssociationsPassive: Epic = (action$, store) =>
                     }
                 })
             )
-        })
-
-/**
- * Works with assoc-lists, which does call back-end's assoc methods by click on confirm button in modal window
- *
- * @category Epics
- */
-export const saveAssociationsActive: Epic = (action$, store) =>
-    action$
-        .ofType(types.saveAssociations)
-        .filter(action => {
-            return store.getState().view.popupData.active
-        })
-        .switchMap(action => {
-            const state = store.getState()
-            const calleeBCName = state.view.popupData.calleeBCName
-            const bcNames = action.payload.bcNames
-            const bcUrl = buildBcUrl(calleeBCName, true)
-            const pendingChanges = state.view.pendingDataChanges[bcNames[0]] || {}
-            const params: Record<string, any> = bcNames.length ? { _bcName: bcNames[bcNames.length - 1] } : {}
-            return api
-                .associate(state.screen.screenName, bcUrl, Object.values(pendingChanges) as AssociatedItem[], params)
-                .mergeMap(response => {
-                    const postInvoke = response.postActions[0]
-                    const calleeWidget = state.view.widgets.find(widgetItem => widgetItem.bcName === calleeBCName)
-                    return Observable.concat(
-                        postInvoke
-                            ? Observable.of($do.processPostInvoke({ bcName: calleeBCName, postInvoke, widgetName: calleeWidget.name }))
-                            : Observable.empty<never>(),
-                        Observable.of($do.bcCancelPendingChanges({ bcNames: bcNames })),
-                        Observable.of($do.bcForceUpdate({ bcName: calleeBCName }))
-                    )
-                })
-                .catch(err => {
-                    console.error(err)
-                    return Observable.empty<never>()
-                })
         })
 
 /**
