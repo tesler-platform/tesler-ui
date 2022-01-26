@@ -21,7 +21,7 @@
     "start:progress": "yarn start --progress --profile",
     "build:stats": "webpack --env production --json > stats.json",
     "test": "jest",
-    "test:coverage": "jest --coverage --coverageProvider=v8",
+    "test:coverage": "node --max_old_space_size=4096 ./node_modules/jest/bin/jest --coverage --coverageProvider=v8",
     "lint": "yarn eslint ./src",
     "check": "yarn run lint && yarn run test",
     "doc:gen": "typedoc --out docs --categorizeByGroup src/index.ts src/interfaces/index.ts --categorizeByGroup false --readme none",
