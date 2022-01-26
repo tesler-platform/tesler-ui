@@ -126,11 +126,13 @@ const ModalInvoke: React.FunctionComponent<ModalInvokeProps> = props => {
 }
 
 function mapStateToProps(store: Store) {
-    const { operation, confirmOperation } = store.view.modalInvoke
+    const modalInvoke = store.view.modalInvoke
+    const operation = modalInvoke?.operation
+    const confirmOperation = modalInvoke?.confirmOperation
     return {
-        bcName: operation.bcName,
-        operationType: operation.operationType,
-        widgetName: operation.widgetName,
+        bcName: operation?.bcName,
+        operationType: operation?.operationType,
+        widgetName: operation?.widgetName,
         confirmOperation
     }
 }
