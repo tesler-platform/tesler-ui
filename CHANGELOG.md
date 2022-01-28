@@ -1,3 +1,11 @@
+# Version 1.33.2 (October 28, 2022)
+
+## Fixes
+
+* devDependency axios does not match with declared peer dependency ([#722](https://github.com/tesler-platform/tesler-ui/pull/722))
+* `saveAssociationsActive` sends request with truly associated items only ([#728](https://github.com/tesler-platform/tesler-ui/pull/728))
+* null check is added to `ModalInvoke`'s `mapStateToProps` ([731](https://github.com/tesler-platform/tesler-ui/pull/731))
+
 # Version 1.33.1 (October 8, 2021)
 
 ## Fixes
