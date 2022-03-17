@@ -6,7 +6,8 @@ import { MultivalueFieldMeta, WidgetListField, WidgetMeta } from '../../interfac
 import styles from './ColumnFilter.less'
 import { $do } from '../../actions/actions'
 import { Store } from '../../interfaces/store'
-import { BcFilter } from '../../interfaces/filters'
+import { DataValue } from '../../interfaces/data'
+import { BcFilter, FilterType } from '../../interfaces/filters'
 import { FieldType } from '../../interfaces/view'
 import cn from 'classnames'
 import filterIcon from './filter-solid.svg'
@@ -58,14 +59,18 @@ export function ColumnFilter({ widgetName, widgetMeta, rowMeta, components }: Co
     const bcName = widget?.bcName
     const effectiveFieldMeta = (widget?.fields?.find((item: WidgetListField) => item.key === widgetMeta.filterBy) ??
         widgetMeta) as WidgetListField
-    const filter = useSelector((store: Store) => store.screen.filters[bcName]?.find(item => item.fieldName === effectiveFieldMeta.key))
-    const [value, setValue] = React.useState(filter?.value)
+    const filter = useSelector(
+        (store: Store) => store.screen.filters[bcName]?.filter(item => item.fieldName === effectiveFieldMeta.key) || []
+    )
+    const [value, setValue] = React.useState(filter[0]?.value)
     const [visible, setVisible] = React.useState(false)
     const dispatch = useDispatch()
 
     React.useEffect(() => {
-        setValue(filter?.value)
-    }, [filter?.value])
+        filter[0]?.type === FilterType.greaterOrEqualThan
+            ? setValue([filter[0]?.value as DataValue, filter[1]?.value as DataValue] as DataValue[])
+            : setValue(filter[0]?.value)
+    }, [filter[0]?.value])
 
     const fieldMeta = effectiveFieldMeta as MultivalueFieldMeta | PickListFieldMeta
     const fieldMetaMultivalue = effectiveFieldMeta as MultivalueFieldMeta
@@ -122,7 +127,7 @@ export function ColumnFilter({ widgetName, widgetMeta, rowMeta, components }: Co
             onVisibleChange={handleVisibleChange}
         >
             <div
-                className={cn(styles.icon, { [styles.active]: filter?.value?.toString()?.length > 0 })}
+                className={cn(styles.icon, { [styles.active]: filter[0]?.value?.toString()?.length > 0 })}
                 dangerouslySetInnerHTML={{ __html: filterIcon }}
             />
         </Popover>

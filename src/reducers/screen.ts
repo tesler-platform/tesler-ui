@@ -1,11 +1,12 @@
 import { AnyAction, types } from '../actions/actions'
 import { ScreenState } from '../interfaces/screen'
+import { DataValue } from '../interfaces/data'
 import { BcMeta, BcMetaState } from '../interfaces/bc'
 import { OperationTypeCrud } from '../interfaces/operation'
 import { parseFilters, parseSorters } from '../utils/filters'
-import { BcFilter, BcSorter } from '../interfaces/filters'
+import { BcFilter, BcSorter, FilterType } from '../interfaces/filters'
 import { Store } from 'interfaces/store'
-import { WidgetField, FieldType } from '@tesler-ui/schema'
+import { FieldType, WidgetField } from '@tesler-ui/schema'
 
 export const initialState: ScreenState = {
     screenName: null,
@@ -302,13 +303,21 @@ export function screen(state = initialState, action: AnyAction, store: Store): S
             const { bcName, filter, widgetName } = action.payload
             const isDate = store.view.widgets
                 .find(item => item.name === widgetName)
-                ?.fields.find((item: WidgetField) => item.type === FieldType.date && item.key === filter.fieldName)
-            const newFilter = isDate ? { ...filter, value: correctDateFilter(filter.value as string) } : filter
+                ?.fields.find((item: WidgetField) => item.type === FieldType.dateTime && item.key === filter.fieldName)
+            const newFilter: BcFilter[] = []
+            if (filter.type === FilterType.equals && filter.fieldName === 'startDateTime') {
+                const dataValue = filter.value as DataValue[]
+                const greaterOrEqualThan = correctDateFilter(dataValue[0] as string)
+                const lessOrEqualThan = correctDateFilter(dataValue[1] as string)
+                newFilter.push({ ...filter, type: FilterType.greaterOrEqualThan, value: greaterOrEqualThan })
+                newFilter.push({ ...filter, type: FilterType.lessOrEqualThan, value: lessOrEqualThan })
+            } else {
+                newFilter.push(filter)
+            }
             const prevFilters = state.filters[bcName] || []
-            const prevFilter = prevFilters.find(item => item.fieldName === filter.fieldName && item.type === filter.type)
-            const newFilters = prevFilter
-                ? prevFilters.map(item => (item === prevFilter ? { ...prevFilter, value: newFilter.value } : item))
-                : [...prevFilters, newFilter]
+            const prevFilter = prevFilters.filter(item => item.fieldName === filter.fieldName)
+
+            const newFilters = getFilterValue(prevFilter, newFilter, prevFilters, !!isDate)
             return {
                 ...state,
                 bo: {
@@ -330,7 +339,10 @@ export function screen(state = initialState, action: AnyAction, store: Store): S
         case types.bcRemoveFilter: {
             const { bcName, filter } = action.payload
             const prevBcFilters = state.filters[bcName] || []
-            const newBcFilters = prevBcFilters.filter(item => item.fieldName !== filter?.fieldName || item.type !== filter.type)
+            const isDate = filter.fieldName === 'startDateTime'
+            const newBcFilters = isDate
+                ? prevBcFilters.filter(item => item.fieldName !== filter?.fieldName)
+                : prevBcFilters.filter(item => item.fieldName !== filter?.fieldName || item.type !== filter.type)
             const newFilters = { ...state.filters, [bcName]: newBcFilters }
             if (!newBcFilters.length) {
                 delete newFilters[bcName]
@@ -432,6 +444,31 @@ function correctDateFilter(timestamp: string) {
         -(originalDate.getTimezoneOffset() / 60)
     )
     return newDate.toISOString()
+}
+
+/***
+ *
+ * The function getFilterValue returns value based on the previous filter and whether the widget type is dateTime type
+ *
+ */
+const getFilterValue = (prevFilter: BcFilter[], newsFilter: BcFilter[], prevFilters: BcFilter[], isDate: boolean): BcFilter[] => {
+    if (prevFilter.length) {
+        if (isDate) {
+            return prevFilters.map(el =>
+                el.type === FilterType.greaterOrEqualThan
+                    ? { ...el, value: newsFilter[0].value }
+                    : el.type === FilterType.lessOrEqualThan
+                    ? { ...el, value: newsFilter[1].value }
+                    : el
+            )
+        } else {
+            return prevFilters.map(el => {
+                if (el === prevFilter[0]) {
+                    return { ...prevFilter[0], value: newsFilter[0].value }
+                } else return el
+            })
+        }
+    } else return [...prevFilters, ...newsFilter]
 }
 
 const operationsHandledLocally: string[] = [OperationTypeCrud.associate, OperationTypeCrud.fileUpload]

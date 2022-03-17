@@ -142,6 +142,10 @@ export function getFilterType(fieldType: FieldType) {
         case FieldType.text: {
             return FilterType.contains
         }
+        case FieldType.date:
+        case FieldType.dateTime: {
+            return FilterType.equals
+        }
         default:
             return FilterType.equals
     }
