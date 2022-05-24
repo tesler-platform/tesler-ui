@@ -1,20 +1,20 @@
-import { Store } from 'redux'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { mockStore } from '../../../tests/mockStore'
 import { $do, types } from '../../../actions/actions'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, StateObservable } from 'redux-observable'
 import { switchRoleEpic } from '../switchRole'
 import { testEpic } from '../../../tests/testEpic'
+import { createMockStateObservable } from '../../../tests/createMockStateObservable'
 
 describe('switchRoleEpic', () => {
-    let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
 
     beforeAll(() => {
-        store = mockStore()
+        store$ = createMockStateObservable()
     })
+
     it('should call logoutDone and login', () => {
         const action = $do.switchRole({ role: 'role' })
-        const epic = switchRoleEpic(ActionsObservable.of(action), store)
+        const epic = switchRoleEpic(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             expect(result.length).toBe(2)
             expect(result[0].type).toBe(types.logoutDone)

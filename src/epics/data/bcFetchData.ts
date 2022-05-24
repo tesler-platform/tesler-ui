@@ -15,14 +15,15 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store, AnyAction } from 'redux'
+import { concat as observableConcat, of as observableOf, Observable, race as observableRace, EMPTY } from 'rxjs'
+import { catchError, mergeMap } from 'rxjs/operators'
+import { AnyAction } from 'redux'
 import { Epic, types, $do, ActionsMap } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { buildBcUrl } from '../../utils/strings'
 import { fetchBcData, createCanceler } from '../../api/api'
 import { cancelRequestActionTypes, cancelRequestEpic } from '../../utils/cancelRequestEpic'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, ofType, StateObservable } from 'redux-observable'
 import { DataItem, WidgetTypes } from '@tesler-ui/schema'
 import { getFilters, getSorters } from '../../utils/filters'
 import { PopupWidgetTypes, WidgetMeta } from '../../interfaces/widget'
@@ -41,12 +42,13 @@ import { BcMetaState } from '../../interfaces/bc'
  * @param action.payload.bcName BC's name for data load
  * @category Epics
  */
-export const bcFetchDataEpic: Epic = (action$, store) =>
-    action$
-        .ofType(types.bcFetchDataRequest, types.bcFetchDataPages, types.showViewPopup, types.bcForceUpdate, types.bcChangePage)
-        .mergeMap(action => {
-            return Observable.race(...bcFetchDataImpl(action, store, action$))
+export const bcFetchDataEpic: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.bcFetchDataRequest, types.bcFetchDataPages, types.showViewPopup, types.bcForceUpdate, types.bcChangePage),
+        mergeMap(action => {
+            return observableRace(...bcFetchDataImpl(action, store$, action$))
         })
+    )
 
 type ActionType = ActionsMap[
     | typeof types.bcFetchDataRequest
@@ -57,10 +59,10 @@ type ActionType = ActionsMap[
 
 export function bcFetchDataImpl(
     action: ActionType,
-    store: Store<CoreStore, AnyAction>,
+    storeObservable: StateObservable<CoreStore>,
     actionObservable: ActionsObservable<AnyAction>
 ): Array<Observable<AnyAction>> {
-    const state = store.getState()
+    const state = storeObservable.value
     const { widgetName } = action.payload
     const { widgets, infiniteWidgets } = state.view
 
@@ -73,7 +75,7 @@ export function bcFetchDataImpl(
      * Missing widget means the view or screen were changed and data request is no longer relevant
      */
     if (!widget) {
-        return [Observable.empty()]
+        return [EMPTY]
     }
     const bcName = action.payload.bcName
     const bc = state.screen.bo.bc[bcName]
@@ -85,7 +87,7 @@ export function bcFetchDataImpl(
      * handled by initiator widget instead
      */
     if (action.type === types.showViewPopup && bcName === action.payload.calleeBCName) {
-        return [Observable.empty()]
+        return [EMPTY]
     }
 
     const anyHierarchyWidget = widgets.find(item => {
@@ -141,8 +143,8 @@ export function bcFetchDataImpl(
         }
     )
 
-    const normalFlow = fetchBcData(state.screen.screenName, bcUrl, fetchParams, canceler.cancelToken)
-        .mergeMap(response => {
+    const normalFlow = fetchBcData(state.screen.screenName, bcUrl, fetchParams, canceler.cancelToken).pipe(
+        mergeMap(response => {
             const cursorChange = getCursorChange(response.data, action, cursor, !!anyHierarchyWidget)
             const parentOfNotLazyWidget = widgets.some(item => {
                 return state.screen.bo.bc[item.bcName]?.parentName === bcName && !PopupWidgetTypes.includes(item.type)
@@ -174,16 +176,16 @@ export function bcFetchDataImpl(
             const lazyWidget = (!isWidgetVisible(widget) || PopupWidgetTypes.includes(widget.type)) && !parentOfNotLazyWidget
             const skipLazy = state.view.popupData?.bcName !== widget.bcName
             if (lazyWidget && skipLazy) {
-                return Observable.empty<never>()
+                return EMPTY
             }
             const fetchChildren = response.data?.length
                 ? getChildrenData(action, widgets, state.screen.bo.bc, !!anyHierarchyWidget, isWidgetVisible)
-                : Observable.empty<never>()
-            const fetchRowMeta = Observable.of<AnyAction>($do.bcFetchRowMeta({ widgetName, bcName }))
+                : EMPTY
+            const fetchRowMeta = observableOf<AnyAction>($do.bcFetchRowMeta({ widgetName, bcName }))
 
-            return Observable.concat(
+            return observableConcat(
                 cursorChange,
-                Observable.of(
+                observableOf(
                     $do.bcFetchDataSuccess({
                         bcName,
                         data: response.data,
@@ -194,11 +196,12 @@ export function bcFetchDataImpl(
                 fetchRowMeta,
                 fetchChildren
             )
-        })
-        .catch((error: any) => {
+        }),
+        catchError((error: any) => {
             console.error(error)
-            return Observable.of($do.bcFetchDataFail({ bcName: action.payload.bcName, bcUrl }))
+            return observableOf($do.bcFetchDataFail({ bcName: action.payload.bcName, bcUrl }))
         })
+    )
     return [cancelFlow, cancelByParentBc, normalFlow]
 }
 
@@ -213,7 +216,7 @@ function getCursorChange(data: DataItem[], action: ActionType, prevCursor: strin
     const { bcName } = action.payload
     const { keepDelta } = (action as ActionsMap[typeof types.bcFetchDataRequest]).payload
     const newCursor = data[0]?.id
-    const changeCurrentCursor = Observable.of<AnyAction>(
+    const changeCurrentCursor = observableOf<AnyAction>(
         $do.bcChangeCursors({
             cursorsMap: {
                 [bcName]: data.some(i => i.id === prevCursor) ? prevCursor : newCursor
@@ -241,7 +244,7 @@ function getChildrenData(
     const { bcName } = action.payload
     const { ignorePageLimit } = (action as ActionsMap[typeof types.bcFetchDataRequest]).payload
     const { keepDelta } = (action as ActionsMap[typeof types.bcFetchDataRequest]).payload
-    return Observable.concat(
+    return observableConcat(
         ...Object.entries(getBcChildren(bcName, widgets, bcDictionary))
             .filter(([childBcName, widgetNames]) => {
                 const nonLazyWidget = widgets.find(item => {
@@ -257,7 +260,7 @@ function getChildrenData(
                 const nonLazyWidget = widgets.find(item => {
                     return widgetNames.includes(item.name) && !PopupWidgetTypes.includes(item.type) && showConditionCheck(item)
                 })
-                return Observable.of(
+                return observableOf(
                     $do.bcFetchDataRequest({
                         bcName: childBcName,
                         widgetName: nonLazyWidget.name,

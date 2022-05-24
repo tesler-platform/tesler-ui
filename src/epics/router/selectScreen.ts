@@ -15,36 +15,40 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store } from 'redux'
+import { of as observableOf, Observable } from 'rxjs'
+import { switchMap } from 'rxjs/operators'
 import { Epic, types, AnyAction, ActionsMap, $do } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
+import { ofType, StateObservable } from 'redux-observable'
 
 /**
  *
  * TODO: Rename to `selectScreen` in 2.0.0
  *
  * @param action$ `selectScreen` action
- * @param store
+ * @param store$
  */
-export const changeScreen: Epic = (action$, store) =>
-    action$.ofType(types.selectScreen).switchMap(action => {
-        return selectScreenImpl(action, store)
-    })
+export const changeScreen: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.selectScreen),
+        switchMap(action => {
+            return selectScreenImpl(action, store$)
+        })
+    )
 
 /**
  *
  * @param action
- * @param store
+ * @param store$
  * @category Epics
  */
-export function selectScreenImpl(action: ActionsMap['selectScreen'], store: Store<CoreStore>): Observable<AnyAction> {
-    const state = store.getState()
+export function selectScreenImpl(action: ActionsMap['selectScreen'], store$: StateObservable<CoreStore>): Observable<AnyAction> {
+    const state = store$.value
     const nextViewName = state.router.viewName
     const requestedView = state.screen.views.find(item => item.name === nextViewName)
     const defaultView = !nextViewName && state.screen.primaryView && state.screen.views.find(item => item.name === state.screen.primaryView)
     const nextView = requestedView || defaultView || state.screen.views[0]
     return nextView
-        ? Observable.of<AnyAction>($do.selectView(nextView))
-        : Observable.of<AnyAction>($do.selectViewFail({ viewName: nextViewName }))
+        ? observableOf<AnyAction>($do.selectView(nextView))
+        : observableOf<AnyAction>($do.selectViewFail({ viewName: nextViewName }))
 }

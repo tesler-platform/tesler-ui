@@ -16,43 +16,42 @@
  */
 
 import { showAssocPopup } from '../showAssocPopup'
-import { Store } from 'redux'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, StateObservable } from 'redux-observable'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { mockStore } from '../../../tests/mockStore'
 import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
 import { FieldType } from '../../../interfaces/view'
 import { $do } from '../../../actions/actions'
 import { testEpic } from '../../../tests/testEpic'
+import { createMockStateObservable } from '../../../tests/createMockStateObservable'
 
 describe('showAssocPopup', () => {
-    let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
 
     beforeAll(() => {
-        store = mockStore()
-        store.getState().screen.screenName = 'test'
-        store.getState().screen.bo.bc.bcExample = bcExample
-        store.getState().screen.bo.bc.bcParent = getBcParent()
-        store.getState().view.widgets = [getWidgetMeta()]
-        store.getState().view.pendingDataChanges = getPendingData()
-        store.getState().data = getData()
+        store$ = createMockStateObservable()
+        store$.value.screen.screenName = 'test'
+        store$.value.screen.bo.bc.bcExample = bcExample
+        store$.value.screen.bo.bc.bcParent = getBcParent()
+        store$.value.view.widgets = [getWidgetMeta()]
+        store$.value.view.pendingDataChanges = getPendingData()
+        store$.value.data = getData()
     })
 
     afterEach(() => {
-        store.getState().view.widgets = [getWidgetMeta()]
-        store.getState().view.pendingDataChanges = getPendingData()
-        store.getState().data = getData()
-        store.getState().screen.bo.bc.bcParent = getBcParent()
+        store$.value.view.widgets = [getWidgetMeta()]
+        store$.value.view.pendingDataChanges = getPendingData()
+        store$.value.data = getData()
+        store$.value.screen.bo.bc.bcParent = getBcParent()
     })
 
     it('fires only for AssocListPopup', () => {
         const missingCalleeBcName = $do.showViewPopup({ bcName: bcExample.name })
-        const missingCalleeBcNameEpic = showAssocPopup(ActionsObservable.of(missingCalleeBcName), store)
+        const missingCalleeBcNameEpic = showAssocPopup(ActionsObservable.of(missingCalleeBcName), store$)
         testEpic(missingCalleeBcNameEpic, result => {
             expect(result).toHaveLength(0)
         })
         const missingAssociateFieldKey = $do.showViewPopup({ bcName: bcExample.name, calleeBCName: bcParent.name })
-        const missingAssociateFieldKeyEpic = showAssocPopup(ActionsObservable.of(missingAssociateFieldKey), store)
+        const missingAssociateFieldKeyEpic = showAssocPopup(ActionsObservable.of(missingAssociateFieldKey), store$)
         testEpic(missingAssociateFieldKeyEpic, result => {
             expect(result).toHaveLength(0)
         })
@@ -61,7 +60,7 @@ describe('showAssocPopup', () => {
     // TODO: This behaviour does not make any sense; we should check if it should not fire
     // for widgets without options
     it('does not fire for missing widgets or widgets with options but not full hierarchies (sic)', () => {
-        store.getState().view.widgets[0] = {
+        store$.value.view.widgets[0] = {
             ...getWidgetMeta(),
             options: {}
         }
@@ -70,7 +69,7 @@ describe('showAssocPopup', () => {
             calleeBCName: bcParent.name,
             associateFieldKey: 'name'
         })
-        const notFullHierarchyEpic = showAssocPopup(ActionsObservable.of(notFullHierarchy), store)
+        const notFullHierarchyEpic = showAssocPopup(ActionsObservable.of(notFullHierarchy), store$)
         testEpic(notFullHierarchyEpic, result => {
             expect(result).toHaveLength(0)
         })
@@ -79,20 +78,20 @@ describe('showAssocPopup', () => {
             calleeBCName: bcParent.name,
             associateFieldKey: 'name'
         })
-        const missingWidgetEpic = showAssocPopup(ActionsObservable.of(missingWidget), store)
+        const missingWidgetEpic = showAssocPopup(ActionsObservable.of(missingWidget), store$)
         testEpic(missingWidgetEpic, result => {
             expect(result).toHaveLength(0)
         })
     })
 
     it('does not fire for missing cursor, pending change for BC or missing field in pending change', () => {
-        store.getState().screen.bo.bc[bcParent.name].cursor = null
+        store$.value.screen.bo.bc[bcParent.name].cursor = null
         const missingCursor = $do.showViewPopup({
             bcName: bcExample.name,
             calleeBCName: bcParent.name,
             associateFieldKey: 'name'
         })
-        const notFullHierarchyEpic = showAssocPopup(ActionsObservable.of(missingCursor), store)
+        const notFullHierarchyEpic = showAssocPopup(ActionsObservable.of(missingCursor), store$)
         testEpic(notFullHierarchyEpic, result => {
             expect(result).toHaveLength(0)
         })
@@ -101,7 +100,7 @@ describe('showAssocPopup', () => {
             calleeBCName: bcParent.name,
             associateFieldKey: 'missing'
         })
-        const missingFieldEpic = showAssocPopup(ActionsObservable.of(missingField), store)
+        const missingFieldEpic = showAssocPopup(ActionsObservable.of(missingField), store$)
         testEpic(missingFieldEpic, result => {
             expect(result).toHaveLength(0)
         })
@@ -110,24 +109,24 @@ describe('showAssocPopup', () => {
             calleeBCName: 'bcMissing',
             associateFieldKey: 'name'
         })
-        const missingBcEpic = showAssocPopup(ActionsObservable.of(missingBc), store)
+        const missingBcEpic = showAssocPopup(ActionsObservable.of(missingBc), store$)
         testEpic(missingBcEpic, result => {
             expect(result).toHaveLength(0)
         })
     })
 
     it('dispatches `changeDataItems` to init `_associate` and `_value` for popup BC from callee BC pending changes', () => {
-        store.getState().view.widgets[0] = {
+        store$.value.view.widgets[0] = {
             ...getWidgetMeta(),
             options: undefined
         }
-        delete store.getState().data[bcParent.name]
+        delete store$.value.data[bcParent.name]
         const action = $do.showViewPopup({
             bcName: bcExample.name,
             calleeBCName: bcParent.name,
             associateFieldKey: 'name'
         })
-        const epic = showAssocPopup(ActionsObservable.of(action), store)
+        const epic = showAssocPopup(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             const expectedAction = $do.changeDataItems({
                 bcName: bcExample.name,
@@ -155,7 +154,7 @@ describe('showAssocPopup', () => {
             calleeBCName: bcParent.name,
             associateFieldKey: 'name'
         })
-        const epic = showAssocPopup(ActionsObservable.of(action), store)
+        const epic = showAssocPopup(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             const expectedAction = $do.changeDataItems({
                 bcName: bcExample.name,

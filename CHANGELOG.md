@@ -1,3 +1,12 @@
+# Version 2.0.0 (May 23, 2022)
+
+## Features
+
+* Updated rxjs version from 5.5.12 to 6.6.7
+* Updated redux-observable from 0.14.1 to 1.2.0
+* Updated webpack-rxjs-externals from 1.1.0 to 2.0.0
+* Code migration: rxjs, redux-observable
+
 # Version 1.33.2 (October 28, 2022)
 
 ## Fixes

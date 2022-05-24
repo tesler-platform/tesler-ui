@@ -15,25 +15,24 @@
  * limitations under the License.
  */
 
+import { of as observableOf, throwError as observableThrowError } from 'rxjs'
 import { bcNewDataEpic } from '../bcNewDataEpic'
 import { $do } from '../../../actions/actions'
-import { Store } from 'redux'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { mockStore } from '../../../tests/mockStore'
 import * as api from '../../../api/api'
 import { newBcData } from '../../../api/api'
-import { Observable } from 'rxjs'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import { OperationTypeCrud, OperationPostInvokeRefreshBc, OperationPostInvokeType } from '../../../interfaces/operation'
 import { RowMeta } from '../../../interfaces/rowMeta'
+import { createMockStateObservable } from '../../../tests/createMockStateObservable'
 
 const newBcDataApiMock = jest.fn().mockImplementation((...args: Parameters<typeof newBcData>) => {
     const [screenName] = args
     if (screenName === 'crash') {
-        return Observable.throw('test request crash')
+        return observableThrowError('test request crash')
     }
-    return Observable.of({
+    return observableOf({
         row: rowMeta,
         postActions: screenName === 'withPostInvoke' ? [postInvoke] : [],
         preInvoke: null
@@ -46,7 +45,7 @@ jest.spyOn<any, any>(api, 'newBcData').mockImplementation(newBcDataApiMock)
 jest.spyOn(console, 'error').mockImplementation(consoleMock)
 
 describe('`bcNewDataEpic`', () => {
-    let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
 
     const action = $do.sendOperation({
         bcName: 'bcExample',
@@ -55,18 +54,18 @@ describe('`bcNewDataEpic`', () => {
     })
 
     beforeAll(() => {
-        store = mockStore()
-        store.getState().screen.screenName = 'test'
-        store.getState().screen.bo.bc.bcExample = bcExample
+        store$ = createMockStateObservable()
+        store$.value.screen.screenName = 'test'
+        store$.value.screen.bo.bc.bcExample = bcExample
     })
 
     afterEach(() => {
         jest.clearAllMocks()
-        store.getState().screen.screenName = 'test'
+        store$.value.screen.screenName = 'test'
     })
 
     it('sends `row-meta-new` request', () => {
-        const epic = bcNewDataEpic(ActionsObservable.of(action), store)
+        const epic = bcNewDataEpic(ActionsObservable.of(action), store$)
         testEpic(epic, () => {
             expect(newBcDataApiMock).toBeCalledWith(
                 'test',
@@ -78,7 +77,7 @@ describe('`bcNewDataEpic`', () => {
     })
 
     it('puts new record in the store and sets BC cursor', () => {
-        const epic = bcNewDataEpic(ActionsObservable.of(action), store)
+        const epic = bcNewDataEpic(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             expect(result.length).toBe(3)
             expect(result[0]).toEqual(
@@ -115,8 +114,8 @@ describe('`bcNewDataEpic`', () => {
     })
 
     it('process post invoke', () => {
-        store.getState().screen.screenName = 'withPostInvoke'
-        const epic = bcNewDataEpic(ActionsObservable.of(action), store)
+        store$.value.screen.screenName = 'withPostInvoke'
+        const epic = bcNewDataEpic(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             expect(result.length).toBe(4)
             expect(result[3]).toEqual(
@@ -133,13 +132,13 @@ describe('`bcNewDataEpic`', () => {
     })
 
     it('dispatch `bcNewDataFail` and console error on crash', () => {
-        store.getState().screen.screenName = 'crash'
+        store$.value.screen.screenName = 'crash'
         const brokenAction = $do.sendOperation({
             bcName: 'bcExample',
             widgetName: 'widget-example',
             operationType: OperationTypeCrud.create
         })
-        const epic = bcNewDataEpic(ActionsObservable.of(brokenAction), store)
+        const epic = bcNewDataEpic(ActionsObservable.of(brokenAction), store$)
         testEpic(epic, result => {
             expect(consoleMock).toBeCalledWith('test request crash')
             expect(result[0]).toEqual(expect.objectContaining($do.bcNewDataFail({ bcName: 'bcExample' })))

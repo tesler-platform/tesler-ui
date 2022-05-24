@@ -21,8 +21,9 @@
  * TODO: Probably will not be needed after migration to redux-observable 1.* and RxJS 6.* with TestScheduler.run available
  */
 
-import { TestScheduler, Notification, Observable } from 'rxjs'
+import { Notification, Observable } from 'rxjs'
 import { AnyAction } from '../actions/actions'
+import { TestScheduler } from 'rxjs/testing'
 
 /**
  * Result frame of test scheduler

@@ -1,25 +1,24 @@
-import { Store } from 'redux'
+import { of as observableOf, throwError as observableThrowError } from 'rxjs'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { mockStore } from '../../../tests/mockStore'
 import { $do } from '../../../actions/actions'
 import { saveAssociationsActive } from '../saveAssociationsActive'
-import { ActionsObservable } from 'redux-observable'
-import { Observable } from 'rxjs'
+import { ActionsObservable, StateObservable } from 'redux-observable'
 import * as api from '../../../api/api'
 import { associate } from '../../../api/api'
 import { testEpic } from '../../../tests/testEpic'
 import { WidgetTypes } from '@tesler-ui/schema'
+import { createMockStateObservable } from '../../../tests/createMockStateObservable'
 
 const associateApiMock = jest.fn().mockImplementation((...args: Parameters<typeof associate>) => {
     const [screenName] = args
     if (screenName === 'crash') {
-        return Observable.throw({
+        return observableThrowError({
             response: {
                 data: ''
             }
         })
     }
-    return Observable.of({
+    return observableOf({
         records: [],
         postActions: screenName === 'withPostInvoke' ? [{ type: 'refreshBC', bc: 'meeting' }] : []
     })
@@ -30,10 +29,10 @@ const consoleMock = jest.fn()
 jest.spyOn(console, 'error').mockImplementation(consoleMock)
 
 describe('saveAssociationsActive', () => {
-    let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
     beforeAll(() => {
-        store = mockStore()
-        store.getState().view.widgets = [
+        store$ = createMockStateObservable()
+        store$.value.view.widgets = [
             {
                 name: 'meeting',
                 bcName: 'meeting',
@@ -44,13 +43,13 @@ describe('saveAssociationsActive', () => {
                 title: 'meeting'
             }
         ]
-        store.getState().view.popupData = {
+        store$.value.view.popupData = {
             bcName: 'meetingAssoc',
             calleeBCName: 'meeting',
             calleeWidgetName: 'meetingList',
             active: true
         }
-        store.getState().view.pendingDataChanges = {
+        store$.value.view.pendingDataChanges = {
             meetingAssoc: {
                 '1117025': {
                     id: '1117025',
@@ -70,7 +69,7 @@ describe('saveAssociationsActive', () => {
         const action = $do.saveAssociations({
             bcNames: ['meetingAssoc']
         })
-        const epic = saveAssociationsActive(ActionsObservable.of(action), store)
+        const epic = saveAssociationsActive(ActionsObservable.of(action), store$)
         testEpic(epic, res => {
             expect(associateApiMock).toBeCalledWith(
                 null,
@@ -86,11 +85,11 @@ describe('saveAssociationsActive', () => {
         })
     })
     it('should call postInvoke', function () {
-        store.getState().screen.screenName = 'withPostInvoke'
+        store$.value.screen.screenName = 'withPostInvoke'
         const action = $do.saveAssociations({
             bcNames: ['meetingAssoc']
         })
-        const epic = saveAssociationsActive(ActionsObservable.of(action), store)
+        const epic = saveAssociationsActive(ActionsObservable.of(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(3)
             expect(res[0]).toEqual(
@@ -107,23 +106,23 @@ describe('saveAssociationsActive', () => {
     })
 
     it('should handle error', function () {
-        store.getState().screen.screenName = 'crash'
+        store$.value.screen.screenName = 'crash'
         const action = $do.saveAssociations({
             bcNames: ['meetingAssoc']
         })
-        const epic = saveAssociationsActive(ActionsObservable.of(action), store)
+        const epic = saveAssociationsActive(ActionsObservable.of(action), store$)
         testEpic(epic, () => {
             expect(consoleMock).toHaveBeenCalled()
         })
     })
 
     it('should send empty request body', function () {
-        store.getState().screen.screenName = 'empty'
-        store.getState().view.pendingDataChanges = {}
+        store$.value.screen.screenName = 'empty'
+        store$.value.view.pendingDataChanges = {}
         const action = $do.saveAssociations({
             bcNames: []
         })
-        const epic = saveAssociationsActive(ActionsObservable.of(action), store)
+        const epic = saveAssociationsActive(ActionsObservable.of(action), store$)
         testEpic(epic, () => {
             expect(associateApiMock).toHaveBeenLastCalledWith('empty', null, expect.objectContaining([]), expect.objectContaining({}))
         })

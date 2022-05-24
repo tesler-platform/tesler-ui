@@ -16,23 +16,22 @@
  */
 
 import { $do } from '../../../actions/actions'
-import { Store } from 'redux'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { mockStore } from '../../../tests/mockStore'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import { httpError409 } from '../httpError409'
 import * as notifications from '../../../utils/notifications'
 import { AxiosError } from 'axios'
+import { createMockStateObservable } from '../../../tests/createMockStateObservable'
 
 const mock = jest.fn().mockImplementation()
 jest.spyOn(notifications, 'openButtonWarningNotification').mockImplementation(mock)
 
 describe('httpError409', () => {
-    let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
 
     beforeAll(() => {
-        store = mockStore()
+        store$ = createMockStateObservable()
     })
 
     afterEach(() => {
@@ -47,7 +46,7 @@ describe('httpError409', () => {
             error,
             callContext: { widgetName: 'widget-example' }
         })
-        const epic = httpError409(ActionsObservable.of(action), store)
+        const epic = httpError409(ActionsObservable.of(action), store$)
         testEpic(epic, () => {
             expect(mock).toBeCalledWith('error message', 'OK', 0, null, 'action_edit_error')
         })
@@ -59,7 +58,7 @@ describe('httpError409', () => {
             error: getError(),
             callContext: { widgetName: 'widget-example' }
         })
-        const epic = httpError409(ActionsObservable.of(action), store)
+        const epic = httpError409(ActionsObservable.of(action), store$)
         testEpic(epic, () => {
             expect(mock).toBeCalledWith('', 'OK', 0, null, 'action_edit_error')
         })

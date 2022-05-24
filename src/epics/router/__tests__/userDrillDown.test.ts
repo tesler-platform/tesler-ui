@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 
+import { of as observableOf, throwError as observableThrowError } from 'rxjs'
 import { testEpic } from '../../../tests/testEpic'
 import { $do } from '../../../actions/actions'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, StateObservable } from 'redux-observable'
 import { mockStore } from '../../../tests/mockStore'
 import { Store } from 'redux'
 import { Store as CoreStore } from '../../../interfaces/store'
@@ -25,40 +26,42 @@ import { userDrillDown } from '../userDrillDown'
 import { WidgetTableMeta } from '../../../interfaces/widget'
 import { FieldType } from '../../../interfaces/view'
 import * as api from '../../../api/api'
-import { Observable } from 'rxjs'
 import { RowMeta } from '../../../interfaces/rowMeta'
 import { DrillDownType } from '../../../interfaces/router'
+import { createStateObservable } from '../../../tests/createStateObservable'
 
 describe('userDrillDown', () => {
     const errorMock = jest.fn()
     const fetchRowMeta = jest.fn().mockImplementation((screenName, bcUrl) => {
         if (screenName === 'screen-error') {
-            return Observable.throw('404 NOT FOUND')
+            return observableThrowError('404 NOT FOUND')
         }
         if (screenName === 'screen-inner') {
-            return Observable.of({ rowMeta, fields: rowMeta.fields.map(field => ({ ...field, drillDownType: DrillDownType.inner })) })
+            return observableOf({ rowMeta, fields: rowMeta.fields.map(field => ({ ...field, drillDownType: DrillDownType.inner })) })
         }
         if (screenName === 'screen-missing') {
-            return Observable.of({ rowMeta, fields: rowMeta.fields.map(field => ({ ...field, drillDown: null })) })
+            return observableOf({ rowMeta, fields: rowMeta.fields.map(field => ({ ...field, drillDown: null })) })
         }
-        return Observable.of(rowMeta)
+        return observableOf(rowMeta)
     })
 
     jest.spyOn(console, 'error').mockImplementation(errorMock)
     jest.spyOn(api, 'fetchRowMeta').mockImplementation(fetchRowMeta)
 
     let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
 
     beforeAll(() => {
         store = mockStore()
-        store.getState().screen.screenName = 'screen-example'
-        store.getState().screen.bo.bc = { bcExample }
-        store.getState().view.widgets = [getWidgetMeta()]
+        store$ = createStateObservable(store.getState())
+        store$.value.screen.screenName = 'screen-example'
+        store$.value.screen.bo.bc = { bcExample }
+        store$.value.view.widgets = [getWidgetMeta()]
     })
 
     afterEach(() => {
-        store.getState().data = {}
-        store.getState().screen.screenName = 'screen-example'
+        store$.value.data = {}
+        store$.value.screen.screenName = 'screen-example'
         errorMock.mockClear()
         fetchRowMeta.mockClear()
     })
@@ -66,7 +69,7 @@ describe('userDrillDown', () => {
     it('fires `bcChangeCursors` if cursor from action payload is different from BC cursor in the store', () => {
         const action = $do.userDrillDown({ ...payload, cursor: '5', fieldKey: 'missing' })
         const mockDispatch = jest.fn()
-        const epic = userDrillDown(ActionsObservable.of(action), { ...store, dispatch: mockDispatch })
+        const epic = userDrillDown(ActionsObservable.of(action), store$, { store: { ...store, dispatch: mockDispatch } })
         testEpic(epic, res => {
             expect(res.length).toBe(0)
             expect(mockDispatch).toBeCalledWith(
@@ -82,7 +85,7 @@ describe('userDrillDown', () => {
     it('handles missing widget', () => {
         const action = $do.userDrillDown({ ...payload, widgetName: 'missing', cursor: '5' })
         const mockDispatch = jest.fn()
-        const epic = userDrillDown(ActionsObservable.of(action), { ...store, dispatch: mockDispatch })
+        const epic = userDrillDown(ActionsObservable.of(action), store$, { store: { ...store, dispatch: mockDispatch } })
         testEpic(epic, res => {
             expect(errorMock).toBeCalledTimes(0)
         })
@@ -90,16 +93,16 @@ describe('userDrillDown', () => {
 
     it('sends fetch row meta request', () => {
         const action = $do.userDrillDown(payload)
-        const epic = userDrillDown(ActionsObservable.of(action), store)
+        const epic = userDrillDown(ActionsObservable.of(action), store$, { store })
         testEpic(epic, res => {
             expect(fetchRowMeta).toBeCalledWith('screen-example', 'bcExample/1')
         })
     })
 
     it('writes console error if fetch row meta request failed', () => {
-        store.getState().screen.screenName = 'screen-error'
+        store$.value.screen.screenName = 'screen-error'
         const action = $do.userDrillDown(payload)
-        const epic = userDrillDown(ActionsObservable.of(action), store)
+        const epic = userDrillDown(ActionsObservable.of(action), store$, { store })
         testEpic(epic, res => {
             expect(fetchRowMeta).toBeCalledWith('screen-error', 'bcExample/1')
             expect(errorMock).toBeCalledWith('404 NOT FOUND')
@@ -112,10 +115,10 @@ describe('userDrillDown', () => {
      * TODO: Review this case and either make condition strict or remove it completely
      */
     it('returns empty observable if drilldown is not needed', () => {
-        store.getState().router.path = null
-        store.getState().screen.screenName = 'screen-missing'
+        store$.value.router.path = null
+        store$.value.screen.screenName = 'screen-missing'
         const action = $do.userDrillDown(payload)
-        const epic = userDrillDown(ActionsObservable.of(action), store)
+        const epic = userDrillDown(ActionsObservable.of(action), store$, { store })
         testEpic(epic, res => {
             expect(fetchRowMeta).toBeCalledWith('screen-missing', 'bcExample/1')
             expect(errorMock).toBeCalledTimes(0)
@@ -124,9 +127,9 @@ describe('userDrillDown', () => {
     })
 
     it('fires `bcFetchRowMetaSuccess` (for not inner drilldowns), `userDrillDownSuccess` and `drillDown` on success', () => {
-        store.getState().router.path = '/screen-example'
+        store$.value.router.path = '/screen-example'
         const action = $do.userDrillDown(payload)
-        const epic = userDrillDown(ActionsObservable.of(action), store)
+        const epic = userDrillDown(ActionsObservable.of(action), store$, { store })
         testEpic(epic, res => {
             expect(res.length).toBe(3)
             expect(res[0]).toEqual(
@@ -153,7 +156,7 @@ describe('userDrillDown', () => {
                     $do.drillDown({
                         url: '/screen-new',
                         drillDownType: DrillDownType.relative,
-                        route: store.getState().router
+                        route: store$.value.router
                     })
                 )
             )
@@ -161,10 +164,10 @@ describe('userDrillDown', () => {
     })
 
     it('does not fire `bcFetchRowMetaSuccess` for inner drilldowns', () => {
-        store.getState().router.path = '/screen-inner'
-        store.getState().screen.screenName = 'screen-inner'
+        store$.value.router.path = '/screen-inner'
+        store$.value.screen.screenName = 'screen-inner'
         const action = $do.userDrillDown(payload)
-        const epic = userDrillDown(ActionsObservable.of(action), store)
+        const epic = userDrillDown(ActionsObservable.of(action), store$, { store })
         testEpic(epic, res => {
             expect(res.length).toBe(2)
             expect(res[0]).toEqual(
@@ -181,7 +184,7 @@ describe('userDrillDown', () => {
                     $do.drillDown({
                         url: '/screen-new',
                         drillDownType: DrillDownType.inner,
-                        route: store.getState().router
+                        route: store$.value.router
                     })
                 )
             )
@@ -189,18 +192,18 @@ describe('userDrillDown', () => {
     })
 
     it('uses custom drilldown url from the record if available', () => {
-        store.getState().data.bcExample = [{ id: '1', vstamp: 0, eee: '/custom-url' }]
-        store.getState().router.path = '/screen-inner'
-        store.getState().screen.screenName = 'screen-inner'
+        store$.value.data.bcExample = [{ id: '1', vstamp: 0, eee: '/custom-url' }]
+        store$.value.router.path = '/screen-inner'
+        store$.value.screen.screenName = 'screen-inner'
         const action = $do.userDrillDown(payload)
-        const epic = userDrillDown(ActionsObservable.of(action), store)
+        const epic = userDrillDown(ActionsObservable.of(action), store$, { store })
         testEpic(epic, res => {
             expect(res[1]).toEqual(
                 expect.objectContaining(
                     $do.drillDown({
                         url: '/custom-url',
                         drillDownType: DrillDownType.inner,
-                        route: store.getState().router
+                        route: store$.value.router
                     })
                 )
             )

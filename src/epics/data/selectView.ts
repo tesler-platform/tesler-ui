@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 
-import { ActionsMap, $do, AnyAction, types, Epic } from '../../actions/actions'
-import { Store } from 'redux'
+import { ActionsMap, $do, types, Epic } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { PopupWidgetTypes, WidgetMeta } from '../../interfaces/widget'
+import { ofType, StateObservable } from 'redux-observable'
+import { mergeMap } from 'rxjs/operators'
 
 /**
  * Schedules data fetch for every widget on the view
@@ -28,13 +29,16 @@ import { PopupWidgetTypes, WidgetMeta } from '../../interfaces/widget'
  * and data for its descendants will be scheduled after ancestor data fetch resolved.
  *
  * @see {@link src/epics/data/bcFetchDataEpic.ts} for details how descendants resolved
- * @param action `selectView` action
- * @param store Store instance
+ * @param action$ `selectView` action
+ * @param store$
  */
-export const selectView: Epic = (action$, store) =>
-    action$.ofType(types.selectView).mergeMap(action => {
-        return selectViewImpl(action, store)
-    })
+export const selectView: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.selectView),
+        mergeMap(action => {
+            return selectViewImpl(action, store$)
+        })
+    )
 
 /**
  * Default implementation for `selectView` epic.
@@ -47,11 +51,11 @@ export const selectView: Epic = (action$, store) =>
  *
  * @see {@link src/epics/data/bcFetchDataEpic.ts} for details how descendants resolved
  * @param action `selectView` action
- * @param store Store instance
+ * @param store$
  * @category Epics
  */
-export function selectViewImpl(action: ActionsMap['selectView'], store: Store<CoreStore, AnyAction>) {
-    const state = store.getState()
+export function selectViewImpl(action: ActionsMap['selectView'], store$: StateObservable<CoreStore>) {
+    const state = store$.value
     const bcToLoad: Record<string, WidgetMeta> = {}
     state.view.widgets
         .filter(widget => !PopupWidgetTypes.includes(widget.type))

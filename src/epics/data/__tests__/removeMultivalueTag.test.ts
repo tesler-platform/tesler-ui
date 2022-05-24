@@ -15,30 +15,29 @@
  * limitations under the License.
  */
 
-import { Store } from 'redux'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { mockStore } from '../../../tests/mockStore'
 import { WidgetTableMeta, WidgetTypes, WidgetTableHierarchy } from '../../../interfaces/widget'
 import { FieldType } from '../../../interfaces/view'
 import { removeMultivalueTag } from '../removeMultivalueTag'
 import { $do, types as coreActions } from '../../../actions/actions'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
+import { createMockStateObservable } from '../../../tests/createMockStateObservable'
 
 describe('removeMultivalueTag for full hierarchies', () => {
-    let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
 
     beforeAll(() => {
-        store = mockStore()
-        store.getState().screen.bo.bc.bcExample = bcExample
-        store.getState().data.bcExample = [{ id: '1', name: 'one', vstamp: 0 }]
-        store.getState().data.bcExamplePopup = [{ id: '9', name: 'one', vstamp: 0, _associate: true }]
-        store.getState().view.widgets = [getWidgetMeta()]
+        store$ = createMockStateObservable()
+        store$.value.screen.bo.bc.bcExample = bcExample
+        store$.value.data.bcExample = [{ id: '1', name: 'one', vstamp: 0 }]
+        store$.value.data.bcExamplePopup = [{ id: '9', name: 'one', vstamp: 0, _associate: true }]
+        store$.value.view.widgets = [getWidgetMeta()]
     })
 
     afterEach(() => {
-        store.getState().screen.bo.bc.bcExample = bcExample
-        store.getState().view.widgets = [getWidgetMeta()]
+        store$.value.screen.bo.bc.bcExample = bcExample
+        store$.value.view.widgets = [getWidgetMeta()]
     })
 
     it('sets a new value for field bc', () => {
@@ -50,7 +49,7 @@ describe('removeMultivalueTag for full hierarchies', () => {
             dataItem: [],
             removedItem: { id: '9', value: 'remove item' }
         })
-        const epic = removeMultivalueTag(ActionsObservable.of(action), store)
+        const epic = removeMultivalueTag(ActionsObservable.of(action), store$)
 
         testEpic(epic, result => {
             expect(result.length).toBe(1)
@@ -68,9 +67,9 @@ describe('removeMultivalueTag for full hierarchies', () => {
     })
 
     it('removes every associated children when `hierarchyGroupDeselection` enabled', () => {
-        store.getState().view.widgets[0].options.hierarchyGroupDeselection = true
-        store.getState().data.bcExamplePopup = getData()
-        store.getState().view.pendingDataChanges.bcExamplePopup = {
+        store$.value.view.widgets[0].options.hierarchyGroupDeselection = true
+        store$.value.data.bcExamplePopup = getData()
+        store$.value.view.pendingDataChanges.bcExamplePopup = {
             '932': { _associate: true, name: 'one three two' }
         }
         const removedItem = { id: '9', value: 'one' }
@@ -83,7 +82,7 @@ describe('removeMultivalueTag for full hierarchies', () => {
             dataItem,
             removedItem
         })
-        const epic = removeMultivalueTag(ActionsObservable.of(action), store)
+        const epic = removeMultivalueTag(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             expect(result[0]).toEqual(
                 expect.objectContaining({
@@ -107,10 +106,10 @@ describe('removeMultivalueTag for full hierarchies', () => {
     })
 
     it('removes every associated descendant when `hierarchyGroupDeselection` and `hierarchyTraverse` enabled', () => {
-        store.getState().view.widgets[0].options.hierarchyGroupDeselection = true
-        store.getState().view.widgets[0].options.hierarchyTraverse = true
-        store.getState().data.bcExamplePopup = getData()
-        store.getState().view.pendingDataChanges.bcExamplePopup = {
+        store$.value.view.widgets[0].options.hierarchyGroupDeselection = true
+        store$.value.view.widgets[0].options.hierarchyTraverse = true
+        store$.value.data.bcExamplePopup = getData()
+        store$.value.view.pendingDataChanges.bcExamplePopup = {
             '932': { _associate: true, name: 'one three two' }
         }
         const removedItem = { id: '9', value: 'one' }
@@ -123,7 +122,7 @@ describe('removeMultivalueTag for full hierarchies', () => {
             dataItem,
             removedItem
         })
-        const epic = removeMultivalueTag(ActionsObservable.of(action), store)
+        const epic = removeMultivalueTag(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             expect(result[0]).toEqual(
                 expect.objectContaining({
@@ -144,9 +143,9 @@ describe('removeMultivalueTag for full hierarchies', () => {
     })
 
     it('removes parent node if removed last child when `hierarchyGroupDeselection` enabled', () => {
-        store.getState().view.widgets[0].options.hierarchyGroupDeselection = true
-        store.getState().data.bcExamplePopup = getData()
-        store.getState().view.pendingDataChanges.bcExamplePopup = {
+        store$.value.view.widgets[0].options.hierarchyGroupDeselection = true
+        store$.value.data.bcExamplePopup = getData()
+        store$.value.view.pendingDataChanges.bcExamplePopup = {
             '932': { _associate: true, name: 'one three two' }
         }
         const removedItem = { id: '921', value: 'one' }
@@ -159,7 +158,7 @@ describe('removeMultivalueTag for full hierarchies', () => {
             dataItem,
             removedItem
         })
-        const epic = removeMultivalueTag(ActionsObservable.of(action), store)
+        const epic = removeMultivalueTag(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             expect(result[0]).toEqual(
                 expect.objectContaining({
@@ -184,10 +183,10 @@ describe('removeMultivalueTag for full hierarchies', () => {
     })
 
     it('removes parent node if removed last descendant when `hierarchyGroupDeselection` and `hierarchyTraverse` enabled', () => {
-        store.getState().view.widgets[0].options.hierarchyGroupDeselection = true
-        store.getState().view.widgets[0].options.hierarchyTraverse = true
-        store.getState().data.bcExamplePopup = getData().map(item => ({ ...item, _associate: ['1', '9'].includes(item.id) }))
-        store.getState().view.pendingDataChanges.bcExamplePopup = {
+        store$.value.view.widgets[0].options.hierarchyGroupDeselection = true
+        store$.value.view.widgets[0].options.hierarchyTraverse = true
+        store$.value.data.bcExamplePopup = getData().map(item => ({ ...item, _associate: ['1', '9'].includes(item.id) }))
+        store$.value.view.pendingDataChanges.bcExamplePopup = {
             '932': { _associate: true, name: 'one three two' }
         }
         const removedItem = { id: '932', value: 'one three two' }
@@ -200,7 +199,7 @@ describe('removeMultivalueTag for full hierarchies', () => {
             dataItem,
             removedItem
         })
-        const epic = removeMultivalueTag(ActionsObservable.of(action), store)
+        const epic = removeMultivalueTag(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             expect(result[0]).toEqual(
                 expect.objectContaining({
@@ -215,7 +214,7 @@ describe('removeMultivalueTag for full hierarchies', () => {
     })
 
     it('fires two `changeDataItem` for non-full hierarchies', () => {
-        store.getState().view.widgets[0].options = { hierarchyFull: false, hierarchy: separateHierarchy }
+        store$.value.view.widgets[0].options = { hierarchyFull: false, hierarchy: separateHierarchy }
         const action = $do.removeMultivalueTag({
             bcName: 'bcExample',
             popupBcName: 'bcExamplePopup',
@@ -224,13 +223,13 @@ describe('removeMultivalueTag for full hierarchies', () => {
             dataItem: [],
             removedItem: { id: '999', value: 'remove item' }
         })
-        store.getState().view.pendingDataChanges.bcExamplePopup = {
+        store$.value.view.pendingDataChanges.bcExamplePopup = {
             '888': { _associate: true, name: 'one three two' }
         }
-        store.getState().view.pendingDataChanges.bcExamplePopup2 = {
+        store$.value.view.pendingDataChanges.bcExamplePopup2 = {
             '999': { _associate: true, name: 'one three two' }
         }
-        const epic = removeMultivalueTag(ActionsObservable.of(action), store)
+        const epic = removeMultivalueTag(ActionsObservable.of(action), store$)
 
         testEpic(epic, result => {
             expect(result.length).toBe(2)
@@ -259,13 +258,13 @@ describe('removeMultivalueTag for full hierarchies', () => {
     })
 
     it('removes associated item for non-hierarchies', () => {
-        store.getState().data.bcExamplePopup = getData()
-        store.getState().view.widgets[0].options = {
+        store$.value.data.bcExamplePopup = getData()
+        store$.value.view.widgets[0].options = {
             hierarchyFull: false,
             hierarchy: undefined,
             hierarchySameBc: false
         }
-        store.getState().view.pendingDataChanges.bcExamplePopup = {
+        store$.value.view.pendingDataChanges.bcExamplePopup = {
             '932': { _associate: true, name: 'one three two' }
         }
         const removedItem = { id: '921', value: 'one' }
@@ -278,7 +277,7 @@ describe('removeMultivalueTag for full hierarchies', () => {
             dataItem,
             removedItem
         })
-        const epic = removeMultivalueTag(ActionsObservable.of(action), store)
+        const epic = removeMultivalueTag(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             expect(result[0]).toEqual(
                 expect.objectContaining({

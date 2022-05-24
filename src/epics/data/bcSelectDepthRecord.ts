@@ -15,13 +15,18 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
+import { of as observableOf, concat as observableConcat, Observable } from 'rxjs'
+import { mergeMap } from 'rxjs/operators'
 import { Epic, types, $do, AnyAction, ActionsMap } from '../../actions/actions'
+import { ofType } from 'redux-observable'
 
 export const bcSelectDepthRecord: Epic = action$ =>
-    action$.ofType(types.bcSelectDepthRecord).mergeMap(action => {
-        return bcSelectDepthRecordImpl(action)
-    })
+    action$.pipe(
+        ofType(types.bcSelectDepthRecord),
+        mergeMap(action => {
+            return bcSelectDepthRecordImpl(action)
+        })
+    )
 
 /**
  * Set a cursor when expanding a record in hierarchy widgets builded around single business components
@@ -42,9 +47,9 @@ export const bcSelectDepthRecord: Epic = action$ =>
  */
 export function bcSelectDepthRecordImpl(action: ActionsMap['bcSelectDepthRecord']): Observable<AnyAction> {
     const { bcName, cursor, depth } = action.payload
-    return Observable.concat(
-        Observable.of($do.bcChangeDepthCursor({ bcName, depth, cursor })),
-        Observable.of(
+    return observableConcat(
+        observableOf($do.bcChangeDepthCursor({ bcName, depth, cursor })),
+        observableOf(
             $do.bcFetchDataRequest({
                 bcName,
                 depth: depth + 1,

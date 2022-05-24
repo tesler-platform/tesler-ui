@@ -1,48 +1,47 @@
+import { of as observableOf, concat as observableConcat, EMPTY } from 'rxjs'
+import { switchMap, filter, mergeMap, catchError } from 'rxjs/operators'
 import { $do, Epic, types } from '../../actions/actions'
 import { buildBcUrl } from '../../utils/strings'
 import * as api from '../../api/api'
 import { AssociatedItem } from '../../interfaces/operation'
-import { Observable } from 'rxjs/Observable'
+import { ofType } from 'redux-observable'
 
 /**
  * Works with assoc-lists, which does call back-end's assoc methods by click on confirm button in modal window
  *
  * @category Epics
  */
-export const saveAssociationsActive: Epic = (action$, store) =>
-    action$
-        .ofType(types.saveAssociations)
-        .filter(action => {
-            return store.getState().view.popupData.active
-        })
-        .switchMap(action => {
-            const state = store.getState()
+export const saveAssociationsActive: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.saveAssociations),
+        filter(action => {
+            return store$.value.view.popupData.active
+        }),
+        switchMap(action => {
+            const state = store$.value
             const calleeBCName = state.view.popupData.calleeBCName
             const calleeWidgetName = state.view.popupData.calleeWidgetName
             const bcNames = action.payload.bcNames
             const bcUrl = buildBcUrl(calleeBCName, true)
             const pendingChanges = state.view.pendingDataChanges[bcNames[0]] || {}
             const params: Record<string, any> = bcNames.length ? { _bcName: bcNames[bcNames.length - 1] } : {}
-            return api
-                .associate(
-                    state.screen.screenName,
-                    bcUrl,
-                    (Object.values(pendingChanges) as AssociatedItem[]).filter(i => i._associate),
-                    params
-                )
-                .mergeMap(response => {
+            const associatedItems = Object.values(pendingChanges).filter(i => i._associate) as AssociatedItem[]
+            return api.associate(state.screen.screenName, bcUrl, associatedItems, params).pipe(
+                mergeMap(response => {
                     const postInvoke = response.postActions[0]
                     const calleeWidget = state.view.widgets.find(widgetItem => widgetItem.bcName === calleeBCName)
-                    return Observable.concat(
+                    return observableConcat(
                         postInvoke
-                            ? Observable.of($do.processPostInvoke({ bcName: calleeBCName, postInvoke, widgetName: calleeWidget.name }))
-                            : Observable.empty<never>(),
-                        Observable.of($do.bcCancelPendingChanges({ bcNames: bcNames })),
-                        Observable.of($do.bcForceUpdate({ bcName: calleeBCName, widgetName: calleeWidgetName }))
+                            ? observableOf($do.processPostInvoke({ bcName: calleeBCName, postInvoke, widgetName: calleeWidget.name }))
+                            : EMPTY,
+                        observableOf($do.bcCancelPendingChanges({ bcNames: bcNames })),
+                        observableOf($do.bcForceUpdate({ bcName: calleeBCName, widgetName: calleeWidgetName }))
                     )
-                })
-                .catch(err => {
+                }),
+                catchError(err => {
                     console.error(err)
-                    return Observable.empty<never>()
+                    return EMPTY
                 })
+            )
         })
+    )

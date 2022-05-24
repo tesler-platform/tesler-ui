@@ -25,6 +25,7 @@ function withLogger(storeCreator: StoreCreator): StoreCreator {
  *
  * @param customReducers Client application reducers
  * @param customEpics Client application epics
+ * @param customEpicsDependencies Injecting Dependencies Into Epics
  * @param useEpics Can be set to `false` if client application does not provide redux-observable peer dependency
  * and does not rely on Tesler epics (e.g. importing only UI components)
  * @param customMiddlewares Any additional middlewares provided by client application
@@ -32,6 +33,7 @@ function withLogger(storeCreator: StoreCreator): StoreCreator {
 export function configureStore<ClientState, ClientActions extends Action<any>>(
     customReducers = {} as ClientReducersMapObject<ClientState, ClientActions>,
     customEpics: CustomEpics | Epic<any, ClientState> = null,
+    customEpicsDependencies: Record<string, any> = {},
     useEpics = true,
     customMiddlewares: CustomMiddlewares = null
 ): Store<ClientState & CoreStore> {
@@ -64,9 +66,34 @@ export function configureStore<ClientState, ClientActions extends Action<any>>(
 
     const middlewares: Middleware[] = combineMiddlewares(coreMiddlewares, customMiddlewares)
 
+    let epicMiddleware
+
+    if (useEpics) {
+        epicMiddleware = createEpicMiddleware({
+            dependencies: {
+                /**
+                 * TODO
+                 *
+                 * Needed for backward compatibility to be able to call store.dispatch.
+                 * The use of store.dispatch is not recommended,
+                 * so this feature was removed in rxjs6.
+                 * For more details see the documentation
+                 */
+                get store() {
+                    return store
+                },
+                ...customEpicsDependencies
+            }
+        })
+        middlewares.push(epicMiddleware)
+    }
+
+    const store = compose(applyMiddleware(...middlewares))(withLogger(createStore))(combineReducers(reducers))
+
     if (useEpics) {
         const epics = isLegacyCustomEpics(customEpics) ? legacyCombineEpics(legacyCoreEpics, customEpics) : combineEpics(customEpics)
-        middlewares.push(createEpicMiddleware(epics))
+        epicMiddleware.run(epics)
     }
-    return compose(applyMiddleware(...middlewares))(withLogger(createStore))(combineReducers(reducers))
+
+    return store
 }

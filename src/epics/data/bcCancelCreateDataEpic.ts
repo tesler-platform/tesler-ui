@@ -15,32 +15,35 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store } from 'redux'
+import { of as observableOf, concat as observableConcat, Observable, EMPTY } from 'rxjs'
+
+import { mergeMap, filter, catchError } from 'rxjs/operators'
 import { Epic, types, $do, AnyAction, ActionsMap } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { buildBcUrl } from '../../utils/strings'
 import { customAction } from '../../api/api'
 import { matchOperationRole } from '../../utils/operations'
 import { OperationTypeCrud } from '../../interfaces/operation'
+import { ofType, StateObservable } from 'redux-observable'
 
 /**
  * Sends `cancel-create` custom operation with record's pending changes and vstamp;
  * Dispatches `sendOperationSuccess` and `bcChangeCursors` to drop cursors, also
  * `processPostInvoke` if received `postActions` in response.
  *
- * @param action sendOperation with `cancel-create` role
- * @param store Store instance
+ * @param action$ sendOperation with `cancel-create` role
+ * @param store$
  * @category Epics
  */
 
-export const bcCancelCreateDataEpic: Epic = (action$, store) =>
-    action$
-        .ofType(types.sendOperation)
-        .filter(action => matchOperationRole(OperationTypeCrud.cancelCreate, action.payload, store.getState()))
-        .mergeMap(action => {
-            return bcCancelCreateDataEpicImpl(action, store)
+export const bcCancelCreateDataEpic: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.sendOperation),
+        filter(action => matchOperationRole(OperationTypeCrud.cancelCreate, action.payload, store$.value)),
+        mergeMap(action => {
+            return bcCancelCreateDataEpicImpl(action, store$)
         })
+    )
 
 /**
  * Default implementation for `bcCancelCreateDataEpic` epic
@@ -52,11 +55,11 @@ export const bcCancelCreateDataEpic: Epic = (action$, store) =>
  * On error dispatches `bcDeleteDataFail`.
  *
  * @param action sendOperation with `cancel-create` role
- * @param store Store instance
+ * @param store$
  * @category Epics
  */
-export function bcCancelCreateDataEpicImpl(action: ActionsMap['sendOperation'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
-    const state = store.getState()
+export function bcCancelCreateDataEpicImpl(action: ActionsMap['sendOperation'], store$: StateObservable<CoreStore>): Observable<AnyAction> {
+    const state = store$.value
     const screenName = state.screen.screenName
     const bcName = action.payload.bcName
     const bcUrl = buildBcUrl(bcName, true)
@@ -68,19 +71,18 @@ export function bcCancelCreateDataEpicImpl(action: ActionsMap['sendOperation'], 
     const data = record && { ...pendingRecordChange, vstamp: record.vstamp }
     const params = { _action: action.payload.operationType }
     const cursorsMap: Record<string, string> = { [action.payload.bcName]: null }
-    return customAction(screenName, bcUrl, data, context, params)
-        .mergeMap(response => {
+    return customAction(screenName, bcUrl, data, context, params).pipe(
+        mergeMap(response => {
             const postInvoke = response.postActions[0]
-            return Observable.concat(
-                Observable.of($do.sendOperationSuccess({ bcName, cursor })),
-                Observable.of($do.bcChangeCursors({ cursorsMap })),
-                postInvoke
-                    ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName: context.widgetName }))
-                    : Observable.empty<never>()
+            return observableConcat(
+                observableOf($do.sendOperationSuccess({ bcName, cursor })),
+                observableOf($do.bcChangeCursors({ cursorsMap })),
+                postInvoke ? observableOf($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName: context.widgetName })) : EMPTY
             )
-        })
-        .catch((error: any) => {
+        }),
+        catchError((error: any) => {
             console.error(error)
-            return Observable.of($do.bcDeleteDataFail({ bcName }))
+            return observableOf($do.bcDeleteDataFail({ bcName }))
         })
+    )
 }

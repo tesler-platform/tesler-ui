@@ -1,3 +1,6 @@
+import { of as observableOf } from 'rxjs'
+
+import { switchMap, filter, catchError, mergeMap } from 'rxjs/operators'
 /*
  * TESLER-UI
  * Copyright (C) 2018-2020 Tesler Contributors
@@ -15,15 +18,14 @@
  * limitations under the License.
  */
 
-import { $do, ActionsMap, AnyAction, Epic, types } from '../../actions/actions'
-import { Store } from 'redux'
+import { $do, ActionsMap, Epic, types } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { loginByRoleRequest } from '../../api'
 import { LoginResponse } from '../../interfaces/session'
 import { changeLocation } from '../../reducers/router'
-import { Observable } from 'rxjs'
 import { AxiosError } from 'axios'
 import i18n from 'i18next'
+import { ofType, StateObservable } from 'redux-observable'
 
 const responseStatusMessages: Record<number, string> = {
     401: i18n.t('Invalid credentials'),
@@ -34,16 +36,17 @@ const responseStatusMessages: Record<number, string> = {
  * Performed on role switching
  *
  * @param action$ This epic will fire on {@link ActionPayloadTypes.login | login} action
- * @param store Redux store instance
+ * @param store$
  * @category Epics
  */
-export const loginByAnotherRoleEpic: Epic = (action$, store) =>
-    action$
-        .ofType(types.login)
-        .filter(action => !!action.payload?.role)
-        .switchMap(action => {
-            return loginByAnotherRoleEpicImpl(action, store)
+export const loginByAnotherRoleEpic: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.login),
+        filter(action => !!action.payload?.role),
+        switchMap(action => {
+            return loginByAnotherRoleEpicImpl(action, store$)
         })
+    )
 
 /**
  * Default implementation of `loginByAnotherRoleEpic` epic
@@ -53,21 +56,21 @@ export const loginByAnotherRoleEpic: Epic = (action$, store) =>
  * If `role` changed, epic changes location to default view
  *
  * @param action action {@link ActionPayloadTypes.login | login}
- * @param store Store instance
+ * @param store$
  * @category Epics
  */
-export function loginByAnotherRoleEpicImpl(action: ActionsMap['login'], store: Store<CoreStore, AnyAction>) {
+export function loginByAnotherRoleEpicImpl(action: ActionsMap['login'], store$: StateObservable<CoreStore>) {
     const { role } = action.payload
-    const isSwitchRole = role && role !== store.getState().session.activeRole
-    return loginByRoleRequest(role)
-        .mergeMap((data: LoginResponse) => {
+    const isSwitchRole = role && role !== store$.value.session.activeRole
+    return loginByRoleRequest(role).pipe(
+        mergeMap((data: LoginResponse) => {
             if (isSwitchRole) {
                 const defaultScreen = data.screens.find(screen => screen.defaultScreen) || data.screens[0]
                 const defaultViewName = defaultScreen?.primary ?? defaultScreen.meta.views[0].name
                 const defaultView = defaultScreen?.meta.views.find(view => defaultViewName === view.name)
                 if (defaultView) changeLocation(defaultView.url)
             }
-            return Observable.of(
+            return observableOf(
                 $do.loginDone({
                     devPanelEnabled: data.devPanelEnabled,
                     activeRole: data.activeRole,
@@ -78,12 +81,13 @@ export function loginByAnotherRoleEpicImpl(action: ActionsMap['login'], store: S
                     login: data.login
                 })
             )
-        })
-        .catch((error: AxiosError) => {
+        }),
+        catchError((error: AxiosError) => {
             console.error(error)
             const errorMsg = error.response
                 ? responseStatusMessages[error.response.status] || 'Server application unavailable'
                 : 'Empty server response'
-            return Observable.of($do.loginFail({ errorMsg }))
+            return observableOf($do.loginFail({ errorMsg }))
         })
+    )
 }

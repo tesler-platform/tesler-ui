@@ -17,7 +17,7 @@ const loginResponce: LoginResponse = {
 }
 describe('configureStore', () => {
     it('handles built-in actions by built-in reducers', () => {
-        const store = configureStore({}, null, false, null)
+        const store = configureStore({}, null, {}, false, null)
         expect(store.getState().session.active).toBe(false)
         store.dispatch($do.loginDone(loginResponce))
         expect(store.getState().session.active).toBe(true)
@@ -39,6 +39,7 @@ describe('configureStore', () => {
                 }
             },
             null,
+            {},
             false,
             null
         )
@@ -64,6 +65,7 @@ describe('configureStore', () => {
                 }
             },
             null,
+            {},
             false,
             null
         )
@@ -87,6 +89,7 @@ describe('configureStore', () => {
                 }
             },
             null,
+            {},
             false,
             null
         )

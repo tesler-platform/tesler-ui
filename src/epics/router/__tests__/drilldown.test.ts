@@ -4,10 +4,11 @@ import { mockStore } from '../../../tests/mockStore'
 import { DrillDownType, RouteType } from '../../../interfaces/router'
 import { $do } from '../../../actions/actions'
 import { drillDown } from '../drilldown'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import * as hstr from 'history'
 import { Path, Location } from 'history'
+import { createStateObservable } from '../../../tests/createStateObservable'
 
 const bcExample = {
     name: 'bcExample',
@@ -43,6 +44,7 @@ const addFilterPayload = {
 
 describe('drillDown epic', () => {
     let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
     const parsePathMock = (url: Path): Location<any> => {
         const splitted = url.split('?')
         return {
@@ -55,20 +57,21 @@ describe('drillDown epic', () => {
     jest.spyOn(hstr, 'parsePath').mockImplementation(parsePathMock)
     beforeAll(() => {
         store = mockStore()
-        store.getState().screen.screenName = 'screen-example'
-        store.getState().screen.bo.bc = { bcExample }
+        store$ = createStateObservable(store.getState())
+        store$.value.screen.screenName = 'screen-example'
+        store$.value.screen.bo.bc = { bcExample }
     })
     afterAll(() => {
-        store.getState().screen.filters = {}
+        store$.value.screen.filters = {}
     })
 
     it('should clear filters', () => {
-        store.getState().screen.filters = {
+        store$.value.screen.filters = {
             [bcExample.name]: []
         }
         const action = $do.drillDown(clearFiltersPayload)
         const mockDispatch = jest.fn()
-        const epic = drillDown(ActionsObservable.of(action), { ...store, dispatch: mockDispatch })
+        const epic = drillDown(ActionsObservable.of(action), store$, { store: { ...store, dispatch: mockDispatch } })
         testEpic(epic, res => {
             expect(res.length).toBe(0)
             expect(mockDispatch).toBeCalledWith(expect.objectContaining($do.bcRemoveAllFilters({ bcName: bcExample.name })))
@@ -78,7 +81,7 @@ describe('drillDown epic', () => {
     it('should add filter', () => {
         const action = $do.drillDown(addFilterPayload)
         const mockDispatch = jest.fn()
-        const epic = drillDown(ActionsObservable.of(action), { ...store, dispatch: mockDispatch })
+        const epic = drillDown(ActionsObservable.of(action), store$, { store: { ...store, dispatch: mockDispatch } })
         testEpic(epic, res => {
             expect(res.length).toBe(0)
             expect(mockDispatch).toBeCalledWith(

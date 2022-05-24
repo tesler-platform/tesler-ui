@@ -15,16 +15,20 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store } from 'redux'
+import { EMPTY, Observable } from 'rxjs'
+import { catchError, mergeMap, switchMap } from 'rxjs/operators'
 import { Epic, types, ActionsMap } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { routerRequest } from '../../api/api'
+import { ofType, StateObservable } from 'redux-observable'
 
-export const handleRouter: Epic = (action$, store) =>
-    action$.ofType(types.handleRouter).switchMap(action => {
-        return handleRouterImpl(action, store)
-    })
+export const handleRouter: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.handleRouter),
+        switchMap(action => {
+            return handleRouterImpl(action, store$)
+        })
+    )
 
 /**
  * Default implementation for `handleRouter` epic.
@@ -33,20 +37,21 @@ export const handleRouter: Epic = (action$, store) =>
  * It writes a console error if request fails.
  *
  * @param action This epic will fire on {@link ActionPayloadTypes.handleRouter | handleRouter} action
- * @param store Redux store instance
+ * @param store$
  * @returns Default implementation does not throw any additional actions
  * @category Epics
  */
-export function handleRouterImpl(action: ActionsMap['handleRouter'], store: Store<CoreStore>): Observable<never> {
+export function handleRouterImpl(action: ActionsMap['handleRouter'], store$: StateObservable<CoreStore>): Observable<never> {
     const path = action.payload.path
     const params = action.payload.params
     // todo: Handle errors
-    return routerRequest(path, params)
-        .mergeMap(data => {
-            return Observable.empty<never>()
-        })
-        .catch(error => {
+    return routerRequest(path, params).pipe(
+        mergeMap(data => {
+            return EMPTY
+        }),
+        catchError(error => {
             console.error(error)
-            return Observable.empty()
+            return EMPTY
         })
+    )
 }

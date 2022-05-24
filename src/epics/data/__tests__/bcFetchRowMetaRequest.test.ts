@@ -15,26 +15,26 @@
  * limitations under the License.
  */
 
-import { Store } from 'redux'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { mockStore } from '../../../tests/mockStore'
+import { concat as observableConcat, of as observableOf, throwError as observableThrowError } from 'rxjs'
+import { mergeMap } from 'rxjs/operators'
 import { bcFetchRowMetaRequestCompatibility, bcFetchRowMetaRequest } from '../bcFetchRowMetaRequest'
 import { customAction } from '../../../api/api'
 import * as api from '../../../api/api'
-import { Observable } from 'rxjs'
 import { $do, Epic, types } from '../../../actions/actions'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, ofType, StateObservable } from 'redux-observable'
 import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
 import { FieldType } from '../../../interfaces/view'
 import { testEpic } from '../../../tests/testEpic'
 import { RowMeta } from '../../../interfaces/rowMeta'
+import { createMockStateObservable } from '../../../tests/createMockStateObservable'
 
 const customActionMock = jest.fn().mockImplementation((...args: Parameters<typeof customAction>) => {
     const [screenName] = args
     if (screenName === 'crash') {
-        return Observable.throw('test request crash')
+        return observableThrowError('test request crash')
     }
-    return Observable.of(rowMeta)
+    return observableOf(rowMeta)
 })
 
 const consoleMock = jest.fn()
@@ -43,39 +43,39 @@ jest.spyOn<any, any>(api, 'fetchRowMeta').mockImplementation(customActionMock)
 jest.spyOn(console, 'error').mockImplementation(consoleMock)
 
 describe('bcFetchRowMetaRequest', () => {
-    let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
     const canceler = api.createCanceler()
 
     beforeAll(() => {
-        store = mockStore()
-        store.getState().screen.screenName = 'test'
-        store.getState().screen.bo.bc.bcExample = bcExample
+        store$ = createMockStateObservable()
+        store$.value.screen.screenName = 'test'
+        store$.value.screen.bo.bc.bcExample = bcExample
     })
 
     afterEach(() => {
         jest.clearAllMocks()
-        store.getState().screen.screenName = 'test'
+        store$.value.screen.screenName = 'test'
     })
 
     it('sends API request', () => {
-        store.getState().view.widgets[0] = { ...getWidgetMeta() }
+        store$.value.view.widgets[0] = { ...getWidgetMeta() }
         const action = $do.bcFetchRowMeta({
             bcName: 'bcExample',
             widgetName: 'widget-example'
         })
-        const epic = bcFetchRowMetaRequest(ActionsObservable.of(action), store)
+        const epic = bcFetchRowMetaRequest(ActionsObservable.of(action), store$)
         testEpic(epic, res => {
             expect(customActionMock).toBeCalledWith('test', 'bcExample/1', undefined, canceler.cancelToken)
         })
     })
 
     it('fires `bcFetchRowMetaSuccess` on success', () => {
-        store.getState().view.widgets[0] = { ...getWidgetMeta() }
+        store$.value.view.widgets[0] = { ...getWidgetMeta() }
         const action = $do.bcFetchRowMeta({
             bcName: 'bcExample',
             widgetName: 'widget-example'
         })
-        testEpic(flow(ActionsObservable.of(action), store), res => {
+        testEpic(flow(ActionsObservable.of(action), store$), res => {
             expect(res[0]).toEqual(
                 expect.objectContaining(
                     $do.bcFetchRowMetaSuccess({
@@ -90,13 +90,13 @@ describe('bcFetchRowMetaRequest', () => {
     })
 
     it('fires `bcFetchRowMetaFail` and writes console error on error', () => {
-        store.getState().screen.screenName = 'crash'
-        store.getState().view.widgets[0] = { ...getWidgetMeta() }
+        store$.value.screen.screenName = 'crash'
+        store$.value.view.widgets[0] = { ...getWidgetMeta() }
         const action = $do.bcFetchRowMeta({
             bcName: 'bcExample',
             widgetName: 'widget-example'
         })
-        testEpic(flow(ActionsObservable.of(action), store), res => {
+        testEpic(flow(ActionsObservable.of(action), store$), res => {
             expect(consoleMock).toBeCalledWith('test request crash')
             expect(res[0]).toEqual(
                 expect.objectContaining(
@@ -113,10 +113,11 @@ describe('bcFetchRowMetaRequest', () => {
     })
 })
 
-const flow: Epic = (action$, store) =>
-    action$
-        .ofType(types.bcFetchRowMeta)
-        .mergeMap(action => Observable.concat(...bcFetchRowMetaRequestCompatibility(action, store, ActionsObservable.of(action))))
+const flow: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.bcFetchRowMeta),
+        mergeMap(action => observableConcat(...bcFetchRowMetaRequestCompatibility(action, store$, ActionsObservable.of(action))))
+    )
 
 function getWidgetMeta(): WidgetTableMeta {
     return {

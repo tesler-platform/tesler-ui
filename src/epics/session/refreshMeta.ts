@@ -15,30 +15,37 @@
  * limitations under the License.
  */
 
+import { of as observableOf, concat as observableConcat, Observable } from 'rxjs'
+import { catchError, mergeMap, switchMap } from 'rxjs/operators'
 import { $do, Epic, types } from '../../actions/actions'
-import { Observable } from 'rxjs/Observable'
 import { refreshMeta } from '../../api'
+import { ofType } from 'redux-observable'
 
 /**
  * Performed on refresh meta data process.
  *
  * @param action$ This epic will fire on {@link ActionPayloadTypes.refreshMeta | refreshMeta} action
- * @param store Redux store instance
+ * @param store$
  * @category Epics
  */
-export const refreshMetaEpic: Epic = (action$, store): Observable<any> =>
-    action$.ofType(types.refreshMeta).mergeMap(() => {
-        const state = store.getState()
-        const { router } = state
-        const { activeRole } = state.session
-        return refreshMeta().switchMap(() => {
-            return Observable.concat([
-                $do.logoutDone(null),
-                $do.login({ login: null, password: null, role: activeRole }),
-                $do.changeLocation({
-                    location: router,
-                    action: 'PUSH'
+export const refreshMetaEpic: Epic = (action$, store$): Observable<any> =>
+    action$.pipe(
+        ofType(types.refreshMeta),
+        mergeMap(() => {
+            const state = store$.value
+            const { router } = state
+            const { activeRole } = state.session
+            return refreshMeta().pipe(
+                switchMap(() => {
+                    return observableConcat([
+                        $do.logoutDone(null),
+                        $do.login({ login: null, password: null, role: activeRole }),
+                        $do.changeLocation({
+                            location: router,
+                            action: 'PUSH'
+                        })
+                    ]).pipe(catchError(error => observableOf($do.loginFail(error))))
                 })
-            ]).catch(error => Observable.of($do.loginFail(error)))
+            )
         })
-    })
+    )

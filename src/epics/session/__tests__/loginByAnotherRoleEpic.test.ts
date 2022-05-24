@@ -15,51 +15,52 @@
  * limitations under the License.
  */
 
-import { Store } from 'redux'
+import { of as observableOf } from 'rxjs'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { mockStore } from '../../../tests/mockStore'
 import { loginByRoleRequest } from '../../../api'
-import { Observable } from 'rxjs'
 import * as api from '../../../api/api'
 import { $do } from '../../../actions/actions'
 import { loginByAnotherRoleEpic } from '../loginByAnotherRole'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import * as router from '../../../reducers/router'
 import * as response from './__mocks__/response.json'
+import { createMockStateObservable } from '../../../tests/createMockStateObservable'
 
 const loginByRoleRequestMock = jest.fn().mockImplementation((...args: Parameters<typeof loginByRoleRequest>) => {
     const [role] = args
     switch (role) {
         case 'Auditor':
-            return Observable.of({ ...response, activeRole: role })
+            return observableOf({ ...response, activeRole: role })
         case 'Reader':
-            return Observable.of({
+            return observableOf({
                 ...response,
                 activeRole: role,
                 screens: [{ ...response.screens[0], defaultScreen: true }, { ...response.screens[1] }]
             })
         case 'error': {
-            return Observable.of(jest.fn().mockImplementationOnce(() => Promise.reject(new Error('test request crash'))))
+            return observableOf(jest.fn().mockImplementationOnce(() => Promise.reject(new Error('test request crash'))))
         }
         default:
-            return Observable.of(response)
+            return observableOf(response)
     }
 })
 const consoleMock = jest.fn().mockImplementation(e => console.warn(e))
 const historyObjMock = jest.fn()
+
 jest.spyOn<any, any>(api, 'loginByRoleRequest').mockImplementation(loginByRoleRequestMock)
 jest.spyOn(console, 'error').mockImplementation(consoleMock)
 jest.spyOn(router, 'changeLocation').mockImplementation(historyObjMock)
+
 describe('loginByAnotherRoleEpic test', () => {
-    let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
 
     beforeAll(() => {
-        store = mockStore()
+        store$ = createMockStateObservable()
     })
     beforeEach(() => {
-        store.getState().session = {
-            ...store.getState().session,
+        store$.value.session = {
+            ...store$.value.session,
             activeRole: 'ADMIN',
             roles: [
                 {
@@ -102,15 +103,15 @@ describe('loginByAnotherRoleEpic test', () => {
     })
     it('should skip login without role', () => {
         const action = $do.login({ login: 'sss', password: 'sss' })
-        const epic = loginByAnotherRoleEpic(ActionsObservable.of(action), store)
+        const epic = loginByAnotherRoleEpic(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             expect(result.length).toBe(0)
         })
     })
     it('should login without role switching', () => {
-        const role = store.getState().session.activeRole
+        const role = store$.value.session.activeRole
         const action = $do.login({ login: null, password: null, role })
-        const epic = loginByAnotherRoleEpic(ActionsObservable.of(action), store)
+        const epic = loginByAnotherRoleEpic(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             expect(historyObjMock).toHaveBeenCalledTimes(0)
             expect(result.length).toBe(1)
@@ -119,9 +120,9 @@ describe('loginByAnotherRoleEpic test', () => {
         })
     })
     it('should login with role switching', () => {
-        const role = store.getState().session.roles[0].key
+        const role = store$.value.session.roles[0].key
         const action = $do.login({ login: null, password: null, role })
-        const epic = loginByAnotherRoleEpic(ActionsObservable.of(action), store)
+        const epic = loginByAnotherRoleEpic(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             expect(historyObjMock).toHaveBeenCalled()
             expect(result.length).toBe(1)
@@ -130,9 +131,9 @@ describe('loginByAnotherRoleEpic test', () => {
         })
     })
     it('should login with role switching (branch with default screen)', () => {
-        const role = store.getState().session.roles[1].key
+        const role = store$.value.session.roles[1].key
         const action = $do.login({ login: null, password: null, role })
-        const epic = loginByAnotherRoleEpic(ActionsObservable.of(action), store)
+        const epic = loginByAnotherRoleEpic(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             expect(historyObjMock).toHaveBeenCalled()
             expect(result.length).toBe(1)
@@ -142,7 +143,7 @@ describe('loginByAnotherRoleEpic test', () => {
     })
     it('should handle error', () => {
         const action = $do.login({ login: null, password: null, role: 'error' })
-        const epic = loginByAnotherRoleEpic(ActionsObservable.of(action), store)
+        const epic = loginByAnotherRoleEpic(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             expect(consoleMock).toHaveBeenCalled()
             expect(result.length).toBe(1)

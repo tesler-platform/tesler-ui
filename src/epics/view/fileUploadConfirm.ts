@@ -15,14 +15,15 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store } from 'redux'
+import { of as observableOf, concat as observableConcat, Observable } from 'rxjs'
+import { mergeMap } from 'rxjs/operators'
 import { Epic, types, $do, AnyAction, ActionsMap } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { buildBcUrl } from '../../utils/strings'
 import { customAction } from '../../api/api'
 import { postOperationRoutine } from '../view'
 import { OperationTypeCrud } from '../../interfaces/operation'
+import { ofType, StateObservable } from 'redux-observable'
 
 /**
  * It sends customAction request for `file-upload-save` endpoint with `bulkIds` data
@@ -32,13 +33,16 @@ import { OperationTypeCrud } from '../../interfaces/operation'
  *
  * It also launces postOperationRoutine to handle pre and post invokes.
  *
- * @param action removeMultivalueTag
- * @param store Store instance
+ * @param action$ removeMultivalueTag
+ * @param store$
  */
-export const fileUploadConfirm: Epic = (action$, store) =>
-    action$.ofType(types.bulkUploadFiles).mergeMap(action => {
-        return fileUploadConfirmImpl(action, store)
-    })
+export const fileUploadConfirm: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.bulkUploadFiles),
+        mergeMap(action => {
+            return fileUploadConfirmImpl(action, store$)
+        })
+    )
 
 /**
  * Default implementation for `fileUploadConfirm` epic
@@ -51,25 +55,27 @@ export const fileUploadConfirm: Epic = (action$, store) =>
  * It also launces postOperationRoutine to handle pre and post invokes.
  *
  * @param action removeMultivalueTag
- * @param store Store instance
+ * @param store$
  * @category Epics
  */
-export function fileUploadConfirmImpl(action: ActionsMap['bulkUploadFiles'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
-    const state = store.getState()
+export function fileUploadConfirmImpl(action: ActionsMap['bulkUploadFiles'], store$: StateObservable<CoreStore>): Observable<AnyAction> {
+    const state = store$.value
     const bcName = state.view.popupData.bcName
     const bcUrl = buildBcUrl(bcName, true)
     const widgetName = state.view.widgets.find(item => item.bcName === bcName)?.name
     const data = {
         bulkIds: action.payload.fileIds
     }
-    return customAction(state.screen.screenName, bcUrl, data, null, { _action: 'file-upload-save' }).mergeMap(response => {
-        const postInvoke = response.postActions[0]
-        const preInvoke = response.preInvoke
-        return Observable.concat(
-            Observable.of($do.sendOperationSuccess({ bcName, cursor: null })),
-            Observable.of($do.bcForceUpdate({ bcName })),
-            Observable.of($do.closeViewPopup(null)),
-            ...postOperationRoutine(widgetName, postInvoke, preInvoke, OperationTypeCrud.save, bcName)
-        )
-    })
+    return customAction(state.screen.screenName, bcUrl, data, null, { _action: 'file-upload-save' }).pipe(
+        mergeMap(response => {
+            const postInvoke = response.postActions[0]
+            const preInvoke = response.preInvoke
+            return observableConcat(
+                observableOf($do.sendOperationSuccess({ bcName, cursor: null })),
+                observableOf($do.bcForceUpdate({ bcName })),
+                observableOf($do.closeViewPopup(null)),
+                ...postOperationRoutine(widgetName, postInvoke, preInvoke, OperationTypeCrud.save, bcName)
+            )
+        })
+    )
 }

@@ -15,32 +15,36 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store } from 'redux'
+import { of as observableOf, Observable, EMPTY } from 'rxjs'
+import { switchMap } from 'rxjs/operators'
 import { Epic, types, AnyAction, ActionsMap, $do } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { parseBcCursors } from '../../utils/history'
+import { ofType, StateObservable } from 'redux-observable'
 
 /**
  *
  * TODO: Rename to `selectView` in 2.0.0
  *
  * @param action$ `selectView` action
- * @param store
+ * @param store$
  */
-export const changeView: Epic = (action$, store) =>
-    action$.ofType(types.selectView).switchMap(action => {
-        return selectViewImpl(action, store)
-    })
+export const changeView: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.selectView),
+        switchMap(action => {
+            return selectViewImpl(action, store$)
+        })
+    )
 
 /**
  *
  * @param action
- * @param store
+ * @param store$
  * @category Epics
  */
-export function selectViewImpl(action: ActionsMap['selectView'], store: Store<CoreStore>): Observable<AnyAction> {
-    const state = store.getState()
+export function selectViewImpl(action: ActionsMap['selectView'], store$: StateObservable<CoreStore>): Observable<AnyAction> {
+    const state = store$.value
     const nextCursors = parseBcCursors(state.router.bcPath) || {}
     const cursorsDiffMap: Record<string, string> = {}
     Object.entries(nextCursors).forEach(entry => {
@@ -51,7 +55,7 @@ export function selectViewImpl(action: ActionsMap['selectView'], store: Store<Co
         }
     })
     if (Object.keys(cursorsDiffMap).length) {
-        return Observable.of($do.bcChangeCursors({ cursorsMap: cursorsDiffMap }))
+        return observableOf($do.bcChangeCursors({ cursorsMap: cursorsDiffMap }))
     }
-    return Observable.empty()
+    return EMPTY
 }

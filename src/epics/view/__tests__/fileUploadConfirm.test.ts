@@ -15,46 +15,45 @@
  * limitations under the License.
  */
 
-import { Store } from 'redux'
+import { of as observableOf } from 'rxjs'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { mockStore } from '../../../tests/mockStore'
 import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
 import { FieldType } from '../../../interfaces/view'
 import { fileUploadConfirm } from '../fileUploadConfirm'
 import { $do, types as coreActions } from '../../../actions/actions'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import * as api from '../../../api/api'
 import { customAction } from '../../../api/api'
-import { Observable } from 'rxjs'
+import { createMockStateObservable } from '../../../tests/createMockStateObservable'
 
 const customActionMock = jest.fn().mockImplementation((args: Parameters<typeof customAction>) => {
-    return Observable.of({ record: null, postActions: [], preInvoke: null })
+    return observableOf({ record: null, postActions: [], preInvoke: null })
 })
 
 jest.spyOn<any, any>(api, 'customAction').mockImplementation(customActionMock)
 
 describe('fileUploadConfirm', () => {
-    let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
 
     beforeAll(() => {
-        store = mockStore()
-        store.getState().screen.screenName = 'test'
-        store.getState().screen.bo.bc.bcExample = bcExample
-        store.getState().view.widgets = [getWidgetMeta()]
-        store.getState().view.popupData = { bcName: 'bcExample' }
+        store$ = createMockStateObservable()
+        store$.value.screen.screenName = 'test'
+        store$.value.screen.bo.bc.bcExample = bcExample
+        store$.value.view.widgets = [getWidgetMeta()]
+        store$.value.view.popupData = { bcName: 'bcExample' }
     })
 
     afterEach(() => {
-        store.getState().view.widgets = [getWidgetMeta()]
+        store$.value.view.widgets = [getWidgetMeta()]
     })
 
     it('sends `customAction` request', () => {
-        store.getState().view.widgets[0] = { ...getWidgetMeta(), bcName: 'missingBc' }
+        store$.value.view.widgets[0] = { ...getWidgetMeta(), bcName: 'missingBc' }
         const action = $do.bulkUploadFiles({
             fileIds: ['123', '567']
         })
-        const epic = fileUploadConfirm(ActionsObservable.of(action), store)
+        const epic = fileUploadConfirm(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             expect(customActionMock).toBeCalledWith(
                 'test',
@@ -72,7 +71,7 @@ describe('fileUploadConfirm', () => {
         const action = $do.bulkUploadFiles({
             fileIds: ['123', '567']
         })
-        const epic = fileUploadConfirm(ActionsObservable.of(action), store)
+        const epic = fileUploadConfirm(ActionsObservable.of(action), store$)
 
         testEpic(epic, result => {
             expect(result.length).toBe(3)

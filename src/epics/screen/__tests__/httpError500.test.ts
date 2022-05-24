@@ -16,20 +16,19 @@
  */
 
 import { $do } from '../../../actions/actions'
-import { Store } from 'redux'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { mockStore } from '../../../tests/mockStore'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import { httpError500 } from '../httpError500'
 import { AxiosError } from 'axios'
 import { ApplicationError, ApplicationErrorType } from '../../../interfaces/view'
+import { createMockStateObservable } from '../../../tests/createMockStateObservable'
 
 describe('httpError500', () => {
-    let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
 
     beforeAll(() => {
-        store = mockStore()
+        store$ = createMockStateObservable()
     })
 
     it('dispatches `showViewError` with system error', () => {
@@ -38,7 +37,7 @@ describe('httpError500', () => {
             error: axiosError,
             callContext: { widgetName: 'widget-example' }
         })
-        const epic = httpError500(ActionsObservable.of(action), store)
+        const epic = httpError500(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             expect(result[0]).toEqual(
                 expect.objectContaining(

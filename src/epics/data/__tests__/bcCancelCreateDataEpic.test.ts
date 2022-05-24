@@ -15,26 +15,25 @@
  * limitations under the License.
  */
 
-import { Store } from 'redux'
+import { of as observableOf, throwError as observableThrowError } from 'rxjs'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { mockStore } from '../../../tests/mockStore'
 import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
 import { FieldType } from '../../../interfaces/view'
 import { bcCancelCreateDataEpic } from '../bcCancelCreateDataEpic'
 import { $do, types as coreActions } from '../../../actions/actions'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import * as api from '../../../api/api'
 import { customAction } from '../../../api/api'
-import { Observable } from 'rxjs'
 import { OperationTypeCrud, OperationPostInvokeRefreshBc, OperationPostInvokeType } from '../../../interfaces/operation'
+import { createMockStateObservable } from '../../../tests/createMockStateObservable'
 
 const customActionMock = jest.fn().mockImplementation((...args: Parameters<typeof customAction>) => {
     const [screenName] = args
     if (screenName === 'crash') {
-        return Observable.throw('test request crash')
+        return observableThrowError('test request crash')
     }
-    return Observable.of({ record: null, postActions: screenName === 'withPostInvoke' ? [postInvoke] : [], preInvoke: null })
+    return observableOf({ record: null, postActions: screenName === 'withPostInvoke' ? [postInvoke] : [], preInvoke: null })
 })
 
 const consoleMock = jest.fn()
@@ -43,31 +42,31 @@ jest.spyOn<any, any>(api, 'customAction').mockImplementation(customActionMock)
 jest.spyOn(console, 'error').mockImplementation(consoleMock)
 
 describe('bcCancelCreateDataEpic', () => {
-    let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
 
     beforeAll(() => {
-        store = mockStore()
-        store.getState().screen.screenName = 'test'
-        store.getState().screen.bo.bc.bcExample = bcExample
-        store.getState().view.widgets = [getWidgetMeta()]
-        store.getState().view.pendingDataChanges = { bcExample: { '1': { field2: '0000' } } }
-        store.getState().data.bcExample = [{ id: '1', vstamp: 4, field1: 'text', field2: 'exter' }]
+        store$ = createMockStateObservable()
+        store$.value.screen.screenName = 'test'
+        store$.value.screen.bo.bc.bcExample = bcExample
+        store$.value.view.widgets = [getWidgetMeta()]
+        store$.value.view.pendingDataChanges = { bcExample: { '1': { field2: '0000' } } }
+        store$.value.data.bcExample = [{ id: '1', vstamp: 4, field1: 'text', field2: 'exter' }]
     })
 
     afterEach(() => {
-        store.getState().view.widgets = [getWidgetMeta()]
-        store.getState().screen.screenName = 'test'
+        store$.value.view.widgets = [getWidgetMeta()]
+        store$.value.screen.screenName = 'test'
         jest.clearAllMocks()
     })
 
     it('sends `customAction` request', () => {
-        store.getState().view.widgets[0] = { ...getWidgetMeta(), bcName: 'missingBc' }
+        store$.value.view.widgets[0] = { ...getWidgetMeta(), bcName: 'missingBc' }
         const action = $do.sendOperation({
             bcName: 'bcExample',
             operationType: OperationTypeCrud.cancelCreate,
             widgetName: 'widget-example'
         })
-        const epic = bcCancelCreateDataEpic(ActionsObservable.of(action), store)
+        const epic = bcCancelCreateDataEpic(ActionsObservable.of(action), store$)
         testEpic(epic, () => {
             expect(customActionMock).toBeCalledWith(
                 'test',
@@ -88,7 +87,7 @@ describe('bcCancelCreateDataEpic', () => {
             operationType: OperationTypeCrud.cancelCreate,
             widgetName: 'widget-example'
         })
-        const epic = bcCancelCreateDataEpic(ActionsObservable.of(action), store)
+        const epic = bcCancelCreateDataEpic(ActionsObservable.of(action), store$)
 
         testEpic(epic, result => {
             expect(result.length).toBe(2)
@@ -108,13 +107,13 @@ describe('bcCancelCreateDataEpic', () => {
     })
 
     it('processs post invoke', () => {
-        store.getState().screen.screenName = 'withPostInvoke'
+        store$.value.screen.screenName = 'withPostInvoke'
         const action = $do.sendOperation({
             bcName: 'bcExample',
             operationType: OperationTypeCrud.cancelCreate,
             widgetName: 'widget-example'
         })
-        const epic = bcCancelCreateDataEpic(ActionsObservable.of(action), store)
+        const epic = bcCancelCreateDataEpic(ActionsObservable.of(action), store$)
 
         testEpic(epic, result => {
             expect(result.length).toBe(3)
@@ -133,13 +132,13 @@ describe('bcCancelCreateDataEpic', () => {
     })
 
     it('dispatch `bcDeleteDataFail` and console error on crash', () => {
-        store.getState().screen.screenName = 'crash'
+        store$.value.screen.screenName = 'crash'
         const action = $do.sendOperation({
             bcName: 'bcMissing',
             operationType: OperationTypeCrud.cancelCreate,
             widgetName: 'widget-example'
         })
-        const epic = bcCancelCreateDataEpic(ActionsObservable.of(action), store)
+        const epic = bcCancelCreateDataEpic(ActionsObservable.of(action), store$)
 
         testEpic(epic, result => {
             expect(consoleMock).toBeCalled()

@@ -15,28 +15,30 @@
  * limitations under the License.
  */
 
+import { map, filter } from 'rxjs/operators'
 import { matchOperationRole } from '../../utils/operations'
 import { OperationTypeCrud } from '../../interfaces/operation'
-import { Store } from 'redux'
 import { Epic, types, $do, ActionsMap } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
+import { ofType, StateObservable } from 'redux-observable'
 
 /**
  * Opens a popup with {@link AssocListPopup | associate component}.
  *
  * @param action$ This epic will fire on {@link ActionPayloadTypes.sendOperation | sendOperation} action where
  * sendOperation role is matching {@link OperationTypeCrud.associate}
- * @param store Redux store instance
+ * @param store$
  * @returns {@link ActionPayloadTypes.showViewPopup | showViewPopup} for `${bcName}Assoc`
  * @category Epics
  */
-export const sendOperationAssociate: Epic = (action$, store) =>
-    action$
-        .ofType(types.sendOperation)
-        .filter(action => matchOperationRole(OperationTypeCrud.associate, action.payload, store.getState()))
-        .map(action => {
-            return sendOperationAssociateImpl(action, store)
+export const sendOperationAssociate: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.sendOperation),
+        filter(action => matchOperationRole(OperationTypeCrud.associate, action.payload, store$.value)),
+        map(action => {
+            return sendOperationAssociateImpl(action, store$)
         })
+    )
 
 /**
  * Default implementation for `sendOperationAssociate` epic.
@@ -44,11 +46,11 @@ export const sendOperationAssociate: Epic = (action$, store) =>
  * Opens a popup with {@link AssocListPopup | associate component}.
  *
  * @param action This epic will fire on {@link ActionPayloadTypes.sendOperation | userDrillDown} action
- * @param store Redux store instance
+ * @param store$
  * @returns {@link ActionPayloadTypes.showViewPopup | showViewPopup} for `${bcName}Assoc`
  * @category Epics
  */
-export function sendOperationAssociateImpl(action: ActionsMap['sendOperation'], store: Store<CoreStore>) {
+export function sendOperationAssociateImpl(action: ActionsMap['sendOperation'], store$: StateObservable<CoreStore>) {
     return $do.showViewPopup({
         // TODO: 2.0.0 bcKey and bcName will be removed in favor `widgetName`
         bcName: action.payload.bcKey ? `${action.payload.bcKey}` : `${action.payload.bcName}Assoc`,

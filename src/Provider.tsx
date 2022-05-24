@@ -20,6 +20,7 @@ export interface ProviderProps<ClientState, ClientActions> {
     customReducers?: ClientReducersMapObject<ClientState, ClientActions>
     customActions?: any
     customEpics?: CustomEpics | AnyEpic
+    customEpicsDependencies?: Record<string, any>
     customMiddlewares?: CustomMiddlewares
     axiosInstance?: AxiosInstance
     customWidgets?: Record<string, CustomWidgetDescriptor>
@@ -86,7 +87,7 @@ export function getLocaleProviderInstance() {
 const Provider = <ClientState extends Partial<CoreStore>, ClientActions extends Action<any>>(
     props: ProviderProps<ClientState, ClientActions>
 ) => {
-    store = configureStore(props.customReducers, props.customEpics, props.useEpics, props.customMiddlewares)
+    store = configureStore(props.customReducers, props.customEpics, props.customEpicsDependencies, props.useEpics, props.customMiddlewares)
     initHistory()
     localeProviderInstance = initLocale(props.lang || 'en', props.langDictionary)
     if (props.axiosInstance) {

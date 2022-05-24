@@ -1,6 +1,6 @@
 {
   "name": "@tesler-ui/core",
-  "version": "1.33.2",
+  "version": "2.0.0",
   "main": "tesler-ui-core.js",
   "exports": {
     ".": "./tesler-ui-core.js",
@@ -71,8 +71,8 @@
     "react-dom": "16.13.1",
     "react-redux": "7.2.1",
     "redux": "^4.0.5",
-    "redux-observable": "0.14.1",
-    "rxjs": "5.5.12",
+    "redux-observable": "1.2.0",
+    "rxjs": "6.6.7",
     "style-loader": "0.23.0",
     "svg-inline-loader": "0.8.0",
     "ts-import-plugin": "1.5.4",
@@ -86,7 +86,7 @@
     "url-loader": "0.6.2",
     "webpack": "4.44.0",
     "webpack-cli": "3.1.0",
-    "webpack-rxjs-externals": "1.1.0"
+    "webpack-rxjs-externals": "2.0.0"
   },
   "dependencies": {
     "@tesler-ui/schema": "^0.5.0",
@@ -111,7 +111,7 @@
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.1",
     "redux": "^4.0.5",
-    "redux-observable": "^0.14.1",
-    "rxjs": "^5.5.12"
+    "redux-observable": "^1.2.0",
+    "rxjs": "^6.6.7"
   }
 }

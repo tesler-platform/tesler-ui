@@ -27,7 +27,7 @@ import coreEpics from '../epics'
  * does not inherit generic Epic from 'redux-observable` but define their own.
  * TODO: We can probably type it better for 2.0.0 with UI scaffolding.
  */
-export type AnyEpic = ($action: any, store: any) => any
+export type AnyEpic = ($action: any, store$: any, dependencies?: Record<string, any>) => any
 
 /**
  * A union of core epic slices: usually consistent with root reducer slices

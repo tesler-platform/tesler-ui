@@ -15,19 +15,22 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store } from 'redux'
+import { EMPTY, Observable } from 'rxjs'
+import { mergeMap, filter } from 'rxjs/operators'
 import { Epic, types, $do, AnyAction, ActionsMap } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { historyObj } from '../../reducers/router'
+import { ofType } from 'redux-observable'
+import { Store } from 'redux'
 
-export const httpError401: Epic = (action$, store) =>
-    action$
-        .ofType(types.httpError)
-        .filter(action => action.payload.statusCode === 401)
-        .mergeMap(action => {
+export const httpError401: Epic = (action$, store$, { store }) =>
+    action$.pipe(
+        ofType(types.httpError),
+        filter(action => action.payload.statusCode === 401),
+        mergeMap(action => {
             return httpError401Impl(action, store)
         })
+    )
 
 /**
  *
@@ -38,5 +41,5 @@ export const httpError401: Epic = (action$, store) =>
 export function httpError401Impl(action: ActionsMap['httpError'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
     store.dispatch($do.logoutDone(null))
     historyObj.push('/')
-    return Observable.empty()
+    return EMPTY
 }

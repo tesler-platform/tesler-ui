@@ -1,5 +1,8 @@
+import { of as observableOf } from 'rxjs'
+
+import { take, mergeMap, filter } from 'rxjs/operators'
 import { ActionPayloadTypes, ActionsObservable, AnyAction, types } from '../actions/actions'
-import { Observable } from 'rxjs'
+import { ofType } from 'redux-observable'
 
 /**
  * Default list of action types which are triggers for request cancel
@@ -24,12 +27,13 @@ export function cancelRequestEpic(
         return true
     }
 ) {
-    return action$
-        .ofType(...actionTypes)
-        .filter(filterFn)
-        .mergeMap(() => {
+    return action$.pipe(
+        ofType(...actionTypes),
+        filter(filterFn),
+        mergeMap(() => {
             cancelFn()
-            return Observable.of(cancelActionCreator)
-        })
-        .take(1)
+            return observableOf(cancelActionCreator)
+        }),
+        take(1)
+    )
 }

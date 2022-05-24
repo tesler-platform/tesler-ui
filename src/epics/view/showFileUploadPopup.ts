@@ -15,24 +15,27 @@
  * limitations under the License.
  */
 
+import { of as observableOf, concat as observableConcat, Observable } from 'rxjs'
+import { mergeMap, filter } from 'rxjs/operators'
 import { Epic, types, $do, ActionsMap, AnyAction } from '../../actions/actions'
-import { Observable } from 'rxjs'
 import { matchOperationRole } from '../../utils/operations'
 import { OperationTypeCrud } from '../../interfaces/operation'
+import { ofType } from 'redux-observable'
 
 /**
  * Fires `bcChangeCursors` and `showFileUploadPopup` to drop the cursors and show file upload popup.
  *
- * @param action sendOperation
- * @param store Store instance
+ * @param action$ sendOperation
+ * @param store$
  */
-export const showFileUploadPopup: Epic = (action$, store) =>
-    action$
-        .ofType(types.sendOperation)
-        .filter(action => matchOperationRole(OperationTypeCrud.fileUpload, action.payload, store.getState()))
-        .mergeMap(action => {
+export const showFileUploadPopup: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.sendOperation),
+        filter(action => matchOperationRole(OperationTypeCrud.fileUpload, action.payload, store$.value)),
+        mergeMap(action => {
             return showFileUploadPopupImpl(action)
         })
+    )
 
 /**
  * Default implementation for `showFileUploadPopupImpl` epic
@@ -40,12 +43,11 @@ export const showFileUploadPopup: Epic = (action$, store) =>
  * Fires `bcChangeCursors` and `showFileUploadPopup` to drop the cursors and show file upload popup.
  *
  * @param action sendOperation
- * @param store Store instance
  * @category Epics
  */
 export function showFileUploadPopupImpl(action: ActionsMap['sendOperation']): Observable<AnyAction> {
-    return Observable.concat(
-        Observable.of($do.bcChangeCursors({ cursorsMap: { [action.payload.bcName]: null } })),
-        Observable.of($do.showFileUploadPopup({ widgetName: action.payload.widgetName }))
+    return observableConcat(
+        observableOf($do.bcChangeCursors({ cursorsMap: { [action.payload.bcName]: null } })),
+        observableOf($do.showFileUploadPopup({ widgetName: action.payload.widgetName }))
     )
 }
