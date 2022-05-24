@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store } from 'redux'
+import { of as observableOf, concat as observableConcat, Observable, EMPTY } from 'rxjs'
+import { mergeMap, filter, catchError } from 'rxjs/operators'
 import { Epic, types, $do, AnyAction, ActionsMap } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { buildBcUrl } from '../../utils/strings'
@@ -24,6 +24,7 @@ import { newBcData } from '../../api/api'
 import { matchOperationRole } from '../../utils/operations'
 import { OperationTypeCrud } from '../../interfaces/operation'
 import { DataItem } from '../../interfaces/data'
+import { ofType, StateObservable } from 'redux-observable'
 
 /**
  * Access `row-meta-new` API endpoint for business component endpoint; response will contain
@@ -37,15 +38,16 @@ import { DataItem } from '../../interfaces/data'
  * In case of an error message is logged as warning and `bcNewDataFail` action dispatched.
  *
  * @param action$ `sendOperation` with `create` role
- * @param store Store instance
+ * @param store$
  */
-export const bcNewDataEpic: Epic = (action$, store) =>
-    action$
-        .ofType(types.sendOperation)
-        .filter(action => matchOperationRole(OperationTypeCrud.create, action.payload, store.getState()))
-        .mergeMap(action => {
-            return bcNewDataEpicImpl(action, store)
+export const bcNewDataEpic: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.sendOperation),
+        filter(action => matchOperationRole(OperationTypeCrud.create, action.payload, store$.value)),
+        mergeMap(action => {
+            return bcNewDataEpicImpl(action, store$)
         })
+    )
 
 /**
  * Default implementation for `bcNewDataEpic` epic
@@ -61,17 +63,17 @@ export const bcNewDataEpic: Epic = (action$, store) =>
  * In case of an error message is logged as warning and `bcNewDataFail` action dispatched.
  *
  * @param action `sendOperation` with `create` role
- * @param store Store instance
+ * @param store$
  * @category Epics
  */
-export function bcNewDataEpicImpl(action: ActionsMap['sendOperation'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
-    const state = store.getState()
+export function bcNewDataEpicImpl(action: ActionsMap['sendOperation'], store$: StateObservable<CoreStore>): Observable<AnyAction> {
+    const state = store$.value
     const bcName = action.payload.bcName
     const bcUrl = buildBcUrl(bcName)
     const context = { widgetName: action.payload.widgetName }
     const params = { _action: action.payload.operationType }
-    return newBcData(state.screen.screenName, bcUrl, context, params)
-        .mergeMap(data => {
+    return newBcData(state.screen.screenName, bcUrl, context, params).pipe(
+        mergeMap(data => {
             const rowMeta = data.row
             const dataItem: DataItem = { id: null, vstamp: -1 }
             data.row.fields.forEach(field => {
@@ -79,10 +81,10 @@ export function bcNewDataEpicImpl(action: ActionsMap['sendOperation'], store: St
             })
             const postInvoke = data.postActions[0]
             const cursor = dataItem.id
-            return Observable.concat(
-                Observable.of($do.bcNewDataSuccess({ bcName, dataItem, bcUrl })),
-                Observable.of($do.bcFetchRowMetaSuccess({ bcName, bcUrl: `${bcUrl}/${cursor}`, rowMeta, cursor })),
-                Observable.of(
+            return observableConcat(
+                observableOf($do.bcNewDataSuccess({ bcName, dataItem, bcUrl })),
+                observableOf($do.bcFetchRowMetaSuccess({ bcName, bcUrl: `${bcUrl}/${cursor}`, rowMeta, cursor })),
+                observableOf(
                     $do.changeDataItem({
                         bcName: action.payload.bcName,
                         cursor: cursor,
@@ -92,12 +94,13 @@ export function bcNewDataEpicImpl(action: ActionsMap['sendOperation'], store: St
                     })
                 ),
                 postInvoke
-                    ? Observable.of($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName: action.payload.widgetName }))
-                    : Observable.empty<never>()
+                    ? observableOf($do.processPostInvoke({ bcName, postInvoke, cursor, widgetName: action.payload.widgetName }))
+                    : EMPTY
             )
-        })
-        .catch((error: any) => {
+        }),
+        catchError((error: any) => {
             console.error(error)
-            return Observable.of($do.bcNewDataFail({ bcName }))
+            return observableOf($do.bcNewDataFail({ bcName }))
         })
+    )
 }

@@ -15,26 +15,28 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store } from 'redux'
+import { of as observableOf, concat as observableConcat, Observable, EMPTY } from 'rxjs'
+import { switchMap, map, catchError, mergeMap } from 'rxjs/operators'
 import { Epic, types, AnyAction, ActionsMap, $do } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { fetchRowMeta } from '../../api/api'
 import { buildBcUrl } from '../../utils/strings'
 import { WidgetFieldBase } from '../../interfaces/widget'
 import { DrillDownType } from '../../interfaces/router'
+import { ofType, StateObservable } from 'redux-observable'
 
 /**
  *
  * @param action$
+ * @param store$
  * @param store
  * @category Epics
  */
-export const userDrillDown: Epic = (action$, store) =>
-    action$
-        .ofType(types.userDrillDown)
-        .map(action => {
-            const state = store.getState()
+export const userDrillDown: Epic = (action$, store$, { store }) =>
+    action$.pipe(
+        ofType(types.userDrillDown),
+        map(action => {
+            const state = store$.value
             const widget = state.view.widgets.find(item => item.name === action.payload.widgetName)
             const cursor = state.screen.bo.bc[widget?.bcName]?.cursor
 
@@ -42,10 +44,11 @@ export const userDrillDown: Epic = (action$, store) =>
                 store.dispatch($do.bcChangeCursors({ cursorsMap: { [action.payload.bcName]: action.payload.cursor } }))
             }
             return action
+        }),
+        switchMap(action => {
+            return userDrillDownImpl(action, store$)
         })
-        .switchMap(action => {
-            return userDrillDownImpl(action, store)
-        })
+    )
 
 /**
  * Default implementation for `userDrillDown` epic.
@@ -61,16 +64,16 @@ export const userDrillDown: Epic = (action$, store) =>
  * directly if record's property specified in {@link WidgetFieldBase.drillDownKey | WidgetField.drillDownKey}
  *
  * @param action This epic will fire on {@link ActionPayloadTypes.userDrillDown | userDrillDown} action
- * @param store Redux store instance
+ * @param store$
  * @category Epics
  */
-export function userDrillDownImpl(action: ActionsMap['userDrillDown'], store: Store<CoreStore>): Observable<AnyAction> {
-    const state = store.getState()
+export function userDrillDownImpl(action: ActionsMap['userDrillDown'], store$: StateObservable<CoreStore>): Observable<AnyAction> {
+    const state = store$.value
     const { bcName, fieldKey, cursor } = action.payload
     const bcUrl = buildBcUrl(bcName, true)
     const fetch = fetchRowMeta(state.screen.screenName, bcUrl)
-    return fetch
-        .mergeMap(rowMeta => {
+    return fetch.pipe(
+        mergeMap(rowMeta => {
             const drillDownField = rowMeta.fields.find(field => field.key === fieldKey)
             const route = state.router
             const drillDownKey = (state.view.widgets
@@ -83,12 +86,12 @@ export function userDrillDownImpl(action: ActionsMap['userDrillDown'], store: St
              * TODO: Review this case and either make condition strict or remove it completely
              */
             return customDrillDownUrl || drillDownField?.drillDown || drillDownField?.drillDown !== route.path
-                ? Observable.concat(
+                ? observableConcat(
                       drillDownField.drillDownType !== DrillDownType.inner
-                          ? Observable.of($do.bcFetchRowMetaSuccess({ bcName, rowMeta, bcUrl, cursor }))
-                          : Observable.empty<never>(),
-                      Observable.of($do.userDrillDownSuccess({ bcName, bcUrl, cursor })),
-                      Observable.of(
+                          ? observableOf($do.bcFetchRowMetaSuccess({ bcName, rowMeta, bcUrl, cursor }))
+                          : EMPTY,
+                      observableOf($do.userDrillDownSuccess({ bcName, bcUrl, cursor })),
+                      observableOf(
                           $do.drillDown({
                               url: customDrillDownUrl || drillDownField.drillDown,
                               drillDownType: drillDownField.drillDownType as DrillDownType,
@@ -96,10 +99,11 @@ export function userDrillDownImpl(action: ActionsMap['userDrillDown'], store: St
                           })
                       )
                   )
-                : Observable.empty<never>()
-        })
-        .catch(error => {
+                : EMPTY
+        }),
+        catchError(error => {
             console.error(error)
-            return Observable.empty() // TODO:
+            return EMPTY // TODO:
         })
+    )
 }

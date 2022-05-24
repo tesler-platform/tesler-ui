@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store } from 'redux'
+import { of as observableOf, Observable, EMPTY } from 'rxjs'
+import { mergeMap } from 'rxjs/operators'
 import { Epic, types, $do, AnyAction, ActionsMap } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { historyObj } from '../../reducers/router'
@@ -28,23 +28,27 @@ import {
     OperationPostInvokeDownloadFile,
     OperationPostInvokeDownloadFileByUrl
 } from '../../interfaces/operation'
+import { ofType, StateObservable } from 'redux-observable'
 
-export const processPostInvoke: Epic = (action$, store) =>
-    action$.ofType(types.processPostInvoke).mergeMap(action => {
-        return processPostInvokeImpl(action, store)
-    })
+export const processPostInvoke: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.processPostInvoke),
+        mergeMap(action => {
+            return processPostInvokeImpl(action, store$)
+        })
+    )
 
 /**
  *
  * @param action
- * @param store
+ * @param store$
  * @category Epics
  */
-export function processPostInvokeImpl(action: ActionsMap['processPostInvoke'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
-    const state = store.getState()
+export function processPostInvokeImpl(action: ActionsMap['processPostInvoke'], store$: StateObservable<CoreStore>): Observable<AnyAction> {
+    const state = store$.value
     switch (action.payload.postInvoke.type) {
         case OperationPostInvokeType.drillDown:
-            return Observable.of(
+            return observableOf(
                 $do.drillDown({
                     ...(action.payload.postInvoke as OperationPostInvokeDrillDown),
                     route: state.router,
@@ -66,7 +70,7 @@ export function processPostInvokeImpl(action: ActionsMap['processPostInvoke'], s
                     })
                 )
             }
-            return Observable.of(...result)
+            return observableOf(...result)
         }
         case OperationPostInvokeType.refreshBC: {
             const bo = state.screen.bo
@@ -77,7 +81,7 @@ export function processPostInvokeImpl(action: ActionsMap['processPostInvoke'], s
             const infiniteWidgets: string[] = state.view.infiniteWidgets || []
             const infinitePagination = state.view.widgets.some(item => item.bcName === postInvokeBC && infiniteWidgets.includes(item.name))
             return infinitePagination
-                ? Observable.of(
+                ? observableOf(
                       $do.bcFetchDataPages({
                           bcName: postInvokeBCItem.name,
                           widgetName: widgetName,
@@ -85,7 +89,7 @@ export function processPostInvokeImpl(action: ActionsMap['processPostInvoke'], s
                           to: postInvokeBCItem.page
                       })
                   )
-                : Observable.of(
+                : observableOf(
                       $do.bcFetchDataRequest({
                           bcName: postInvokeBCItem.name,
                           widgetName
@@ -94,18 +98,18 @@ export function processPostInvokeImpl(action: ActionsMap['processPostInvoke'], s
         }
         case OperationPostInvokeType.showMessage: {
             const postInvoke = action.payload.postInvoke as OperationPostInvokeShowMessage
-            return Observable.of($do.showNotification({ type: postInvoke.messageType, message: postInvoke.messageText }))
+            return observableOf($do.showNotification({ type: postInvoke.messageType, message: postInvoke.messageText }))
         }
         case OperationPostInvokeType.downloadFile: {
             const postInvoke = action.payload.postInvoke as OperationPostInvokeDownloadFile
-            return Observable.of($do.downloadFile({ fileId: postInvoke.fileId }))
+            return observableOf($do.downloadFile({ fileId: postInvoke.fileId }))
         }
         case OperationPostInvokeType.downloadFileByUrl: {
             const postInvoke = action.payload.postInvoke as OperationPostInvokeDownloadFileByUrl
-            return Observable.of($do.downloadFileByUrl({ url: postInvoke.url }))
+            return observableOf($do.downloadFileByUrl({ url: postInvoke.url }))
         }
         default:
             // Other types can be handled by client application
-            return Observable.empty()
+            return EMPTY
     }
 }

@@ -15,20 +15,22 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store } from 'redux'
-import { Epic, types, AnyAction, ActionsMap, $do } from '../../actions/actions'
+import { of as observableOf } from 'rxjs'
+import { mergeMap, filter } from 'rxjs/operators'
+import { Epic, types, ActionsMap, $do } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { ApplicationErrorType } from '../../interfaces/view'
 import { knownHttpErrors } from './apiError'
+import { ofType, StateObservable } from 'redux-observable'
 
-export const httpErrorDefault: Epic = (action$, store) =>
-    action$
-        .ofType(types.httpError)
-        .filter(action => !knownHttpErrors.includes(action.payload.statusCode))
-        .mergeMap(action => {
-            return httpErrorDefaultImpl(action, store)
+export const httpErrorDefault: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.httpError),
+        filter(action => !knownHttpErrors.includes(action.payload.statusCode)),
+        mergeMap(action => {
+            return httpErrorDefaultImpl(action, store$)
         })
+    )
 
 /**
  *
@@ -36,11 +38,11 @@ export const httpErrorDefault: Epic = (action$, store) =>
  * @param store
  * @category Epics
  */
-export function httpErrorDefaultImpl(action: ActionsMap['httpError'], store: Store<CoreStore, AnyAction>) {
+export function httpErrorDefaultImpl(action: ActionsMap['httpError'], store: StateObservable<CoreStore>) {
     const businessError = {
         type: ApplicationErrorType.BusinessError,
         code: action.payload.error.response.status,
         details: action.payload.error.response.data
     }
-    return Observable.of($do.showViewError({ error: businessError }))
+    return observableOf($do.showViewError({ error: businessError }))
 }

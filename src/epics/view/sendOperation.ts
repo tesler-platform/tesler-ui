@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
+import { of as observableOf, concat as observableConcat, Observable, EMPTY } from 'rxjs'
+import { mergeMap, filter, catchError } from 'rxjs/operators'
 import { matchOperationRole } from '../../utils/operations'
 import { OperationErrorEntity, OperationError } from '../../interfaces/operation'
-import { Store } from 'redux'
 import { Epic, types, $do, AnyAction, ActionsMap } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { buildBcUrl } from '../../utils/strings'
@@ -26,6 +26,7 @@ import { postOperationRoutine } from '../../epics/view'
 import { AxiosError } from 'axios'
 import { customAction } from '../../api/api'
 import { getFilters, getSorters } from '../../utils/filters'
+import { ofType, StateObservable } from 'redux-observable'
 
 /**
  * Handle any `sendOperation` action which is not part of built-in operations types
@@ -36,25 +37,26 @@ import { getFilters, getSorters } from '../../utils/filters'
  * Fires sendOperationSuccess, bcForceUpdate and postOperationRoutine
  *
  * @param action$ Payload includes operation type and widget that initiated operation
- * @param store
+ * @param store$
  */
-export const sendOperation: Epic = (action$, store) =>
-    action$
-        .ofType(types.sendOperation)
-        .filter(action => matchOperationRole('none', action.payload, store.getState()))
-        .mergeMap(action => {
-            return sendOperationEpicImpl(action, store)
+export const sendOperation: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.sendOperation),
+        filter(action => matchOperationRole('none', action.payload, store$.value)),
+        mergeMap(action => {
+            return sendOperationEpicImpl(action, store$)
         })
+    )
 
 /**
  * Default implementation of `sendOperation` handler
  *
  * @param action
- * @param store
+ * @param store$
  * @category Epics
  */
-export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
-    const state = store.getState()
+export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store$: StateObservable<CoreStore>): Observable<AnyAction> {
+    const state = store$.value
     const screenName = state.screen.screenName
     const { bcName, operationType, widgetName } = action.payload
     // TODO: Remove conformOperation n 2.0.0
@@ -86,8 +88,8 @@ export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store
         params._confirm = confirm
     }
     const context = { widgetName: action.payload.widgetName }
-    return customAction(screenName, bcUrl, data, context, params)
-        .mergeMap(response => {
+    return customAction(screenName, bcUrl, data, context, params).pipe(
+        mergeMap(response => {
             const postInvoke = response.postActions[0]
             // TODO: Remove in 2.0.0 in favor of postInvokeConfirm (is this todo needed?)
             const preInvoke = response.preInvoke
@@ -95,18 +97,18 @@ export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store
             // drop pendingChanges and onSuccessAction execute instead
             return defaultSaveOperation
                 ? action?.payload?.onSuccessAction
-                    ? Observable.concat(
-                          Observable.of($do.bcCancelPendingChanges({ bcNames: [bcName] })),
-                          Observable.of(action.payload.onSuccessAction)
+                    ? observableConcat(
+                          observableOf($do.bcCancelPendingChanges({ bcNames: [bcName] })),
+                          observableOf(action.payload.onSuccessAction)
                       )
-                    : Observable.empty<never>()
-                : Observable.concat(
-                      Observable.of($do.sendOperationSuccess({ bcName, cursor })),
-                      Observable.of($do.bcForceUpdate({ bcName })),
+                    : EMPTY
+                : observableConcat(
+                      observableOf($do.sendOperationSuccess({ bcName, cursor })),
+                      observableOf($do.bcForceUpdate({ bcName })),
                       ...postOperationRoutine(widgetName, postInvoke, preInvoke, operationType, bcName)
                   )
-        })
-        .catch((e: AxiosError) => {
+        }),
+        catchError((e: AxiosError) => {
             console.error(e)
             let viewError: string = null
             let entityError: OperationErrorEntity = null
@@ -115,6 +117,7 @@ export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store
                 entityError = operationError?.error?.entity
                 viewError = operationError?.error?.popup?.[0]
             }
-            return Observable.of($do.sendOperationFail({ bcName, bcUrl, viewError, entityError }))
+            return observableOf($do.sendOperationFail({ bcName, bcUrl, viewError, entityError }))
         })
+    )
 }

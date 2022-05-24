@@ -27,8 +27,6 @@
  */
 
 import './imports/shim'
-import './imports/rxjs'
-
 import { connect } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import Provider, {

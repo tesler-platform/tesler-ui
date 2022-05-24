@@ -15,44 +15,46 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store } from 'redux'
+import { concat as observableConcat, of as observableOf, Observable, EMPTY } from 'rxjs'
+import { mergeMap, filter } from 'rxjs/operators'
 import { Epic, types, AnyAction, ActionsMap, $do } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { ApplicationErrorType, BusinessError } from '../../interfaces/view'
 import { OperationError } from '../../interfaces/operation'
+import { ofType, StateObservable } from 'redux-observable'
 
-export const httpError418: Epic = (action$, store) =>
-    action$
-        .ofType(types.httpError)
-        .filter(action => action.payload.statusCode === 418)
-        .mergeMap(action => {
-            return httpError418Impl(action, store)
+export const httpError418: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.httpError),
+        filter(action => action.payload.statusCode === 418),
+        mergeMap(action => {
+            return httpError418Impl(action, store$)
         })
+    )
 
 /**
  *
  * @param action
- * @param store
+ * @param store$
  * @category Epics
  */
-export function httpError418Impl(action: ActionsMap['httpError'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
+export function httpError418Impl(action: ActionsMap['httpError'], store$: StateObservable<CoreStore>): Observable<AnyAction> {
     const { error, callContext } = action.payload
     const result: Array<Observable<AnyAction>> = []
     const typedError = error.response.data as OperationError
     if (!typedError.error.popup) {
-        return Observable.empty()
+        return EMPTY
     }
     const businessError: BusinessError = {
         type: ApplicationErrorType.BusinessError,
         message: typedError.error.popup[0]
     }
-    result.push(Observable.of($do.showViewError({ error: businessError })))
+    result.push(observableOf($do.showViewError({ error: businessError })))
     if (typedError.error.postActions?.[0]) {
-        const widget = store.getState().view.widgets.find(item => item.name === callContext.widgetName)
+        const widget = store$.value.view.widgets.find(item => item.name === callContext.widgetName)
         const bcName = widget.bcName
         result.push(
-            Observable.of(
+            observableOf(
                 $do.processPostInvoke({
                     bcName,
                     postInvoke: typedError.error.postActions[0],
@@ -61,5 +63,5 @@ export function httpError418Impl(action: ActionsMap['httpError'], store: Store<C
             )
         )
     }
-    return Observable.concat(...result)
+    return observableConcat(...result)
 }

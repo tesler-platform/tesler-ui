@@ -16,24 +16,26 @@
  */
 
 import { Store } from 'redux'
+import { concat as observableConcat, of as observableOf } from 'rxjs'
+import { mergeMap } from 'rxjs/operators'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { mockStore } from '../../../tests/mockStore'
 import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
 import { FieldType } from '../../../interfaces/view'
 import { bcFetchDataEpic, bcFetchDataImpl } from '../bcFetchData'
 import { $do, Epic, types } from '../../../actions/actions'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, ofType, StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import * as api from '../../../api/api'
 import { customAction } from '../../../api/api'
-import { Observable } from 'rxjs'
+import { createStateObservable } from '../../../tests/createStateObservable'
 
 const customActionMock = jest.fn().mockImplementation((...args: Parameters<typeof customAction>) => {
     const [screenName] = args
     if (screenName === 'crash') {
         throw Error('test request crash')
     }
-    return Observable.of({ data: [{ id: '9', vstamp: 1 }], hasNext: true })
+    return observableOf({ data: [{ id: '9', vstamp: 1 }], hasNext: true })
 })
 
 const consoleMock = jest.fn().mockImplementation(e => console.warn(e))
@@ -43,20 +45,22 @@ jest.spyOn(console, 'error').mockImplementation(consoleMock)
 
 describe('bcFetchDataEpic', () => {
     let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
     const canceler = api.createCanceler()
 
     beforeAll(() => {
         store = mockStore()
-        store.getState().screen.screenName = 'test'
-        store.getState().screen.bo.bc.bcExample = bcExample
-        store.getState().view.widgets = [getWidgetMeta()]
+        store$ = createStateObservable(store.getState())
+        store$.value.screen.screenName = 'test'
+        store$.value.screen.bo.bc.bcExample = bcExample
+        store$.value.view.widgets = [getWidgetMeta()]
     })
 
     afterEach(() => {
-        store.getState().view.widgets = [getWidgetMeta()]
-        store.getState().screen.bo.bc.bcChild = null
-        store.getState().screen.bo.bc.bcLazyChild = null
-        store.getState().screen.screenName = 'test'
+        store$.value.view.widgets = [getWidgetMeta()]
+        store$.value.screen.bo.bc.bcChild = null
+        store$.value.screen.bo.bc.bcLazyChild = null
+        store$.value.screen.screenName = 'test'
     })
 
     it('bcForceUpdate calls api request', () => {
@@ -65,7 +69,7 @@ describe('bcFetchDataEpic', () => {
             bcName: 'bcExample',
             widgetName: 'widget-example'
         })
-        const epic = bcFetchDataEpic(ActionsObservable.of(action), store)
+        const epic = bcFetchDataEpic(ActionsObservable.of(action), store$)
         testEpic(epic, () => {
             expect(customActionMock).toBeCalledWith('test', 'bcExample', { _limit: 5, _page: 2 }, canceler.cancelToken)
         })
@@ -78,7 +82,7 @@ describe('bcFetchDataEpic', () => {
             bcName: 'bcExample',
             widgetName: 'widget-example'
         })
-        const epic = bcFetchDataEpic(ActionsObservable.of(action), store)
+        const epic = bcFetchDataEpic(ActionsObservable.of(action), store$)
         testEpic(epic, () => {
             expect(customActionMock).toBeCalledWith('test', 'bcExample', { _limit: 10, _page: 1 }, canceler.cancelToken)
         })
@@ -90,7 +94,7 @@ describe('bcFetchDataEpic', () => {
         const action = $do.bcForceUpdate({
             bcName: 'bcExample'
         })
-        const epic = bcFetchDataEpic(ActionsObservable.of(action), store)
+        const epic = bcFetchDataEpic(ActionsObservable.of(action), store$)
         testEpic(epic, () => {
             expect(customActionMock).toBeCalledWith('test', 'bcExample', { _limit: 10, _page: 1 }, canceler.cancelToken)
         })
@@ -104,7 +108,7 @@ describe('bcFetchDataEpic', () => {
             from: 1,
             to: 5
         })
-        const epic = bcFetchDataEpic(ActionsObservable.of(action), store)
+        const epic = bcFetchDataEpic(ActionsObservable.of(action), store$)
         testEpic(epic, () => {
             expect(customActionMock).toBeCalledWith('test', 'bcExample', { _limit: 25, _page: 1 }, canceler.cancelToken)
         })
@@ -117,7 +121,7 @@ describe('bcFetchDataEpic', () => {
             bcName: 'bcExample',
             widgetName: 'widget-example'
         })
-        const epic = bcFetchDataEpic(ActionsObservable.of(action), store)
+        const epic = bcFetchDataEpic(ActionsObservable.of(action), store$)
         testEpic(epic, e => {
             expect(customActionMock).toBeCalledWith('test', 'bcExample', { _limit: 20, _page: 1 }, canceler.cancelToken)
         })
@@ -129,7 +133,7 @@ describe('bcFetchDataEpic', () => {
             calleeBCName: 'bcExampleAnother',
             widgetName: 'widget-example'
         })
-        testEpic(flow(ActionsObservable.of(showViewPopupDiffers), store), res => {
+        testEpic(flow(ActionsObservable.of(showViewPopupDiffers), store$), res => {
             expect(res[0]).toEqual(
                 expect.objectContaining(
                     $do.bcChangeCursors({
@@ -164,22 +168,22 @@ describe('bcFetchDataEpic', () => {
             calleeBCName: 'bcExample',
             widgetName: 'widget-example'
         })
-        testEpic(flow(ActionsObservable.of(showViewPopupSame), store), res => {
+        testEpic(flow(ActionsObservable.of(showViewPopupSame), store$), res => {
             expect(res.length).toBe(0)
         })
     })
 
     it('does not fetch lazy widgets', () => {
-        store.getState().screen.bo.bc.bcChild = bcChild
-        store.getState().screen.bo.bc.bcLazyChild = bcLazyChild
-        store.getState().screen.bo.bc.bcHidden = bcHidden
-        store.getState().screen.bo.bc.bcHiddenParent = bcHiddenParent
-        store.getState().screen.bo.bc.bcHiddenChild = bcHiddenChild
-        store.getState().screen.bo.bc.bcVisibleChild = bcVisibleChild
-        store.getState().data.bcHidden = [{ id: '50', vstamp: 0, test: '8' }]
-        store.getState().data.bcHiddenParent = [{ id: '50', vstamp: 0, test: '8' }]
-        store.getState().data.bcExample = [{ id: '1', vstamp: 0, test: '8' }]
-        store.getState().view.widgets = [
+        store$.value.screen.bo.bc.bcChild = bcChild
+        store$.value.screen.bo.bc.bcLazyChild = bcLazyChild
+        store$.value.screen.bo.bc.bcHidden = bcHidden
+        store$.value.screen.bo.bc.bcHiddenParent = bcHiddenParent
+        store$.value.screen.bo.bc.bcHiddenChild = bcHiddenChild
+        store$.value.screen.bo.bc.bcVisibleChild = bcVisibleChild
+        store$.value.data.bcHidden = [{ id: '50', vstamp: 0, test: '8' }]
+        store$.value.data.bcHiddenParent = [{ id: '50', vstamp: 0, test: '8' }]
+        store$.value.data.bcExample = [{ id: '1', vstamp: 0, test: '8' }]
+        store$.value.view.widgets = [
             getWidgetMeta(),
             {
                 ...getWidgetMeta(),
@@ -237,7 +241,7 @@ describe('bcFetchDataEpic', () => {
         ]
 
         const action = $do.bcFetchDataRequest({ widgetName: 'widget-example', bcName: 'bcExample' })
-        testEpic(flow(ActionsObservable.of(action), store), res => {
+        testEpic(flow(ActionsObservable.of(action), store$), res => {
             expect(res.length).toBe(4)
             expect(res[0].type).toBe(types.bcChangeCursors)
             expect(res[1].type).toBe(types.bcFetchDataSuccess)
@@ -254,7 +258,7 @@ describe('bcFetchDataEpic', () => {
             )
         })
         const action2 = $do.bcFetchDataRequest({ widgetName: 'child-of-hidden-widget', bcName: 'bcHiddenParent' })
-        testEpic(flow(ActionsObservable.of(action2), store), res => {
+        testEpic(flow(ActionsObservable.of(action2), store$), res => {
             expect(res.length).toBe(4)
             expect(res[0].type).toBe(types.bcChangeCursors)
             expect(res[1].type).toBe(types.bcFetchDataSuccess)
@@ -273,18 +277,18 @@ describe('bcFetchDataEpic', () => {
     })
 
     it('does not breaks for missing widget', () => {
-        store.getState().view.widgets = []
+        store$.value.view.widgets = []
         const action = $do.bcFetchDataRequest({ widgetName: 'widget-example', bcName: 'bcExample' })
-        testEpic(flow(ActionsObservable.of(action), store), res => {
+        testEpic(flow(ActionsObservable.of(action), store$), res => {
             expect(res.length).toBe(0)
         })
     })
 
     it('should load data of hierarchy of BCs', () => {
-        store.getState().screen.bo.bc.bcChild = bcChild
-        store.getState().screen.bo.bc.bcChildOfChild = bcChildOfChild
-        store.getState().screen.bo.bc.lastChild = lastChild
-        store.getState().view.widgets[0] = {
+        store$.value.screen.bo.bc.bcChild = bcChild
+        store$.value.screen.bo.bc.bcChildOfChild = bcChildOfChild
+        store$.value.screen.bo.bc.lastChild = lastChild
+        store$.value.view.widgets[0] = {
             ...getWidgetMeta(),
             showCondition: {
                 bcName: bcChildOfChild.name,
@@ -297,7 +301,7 @@ describe('bcFetchDataEpic', () => {
             bcName: lastChild.name
         }
         const action = $do.bcFetchDataRequest({ widgetName: 'widget-example', bcName: 'bcExample' })
-        testEpic(flow(ActionsObservable.of(action), store), res => {
+        testEpic(flow(ActionsObservable.of(action), store$), res => {
             expect(res.pop()).toEqual(
                 expect.objectContaining(
                     $do.bcFetchDataRequest({
@@ -314,9 +318,10 @@ describe('bcFetchDataEpic', () => {
 
 /** */
 const flow: Epic = (action$, store) =>
-    action$
-        .ofType(types.bcFetchDataRequest, types.bcFetchDataPages, types.showViewPopup, types.bcForceUpdate, types.bcChangePage)
-        .mergeMap(action => Observable.concat(...bcFetchDataImpl(action, store, ActionsObservable.of(action))))
+    action$.pipe(
+        ofType(types.bcFetchDataRequest, types.bcFetchDataPages, types.showViewPopup, types.bcForceUpdate, types.bcChangePage),
+        mergeMap(action => observableConcat(...bcFetchDataImpl(action, store, ActionsObservable.of(action))))
+    )
 
 function getWidgetMeta(): WidgetTableMeta {
     return {

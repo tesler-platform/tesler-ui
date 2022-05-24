@@ -20,8 +20,9 @@ import { buildUrl } from '../utils/history'
 import { BcDataResponse, DataItem, DataItemResponse, PendingDataItem } from '../interfaces/data'
 import { RowMetaResponse } from '../interfaces/rowMeta'
 import { AssociatedItem } from '../interfaces/operation'
-import { Observable } from 'rxjs/Observable'
 import axios, { CancelToken } from 'axios'
+import { expand, map, reduce } from 'rxjs/operators'
+import { EMPTY } from 'rxjs'
 
 type GetParamsMap = Record<string, string | number>
 
@@ -67,13 +68,14 @@ export function fetchBcData(screenName: string, bcUrl: string, params: GetParams
 export function fetchBcDataAll(screenName: string, bcUrl: string, params: GetParamsMap = {}) {
     let currentPage = 1
 
-    return fetchBcData(screenName, bcUrl, { ...params, _page: currentPage })
-        .expand(response => {
-            return response.hasNext ? fetchBcData(screenName, bcUrl, { ...params, _page: ++currentPage }) : Observable.empty()
-        })
-        .reduce((items, nextResponse) => {
+    return fetchBcData(screenName, bcUrl, { ...params, _page: currentPage }).pipe(
+        expand(response => {
+            return response.hasNext ? fetchBcData(screenName, bcUrl, { ...params, _page: ++currentPage }) : EMPTY
+        }),
+        reduce((items, nextResponse) => {
             return [...items, ...nextResponse.data]
         }, [] as DataItem[])
+    )
 }
 
 /**
@@ -87,7 +89,7 @@ export function fetchBcDataAll(screenName: string, bcUrl: string, params: GetPar
  */
 export function fetchRowMeta(screenName: string, bcUrl: string, params?: GetParamsMap, cancelToken?: CancelToken) {
     const url = applyParams(buildUrl`row-meta/${screenName}/` + bcUrl, params)
-    return axiosGet<RowMetaResponse>(url, { cancelToken }).map(response => response.data.row)
+    return axiosGet<RowMetaResponse>(url, { cancelToken }).pipe(map(response => response.data.row))
 }
 
 /**
@@ -100,7 +102,7 @@ export function fetchRowMeta(screenName: string, bcUrl: string, params?: GetPara
  */
 export function newBcData(screenName: string, bcUrl: string, context: ApiCallContext, params?: GetParamsMap) {
     const url = applyParams(buildUrl`row-meta-new/${screenName}/` + bcUrl, params)
-    return axiosGet<RowMetaResponse>(url, null, context).map(response => response.data)
+    return axiosGet<RowMetaResponse>(url, null, context).pipe(map(response => response.data))
 }
 
 /**
@@ -121,7 +123,7 @@ export function saveBcData(
     params?: GetParamsMap
 ) {
     const url = applyParams(buildUrl`data/${screenName}/` + bcUrl, params)
-    return axiosPut<DataItemResponse>(url, { data }, context).map(response => response.data)
+    return axiosPut<DataItemResponse>(url, { data }, context).pipe(map(response => response.data))
 }
 
 /**
@@ -135,7 +137,7 @@ export function saveBcData(
  */
 export function deleteBcData(screenName: string, bcUrl: string, context: ApiCallContext, params?: GetParamsMap) {
     const url = applyParams(buildUrl`data/${screenName}/` + bcUrl, params)
-    return axiosDelete<DataItemResponse>(url, context).map(response => response.data)
+    return axiosDelete<DataItemResponse>(url, context).pipe(map(response => response.data))
 }
 
 /**
@@ -150,7 +152,7 @@ export function deleteBcData(screenName: string, bcUrl: string, context: ApiCall
  */
 export function customAction(screenName: string, bcUrl: string, data: Record<string, any>, context: ApiCallContext, params?: GetParamsMap) {
     const url = applyParams(buildUrl`custom-action/${screenName}/` + bcUrl, params)
-    return axiosPost<DataItemResponse>(url, { data: data || {} }, null, context).map(response => response.data)
+    return axiosPost<DataItemResponse>(url, { data: data || {} }, null, context).pipe(map(response => response.data))
 }
 
 /**
@@ -181,7 +183,7 @@ export function associate(
           }))
         : data
     const url = applyParams(buildUrl`associate/${screenName}/` + bcUrl, params)
-    return axiosPost<any>(url, processedData).map(response => response.data)
+    return axiosPost<any>(url, processedData).pipe(map(response => response.data))
 }
 
 /**
@@ -195,7 +197,7 @@ export function associate(
  */
 export function getRmByForceActive(screenName: string, bcUrl: string, data: PendingDataItem & { vstamp: number }, params?: GetParamsMap) {
     const url = applyParams(buildUrl`row-meta/${screenName}/` + bcUrl, params)
-    return axiosPost<RowMetaResponse>(url, { data }).map(response => response.data.row)
+    return axiosPost<RowMetaResponse>(url, { data }).pipe(map(response => response.data.row))
 }
 
 /**

@@ -15,31 +15,33 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store } from 'redux'
+import { of as observableOf, Observable, EMPTY } from 'rxjs'
+import { mergeMap, filter } from 'rxjs/operators'
 import { Epic, types, $do, AnyAction, ActionsMap } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { MultivalueSingleValue, PendingDataItem } from '../../interfaces/data'
 import { WidgetTypes } from '../../interfaces/widget'
+import { ofType, StateObservable } from 'redux-observable'
 
-export const showAssocPopup: Epic = (action$, store) =>
-    action$
-        .ofType(types.showViewPopup)
-        .filter(action => !!(action.payload.calleeBCName && action.payload.associateFieldKey))
-        .mergeMap(action => {
-            return showAssocPopupEpicImpl(action, store)
+export const showAssocPopup: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.showViewPopup),
+        filter(action => !!(action.payload.calleeBCName && action.payload.associateFieldKey)),
+        mergeMap(action => {
+            return showAssocPopupEpicImpl(action, store$)
         })
+    )
 
 /**
  *
  * @param action
- * @param store
+ * @param store$
  * @category Epics
  */
-export function showAssocPopupEpicImpl(action: ActionsMap['showViewPopup'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
+export function showAssocPopupEpicImpl(action: ActionsMap['showViewPopup'], store$: StateObservable<CoreStore>): Observable<AnyAction> {
     const { bcName, calleeBCName } = action.payload
 
-    const state = store.getState()
+    const state = store$.value
 
     const assocWidget = state.view.widgets.find(widget => widget.bcName === bcName && widget.type === WidgetTypes.AssocListPopup)
     const calleeCursor = state.screen.bo.bc[calleeBCName]?.cursor
@@ -48,7 +50,7 @@ export function showAssocPopupEpicImpl(action: ActionsMap['showViewPopup'], stor
     const assocFieldChanges = calleePendingChanges?.[assocFieldKey] as MultivalueSingleValue[]
     const somethingMissing = !assocWidget || !calleePendingChanges || !assocFieldChanges || !assocFieldChanges
     if (somethingMissing || (assocWidget.options && !assocWidget.options.hierarchyFull)) {
-        return Observable.empty<never>()
+        return EMPTY
     }
 
     const popupInitPendingChanges: Record<string, PendingDataItem> = {}
@@ -75,7 +77,7 @@ export function showAssocPopupEpicImpl(action: ActionsMap['showViewPopup'], stor
         })
     }
 
-    return Observable.of(
+    return observableOf(
         $do.changeDataItems({
             bcName,
             cursors: Object.keys(popupInitPendingChanges),

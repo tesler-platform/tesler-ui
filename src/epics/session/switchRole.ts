@@ -15,17 +15,22 @@
  * limitations under the License.
  */
 
+import { concat as observableConcat } from 'rxjs'
+import { switchMap } from 'rxjs/operators'
 import { $do, Epic, types } from '../../actions/actions'
-import { Observable } from 'rxjs'
+import { ofType } from 'redux-observable'
 
 /**
  * Activates process of role switching
  *
  * @param action$ This epic will fire on {@link ActionPayloadTypes.switchRole | switchRole} action
- * @param store Redux store instance
+ * @param store$
  * @category Epics
  */
-export const switchRoleEpic: Epic = (action$, store) =>
-    action$.ofType(types.switchRole).switchMap(action => {
-        return Observable.concat([$do.logoutDone(null), $do.login({ login: null, password: null, role: action.payload.role })])
-    })
+export const switchRoleEpic: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.switchRole),
+        switchMap(action => {
+            return observableConcat([$do.logoutDone(null), $do.login({ login: null, password: null, role: action.payload.role })])
+        })
+    )

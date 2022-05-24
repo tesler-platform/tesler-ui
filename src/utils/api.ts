@@ -1,4 +1,6 @@
-import { Observable } from 'rxjs/Observable'
+import { from as observableFrom } from 'rxjs'
+
+import { map, takeWhile } from 'rxjs/operators'
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 import qs from 'query-string'
 import { axiosInstance, getStoreInstance } from '../Provider'
@@ -32,7 +34,7 @@ const onResponseHook = <ResponsePayload>(response: AxiosResponse<ResponsePayload
  *
  * @param value
  */
-function redirectOccurred(value: AxiosResponse<TeslerResponse>) {
+function redirectOccurred<T extends TeslerResponse>(value: AxiosResponse<T>) {
     if (value.data?.redirectUrl) {
         let redirectUrl = value.data.redirectUrl
         if (!redirectUrl.startsWith('/') && !redirectUrl.match('^http(.?)://')) {
@@ -103,9 +105,10 @@ const axiosForApi = {
  * @category Utils
  */
 const axiosGet = <ResponsePayload>(path: string, config: AxiosRequestConfig = {}, callContext?: ApiCallContext) => {
-    return Observable.fromPromise(axiosForApi.get<ResponsePayload>(path, config, callContext))
-        .takeWhile(redirectOccurred)
-        .map(response => response.data)
+    return observableFrom(axiosForApi.get<ResponsePayload>(path, config, callContext)).pipe(
+        takeWhile(redirectOccurred),
+        map(response => response.data)
+    )
 }
 
 /**
@@ -119,9 +122,10 @@ const axiosGet = <ResponsePayload>(path: string, config: AxiosRequestConfig = {}
  * @category Utils
  */
 const axiosPost = <ResponsePayload>(path: string, data: any, config: AxiosRequestConfig = {}, callContext?: ApiCallContext) => {
-    return Observable.fromPromise(axiosForApi.post<ResponsePayload>(path, data, config, callContext))
-        .takeWhile(redirectOccurred)
-        .map(response => response.data)
+    return observableFrom(axiosForApi.post<ResponsePayload>(path, data, config, callContext)).pipe(
+        takeWhile(redirectOccurred),
+        map(response => response.data)
+    )
 }
 
 /**
@@ -135,9 +139,10 @@ const axiosPost = <ResponsePayload>(path: string, data: any, config: AxiosReques
  * @category Utils
  */
 const axiosPut = <ResponsePayload>(path: string, data: any, callContext?: ApiCallContext) => {
-    return Observable.fromPromise(axiosForApi.put<ResponsePayload>(path, data, callContext))
-        .takeWhile(redirectOccurred)
-        .map(response => response.data)
+    return observableFrom(axiosForApi.put<ResponsePayload>(path, data, callContext)).pipe(
+        takeWhile(redirectOccurred),
+        map(response => response.data)
+    )
 }
 
 /**
@@ -151,9 +156,10 @@ const axiosPut = <ResponsePayload>(path: string, data: any, callContext?: ApiCal
  * @category Utils
  */
 const axiosDelete = <ResponsePayload>(path: string, callContext?: ApiCallContext) => {
-    return Observable.fromPromise(axiosForApi.delete<ResponsePayload>(path, callContext))
-        .takeWhile(redirectOccurred)
-        .map(response => response.data)
+    return observableFrom(axiosForApi.delete<ResponsePayload>(path, callContext)).pipe(
+        takeWhile(redirectOccurred),
+        map(response => response.data)
+    )
 }
 
 type QueryParamsMap = Record<string, string | number>

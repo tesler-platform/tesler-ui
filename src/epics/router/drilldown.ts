@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store } from 'redux'
+import { EMPTY, Observable } from 'rxjs'
+import { switchMap } from 'rxjs/operators'
 import { Epic, types, $do, AnyAction, ActionsMap } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { DrillDownType } from '../../interfaces/router'
@@ -26,11 +26,16 @@ import { defaultParseLocation, makeRelativeUrl } from '../../utils/history'
 import { shallowCompare } from '../../utils/redux'
 import { historyObj } from '../../reducers/router'
 import { parsePath } from 'history'
+import { ofType } from 'redux-observable'
+import { Store } from 'redux'
 
-export const drillDown: Epic = (action$, store) =>
-    action$.ofType(types.drillDown).switchMap(action => {
-        return drillDownImpl(action, store)
-    })
+export const drillDown: Epic = (action$, store$, { store }) =>
+    action$.pipe(
+        ofType(types.drillDown),
+        switchMap(action => {
+            return drillDownImpl(action, store)
+        })
+    )
 
 /**
  *
@@ -111,5 +116,5 @@ export function drillDownImpl(action: ActionsMap['drillDown'], store: Store<Core
             historyObj.push(makeRelativeUrl(urlBase))
             break
     }
-    return Observable.empty()
+    return EMPTY
 }

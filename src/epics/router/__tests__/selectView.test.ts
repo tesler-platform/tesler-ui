@@ -17,29 +17,28 @@
 
 import { testEpic } from '../../../tests/testEpic'
 import { $do } from '../../../actions/actions'
-import { ActionsObservable } from 'redux-observable'
-import { mockStore } from '../../../tests/mockStore'
-import { Store } from 'redux'
+import { ActionsObservable, StateObservable } from 'redux-observable'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { changeView } from '../selectView'
+import { createMockStateObservable } from '../../../tests/createMockStateObservable'
 
 describe('selectView', () => {
-    let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
     const action = $do.selectView(null)
 
     beforeAll(() => {
-        store = mockStore()
+        store$ = createMockStateObservable()
         // store.getState().view.name = 'view-previous'
-        store.getState().router.bcPath = 'bcParent/4/bcChild/5'
-        store.getState().screen.bo.bc = {
+        store$.value.router.bcPath = 'bcParent/4/bcChild/5'
+        store$.value.screen.bo.bc = {
             bcParent: { cursor: '1', name: 'bcParent', parentName: null, url: 'bcParent/:id' },
             bcChild: { cursor: '2', name: 'bcChild', parentName: 'bcParent', url: 'bcParent/:id/bcChild/:id' }
         }
     })
 
     it('fires `bcChangeCursors` if route cursors does not match the store', () => {
-        store.getState().router.bcPath = 'bcParent/4/bcChild/5/bcNew/8'
-        const epic = changeView(ActionsObservable.of(action), store)
+        store$.value.router.bcPath = 'bcParent/4/bcChild/5/bcNew/8'
+        const epic = changeView(ActionsObservable.of(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(
@@ -57,16 +56,16 @@ describe('selectView', () => {
     })
 
     it('fires nothing if route cursors match the store', () => {
-        store.getState().router.bcPath = 'bcParent/1/bcChild/2'
-        const epic = changeView(ActionsObservable.of(action), store)
+        store$.value.router.bcPath = 'bcParent/1/bcChild/2'
+        const epic = changeView(ActionsObservable.of(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(0)
         })
     })
 
     it('fires nothing if no cursors in route', () => {
-        store.getState().router.bcPath = null
-        const epic = changeView(ActionsObservable.of(action), store)
+        store$.value.router.bcPath = null
+        const epic = changeView(ActionsObservable.of(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(0)
         })

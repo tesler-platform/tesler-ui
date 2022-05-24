@@ -15,14 +15,15 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store, AnyAction } from 'redux'
+import { of as observableOf, Observable, race as observableRace } from 'rxjs'
+import { catchError, map, mergeMap } from 'rxjs/operators'
+import { AnyAction } from 'redux'
 import { Epic, types, $do, ActionsMap } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { buildBcUrl } from '../../utils/strings'
 import { createCanceler, fetchRowMeta } from '../../api/api'
 import { cancelRequestActionTypes, cancelRequestEpic } from '../../utils/cancelRequestEpic'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, ofType, StateObservable } from 'redux-observable'
 
 /**
  * Access `row-meta` API endpoint for business component; response will contain information
@@ -37,14 +38,17 @@ import { ActionsObservable } from 'redux-observable'
  * this epic will be cancelled and {@link ActionPayloadTypes.bcFetchRowMetaFail | bcFetchRowMetaFail} action
  * will be dispatched.
  *
- * @param action {@link ActionPayloadTypes.bcFetchRowMeta | bcFetchRowMeta}
- * @param store Store instance
+ * @param action$ {@link ActionPayloadTypes.bcFetchRowMeta | bcFetchRowMeta}
+ * @param store$
  * @category Epics
  */
-export const bcFetchRowMetaRequest: Epic = (action$, store) =>
-    action$.ofType(types.bcFetchRowMeta).mergeMap(action => {
-        return bcFetchRowMetaRequestImpl(action, store, action$)
-    })
+export const bcFetchRowMetaRequest: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.bcFetchRowMeta),
+        mergeMap(action => {
+            return bcFetchRowMetaRequestImpl(action, store$, action$)
+        })
+    )
 
 /**
  * Default implementation for `bcFetchRowMetaRequest` epic
@@ -62,17 +66,17 @@ export const bcFetchRowMetaRequest: Epic = (action$, store) =>
  * will be dispatched.
  *
  * @param action {@link ActionPayloadTypes.bcFetchRowMeta | bcFetchRowMeta}
- * @param store Store instance
+ * @param storeObservable Store instance
  * @param actionObservable Root epic to cancel
  * @category Epics
  */
 export function bcFetchRowMetaRequestImpl(
     action: ActionsMap['bcFetchRowMeta'],
-    store: Store<CoreStore, AnyAction>,
+    storeObservable: StateObservable<CoreStore>,
     actionObservable: ActionsObservable<AnyAction>
 ): Observable<AnyAction> {
-    const [cancelFlow, cancelByParentBc, normalFlow] = bcFetchRowMetaRequestCompatibility(action, store, actionObservable)
-    return Observable.race(cancelFlow, cancelByParentBc, normalFlow)
+    const [cancelFlow, cancelByParentBc, normalFlow] = bcFetchRowMetaRequestCompatibility(action, storeObservable, actionObservable)
+    return observableRace(cancelFlow, cancelByParentBc, normalFlow)
 }
 
 /**
@@ -82,10 +86,10 @@ export function bcFetchRowMetaRequestImpl(
  */
 export function bcFetchRowMetaRequestCompatibility(
     action: ActionsMap['bcFetchRowMeta'],
-    store: Store<CoreStore, AnyAction>,
+    storeObservable: StateObservable<CoreStore>,
     actionObservable: ActionsObservable<AnyAction>
 ): Array<Observable<AnyAction>> {
-    const state = store.getState()
+    const state = storeObservable.value
     const screenName = state.screen.screenName
     const bcName = action.payload.bcName
     const cursor = state.screen.bo.bc[bcName].cursor
@@ -102,13 +106,15 @@ export function bcFetchRowMetaRequestCompatibility(
             return state.screen.bo.bc[bcName].parentName === actionBc
         }
     )
-    const normalFlow = fetchRowMeta(screenName, bcUrl, undefined, canceler.cancelToken)
-        .map(rowMeta => {
+    const normalFlow = fetchRowMeta(screenName, bcUrl, undefined, canceler.cancelToken).pipe(
+        map(rowMeta => {
             return $do.bcFetchRowMetaSuccess({ bcName, rowMeta, bcUrl, cursor })
-        })
-        .catch(error => {
+        }),
+        catchError(error => {
             console.error(error)
-            return Observable.of($do.bcFetchRowMetaFail({ bcName }))
+            return observableOf($do.bcFetchRowMetaFail({ bcName }))
         })
+    )
+
     return [cancelFlow, cancelByParentBc, normalFlow]
 }

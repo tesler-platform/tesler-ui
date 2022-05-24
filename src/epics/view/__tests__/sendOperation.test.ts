@@ -1,21 +1,20 @@
+import { of as observableOf } from 'rxjs'
 import { customAction } from '../../../api'
-import { Observable } from 'rxjs'
 import * as api from '../../../api/api'
-import { Store } from 'redux'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { $do } from '../../../actions/actions'
-import { mockStore } from '../../../tests/mockStore'
 import { sendOperation } from '../sendOperation'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import { FilterType } from '../../../interfaces/filters'
+import { createMockStateObservable } from '../../../tests/createMockStateObservable'
 
 const customActionMock = jest.fn().mockImplementation((...args: Parameters<typeof customAction>) => {
     const [screenName] = args
     if (screenName === 'fail') {
         throw Error('test request crash')
     }
-    return Observable.of({ data: [{ id: '1', vstamp: 1 }], hasNext: true })
+    return observableOf({ data: [{ id: '1', vstamp: 1 }], hasNext: true })
 })
 const consoleMock = jest.fn().mockImplementation(e => console.warn(e))
 
@@ -23,13 +22,13 @@ jest.spyOn<any, any>(api, 'customAction').mockImplementation(customActionMock)
 jest.spyOn(console, 'error').mockImplementation(consoleMock)
 
 describe('sendOperation', () => {
-    let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
 
     beforeAll(() => {
-        store = mockStore()
-        store.getState().screen.screenName = 'test'
-        store.getState().screen.bo.bc.bcExample = bcExample
-        store.getState().data[bcExample.name] = dataExample
+        store$ = createMockStateObservable()
+        store$.value.screen.screenName = 'test'
+        store$.value.screen.bo.bc.bcExample = bcExample
+        store$.value.data[bcExample.name] = dataExample
     })
 
     it('call customAction api', () => {
@@ -38,7 +37,7 @@ describe('sendOperation', () => {
             operationType: 'someCustomAction',
             widgetName: 'exWidgetName'
         })
-        const epic = sendOperation(ActionsObservable.of(action), store)
+        const epic = sendOperation(ActionsObservable.of(action), store$)
         testEpic(epic, () => {
             expect(customActionMock).toBeCalledWith(
                 'test',
@@ -57,7 +56,7 @@ describe('sendOperation', () => {
             operationType: 'someCustomAction',
             widgetName: 'exWidgetName'
         })
-        const epic = sendOperation(ActionsObservable.of(action), store)
+        const epic = sendOperation(ActionsObservable.of(action), store$)
         testEpic(epic, () => {
             expect(customActionMock).toBeCalledWith(
                 'test',
@@ -70,7 +69,7 @@ describe('sendOperation', () => {
     })
 
     it('call customAction api with filters ans sorters', () => {
-        store.getState().screen.sorters = {
+        store$.value.screen.sorters = {
             bcExample: [
                 {
                     fieldName: 'name',
@@ -78,7 +77,7 @@ describe('sendOperation', () => {
                 }
             ]
         }
-        store.getState().screen.filters = {
+        store$.value.screen.filters = {
             bcExample: [{ type: FilterType.equalsOneOf, fieldName: 'countryList', value: ['Germany'] }]
         }
         const action = $do.sendOperation({
@@ -86,7 +85,7 @@ describe('sendOperation', () => {
             operationType: 'someCustomAction',
             widgetName: 'exWidgetName'
         })
-        const epic = sendOperation(ActionsObservable.of(action), store)
+        const epic = sendOperation(ActionsObservable.of(action), store$)
         testEpic(epic, () => {
             expect(customActionMock).toBeCalledWith(
                 'test',

@@ -15,18 +15,20 @@
  * limitations under the License.
  */
 
-import { ActionsMap, $do, AnyAction, types, Epic } from '../../actions/actions'
-import { Store } from 'redux'
+import { of as observableOf, concat as observableConcat, EMPTY } from 'rxjs'
+import { mergeMap, filter, catchError } from 'rxjs/operators'
+import { ActionsMap, $do, types, Epic, AnyAction } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { OperationTypeCrud, OperationErrorEntity, OperationError } from '../../interfaces/operation'
 import { matchOperationRole } from '../../utils/operations'
 import { buildBcUrl } from '../../utils/strings'
 import { getBcChildren } from '../../utils/bc'
-import { Observable } from 'rxjs'
 import { AxiosError } from 'axios'
 import { openButtonWarningNotification } from '../../utils/notifications'
 import i18n from 'i18next'
 import { saveBcData } from '../../api/api'
+import { ofType } from 'redux-observable'
+import { Store } from 'redux'
 
 /**
  * Post record's pending changes to `save data` API endpoint.
@@ -49,17 +51,19 @@ import { saveBcData } from '../../api/api'
  * then a notification will be shown on failure with suggestion to cancel pending changes and a button that fires
  * {@link ActionPayloadTypes.bcCancelPendingChanges | bcCancelPendingChanges}
  *
- * @param action {@link ActionPayloadTypes.sendOperation | sendOperation} with `save` role
- * @param store Store instance
+ * @param action$ {@link ActionPayloadTypes.sendOperation | sendOperation} with `save` role
+ * @param store$
+ * @param store
  * @category Epics
  */
-export const bcSaveDataEpic: Epic = (action$, store) =>
-    action$
-        .ofType(types.sendOperation)
-        .filter(action => matchOperationRole(OperationTypeCrud.save, action.payload, store.getState()))
-        .mergeMap(action => {
+export const bcSaveDataEpic: Epic = (action$, store$, { store }) =>
+    action$.pipe(
+        ofType(types.sendOperation),
+        filter(action => matchOperationRole(OperationTypeCrud.save, action.payload, store$.value)),
+        mergeMap(action => {
             return bcSaveDataImpl(action, store)
         })
+    )
 
 /**
  * Default implementation for `bcSaveData` epic
@@ -85,7 +89,7 @@ export const bcSaveDataEpic: Epic = (action$, store) =>
  * {@link ActionPayloadTypes.bcCancelPendingChanges | bcCancelPendingChanges}
  *
  * @param action {@link ActionPayloadTypes.sendOperation | sendOperation} with `save` role
- * @param store Store instance
+ * @param store
  * @category Epics
  */
 export function bcSaveDataImpl(action: ActionsMap['sendOperation'], store: Store<CoreStore, AnyAction>) {
@@ -115,16 +119,16 @@ export function bcSaveDataImpl(action: ActionsMap['sendOperation'], store: Store
     })
 
     const context = { widgetName: action.payload.widgetName }
-    return saveBcData(state.screen.screenName, bcUrl, { ...pendingChanges, vstamp: dataItem.vstamp }, context)
-        .mergeMap(data => {
+    return saveBcData(state.screen.screenName, bcUrl, { ...pendingChanges, vstamp: dataItem.vstamp }, context).pipe(
+        mergeMap(data => {
             const postInvoke = data.postActions[0]
             const responseDataItem = data.record
-            return Observable.concat(
-                Observable.of($do.bcSaveDataSuccess({ bcName, cursor, dataItem: responseDataItem })),
-                Observable.of($do.bcFetchRowMeta({ widgetName, bcName })),
-                Observable.of(...fetchChildrenBcData),
+            return observableConcat(
+                observableOf($do.bcSaveDataSuccess({ bcName, cursor, dataItem: responseDataItem })),
+                observableOf($do.bcFetchRowMeta({ widgetName, bcName })),
+                observableOf(...fetchChildrenBcData),
                 postInvoke
-                    ? Observable.of(
+                    ? observableOf(
                           $do.processPostInvoke({
                               bcName,
                               widgetName,
@@ -132,11 +136,11 @@ export function bcSaveDataImpl(action: ActionsMap['sendOperation'], store: Store
                               cursor: responseDataItem.id
                           })
                       )
-                    : Observable.empty<never>(),
-                action.payload.onSuccessAction ? Observable.of(action.payload.onSuccessAction) : Observable.empty<never>()
+                    : EMPTY,
+                action.payload.onSuccessAction ? observableOf(action.payload.onSuccessAction) : EMPTY
             )
-        })
-        .catch((e: AxiosError) => {
+        }),
+        catchError((e: AxiosError) => {
             console.error(e)
             // Protection against widget blocking while autosaving
             if (action.payload.onSuccessAction && !options?.disableNotification) {
@@ -157,6 +161,7 @@ export function bcSaveDataImpl(action: ActionsMap['sendOperation'], store: Store
                 entityError = operationError?.error?.entity
                 viewError = operationError?.error?.popup?.[0]
             }
-            return Observable.of($do.bcSaveDataFail({ bcName, bcUrl, viewError, entityError }))
+            return observableOf($do.bcSaveDataFail({ bcName, bcUrl, viewError, entityError }))
         })
+    )
 }

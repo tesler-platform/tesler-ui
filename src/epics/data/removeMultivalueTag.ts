@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store } from 'redux'
+import { of as observableOf, concat as observableConcat, Observable } from 'rxjs'
+import { mergeMap } from 'rxjs/operators'
 import { Epic, types, $do, AnyAction, ActionsMap } from '../../actions/actions'
 import { PopupWidgetTypes } from '../../interfaces/widget'
 import { TreeAssociatedRecord } from '../../interfaces/tree'
 import { assignTreeLinks, getDescendants } from '../../utils/tree'
 import { Store as CoreStore } from '../../interfaces/store'
+import { ofType, StateObservable } from 'redux-observable'
 
 /**
  * For full hierarchies it fires `changeDataItem` action to remove value from source record
@@ -38,13 +39,16 @@ import { Store as CoreStore } from '../../interfaces/store'
  * of remove item and second to update value of source record.
  * Widget options are not tested for non-full hierarchies.
  *
- * @param action removeMultivalueTag
- * @param store Store instance
+ * @param action$ removeMultivalueTag
+ * @param store$
  */
-export const removeMultivalueTag: Epic = (action$, store) =>
-    action$.ofType(types.removeMultivalueTag).mergeMap(action => {
-        return removeMultivalueTagImpl(action, store)
-    })
+export const removeMultivalueTag: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.removeMultivalueTag),
+        mergeMap(action => {
+            return removeMultivalueTagImpl(action, store$)
+        })
+    )
 
 /**
  * Default implementation for `removeMultivalueTag` epic
@@ -64,14 +68,14 @@ export const removeMultivalueTag: Epic = (action$, store) =>
  * Widget options are not tested for non-full hierarchies.
  *
  * @param action removeMultivalueTag
- * @param store Store instance
+ * @param store$
  * @category Epics
  */
 export function removeMultivalueTagImpl(
     action: ActionsMap['removeMultivalueTag'],
-    store: Store<CoreStore, AnyAction>
+    store$: StateObservable<CoreStore>
 ): Observable<AnyAction> {
-    const state = store.getState()
+    const state = store$.value
     const { bcName, cursor, popupBcName, associateFieldKey } = action.payload
     const widget = state.view.widgets.find(item => item.bcName === popupBcName && PopupWidgetTypes.includes(item.type))
     const storeData = ((state?.data[popupBcName] || []) as unknown) as TreeAssociatedRecord[]
@@ -111,8 +115,8 @@ export function removeMultivalueTagImpl(
                     return removedNodes.includes(descendant) || !associated.includes(descendant)
                 })
                 if (parentDeepEmpty) {
-                    return Observable.concat(
-                        Observable.of(
+                    return observableConcat(
+                        observableOf(
                             $do.removeMultivalueTag({
                                 ...action.payload,
                                 removedItem: { id: parent.id, value: null }
@@ -128,7 +132,7 @@ export function removeMultivalueTagImpl(
     }
     // Full hierarchies just filter out selected records
     if (widget.options?.hierarchyFull) {
-        return Observable.of(
+        return observableOf(
             $do.changeDataItem({
                 bcName,
                 cursor,
@@ -139,8 +143,8 @@ export function removeMultivalueTagImpl(
     // Non-full hierarchies drops removed item's `_associate` flag`
     // And also updates source record value
     if (widget.options?.hierarchy) {
-        return Observable.concat(
-            Observable.of(
+        return observableConcat(
+            observableOf(
                 $do.changeDataItem({
                     /**
                      * This is incorrect and will break if different BC has records with
@@ -156,7 +160,7 @@ export function removeMultivalueTagImpl(
                     dataItem: { ...(action.payload.removedItem as any), _associate: false }
                 })
             ),
-            Observable.of(
+            observableOf(
                 $do.changeDataItem({
                     bcName,
                     cursor,
@@ -167,15 +171,15 @@ export function removeMultivalueTagImpl(
     }
     // Non hierarchies drops removed item's `_associate` flag` from popup BC
     // And also updates source record value
-    return Observable.concat(
-        Observable.of(
+    return observableConcat(
+        observableOf(
             $do.changeDataItem({
                 bcName: popupBcName,
                 cursor: action.payload.removedItem.id,
                 dataItem: { ...(action.payload.removedItem as any), _associate: false }
             })
         ),
-        Observable.of(
+        observableOf(
             $do.changeDataItem({
                 bcName,
                 cursor,

@@ -1,7 +1,7 @@
-import { Store } from 'redux'
 import { Store as CoreStore } from '../interfaces/store'
 import { ACTIONS_HISTORY } from './actionsHistory'
 import html2canvas from 'html2canvas'
+import { StateObservable } from 'redux-observable'
 
 function download(state: any, type?: string, name?: string) {
     const blob = new Blob([state], { type: type ? type : 'octet/stream' })
@@ -18,7 +18,7 @@ function download(state: any, type?: string, name?: string) {
     }, 0)
 }
 
-export default function exportState(store: Store<CoreStore>) {
-    download(JSON.stringify({ payload: JSON.stringify(ACTIONS_HISTORY), preloadedState: JSON.stringify(store.getState()) }))
+export default function exportState(store$: StateObservable<CoreStore>) {
+    download(JSON.stringify({ payload: JSON.stringify(ACTIONS_HISTORY), preloadedState: JSON.stringify(store$.value) }))
     html2canvas(document.body).then(r => r.toBlob(b => download(b, 'image/png', 'screen.png')))
 }

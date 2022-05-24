@@ -15,24 +15,23 @@
  * limitations under the License.
  */
 
-import { Store } from 'redux'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { mockStore } from '../../../tests/mockStore'
 import { selectView } from '../selectView'
 import { $do } from '../../../actions/actions'
-import { ActionsObservable } from 'redux-observable'
+import { ActionsObservable, StateObservable } from 'redux-observable'
 import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
 import { FieldType, ViewMetaResponse } from '../../../interfaces/view'
 import { testEpic } from '../../../tests/testEpic'
+import { createMockStateObservable } from '../../../tests/createMockStateObservable'
 
 describe('bcFetchRowMetaRequest', () => {
-    let store: Store<CoreStore> = null
+    let store$: StateObservable<CoreStore> = null
 
     beforeAll(() => {
-        store = mockStore()
-        store.getState().screen.screenName = 'screen-example'
-        store.getState().view.widgets = viewMetaResponse.widgets
-        store.getState().screen.bo.bc = {
+        store$ = createMockStateObservable()
+        store$.value.screen.screenName = 'screen-example'
+        store$.value.view.widgets = viewMetaResponse.widgets
+        store$.value.screen.bo.bc = {
             'bcExample-1-1-1': {
                 ...bcExample,
                 name: 'bcExample-1-1-1',
@@ -66,7 +65,7 @@ describe('bcFetchRowMetaRequest', () => {
 
     it('Schedules `bcFetchDataRequest` for every widget on the view', () => {
         const action = $do.selectView(viewMetaResponse)
-        const epic = selectView(ActionsObservable.of(action), store)
+        const epic = selectView(ActionsObservable.of(action), store$)
         testEpic(epic, result => {
             expect(result.length).toBe(2)
             expect(result[0]).toEqual(

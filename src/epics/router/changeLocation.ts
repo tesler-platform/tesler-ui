@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-import { Observable } from 'rxjs'
-import { Store } from 'redux'
+import { concat as observableConcat, of as observableOf, Observable, EMPTY } from 'rxjs'
+import { mergeMap } from 'rxjs/operators'
 import { Epic, types, AnyAction, ActionsMap, $do } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
 import { RouteType } from '../../interfaces/router'
 import { parseBcCursors } from '../../utils/history'
+import { ofType, StateObservable } from 'redux-observable'
 
 /**
  * Epic of changing the current route
@@ -31,31 +32,34 @@ import { parseBcCursors } from '../../utils/history'
  *
  * @param action$ changeLocation
  */
-export const changeLocation: Epic = (action$, store) =>
-    action$.ofType(types.changeLocation).mergeMap(action => {
-        return changeLocationImpl(action, store)
-    })
+export const changeLocation: Epic = (action$, store$) =>
+    action$.pipe(
+        ofType(types.changeLocation),
+        mergeMap(action => {
+            return changeLocationImpl(action, store$)
+        })
+    )
 
 /**
  *
  * @param action
- * @param store
+ * @param storeObservable
  * @category Epics
  */
 function changeLocationImpl(
     // completely ignored, handled in reducer
     action: ActionsMap['changeLocation'],
-    store: Store<CoreStore>
+    storeObservable: StateObservable<CoreStore>
 ): Observable<AnyAction> {
-    const state = store.getState()
+    const state = storeObservable.value
 
     // User not logged
     if (!state.session.active) {
-        return Observable.empty()
+        return EMPTY
     }
 
     if (state.router.type === RouteType.router) {
-        return Observable.of($do.handleRouter(state.router))
+        return observableOf($do.handleRouter(state.router))
     }
 
     // Reload screen if nextScreen and currentScreen not equal
@@ -67,8 +71,8 @@ function changeLocationImpl(
     if (nextScreenName !== currentScreenName) {
         const nextScreen = state.session.screens.find(item => item.name === nextScreenName)
         return nextScreen
-            ? Observable.of($do.selectScreen({ screen: nextScreen }))
-            : Observable.of($do.selectScreenFail({ screenName: nextScreenName }))
+            ? observableOf($do.selectScreen({ screen: nextScreen }))
+            : observableOf($do.selectScreenFail({ screenName: nextScreenName }))
     }
     // Check cursor different between store and url
     const currentViewName = state.view.name
@@ -87,7 +91,7 @@ function changeLocationImpl(
     const resultObservables: Array<Observable<AnyAction>> = []
     // if cursors have difference, then put new cursors and mark BC as "dirty"
     if (needUpdateCursors) {
-        resultObservables.push(Observable.of($do.bcChangeCursors({ cursorsMap: cursorsDiffMap })))
+        resultObservables.push(observableOf($do.bcChangeCursors({ cursorsMap: cursorsDiffMap })))
     }
     // reload view if not equ
     if (needUpdateViews) {
@@ -97,7 +101,7 @@ function changeLocationImpl(
             ? state.screen.views.find(item => item.name === state.screen.primaryView)
             : state.screen.views[0]
         resultObservables.push(
-            nextView ? Observable.of($do.selectView(nextView)) : Observable.of($do.selectViewFail({ viewName: nextViewName }))
+            nextView ? observableOf($do.selectView(nextView)) : observableOf($do.selectViewFail({ viewName: nextViewName }))
         )
     }
     // If CURSOR has been updated but VIEW has`t changed, need update DATA
@@ -105,10 +109,10 @@ function changeLocationImpl(
         Object.entries(nextCursors).forEach(entry => {
             const [bcName, cursor] = entry
             if (!state.data[bcName].find(item => item.id === cursor)) {
-                resultObservables.push(Observable.of($do.bcForceUpdate({ bcName })))
+                resultObservables.push(observableOf($do.bcForceUpdate({ bcName })))
             }
         })
     }
     // The order is important (cursors are placed first, then the view is reloaded)
-    return Observable.concat(...resultObservables)
+    return observableConcat(...resultObservables)
 }

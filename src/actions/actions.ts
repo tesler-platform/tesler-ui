@@ -16,9 +16,7 @@
  */
 
 import * as util from './actions-utils'
-import { ActionsObservable as rActionsObservable } from 'redux-observable'
-import { Observable } from 'rxjs/Observable'
-import { Store } from 'redux'
+import { ActionsObservable as RoActionsObservable, StateObservable } from 'redux-observable'
 import { LoginResponse, SessionScreen, PendingRequest } from '../interfaces/session'
 import { Action as HistoryAction } from 'history'
 import { DrillDownType, Route } from '../interfaces/router'
@@ -38,6 +36,8 @@ import {
 import { BcFilter, BcSorter } from '../interfaces/filters'
 import { AxiosError } from 'axios'
 import { ApiCallContext } from '../utils/api'
+import { Observable } from 'rxjs'
+import { Store } from 'redux'
 
 const z = null as any
 
@@ -1247,16 +1247,18 @@ export type ActionsMap = util.uActionsMap<ActionPayloadTypes>
  */
 export type AnyAction = util.AnyOfMap<ActionsMap> | { type: ' UNKNOWN ACTION '; payload?: any }
 
-export interface ActionsObservable<T extends AnyAction> extends rActionsObservable<T> {
-    /**
-     * TODO
-     *
-     * @param key
-     */
-    ofType<K extends keyof ActionPayloadTypes>(...key: K[]): ActionsObservable<ActionsMap[K]>
-}
+export type ActionsObservable<T extends AnyAction> = RoActionsObservable<T>
 
 /**
  * Epic for any of core actions
  */
-export type Epic = (action$: ActionsObservable<AnyAction>, store: Store<CoreStore>) => Observable<AnyAction>
+export type Epic<Input extends AnyAction = any, Output extends Input = Input, State = CoreStore, Dependencies = EpicDependencies> = (
+    action$: ActionsObservable<Input>,
+    state$: StateObservable<State>,
+    dependencies?: Dependencies
+) => Observable<Output>
+
+export interface EpicDependencies<S extends CoreStore = CoreStore, A extends AnyAction = AnyAction> {
+    store?: Store<S, A>
+    [key: string]: any
+}
