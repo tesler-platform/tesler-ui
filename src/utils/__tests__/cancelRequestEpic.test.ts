@@ -3,8 +3,8 @@ import { Store as CoreStore } from '../../interfaces/store'
 import { mockStore } from '../../tests/mockStore'
 import { cancelRequestEpic } from '../cancelRequestEpic'
 import { $do, types } from '../../actions/actions'
-import { ActionsObservable } from 'redux-observable'
 import { testEpic } from '../../tests/testEpic'
+import { of as observableOf } from 'rxjs'
 
 const bcExample = {
     name: 'bcExample',
@@ -25,7 +25,7 @@ describe('cancelRequestEpic test', () => {
     it('should return set epic', () => {
         const action = $do.logout(null)
         const epic = cancelRequestEpic(
-            ActionsObservable.of(action),
+            observableOf(action),
             [types.logout],
             () => null,
             $do.bcFetchRowMetaFail({ bcName: bcExample.name }),
@@ -47,12 +47,7 @@ describe('cancelRequestEpic test', () => {
     })
     it('should return set epic', () => {
         const action = $do.logout(null)
-        const epic = cancelRequestEpic(
-            ActionsObservable.of(action),
-            [types.logout],
-            () => null,
-            $do.bcFetchRowMetaFail({ bcName: bcExample.name })
-        )
+        const epic = cancelRequestEpic(observableOf(action), [types.logout], () => null, $do.bcFetchRowMetaFail({ bcName: bcExample.name }))
         testEpic(epic, result => {
             expect(result.length).toEqual(1)
             expect(result[0]).toEqual(

@@ -89,7 +89,7 @@ export function fetchBcDataAll(screenName: string, bcUrl: string, params: GetPar
  */
 export function fetchRowMeta(screenName: string, bcUrl: string, params?: GetParamsMap, cancelToken?: CancelToken) {
     const url = applyParams(buildUrl`row-meta/${screenName}/` + bcUrl, params)
-    return axiosGet<RowMetaResponse>(url, { cancelToken }).pipe(map(response => response.data.row))
+    return axiosGet<RowMetaResponse>(url, { cancelToken }).pipe(map(response => response.data?.row))
 }
 
 /**

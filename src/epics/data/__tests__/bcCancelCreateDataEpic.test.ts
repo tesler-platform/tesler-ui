@@ -21,7 +21,7 @@ import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
 import { FieldType } from '../../../interfaces/view'
 import { bcCancelCreateDataEpic } from '../bcCancelCreateDataEpic'
 import { $do, types as coreActions } from '../../../actions/actions'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import * as api from '../../../api/api'
 import { customAction } from '../../../api/api'
@@ -31,7 +31,7 @@ import { createMockStateObservable } from '../../../tests/createMockStateObserva
 const customActionMock = jest.fn().mockImplementation((...args: Parameters<typeof customAction>) => {
     const [screenName] = args
     if (screenName === 'crash') {
-        return observableThrowError('test request crash')
+        return observableThrowError(() => 'test request crash')
     }
     return observableOf({ record: null, postActions: screenName === 'withPostInvoke' ? [postInvoke] : [], preInvoke: null })
 })
@@ -66,7 +66,7 @@ describe('bcCancelCreateDataEpic', () => {
             operationType: OperationTypeCrud.cancelCreate,
             widgetName: 'widget-example'
         })
-        const epic = bcCancelCreateDataEpic(ActionsObservable.of(action), store$)
+        const epic = bcCancelCreateDataEpic(observableOf(action), store$)
         testEpic(epic, () => {
             expect(customActionMock).toBeCalledWith(
                 'test',
@@ -87,7 +87,7 @@ describe('bcCancelCreateDataEpic', () => {
             operationType: OperationTypeCrud.cancelCreate,
             widgetName: 'widget-example'
         })
-        const epic = bcCancelCreateDataEpic(ActionsObservable.of(action), store$)
+        const epic = bcCancelCreateDataEpic(observableOf(action), store$)
 
         testEpic(epic, result => {
             expect(result.length).toBe(2)
@@ -113,7 +113,7 @@ describe('bcCancelCreateDataEpic', () => {
             operationType: OperationTypeCrud.cancelCreate,
             widgetName: 'widget-example'
         })
-        const epic = bcCancelCreateDataEpic(ActionsObservable.of(action), store$)
+        const epic = bcCancelCreateDataEpic(observableOf(action), store$)
 
         testEpic(epic, result => {
             expect(result.length).toBe(3)
@@ -138,7 +138,7 @@ describe('bcCancelCreateDataEpic', () => {
             operationType: OperationTypeCrud.cancelCreate,
             widgetName: 'widget-example'
         })
-        const epic = bcCancelCreateDataEpic(ActionsObservable.of(action), store$)
+        const epic = bcCancelCreateDataEpic(observableOf(action), store$)
 
         testEpic(epic, result => {
             expect(consoleMock).toBeCalled()

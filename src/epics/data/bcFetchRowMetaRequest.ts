@@ -23,7 +23,7 @@ import { Store as CoreStore } from '../../interfaces/store'
 import { buildBcUrl } from '../../utils/strings'
 import { createCanceler, fetchRowMeta } from '../../api/api'
 import { cancelRequestActionTypes, cancelRequestEpic } from '../../utils/cancelRequestEpic'
-import { ActionsObservable, ofType, StateObservable } from 'redux-observable'
+import { ofType, StateObservable } from 'redux-observable'
 
 /**
  * Access `row-meta` API endpoint for business component; response will contain information
@@ -73,7 +73,7 @@ export const bcFetchRowMetaRequest: Epic = (action$, store$) =>
 export function bcFetchRowMetaRequestImpl(
     action: ActionsMap['bcFetchRowMeta'],
     storeObservable: StateObservable<CoreStore>,
-    actionObservable: ActionsObservable<AnyAction>
+    actionObservable: Observable<AnyAction>
 ): Observable<AnyAction> {
     const [cancelFlow, cancelByParentBc, normalFlow] = bcFetchRowMetaRequestCompatibility(action, storeObservable, actionObservable)
     return observableRace(cancelFlow, cancelByParentBc, normalFlow)
@@ -87,7 +87,7 @@ export function bcFetchRowMetaRequestImpl(
 export function bcFetchRowMetaRequestCompatibility(
     action: ActionsMap['bcFetchRowMeta'],
     storeObservable: StateObservable<CoreStore>,
-    actionObservable: ActionsObservable<AnyAction>
+    actionObservable: Observable<AnyAction>
 ): Array<Observable<AnyAction>> {
     const state = storeObservable.value
     const screenName = state.screen.screenName

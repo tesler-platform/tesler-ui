@@ -1,7 +1,6 @@
-import { of as observableOf } from 'rxjs'
-
+import { Observable, of as observableOf } from 'rxjs'
 import { take, mergeMap, filter } from 'rxjs/operators'
-import { ActionPayloadTypes, ActionsObservable, AnyAction, types } from '../actions/actions'
+import { ActionPayloadTypes, AnyAction, types } from '../actions/actions'
 import { ofType } from 'redux-observable'
 
 /**
@@ -19,7 +18,7 @@ export const cancelRequestActionTypes = [types.selectView, types.logout]
  * @param filterFn a callback function which filters come actions
  */
 export function cancelRequestEpic(
-    action$: ActionsObservable<AnyAction>,
+    action$: Observable<AnyAction>,
     actionTypes: Array<keyof ActionPayloadTypes>,
     cancelFn: () => void,
     cancelActionCreator: AnyAction,
@@ -28,6 +27,9 @@ export function cancelRequestEpic(
     }
 ) {
     return action$.pipe(
+        // my проблема с ...actionTypes
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         ofType(...actionTypes),
         filter(filterFn),
         mergeMap(() => {

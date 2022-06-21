@@ -17,7 +17,7 @@
 
 import { $do } from '../../../actions/actions'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import { httpError418 } from '../httpError418'
 import { AxiosError } from 'axios'
@@ -25,6 +25,7 @@ import { ApplicationErrorType, BusinessError } from '../../../interfaces/view'
 import { OperationError, OperationPostInvokeType } from '../../../interfaces/operation'
 import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
 import { createMockStateObservable } from '../../../tests/createMockStateObservable'
+import { of as observableOf } from 'rxjs'
 
 describe('httpError418', () => {
     let store$: StateObservable<CoreStore> = null
@@ -40,7 +41,7 @@ describe('httpError418', () => {
             error: getAxiosError(),
             callContext: { widgetName: 'widget-example' }
         })
-        const epic = httpError418(ActionsObservable.of(action), store$)
+        const epic = httpError418(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result[0]).toEqual(
                 expect.objectContaining(
@@ -64,7 +65,7 @@ describe('httpError418', () => {
             error,
             callContext: { widgetName: 'widget-example' }
         })
-        const epic = httpError418(ActionsObservable.of(action), store$)
+        const epic = httpError418(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result[1]).toEqual(
                 expect.objectContaining(
@@ -86,7 +87,7 @@ describe('httpError418', () => {
             error,
             callContext: { widgetName: 'widget-example' }
         })
-        const epic = httpError418(ActionsObservable.of(action), store$)
+        const epic = httpError418(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result.length).toBe(0)
         })

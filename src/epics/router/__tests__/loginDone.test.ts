@@ -17,12 +17,13 @@
 
 import { testEpic } from '../../../tests/testEpic'
 import { $do } from '../../../actions/actions'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { loginDone } from '../loginDone'
 import { RouteType } from '../../../interfaces/router'
 import { SessionScreen } from '../../../interfaces/session'
 import { createMockStateObservable } from '../../../tests/createMockStateObservable'
+import { of as observableOf } from 'rxjs'
 
 describe('loginDone', () => {
     let store$: StateObservable<CoreStore> = null
@@ -40,7 +41,7 @@ describe('loginDone', () => {
 
     it('fires `handleRouter` for server-side routing', () => {
         store$.value.router.type = RouteType.router
-        const epic = loginDone(ActionsObservable.of(action), store$)
+        const epic = loginDone(observableOf(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.handleRouter(store$.value.router)))
@@ -48,26 +49,26 @@ describe('loginDone', () => {
     })
 
     it('fires `selectScreen` or `selectScreenFail`', () => {
-        const epicRequested = loginDone(ActionsObservable.of(action), store$)
+        const epicRequested = loginDone(observableOf(action), store$)
         testEpic(epicRequested, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectScreen({ screen: requestedScreen })))
         })
         store$.value.router.screenName = null
-        const epicDefault = loginDone(ActionsObservable.of(action), store$)
+        const epicDefault = loginDone(observableOf(action), store$)
         testEpic(epicDefault, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectScreen({ screen: defaultScreen })))
         })
         store$.value.router.screenName = 'screen-missing'
         store$.value.session.screens = [requestedScreen]
-        const epicFirstAvailable = loginDone(ActionsObservable.of(action), store$)
+        const epicFirstAvailable = loginDone(observableOf(action), store$)
         testEpic(epicFirstAvailable, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectScreen({ screen: requestedScreen })))
         })
         store$.value.session.screens = []
-        const epicFail = loginDone(ActionsObservable.of(action), store$)
+        const epicFail = loginDone(observableOf(action), store$)
         testEpic(epicFail, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectScreenFail({ screenName: 'screen-missing' })))

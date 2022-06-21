@@ -294,7 +294,7 @@ describe('Choose widget', () => {
                 }}
             />
         )
-        expect(wrapper.find('Memo()').findWhere(i => i.props().meta.type === WidgetTypes.FlatTree).length).toBe(1)
+        expect(wrapper.find('Memo(FlatTree)').findWhere(i => i.props().meta.type === WidgetTypes.FlatTree).length).toBe(1)
     })
 
     it('should render TextWidget', () => {

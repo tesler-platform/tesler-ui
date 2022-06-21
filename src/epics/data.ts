@@ -576,7 +576,7 @@ export const changeAssociationFull: Epic = (action$, store$) =>
                         )
                     }
                 } else {
-                    // result.push(Observable.of($do.dropAllAssociationsFull({bcName, depth: depth + 1, dropDescendants: true})))
+                    // result.push(observableOf($do.dropAllAssociationsFull({bcName, depth: depth + 1, dropDescendants: true})))
                     result.push(
                         observableOf(
                             $do.changeDescendantsAssociationsFull({

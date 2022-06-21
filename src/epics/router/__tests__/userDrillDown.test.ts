@@ -18,7 +18,7 @@
 import { of as observableOf, throwError as observableThrowError } from 'rxjs'
 import { testEpic } from '../../../tests/testEpic'
 import { $do } from '../../../actions/actions'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { mockStore } from '../../../tests/mockStore'
 import { Store } from 'redux'
 import { Store as CoreStore } from '../../../interfaces/store'
@@ -34,7 +34,7 @@ describe('userDrillDown', () => {
     const errorMock = jest.fn()
     const fetchRowMeta = jest.fn().mockImplementation((screenName, bcUrl) => {
         if (screenName === 'screen-error') {
-            return observableThrowError('404 NOT FOUND')
+            return observableThrowError(() => '404 NOT FOUND')
         }
         if (screenName === 'screen-inner') {
             return observableOf({ rowMeta, fields: rowMeta.fields.map(field => ({ ...field, drillDownType: DrillDownType.inner })) })
@@ -69,7 +69,7 @@ describe('userDrillDown', () => {
     it('fires `bcChangeCursors` if cursor from action payload is different from BC cursor in the store', () => {
         const action = $do.userDrillDown({ ...payload, cursor: '5', fieldKey: 'missing' })
         const mockDispatch = jest.fn()
-        const epic = userDrillDown(ActionsObservable.of(action), store$, { store: { ...store, dispatch: mockDispatch } })
+        const epic = userDrillDown(observableOf(action), store$, { store: { ...store, dispatch: mockDispatch } })
         testEpic(epic, res => {
             expect(res.length).toBe(0)
             expect(mockDispatch).toBeCalledWith(
@@ -85,7 +85,7 @@ describe('userDrillDown', () => {
     it('handles missing widget', () => {
         const action = $do.userDrillDown({ ...payload, widgetName: 'missing', cursor: '5' })
         const mockDispatch = jest.fn()
-        const epic = userDrillDown(ActionsObservable.of(action), store$, { store: { ...store, dispatch: mockDispatch } })
+        const epic = userDrillDown(observableOf(action), store$, { store: { ...store, dispatch: mockDispatch } })
         testEpic(epic, res => {
             expect(errorMock).toBeCalledTimes(0)
         })
@@ -93,7 +93,7 @@ describe('userDrillDown', () => {
 
     it('sends fetch row meta request', () => {
         const action = $do.userDrillDown(payload)
-        const epic = userDrillDown(ActionsObservable.of(action), store$, { store })
+        const epic = userDrillDown(observableOf(action), store$, { store })
         testEpic(epic, res => {
             expect(fetchRowMeta).toBeCalledWith('screen-example', 'bcExample/1')
         })
@@ -102,7 +102,7 @@ describe('userDrillDown', () => {
     it('writes console error if fetch row meta request failed', () => {
         store$.value.screen.screenName = 'screen-error'
         const action = $do.userDrillDown(payload)
-        const epic = userDrillDown(ActionsObservable.of(action), store$, { store })
+        const epic = userDrillDown(observableOf(action), store$, { store })
         testEpic(epic, res => {
             expect(fetchRowMeta).toBeCalledWith('screen-error', 'bcExample/1')
             expect(errorMock).toBeCalledWith('404 NOT FOUND')
@@ -118,7 +118,7 @@ describe('userDrillDown', () => {
         store$.value.router.path = null
         store$.value.screen.screenName = 'screen-missing'
         const action = $do.userDrillDown(payload)
-        const epic = userDrillDown(ActionsObservable.of(action), store$, { store })
+        const epic = userDrillDown(observableOf(action), store$, { store })
         testEpic(epic, res => {
             expect(fetchRowMeta).toBeCalledWith('screen-missing', 'bcExample/1')
             expect(errorMock).toBeCalledTimes(0)
@@ -129,7 +129,7 @@ describe('userDrillDown', () => {
     it('fires `bcFetchRowMetaSuccess` (for not inner drilldowns), `userDrillDownSuccess` and `drillDown` on success', () => {
         store$.value.router.path = '/screen-example'
         const action = $do.userDrillDown(payload)
-        const epic = userDrillDown(ActionsObservable.of(action), store$, { store })
+        const epic = userDrillDown(observableOf(action), store$, { store })
         testEpic(epic, res => {
             expect(res.length).toBe(3)
             expect(res[0]).toEqual(
@@ -167,7 +167,7 @@ describe('userDrillDown', () => {
         store$.value.router.path = '/screen-inner'
         store$.value.screen.screenName = 'screen-inner'
         const action = $do.userDrillDown(payload)
-        const epic = userDrillDown(ActionsObservable.of(action), store$, { store })
+        const epic = userDrillDown(observableOf(action), store$, { store })
         testEpic(epic, res => {
             expect(res.length).toBe(2)
             expect(res[0]).toEqual(
@@ -196,7 +196,7 @@ describe('userDrillDown', () => {
         store$.value.router.path = '/screen-inner'
         store$.value.screen.screenName = 'screen-inner'
         const action = $do.userDrillDown(payload)
-        const epic = userDrillDown(ActionsObservable.of(action), store$, { store })
+        const epic = userDrillDown(observableOf(action), store$, { store })
         testEpic(epic, res => {
             expect(res[1]).toEqual(
                 expect.objectContaining(

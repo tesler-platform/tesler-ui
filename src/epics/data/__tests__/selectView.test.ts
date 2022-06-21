@@ -18,11 +18,12 @@
 import { Store as CoreStore } from '../../../interfaces/store'
 import { selectView } from '../selectView'
 import { $do } from '../../../actions/actions'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
 import { FieldType, ViewMetaResponse } from '../../../interfaces/view'
 import { testEpic } from '../../../tests/testEpic'
 import { createMockStateObservable } from '../../../tests/createMockStateObservable'
+import { of as observableOf } from 'rxjs'
 
 describe('bcFetchRowMetaRequest', () => {
     let store$: StateObservable<CoreStore> = null
@@ -65,7 +66,7 @@ describe('bcFetchRowMetaRequest', () => {
 
     it('Schedules `bcFetchDataRequest` for every widget on the view', () => {
         const action = $do.selectView(viewMetaResponse)
-        const epic = selectView(ActionsObservable.of(action), store$)
+        const epic = selectView(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result.length).toBe(2)
             expect(result[0]).toEqual(

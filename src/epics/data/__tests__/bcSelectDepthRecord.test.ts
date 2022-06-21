@@ -18,9 +18,10 @@
 import { bcSelectDepthRecord } from '../bcSelectDepthRecord'
 import { $do } from '../../../actions/actions'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import { createMockStateObservable } from '../../../tests/createMockStateObservable'
+import { of as observableOf } from 'rxjs'
 
 describe('bcSelectDepthRecord', () => {
     let store$: StateObservable<CoreStore> = null
@@ -35,7 +36,7 @@ describe('bcSelectDepthRecord', () => {
             cursor: '17',
             depth: 2
         })
-        const epic = bcSelectDepthRecord(ActionsObservable.of(action), store$)
+        const epic = bcSelectDepthRecord(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result.length).toBe(2)
             expect(result[0]).toEqual(

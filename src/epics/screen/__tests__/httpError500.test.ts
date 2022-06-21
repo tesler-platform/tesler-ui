@@ -17,12 +17,13 @@
 
 import { $do } from '../../../actions/actions'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import { httpError500 } from '../httpError500'
 import { AxiosError } from 'axios'
 import { ApplicationError, ApplicationErrorType } from '../../../interfaces/view'
 import { createMockStateObservable } from '../../../tests/createMockStateObservable'
+import { of as observableOf } from 'rxjs'
 
 describe('httpError500', () => {
     let store$: StateObservable<CoreStore> = null
@@ -37,7 +38,7 @@ describe('httpError500', () => {
             error: axiosError,
             callContext: { widgetName: 'widget-example' }
         })
-        const epic = httpError500(ActionsObservable.of(action), store$)
+        const epic = httpError500(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result[0]).toEqual(
                 expect.objectContaining(

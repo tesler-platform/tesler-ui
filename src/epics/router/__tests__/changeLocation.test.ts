@@ -17,13 +17,14 @@
 
 import { testEpic } from '../../../tests/testEpic'
 import { $do } from '../../../actions/actions'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { changeLocation } from '../changeLocation'
 import { RouteType } from '../../../interfaces/router'
 import { SessionScreen } from '../../../interfaces/session'
 import { ViewMetaResponse } from '../../../interfaces/view'
 import { createMockStateObservable } from '../../../tests/createMockStateObservable'
+import { of as observableOf } from 'rxjs'
 
 describe('selectScreenFail', () => {
     let store$: StateObservable<CoreStore> = null
@@ -57,7 +58,7 @@ describe('selectScreenFail', () => {
 
     it('returns empty when user is not logged in', () => {
         store$.value.session.active = false
-        const epic = changeLocation(ActionsObservable.of(action), store$)
+        const epic = changeLocation(observableOf(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(0)
         })
@@ -66,7 +67,7 @@ describe('selectScreenFail', () => {
 
     it('fires `handleRouter` action for server-side routing', () => {
         store$.value.router.type = RouteType.router
-        const epic = changeLocation(ActionsObservable.of(action), store$)
+        const epic = changeLocation(observableOf(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.handleRouter(store$.value.router)))
@@ -76,13 +77,13 @@ describe('selectScreenFail', () => {
     it('fires `selectScreen`/`selectScreenFail` if current screen does not match the store', () => {
         expect(store$.value.router.screenName !== 'screen-next').toBe(true)
         store$.value.router.screenName = 'screen-next'
-        const epic = changeLocation(ActionsObservable.of(action), store$)
+        const epic = changeLocation(observableOf(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectScreen({ screen: requestedScreen })))
         })
         store$.value.router.screenName = 'screen-missing'
-        const epicFail = changeLocation(ActionsObservable.of(action), store$)
+        const epicFail = changeLocation(observableOf(action), store$)
         testEpic(epicFail, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectScreenFail({ screenName: 'screen-missing' })))
@@ -94,13 +95,13 @@ describe('selectScreenFail', () => {
         store$.value.router.screenName = 'screen-next'
         expect(store$.value.view.name !== 'view-next').toBe(true)
         store$.value.router.viewName = 'view-next'
-        const epic = changeLocation(ActionsObservable.of(action), store$)
+        const epic = changeLocation(observableOf(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectView(requestedView)))
         })
         store$.value.router.viewName = 'view-missing'
-        const epicFailView = changeLocation(ActionsObservable.of(action), store$)
+        const epicFailView = changeLocation(observableOf(action), store$)
         testEpic(epicFailView, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectViewFail({ viewName: 'view-missing' })))
@@ -113,7 +114,7 @@ describe('selectScreenFail', () => {
         store$.value.router.bcPath = 'bcParent/4/bcChild/5'
         expect(store$.value.view.name !== 'view-next').toBe(true)
         store$.value.router.viewName = 'view-next'
-        const epic = changeLocation(ActionsObservable.of(action), store$)
+        const epic = changeLocation(observableOf(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(2)
             expect(res[0]).toEqual(
@@ -136,7 +137,7 @@ describe('selectScreenFail', () => {
         store$.value.router.screenName = 'screen-next'
         store$.value.router.bcPath = 'bcParent/4/bcChild/5'
         store$.value.router.viewName = 'view-next'
-        const epic = changeLocation(ActionsObservable.of(action), store$)
+        const epic = changeLocation(observableOf(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(3)
             expect(res[0]).toEqual(
@@ -157,19 +158,19 @@ describe('selectScreenFail', () => {
     it('uses default screens for `default` route type', () => {
         store$.value.router.type = RouteType.default
         expect(store$.value.router.screenName).toBeFalsy()
-        const explicitDefaultScreen = changeLocation(ActionsObservable.of(action), store$)
+        const explicitDefaultScreen = changeLocation(observableOf(action), store$)
         testEpic(explicitDefaultScreen, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectScreen({ screen: defaultScreen })))
         })
         store$.value.session.screens = [requestedScreen]
-        const firstAvailableScreen = changeLocation(ActionsObservable.of(action), store$)
+        const firstAvailableScreen = changeLocation(observableOf(action), store$)
         testEpic(firstAvailableScreen, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectScreen({ screen: requestedScreen })))
         })
         store$.value.session.screens = []
-        const noScreens = changeLocation(ActionsObservable.of(action), store$)
+        const noScreens = changeLocation(observableOf(action), store$)
         testEpic(noScreens, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectScreenFail({ screenName: undefined })))
@@ -182,19 +183,19 @@ describe('selectScreenFail', () => {
         store$.value.router.screenName = 'screen-next'
         expect(store$.value.router.viewName).toBeFalsy()
         store$.value.screen.primaryView = 'view-default'
-        const explicitDefaultView = changeLocation(ActionsObservable.of(action), store$)
+        const explicitDefaultView = changeLocation(observableOf(action), store$)
         testEpic(explicitDefaultView, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectView(defaultView)))
         })
         store$.value.screen.primaryView = null
-        const firstAvailableView = changeLocation(ActionsObservable.of(action), store$)
+        const firstAvailableView = changeLocation(observableOf(action), store$)
         testEpic(firstAvailableView, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectView(requestedView)))
         })
         store$.value.screen.views = []
-        const noViews = changeLocation(ActionsObservable.of(action), store$)
+        const noViews = changeLocation(observableOf(action), store$)
         testEpic(noViews, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectViewFail({ viewName: undefined })))

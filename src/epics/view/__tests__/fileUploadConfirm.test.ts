@@ -21,7 +21,7 @@ import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
 import { FieldType } from '../../../interfaces/view'
 import { fileUploadConfirm } from '../fileUploadConfirm'
 import { $do, types as coreActions } from '../../../actions/actions'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import * as api from '../../../api/api'
 import { customAction } from '../../../api/api'
@@ -53,7 +53,7 @@ describe('fileUploadConfirm', () => {
         const action = $do.bulkUploadFiles({
             fileIds: ['123', '567']
         })
-        const epic = fileUploadConfirm(ActionsObservable.of(action), store$)
+        const epic = fileUploadConfirm(observableOf(action), store$)
         testEpic(epic, result => {
             expect(customActionMock).toBeCalledWith(
                 'test',
@@ -71,7 +71,7 @@ describe('fileUploadConfirm', () => {
         const action = $do.bulkUploadFiles({
             fileIds: ['123', '567']
         })
-        const epic = fileUploadConfirm(ActionsObservable.of(action), store$)
+        const epic = fileUploadConfirm(observableOf(action), store$)
 
         testEpic(epic, result => {
             expect(result.length).toBe(3)

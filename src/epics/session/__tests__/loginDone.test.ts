@@ -18,9 +18,10 @@
 import { Store as CoreStore } from '../../../interfaces/store'
 import { loginEpic } from '../loginDone'
 import { $do } from '../../../actions/actions'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import { createMockStateObservable } from '../../../tests/createMockStateObservable'
+import { of as observableOf } from 'rxjs'
 
 describe('`loginDone` epic', () => {
     let store$: StateObservable<CoreStore> = null
@@ -30,7 +31,7 @@ describe('`loginDone` epic', () => {
 
     it('does nothing', () => {
         const action = $do.login({ login: 'bruce', password: 'qwerty' })
-        const epic = loginEpic(ActionsObservable.of(action), store$)
+        const epic = loginEpic(observableOf(action), store$)
 
         testEpic(epic, result => {
             expect(result.length).toBe(0)

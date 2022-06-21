@@ -17,12 +17,13 @@
 
 import { testEpic } from '../../../tests/testEpic'
 import { $do } from '../../../actions/actions'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { notification } from 'antd'
 import { selectViewFail } from '../selectViewFail'
 import i18n from 'i18next'
 import { createMockStateObservable } from '../../../tests/createMockStateObservable'
+import { of as observableOf } from 'rxjs'
 
 const notificationMock = jest.fn()
 const i18nMock = jest.fn().mockImplementation((token, variable) => {
@@ -41,7 +42,7 @@ describe('selectViewFail', () => {
 
     it('shows notification with error message and view name', () => {
         const action = $do.selectViewFail({ viewName: 'view-example' })
-        const epic = selectViewFail(ActionsObservable.of(action), store$)
+        const epic = selectViewFail(observableOf(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(0)
             expect(notificationMock).toBeCalledWith({

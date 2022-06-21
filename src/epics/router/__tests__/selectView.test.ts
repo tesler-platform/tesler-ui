@@ -17,10 +17,11 @@
 
 import { testEpic } from '../../../tests/testEpic'
 import { $do } from '../../../actions/actions'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { changeView } from '../selectView'
 import { createMockStateObservable } from '../../../tests/createMockStateObservable'
+import { of as observableOf } from 'rxjs'
 
 describe('selectView', () => {
     let store$: StateObservable<CoreStore> = null
@@ -38,7 +39,7 @@ describe('selectView', () => {
 
     it('fires `bcChangeCursors` if route cursors does not match the store', () => {
         store$.value.router.bcPath = 'bcParent/4/bcChild/5/bcNew/8'
-        const epic = changeView(ActionsObservable.of(action), store$)
+        const epic = changeView(observableOf(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(
@@ -57,7 +58,7 @@ describe('selectView', () => {
 
     it('fires nothing if route cursors match the store', () => {
         store$.value.router.bcPath = 'bcParent/1/bcChild/2'
-        const epic = changeView(ActionsObservable.of(action), store$)
+        const epic = changeView(observableOf(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(0)
         })
@@ -65,7 +66,7 @@ describe('selectView', () => {
 
     it('fires nothing if no cursors in route', () => {
         store$.value.router.bcPath = null
-        const epic = changeView(ActionsObservable.of(action), store$)
+        const epic = changeView(observableOf(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(0)
         })

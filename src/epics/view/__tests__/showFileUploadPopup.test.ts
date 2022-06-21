@@ -2,8 +2,8 @@ import { showFileUploadPopup } from '../showFileUploadPopup'
 import { testEpic } from '../../../tests/testEpic'
 import { $do, types as coreActions } from '../../../actions/actions'
 import { OperationTypeCrud } from '../../../interfaces/operation'
-import { ActionsObservable } from 'redux-observable'
 import { createMockStateObservable } from '../../../tests/createMockStateObservable'
+import { of as observableOf } from 'rxjs'
 
 describe('showFileUploadPopup', () => {
     const store$ = createMockStateObservable()
@@ -13,7 +13,7 @@ describe('showFileUploadPopup', () => {
             operationType: OperationTypeCrud.fileUpload,
             widgetName: 'test-widget'
         })
-        testEpic(showFileUploadPopup(ActionsObservable.of(action), store$), result => {
+        testEpic(showFileUploadPopup(observableOf(action), store$), result => {
             expect(result.length).toBe(2)
             expect(result[0]).toEqual(
                 expect.objectContaining({

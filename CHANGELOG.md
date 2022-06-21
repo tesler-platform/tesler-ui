@@ -2,9 +2,15 @@
 
 ## Features
 
-* Updated rxjs version from 5.5.12 to 6.6.7
-* Updated redux-observable from 0.14.1 to 1.2.0
-* Updated webpack-rxjs-externals from 1.1.0 to 2.0.0
+* Updated rxjs version to 7.5.5
+* Updated redux-observable to 2.0.0
+* Updated webpack-rxjs-externals to 2.0.0
+* Updated @typescript-eslint/eslint-plugin to 4.22.0
+* Updated @typescript-eslint/eslint-plugin-tslint to 4.22.0
+* Updated @typescript-eslint/parser to 4.22.0
+* Updated ts-loader to 8.3.0 (until Feb. 24)
+* Updated typedoc to 0.22.17
+* typescript typedoc to 4.2.2
 * Code migration: rxjs, redux-observable
 
 # Version 1.33.2 (October 28, 2022)

@@ -16,7 +16,7 @@
  */
 
 import * as util from './actions-utils'
-import { ActionsObservable as RoActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { LoginResponse, SessionScreen, PendingRequest } from '../interfaces/session'
 import { Action as HistoryAction } from 'history'
 import { DrillDownType, Route } from '../interfaces/router'
@@ -1247,13 +1247,11 @@ export type ActionsMap = util.uActionsMap<ActionPayloadTypes>
  */
 export type AnyAction = util.AnyOfMap<ActionsMap> | { type: ' UNKNOWN ACTION '; payload?: any }
 
-export type ActionsObservable<T extends AnyAction> = RoActionsObservable<T>
-
 /**
  * Epic for any of core actions
  */
 export type Epic<Input extends AnyAction = any, Output extends Input = Input, State = CoreStore, Dependencies = EpicDependencies> = (
-    action$: ActionsObservable<Input>,
+    action$: Observable<Input>,
     state$: StateObservable<State>,
     dependencies?: Dependencies
 ) => Observable<Output>

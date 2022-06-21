@@ -23,7 +23,7 @@ import { mockStore } from '../../../tests/mockStore'
 import * as api from '../../../api/api'
 import * as notifications from '../../../utils/notifications'
 import { saveBcData } from '../../../api/api'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import { $do } from '../../../actions/actions'
 import { OperationTypeCrud, OperationError, OperationPostInvokeShowMessage, OperationPostInvokeType } from '../../../interfaces/operation'
@@ -35,11 +35,11 @@ import { createStateObservable } from '../../../tests/createStateObservable'
 const saveBcDataApiMock = jest.fn().mockImplementation((...args: Parameters<typeof saveBcData>) => {
     const [screenName] = args
     if (screenName === 'crash') {
-        return observableThrowError({
+        return observableThrowError(() => ({
             response: {
                 data: errorResponse
             }
-        })
+        }))
     }
     return observableOf({
         record: dataItemExample,
@@ -87,7 +87,7 @@ describe('`bcSaveData` epic', () => {
             bcName: 'bcExample',
             widgetName: 'widget-example'
         })
-        const epic = bcSaveDataEpic(ActionsObservable.of(action), store$, { store })
+        const epic = bcSaveDataEpic(observableOf(action), store$, { store })
         testEpic(epic, res => {
             expect(saveBcDataApiMock).toBeCalledWith(
                 'test',
@@ -104,7 +104,7 @@ describe('`bcSaveData` epic', () => {
             bcName: 'bcExample',
             widgetName: 'widget-example'
         })
-        let epic = bcSaveDataEpic(ActionsObservable.of(action), store$, { store })
+        let epic = bcSaveDataEpic(observableOf(action), store$, { store })
         testEpic(epic, res => {
             expect(saveBcDataApiMock).toBeCalledWith(
                 'test',
@@ -127,7 +127,7 @@ describe('`bcSaveData` epic', () => {
                 }
             }
         }
-        epic = bcSaveDataEpic(ActionsObservable.of(action), store$, { store })
+        epic = bcSaveDataEpic(observableOf(action), store$, { store })
         testEpic(epic, res => {
             expect(saveBcDataApiMock).toBeCalledWith('test', 'bcExample/1', { vstamp: 0, age: 29 }, { widgetName: 'widget-example' })
         })
@@ -139,7 +139,7 @@ describe('`bcSaveData` epic', () => {
             bcName: 'bcExample',
             widgetName: 'widget-example'
         })
-        const epic = bcSaveDataEpic(ActionsObservable.of(action), store$, { store })
+        const epic = bcSaveDataEpic(observableOf(action), store$, { store })
         testEpic(epic, res => {
             expect(res[0]).toEqual(
                 expect.objectContaining(
@@ -168,7 +168,7 @@ describe('`bcSaveData` epic', () => {
             bcName: 'bcExample',
             widgetName: 'widget-example'
         })
-        const epic = bcSaveDataEpic(ActionsObservable.of(action), store$, { store })
+        const epic = bcSaveDataEpic(observableOf(action), store$, { store })
         testEpic(epic, res => {
             expect(res[2]).toEqual(
                 expect.objectContaining(
@@ -197,7 +197,7 @@ describe('`bcSaveData` epic', () => {
             widgetName: 'widget-example',
             onSuccessAction: $do.emptyAction(null)
         })
-        const epic = bcSaveDataEpic(ActionsObservable.of(action), store$, { store })
+        const epic = bcSaveDataEpic(observableOf(action), store$, { store })
         testEpic(epic, res => {
             expect(res[2]).toEqual(
                 expect.objectContaining(
@@ -220,7 +220,7 @@ describe('`bcSaveData` epic', () => {
             widgetName: 'widget-example',
             operationType: OperationTypeCrud.save
         })
-        const epic = bcSaveDataEpic(ActionsObservable.of(brokenAction), store$, { store })
+        const epic = bcSaveDataEpic(observableOf(brokenAction), store$, { store })
         testEpic(epic, result => {
             expect(consoleMock).toBeCalledWith(
                 expect.objectContaining({
@@ -258,13 +258,13 @@ describe('`bcSaveData` epic', () => {
             }
         ]
         const dispatchMock = jest.fn()
-        let epic = bcSaveDataEpic(ActionsObservable.of(brokenAction), store$, { store: { ...store, dispatch: dispatchMock } })
+        let epic = bcSaveDataEpic(observableOf(brokenAction), store$, { store: { ...store, dispatch: dispatchMock } })
         testEpic(epic, () => {
             expect(notificationMock).toBeCalledTimes(0)
             expect(dispatchMock).toBeCalledTimes(0)
         })
         store$.value.view.widgets = [widgetMeta]
-        epic = bcSaveDataEpic(ActionsObservable.of(brokenAction), store$, { store: { ...store, dispatch: dispatchMock } })
+        epic = bcSaveDataEpic(observableOf(brokenAction), store$, { store: { ...store, dispatch: dispatchMock } })
         testEpic(epic, () => {
             expect(notificationMock).toBeCalledTimes(1)
             const cancelButton = notificationMock.mock.calls[0][3]

@@ -20,9 +20,10 @@ import { WidgetTableMeta, WidgetTypes, WidgetTableHierarchy } from '../../../int
 import { FieldType } from '../../../interfaces/view'
 import { removeMultivalueTag } from '../removeMultivalueTag'
 import { $do, types as coreActions } from '../../../actions/actions'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import { createMockStateObservable } from '../../../tests/createMockStateObservable'
+import { of as observableOf } from 'rxjs'
 
 describe('removeMultivalueTag for full hierarchies', () => {
     let store$: StateObservable<CoreStore> = null
@@ -49,7 +50,7 @@ describe('removeMultivalueTag for full hierarchies', () => {
             dataItem: [],
             removedItem: { id: '9', value: 'remove item' }
         })
-        const epic = removeMultivalueTag(ActionsObservable.of(action), store$)
+        const epic = removeMultivalueTag(observableOf(action), store$)
 
         testEpic(epic, result => {
             expect(result.length).toBe(1)
@@ -82,7 +83,7 @@ describe('removeMultivalueTag for full hierarchies', () => {
             dataItem,
             removedItem
         })
-        const epic = removeMultivalueTag(ActionsObservable.of(action), store$)
+        const epic = removeMultivalueTag(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result[0]).toEqual(
                 expect.objectContaining({
@@ -122,7 +123,7 @@ describe('removeMultivalueTag for full hierarchies', () => {
             dataItem,
             removedItem
         })
-        const epic = removeMultivalueTag(ActionsObservable.of(action), store$)
+        const epic = removeMultivalueTag(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result[0]).toEqual(
                 expect.objectContaining({
@@ -158,7 +159,7 @@ describe('removeMultivalueTag for full hierarchies', () => {
             dataItem,
             removedItem
         })
-        const epic = removeMultivalueTag(ActionsObservable.of(action), store$)
+        const epic = removeMultivalueTag(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result[0]).toEqual(
                 expect.objectContaining({
@@ -199,7 +200,7 @@ describe('removeMultivalueTag for full hierarchies', () => {
             dataItem,
             removedItem
         })
-        const epic = removeMultivalueTag(ActionsObservable.of(action), store$)
+        const epic = removeMultivalueTag(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result[0]).toEqual(
                 expect.objectContaining({
@@ -229,7 +230,7 @@ describe('removeMultivalueTag for full hierarchies', () => {
         store$.value.view.pendingDataChanges.bcExamplePopup2 = {
             '999': { _associate: true, name: 'one three two' }
         }
-        const epic = removeMultivalueTag(ActionsObservable.of(action), store$)
+        const epic = removeMultivalueTag(observableOf(action), store$)
 
         testEpic(epic, result => {
             expect(result.length).toBe(2)
@@ -277,7 +278,7 @@ describe('removeMultivalueTag for full hierarchies', () => {
             dataItem,
             removedItem
         })
-        const epic = removeMultivalueTag(ActionsObservable.of(action), store$)
+        const epic = removeMultivalueTag(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result[0]).toEqual(
                 expect.objectContaining({

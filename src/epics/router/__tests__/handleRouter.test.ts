@@ -18,7 +18,7 @@ import { of as observableOf, throwError as observableThrowError } from 'rxjs'
 
 import { testEpic } from '../../../tests/testEpic'
 import { $do } from '../../../actions/actions'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { handleRouter } from '../handleRouter'
 import * as api from '../../../api/api'
@@ -27,7 +27,7 @@ import { createMockStateObservable } from '../../../tests/createMockStateObserva
 const errorMock = jest.fn()
 const routerMock = jest.fn().mockImplementation((path, params) => {
     if (path === '/error') {
-        return observableThrowError('404 NOT FOUND')
+        return observableThrowError(() => '404 NOT FOUND')
     }
     return observableOf('200 OK')
 })
@@ -44,7 +44,7 @@ describe('selectScreenFail', () => {
 
     it('Sends a requst to Tesler API router endpoint', () => {
         const action = $do.handleRouter({ path: '/data', params: { someParam: 3 } })
-        const epic = handleRouter(ActionsObservable.of(action), store$)
+        const epic = handleRouter(observableOf(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(0)
             expect(routerMock).toBeCalledWith('/data', expect.objectContaining({ someParam: 3 }))
@@ -53,7 +53,7 @@ describe('selectScreenFail', () => {
 
     it('Writes a console error if request fails.', () => {
         const action = $do.handleRouter({ path: '/error', params: { someParam: 3 } })
-        const epic = handleRouter(ActionsObservable.of(action), store$)
+        const epic = handleRouter(observableOf(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(0)
             expect(routerMock).toBeCalledWith('/error', expect.objectContaining({ someParam: 3 }))

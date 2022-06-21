@@ -17,11 +17,12 @@
 
 import { testEpic } from '../../../tests/testEpic'
 import { $do } from '../../../actions/actions'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { changeScreen } from '../selectScreen'
 import { ViewMetaResponse } from '../../../interfaces/view'
 import { createMockStateObservable } from '../../../tests/createMockStateObservable'
+import { of as observableOf } from 'rxjs'
 
 describe('selectScreen', () => {
     let store$: StateObservable<CoreStore> = null
@@ -40,7 +41,7 @@ describe('selectScreen', () => {
 
     it('select view specified by route when available', () => {
         store$.value.router.viewName = 'view-next'
-        const epic = changeScreen(ActionsObservable.of(action), store$)
+        const epic = changeScreen(observableOf(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectView(requestedView)))
@@ -48,13 +49,13 @@ describe('selectScreen', () => {
     })
 
     it('selects primary view or first available if route does not specify view', () => {
-        const unspecifiedView = changeScreen(ActionsObservable.of(action), store$)
+        const unspecifiedView = changeScreen(observableOf(action), store$)
         testEpic(unspecifiedView, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectView(defaultView)))
         })
         store$.value.screen.views = [requestedView]
-        const firstAvailable = changeScreen(ActionsObservable.of(action), store$)
+        const firstAvailable = changeScreen(observableOf(action), store$)
         testEpic(firstAvailable, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectView(requestedView)))
@@ -64,7 +65,7 @@ describe('selectScreen', () => {
     it('fires `selectViewFail` if no views present on the screen', () => {
         store$.value.router.viewName = 'view-next'
         store$.value.screen.views = []
-        const epic = changeScreen(ActionsObservable.of(action), store$)
+        const epic = changeScreen(observableOf(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(1)
             expect(res[0]).toEqual(expect.objectContaining($do.selectViewFail({ viewName: 'view-next' })))

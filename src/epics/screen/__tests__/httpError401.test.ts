@@ -17,13 +17,13 @@
 
 import { $do } from '../../../actions/actions'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import { httpError401 } from '../httpError401'
 import { Store } from 'redux'
 import { mockStore } from '../../../tests/mockStore'
 import { createStateObservable } from '../../../tests/createStateObservable'
-import { timer } from 'rxjs'
+import { of as observableOf, timer } from 'rxjs'
 import { tap } from 'rxjs/operators'
 
 const pushMock = jest.fn().mockImplementation()
@@ -67,7 +67,7 @@ describe('httpError401', () => {
             },
             callContext: { widgetName: 'widget-example' }
         })
-        const epic = httpError401(ActionsObservable.of(action), store$, { store: { ...store, dispatch: dispatchMock } })
+        const epic = httpError401(observableOf(action), store$, { store: { ...store, dispatch: dispatchMock } })
         testEpic(epic, () => {
             expect(dispatchMock).toBeCalledWith(expect.objectContaining($do.logoutDone(null)))
             expect(pushMock).toBeCalledWith('/')

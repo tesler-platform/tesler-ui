@@ -19,13 +19,14 @@ import { $do } from '../../../actions/actions'
 import { Store } from 'redux'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { mockStore } from '../../../tests/mockStore'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import { apiError } from '../apiError'
 import axios, { AxiosError } from 'axios'
 import { ApplicationErrorType } from '../../../interfaces/view'
 import { knownHttpErrors } from '../apiError'
 import { createStateObservable } from '../../../tests/createStateObservable'
+import { of as observableOf } from 'rxjs'
 
 const dispatch = jest.fn()
 jest.spyOn(axios, 'isCancel').mockImplementation((e: AxiosError) => {
@@ -50,7 +51,7 @@ describe('apiError', () => {
                 error,
                 callContext
             })
-            const epic = apiError(ActionsObservable.of(action), store$)
+            const epic = apiError(observableOf(action), store$)
             testEpic(epic, result => {
                 expect(result[0]).toEqual(
                     expect.objectContaining(
@@ -68,7 +69,7 @@ describe('apiError', () => {
             error: unknownStatusError,
             callContext: { widgetName: 'widget-example' }
         })
-        const unknownStatusEpic = apiError(ActionsObservable.of(unkownStatusAction), store$)
+        const unknownStatusEpic = apiError(observableOf(unkownStatusAction), store$)
         testEpic(unknownStatusEpic, result => {
             expect(result[0]).toEqual(
                 expect.objectContaining(
@@ -89,7 +90,7 @@ describe('apiError', () => {
             error,
             callContext: { widgetName: 'widget-example' }
         })
-        const epic = apiError(ActionsObservable.of(action), store$)
+        const epic = apiError(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result[0]).toEqual(
                 expect.objectContaining(
@@ -111,7 +112,7 @@ describe('apiError', () => {
             error,
             callContext: { widgetName: 'widget-example' }
         })
-        const epic = apiError(ActionsObservable.of(action), store$)
+        const epic = apiError(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result.length).toBe(0)
         })

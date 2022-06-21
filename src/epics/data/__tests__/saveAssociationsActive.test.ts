@@ -2,7 +2,7 @@ import { of as observableOf, throwError as observableThrowError } from 'rxjs'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { $do } from '../../../actions/actions'
 import { saveAssociationsActive } from '../saveAssociationsActive'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import * as api from '../../../api/api'
 import { associate } from '../../../api/api'
 import { testEpic } from '../../../tests/testEpic'
@@ -12,11 +12,11 @@ import { createMockStateObservable } from '../../../tests/createMockStateObserva
 const associateApiMock = jest.fn().mockImplementation((...args: Parameters<typeof associate>) => {
     const [screenName] = args
     if (screenName === 'crash') {
-        return observableThrowError({
+        return observableThrowError(() => ({
             response: {
                 data: ''
             }
-        })
+        }))
     }
     return observableOf({
         records: [],
@@ -69,7 +69,7 @@ describe('saveAssociationsActive', () => {
         const action = $do.saveAssociations({
             bcNames: ['meetingAssoc']
         })
-        const epic = saveAssociationsActive(ActionsObservable.of(action), store$)
+        const epic = saveAssociationsActive(observableOf(action), store$)
         testEpic(epic, res => {
             expect(associateApiMock).toBeCalledWith(
                 null,
@@ -89,7 +89,7 @@ describe('saveAssociationsActive', () => {
         const action = $do.saveAssociations({
             bcNames: ['meetingAssoc']
         })
-        const epic = saveAssociationsActive(ActionsObservable.of(action), store$)
+        const epic = saveAssociationsActive(observableOf(action), store$)
         testEpic(epic, res => {
             expect(res.length).toBe(3)
             expect(res[0]).toEqual(
@@ -110,7 +110,7 @@ describe('saveAssociationsActive', () => {
         const action = $do.saveAssociations({
             bcNames: ['meetingAssoc']
         })
-        const epic = saveAssociationsActive(ActionsObservable.of(action), store$)
+        const epic = saveAssociationsActive(observableOf(action), store$)
         testEpic(epic, () => {
             expect(consoleMock).toHaveBeenCalled()
         })
@@ -122,7 +122,7 @@ describe('saveAssociationsActive', () => {
         const action = $do.saveAssociations({
             bcNames: []
         })
-        const epic = saveAssociationsActive(ActionsObservable.of(action), store$)
+        const epic = saveAssociationsActive(observableOf(action), store$)
         testEpic(epic, () => {
             expect(associateApiMock).toHaveBeenLastCalledWith('empty', null, expect.objectContaining([]), expect.objectContaining({}))
         })

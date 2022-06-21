@@ -21,7 +21,7 @@ import { $do } from '../../../actions/actions'
 import { Store as CoreStore } from '../../../interfaces/store'
 import * as api from '../../../api/api'
 import { newBcData } from '../../../api/api'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import { OperationTypeCrud, OperationPostInvokeRefreshBc, OperationPostInvokeType } from '../../../interfaces/operation'
 import { RowMeta } from '../../../interfaces/rowMeta'
@@ -30,7 +30,7 @@ import { createMockStateObservable } from '../../../tests/createMockStateObserva
 const newBcDataApiMock = jest.fn().mockImplementation((...args: Parameters<typeof newBcData>) => {
     const [screenName] = args
     if (screenName === 'crash') {
-        return observableThrowError('test request crash')
+        return observableThrowError(() => 'test request crash')
     }
     return observableOf({
         row: rowMeta,
@@ -65,7 +65,7 @@ describe('`bcNewDataEpic`', () => {
     })
 
     it('sends `row-meta-new` request', () => {
-        const epic = bcNewDataEpic(ActionsObservable.of(action), store$)
+        const epic = bcNewDataEpic(observableOf(action), store$)
         testEpic(epic, () => {
             expect(newBcDataApiMock).toBeCalledWith(
                 'test',
@@ -77,7 +77,7 @@ describe('`bcNewDataEpic`', () => {
     })
 
     it('puts new record in the store and sets BC cursor', () => {
-        const epic = bcNewDataEpic(ActionsObservable.of(action), store$)
+        const epic = bcNewDataEpic(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result.length).toBe(3)
             expect(result[0]).toEqual(
@@ -115,7 +115,7 @@ describe('`bcNewDataEpic`', () => {
 
     it('process post invoke', () => {
         store$.value.screen.screenName = 'withPostInvoke'
-        const epic = bcNewDataEpic(ActionsObservable.of(action), store$)
+        const epic = bcNewDataEpic(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result.length).toBe(4)
             expect(result[3]).toEqual(
@@ -138,7 +138,7 @@ describe('`bcNewDataEpic`', () => {
             widgetName: 'widget-example',
             operationType: OperationTypeCrud.create
         })
-        const epic = bcNewDataEpic(ActionsObservable.of(brokenAction), store$)
+        const epic = bcNewDataEpic(observableOf(brokenAction), store$)
         testEpic(epic, result => {
             expect(consoleMock).toBeCalledWith('test request crash')
             expect(result[0]).toEqual(expect.objectContaining($do.bcNewDataFail({ bcName: 'bcExample' })))

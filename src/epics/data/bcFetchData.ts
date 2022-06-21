@@ -23,7 +23,7 @@ import { Store as CoreStore } from '../../interfaces/store'
 import { buildBcUrl } from '../../utils/strings'
 import { fetchBcData, createCanceler } from '../../api/api'
 import { cancelRequestActionTypes, cancelRequestEpic } from '../../utils/cancelRequestEpic'
-import { ActionsObservable, ofType, StateObservable } from 'redux-observable'
+import { ofType, StateObservable } from 'redux-observable'
 import { DataItem, WidgetTypes } from '@tesler-ui/schema'
 import { getFilters, getSorters } from '../../utils/filters'
 import { PopupWidgetTypes, WidgetMeta } from '../../interfaces/widget'
@@ -60,7 +60,7 @@ type ActionType = ActionsMap[
 export function bcFetchDataImpl(
     action: ActionType,
     storeObservable: StateObservable<CoreStore>,
-    actionObservable: ActionsObservable<AnyAction>
+    actionObservable: Observable<AnyAction>
 ): Array<Observable<AnyAction>> {
     const state = storeObservable.value
     const { widgetName } = action.payload

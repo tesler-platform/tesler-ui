@@ -16,13 +16,14 @@
  */
 
 import { showAssocPopup } from '../showAssocPopup'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { WidgetTableMeta, WidgetTypes } from '../../../interfaces/widget'
 import { FieldType } from '../../../interfaces/view'
 import { $do } from '../../../actions/actions'
 import { testEpic } from '../../../tests/testEpic'
 import { createMockStateObservable } from '../../../tests/createMockStateObservable'
+import { of as observableOf } from 'rxjs'
 
 describe('showAssocPopup', () => {
     let store$: StateObservable<CoreStore> = null
@@ -46,12 +47,12 @@ describe('showAssocPopup', () => {
 
     it('fires only for AssocListPopup', () => {
         const missingCalleeBcName = $do.showViewPopup({ bcName: bcExample.name })
-        const missingCalleeBcNameEpic = showAssocPopup(ActionsObservable.of(missingCalleeBcName), store$)
+        const missingCalleeBcNameEpic = showAssocPopup(observableOf(missingCalleeBcName), store$)
         testEpic(missingCalleeBcNameEpic, result => {
             expect(result).toHaveLength(0)
         })
         const missingAssociateFieldKey = $do.showViewPopup({ bcName: bcExample.name, calleeBCName: bcParent.name })
-        const missingAssociateFieldKeyEpic = showAssocPopup(ActionsObservable.of(missingAssociateFieldKey), store$)
+        const missingAssociateFieldKeyEpic = showAssocPopup(observableOf(missingAssociateFieldKey), store$)
         testEpic(missingAssociateFieldKeyEpic, result => {
             expect(result).toHaveLength(0)
         })
@@ -69,7 +70,7 @@ describe('showAssocPopup', () => {
             calleeBCName: bcParent.name,
             associateFieldKey: 'name'
         })
-        const notFullHierarchyEpic = showAssocPopup(ActionsObservable.of(notFullHierarchy), store$)
+        const notFullHierarchyEpic = showAssocPopup(observableOf(notFullHierarchy), store$)
         testEpic(notFullHierarchyEpic, result => {
             expect(result).toHaveLength(0)
         })
@@ -78,7 +79,7 @@ describe('showAssocPopup', () => {
             calleeBCName: bcParent.name,
             associateFieldKey: 'name'
         })
-        const missingWidgetEpic = showAssocPopup(ActionsObservable.of(missingWidget), store$)
+        const missingWidgetEpic = showAssocPopup(observableOf(missingWidget), store$)
         testEpic(missingWidgetEpic, result => {
             expect(result).toHaveLength(0)
         })
@@ -91,7 +92,7 @@ describe('showAssocPopup', () => {
             calleeBCName: bcParent.name,
             associateFieldKey: 'name'
         })
-        const notFullHierarchyEpic = showAssocPopup(ActionsObservable.of(missingCursor), store$)
+        const notFullHierarchyEpic = showAssocPopup(observableOf(missingCursor), store$)
         testEpic(notFullHierarchyEpic, result => {
             expect(result).toHaveLength(0)
         })
@@ -100,7 +101,7 @@ describe('showAssocPopup', () => {
             calleeBCName: bcParent.name,
             associateFieldKey: 'missing'
         })
-        const missingFieldEpic = showAssocPopup(ActionsObservable.of(missingField), store$)
+        const missingFieldEpic = showAssocPopup(observableOf(missingField), store$)
         testEpic(missingFieldEpic, result => {
             expect(result).toHaveLength(0)
         })
@@ -109,7 +110,7 @@ describe('showAssocPopup', () => {
             calleeBCName: 'bcMissing',
             associateFieldKey: 'name'
         })
-        const missingBcEpic = showAssocPopup(ActionsObservable.of(missingBc), store$)
+        const missingBcEpic = showAssocPopup(observableOf(missingBc), store$)
         testEpic(missingBcEpic, result => {
             expect(result).toHaveLength(0)
         })
@@ -126,7 +127,7 @@ describe('showAssocPopup', () => {
             calleeBCName: bcParent.name,
             associateFieldKey: 'name'
         })
-        const epic = showAssocPopup(ActionsObservable.of(action), store$)
+        const epic = showAssocPopup(observableOf(action), store$)
         testEpic(epic, result => {
             const expectedAction = $do.changeDataItems({
                 bcName: bcExample.name,
@@ -154,7 +155,7 @@ describe('showAssocPopup', () => {
             calleeBCName: bcParent.name,
             associateFieldKey: 'name'
         })
-        const epic = showAssocPopup(ActionsObservable.of(action), store$)
+        const epic = showAssocPopup(observableOf(action), store$)
         testEpic(epic, result => {
             const expectedAction = $do.changeDataItems({
                 bcName: bcExample.name,

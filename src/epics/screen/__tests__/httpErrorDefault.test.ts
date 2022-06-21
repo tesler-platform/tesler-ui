@@ -17,13 +17,14 @@
 
 import { $do } from '../../../actions/actions'
 import { Store as CoreStore } from '../../../interfaces/store'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import { httpErrorDefault } from '../httpErrorDefault'
 import { AxiosError } from 'axios'
 import { ApplicationError, ApplicationErrorType } from '../../../interfaces/view'
 import { knownHttpErrors } from '../apiError'
 import { createMockStateObservable } from '../../../tests/createMockStateObservable'
+import { of as observableOf } from 'rxjs'
 
 describe('httpErrorDefault', () => {
     let store$: StateObservable<CoreStore> = null
@@ -38,7 +39,7 @@ describe('httpErrorDefault', () => {
             error: axiosError,
             callContext: { widgetName: 'widget-example' }
         })
-        const epic = httpErrorDefault(ActionsObservable.of(action), store$)
+        const epic = httpErrorDefault(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result[0]).toEqual(
                 expect.objectContaining(
@@ -57,7 +58,7 @@ describe('httpErrorDefault', () => {
                 error: null,
                 callContext: { widgetName: 'widget-example' }
             })
-            const epic = httpErrorDefault(ActionsObservable.of(action), store$)
+            const epic = httpErrorDefault(observableOf(action), store$)
             testEpic(epic, result => {
                 expect(result.length).toBe(0)
             })

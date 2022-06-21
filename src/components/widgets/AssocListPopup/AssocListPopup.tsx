@@ -221,7 +221,7 @@ export const AssocListPopup: FunctionComponent<IAssocListProps & IAssocListActio
             footer={components?.footer}
             {...rest}
         >
-            {bcLoading ? <Skeleton loading paragraph={{ rows: 5 }} /> : { ...table }}
+            {bcLoading ? <Skeleton loading paragraph={{ rows: 5 }} /> : table}
         </Popup>
     )
 }

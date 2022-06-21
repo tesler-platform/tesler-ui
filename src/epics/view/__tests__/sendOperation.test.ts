@@ -4,7 +4,7 @@ import * as api from '../../../api/api'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { $do } from '../../../actions/actions'
 import { sendOperation } from '../sendOperation'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import { FilterType } from '../../../interfaces/filters'
 import { createMockStateObservable } from '../../../tests/createMockStateObservable'
@@ -37,7 +37,7 @@ describe('sendOperation', () => {
             operationType: 'someCustomAction',
             widgetName: 'exWidgetName'
         })
-        const epic = sendOperation(ActionsObservable.of(action), store$)
+        const epic = sendOperation(observableOf(action), store$)
         testEpic(epic, () => {
             expect(customActionMock).toBeCalledWith(
                 'test',
@@ -56,7 +56,7 @@ describe('sendOperation', () => {
             operationType: 'someCustomAction',
             widgetName: 'exWidgetName'
         })
-        const epic = sendOperation(ActionsObservable.of(action), store$)
+        const epic = sendOperation(observableOf(action), store$)
         testEpic(epic, () => {
             expect(customActionMock).toBeCalledWith(
                 'test',
@@ -85,7 +85,7 @@ describe('sendOperation', () => {
             operationType: 'someCustomAction',
             widgetName: 'exWidgetName'
         })
-        const epic = sendOperation(ActionsObservable.of(action), store$)
+        const epic = sendOperation(observableOf(action), store$)
         testEpic(epic, () => {
             expect(customActionMock).toBeCalledWith(
                 'test',

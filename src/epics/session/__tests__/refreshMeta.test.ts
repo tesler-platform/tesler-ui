@@ -1,7 +1,7 @@
 import { of as observableOf } from 'rxjs'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { $do } from '../../../actions/actions'
-import { ActionsObservable, StateObservable } from 'redux-observable'
+import { StateObservable } from 'redux-observable'
 import { refreshMetaEpic } from '../refreshMeta'
 import { testEpic } from '../../../tests/testEpic'
 import { refreshMeta } from '../../../api'
@@ -26,7 +26,7 @@ describe('refreshMeta', () => {
     })
     it('should call logoutDone, login, changeLocation', () => {
         const action = $do.refreshMeta(null)
-        const epic = refreshMetaEpic(ActionsObservable.of(action), store$)
+        const epic = refreshMetaEpic(observableOf(action), store$)
         testEpic(epic, result => {
             expect(result.length).toBe(3)
             expect(result[0]).toEqual(expect.objectContaining({ type: 'logoutDone' }))
