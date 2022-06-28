@@ -29,6 +29,7 @@ import { RowMetaField } from '../../../interfaces/rowMeta'
 import FilterPopup from '../../FilterPopup/FilterPopup'
 import { types as coreActions, $do } from '../../../actions/actions'
 import { FilterType, BcFilter } from '../../../interfaces/filters'
+import FilterField from '../../ui/FilterField/FilterField'
 
 const useDispatch = jest.fn()
 jest.spyOn(redux, 'useDispatch').mockImplementation(() => {
@@ -84,6 +85,31 @@ describe('`<ColumnFilter />`', () => {
         expect(wrapper.find(Popover).props().visible).toBeTruthy()
         wrapper.find(FilterPopup).invoke('onCancel')()
         expect(wrapper.find(Popover).props().visible).toBeFalsy()
+    })
+
+    it('filter values are removed after pushing a clear button', () => {
+        const content = (
+            <redux.Provider store={store}>
+                <ColumnFilter widgetMeta={{ ...widgetFieldMeta, type: FieldType.date }} widgetName="widget-name" rowMeta={fieldRowMeta} />)
+            </redux.Provider>
+        )
+        const wrapper = mount(content)
+
+        // open filter
+        wrapper.find(Popover).childAt(0).simulate('click')
+        expect(wrapper.find(Popover).props().visible).toBeTruthy()
+
+        // setting filter values
+        wrapper.find(FilterField).invoke('onChange')(['new'])
+        expect(wrapper.find(FilterField).props().value).toEqual(['new'])
+
+        // filter cleaning
+        wrapper.find(FilterPopup).invoke('onCancel')()
+        expect(wrapper.find(Popover).props().visible).toBeFalsy()
+
+        wrapper.find(Popover).childAt(0).simulate('click')
+        expect(wrapper.find(Popover).props().visible).toBeTruthy()
+        expect(wrapper.find(FilterField).props().value).not.toEqual(['new'])
     })
 
     it('supports custom popover', () => {
