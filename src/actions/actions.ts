@@ -19,7 +19,7 @@ import * as util from './actions-utils'
 import { ActionsObservable as rActionsObservable } from 'redux-observable'
 import { Observable } from 'rxjs/Observable'
 import { Store } from 'redux'
-import { LoginResponse, SessionScreen, PendingRequest } from '../interfaces/session'
+import { LoginResponse, SessionScreen, PendingRequest, NotificationKeys } from '../interfaces/session'
 import { Action as HistoryAction } from 'history'
 import { DrillDownType, Route } from '../interfaces/router'
 import { ViewMetaResponse, ApplicationError, PopupType } from '../interfaces/view'
@@ -38,6 +38,7 @@ import {
 import { BcFilter, BcSorter } from '../interfaces/filters'
 import { AxiosError } from 'axios'
 import { ApiCallContext } from '../utils/api'
+import { Notification } from '../interfaces'
 
 const z = null as any
 
@@ -1212,6 +1213,10 @@ export class ActionPayloadTypes {
     removePendingRequest: {
         requestId: string
     } = z
+
+    addNotification: Notification = z
+
+    removeNotifications: NotificationKeys = z
 }
 
 // action-types

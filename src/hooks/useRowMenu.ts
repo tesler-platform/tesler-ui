@@ -1,6 +1,13 @@
 import React, { MutableRefObject } from 'react'
-import { RowOperationsButtonInstance } from '../components/RowOperations/RowOperationsButton'
 import { DataItem } from '@tesler-ui/schema'
+
+/**
+ * {@link RowOperationsButton | RowOperationsButton} instance
+ */
+export interface RowOperationsButtonInstance {
+    setRow: (record: DataItem, e: React.MouseEvent<HTMLElement>) => void
+    containerRef: MutableRefObject<HTMLElement>
+}
 
 /**
  * Handles interactions between `<RowOperationsButton />` and antd `<Table />`

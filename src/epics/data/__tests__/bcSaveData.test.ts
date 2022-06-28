@@ -20,7 +20,6 @@ import { Store } from 'redux'
 import { Store as CoreStore } from '../../../interfaces/store'
 import { mockStore } from '../../../tests/mockStore'
 import * as api from '../../../api/api'
-import * as notifications from '../../../utils/notifications'
 import { saveBcData } from '../../../api/api'
 import { Observable } from 'rxjs'
 import { ActionsObservable } from 'redux-observable'
@@ -51,7 +50,6 @@ const consoleMock = jest.fn()
 const notificationMock = jest.fn()
 
 jest.spyOn<any, any>(api, 'saveBcData').mockImplementation(saveBcDataApiMock)
-jest.spyOn<any, any>(notifications, 'openButtonWarningNotification').mockImplementation(notificationMock)
 jest.spyOn(console, 'error').mockImplementation(consoleMock)
 
 describe('`bcSaveData` epic', () => {

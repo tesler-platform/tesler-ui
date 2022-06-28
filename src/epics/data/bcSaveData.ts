@@ -24,7 +24,6 @@ import { buildBcUrl } from '../../utils/strings'
 import { getBcChildren } from '../../utils/bc'
 import { Observable } from 'rxjs'
 import { AxiosError } from 'axios'
-import { openButtonWarningNotification } from '../../utils/notifications'
 import i18n from 'i18next'
 import { saveBcData } from '../../api/api'
 
@@ -140,14 +139,19 @@ export function bcSaveDataImpl(action: ActionsMap['sendOperation'], store: Store
             console.error(e)
             // Protection against widget blocking while autosaving
             if (action.payload.onSuccessAction && !options?.disableNotification) {
-                openButtonWarningNotification(
-                    i18n.t('There are pending changes. Please save them or cancel.'),
-                    i18n.t('Cancel changes'),
-                    0,
-                    () => {
-                        store.dispatch($do.bcCancelPendingChanges({ bcNames: [bcName] }))
-                    },
-                    'data_autosave_undo'
+                store.dispatch(
+                    $do.addNotification({
+                        key: 'data_autosave_undo',
+                        type: 'buttonWarningNotification',
+                        message: i18n.t('There are pending changes. Please save them or cancel.'),
+                        duration: 0,
+                        options: {
+                            buttonWarningNotificationOptions: {
+                                buttonText: i18n.t('Cancel changes'),
+                                actionsForClick: [$do.bcCancelPendingChanges({ bcNames: [bcName] })]
+                            }
+                        }
+                    })
                 )
             }
             let viewError: string = null

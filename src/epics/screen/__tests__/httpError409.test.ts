@@ -22,11 +22,9 @@ import { mockStore } from '../../../tests/mockStore'
 import { ActionsObservable } from 'redux-observable'
 import { testEpic } from '../../../tests/testEpic'
 import { httpError409 } from '../httpError409'
-import * as notifications from '../../../utils/notifications'
 import { AxiosError } from 'axios'
 
 const mock = jest.fn().mockImplementation()
-jest.spyOn(notifications, 'openButtonWarningNotification').mockImplementation(mock)
 
 describe('httpError409', () => {
     let store: Store<CoreStore> = null

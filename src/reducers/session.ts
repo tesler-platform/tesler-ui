@@ -28,10 +28,12 @@ export const initialState: Session = {
     debugMode: false,
     exportStateEnabled: false,
     active: false,
+    logout: false,
     loginSpin: false,
     errorMsg: null,
     screens: [],
-    pendingRequests: []
+    pendingRequests: [],
+    notifications: []
 }
 
 /**
@@ -61,11 +63,20 @@ export function session(state = initialState, action: AnyAction): Session {
                 login: loginResponse.login,
                 loginSpin: false,
                 active: true,
+                logout: false,
                 screens: loginResponse.screens || []
             }
         }
         case types.loginFail: {
             return { ...state, loginSpin: false, errorMsg: action.payload.errorMsg }
+        }
+        case types.logout: {
+            return {
+                ...state,
+                loginSpin: false,
+                active: false,
+                logout: true
+            }
         }
         case types.switchDebugMode: {
             return { ...state, debugMode: action.payload }
@@ -77,6 +88,24 @@ export function session(state = initialState, action: AnyAction): Session {
             return {
                 ...state,
                 pendingRequests: state.pendingRequests.filter(item => item.requestId !== action.payload.requestId)
+            }
+        }
+        case types.addNotification: {
+            const notification = action.payload
+
+            return {
+                ...state,
+                notifications: [...state.notifications, notification]
+            }
+        }
+        case types.removeNotifications: {
+            const notificationClosingKeys = action.payload
+
+            const newNotifications = state.notifications.filter(notification => !notificationClosingKeys.includes(notification.key))
+
+            return {
+                ...state,
+                notifications: newNotifications
             }
         }
         default:

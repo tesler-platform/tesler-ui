@@ -37,12 +37,6 @@ module.exports = (_env, options) => {
         externals: [
             rxjsExternals(),
             {
-            antd: {
-                root: 'antd',
-                commonjs2: 'antd',
-                commonjs: 'antd',
-                amd: 'antd'
-            },
             axios: {
                 root: 'axios',
                 commonjs2: 'axios',
@@ -113,38 +107,6 @@ module.exports = (_env, options) => {
                                 sourceMap: true
                             }
                         }
-                    }
-                },
-                {
-                    test: /\.less$/,
-                    include: [
-                        path.resolve(__dirname, 'src')
-                    ],
-                    use: [
-                        { loader: 'style-loader' },
-                        { loader: 'css-loader', options: {
-                            modules: true,
-                            localIdentName: '[name]__[local]___[hash:base64:5]'
-                        } },
-                        { loader: 'less-loader', options: { javascriptEnabled: true } }
-                    ]
-                },
-                {
-                    test: /\.(png|jpg|jpeg|gif|woff|woff2)$/,
-                    use: {
-                        loader: 'url-loader',
-                        options: {
-                            limit: 8192,
-                            name: (file) => {
-                                return '[path][name].[ext]'
-                            }
-                        }
-                    }
-                },
-                {
-                    test: /\.svg$/,
-                    use: {
-                        loader: 'svg-inline-loader?classPrefix'
                     }
                 },
                 // Translating ES2015 modules from npm to support IE11

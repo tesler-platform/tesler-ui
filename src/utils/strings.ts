@@ -45,6 +45,21 @@ export function buildBcUrl(bcName: string, includeSelf = false, store?: Store) {
     return bcUrl
 }
 
+export function splitBcUrl(bcUrl: string) {
+    const bcUrlItems = bcUrl.split('/')
+    const result = []
+
+    for (let i = 0; i < bcUrlItems.length; i += 2) {
+        const bcName = bcUrlItems[i]
+        const bcCursor = bcUrlItems[i + 1]
+        const includeSelf = bcName && bcCursor
+
+        result.push(includeSelf ? `${bcName}/${bcCursor}` : bcName)
+    }
+
+    return result
+}
+
 // Token format: '${fieldName:defaultValue}'
 const TAG_PLACEHOLDER = /\${([^{}]+)}/g
 

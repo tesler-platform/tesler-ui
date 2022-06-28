@@ -17,9 +17,8 @@
 
 import { Observable } from 'rxjs'
 import { Store } from 'redux'
-import { Epic, types, AnyAction, ActionsMap } from '../../actions/actions'
+import { Epic, types, AnyAction, ActionsMap, $do } from '../../actions/actions'
 import { Store as CoreStore } from '../../interfaces/store'
-import { notification } from 'antd'
 import i18n from 'i18next'
 
 /**
@@ -39,9 +38,12 @@ export const selectViewFail: Epic = (action$, store) =>
  * @category Epics
  */
 export function selectViewFailImpl(action: ActionsMap['selectViewFail'], store: Store<CoreStore, AnyAction>): Observable<AnyAction> {
-    notification.error({
-        message: i18n.t('View is missing or unavailable for your role', { viewName: action.payload.viewName }),
-        duration: 15
-    })
-    return Observable.empty()
+    return Observable.of(
+        $do.addNotification({
+            type: 'error',
+            key: 'selectViewFail',
+            message: i18n.t('View is missing or unavailable for your role', { viewName: action.payload.viewName }),
+            duration: 15
+        })
+    )
 }

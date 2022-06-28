@@ -7,7 +7,6 @@ import { $do, ActionPayloadTypes, types } from '../actions/actions'
 import { Operation, OperationGroup } from '../interfaces/operation'
 import { Store as CoreStore } from '../interfaces/store'
 import { buildBcUrl } from '../utils/strings'
-import { openButtonWarningNotification } from '../utils/notifications'
 import i18n from 'i18next'
 import { DataItem, PendingDataItem } from '../interfaces/data'
 import { RowMetaField } from '../interfaces/rowMeta'
@@ -62,17 +61,18 @@ const requiredFields = ({ getState, dispatch }: MiddlewareAPI<Dispatch<AnyAction
 
         // If operation is not validation-sensetive and validation failed, offer to drop pending changes
         if (hasPendingValidationFails(state, bcName)) {
-            openButtonWarningNotification(
-                i18n.t('Required fields are missing'),
-                i18n.t('Cancel changes'),
-                0,
-                () => {
-                    next($do.bcCancelPendingChanges(null))
-                    next($do.clearValidationFails(null))
-                },
-                'requiredFieldsMissing'
-            )
-            return { type: types.emptyAction }
+            return $do.addNotification({
+                key: 'requiredFieldsMissing',
+                type: 'buttonWarningNotification',
+                message: i18n.t('Required fields are missing'),
+                duration: 0,
+                options: {
+                    buttonWarningNotificationOptions: {
+                        buttonText: i18n.t('Cancel changes'),
+                        actionsForClick: [$do.bcCancelPendingChanges(null), $do.clearValidationFails(null)]
+                    }
+                }
+            })
         }
     }
 

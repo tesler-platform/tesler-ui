@@ -94,13 +94,6 @@ export {
 }
 
 /**
- * Components
- *
- * Make sure every component has backward-compatible props, i.e. no new mandatory props or changing types
- */
-export * from './components'
-
-/**
  * Hooks
  */
 export * from './hooks'
@@ -232,3 +225,31 @@ export { userDrillDownImpl } from './epics/router/userDrillDown'
  * Autosave middleware utils
  */
 export { autosaveRoutine }
+export {
+    useWidgetProps,
+    usePendingProps,
+    useDataProps,
+    useFilter,
+    useSorter,
+    usePagination,
+    useOperations,
+    useBcProps,
+    useFilters,
+    useWidgetsGrid,
+    useRowMetaProps,
+    useSsoAuth,
+    useViewCell,
+    SSO_AUTH,
+    useControlColumnsMerge,
+    useFieldNormalization,
+    useShowCondition
+} from './hooks'
+
+export type { PaginationProps, SorterProps, ControlColumnsMergeProps } from './hooks'
+
+export * from './interfaces'
+export { DataNode, TreeNodeBidirectional } from './interfaces'
+export type { CustomWidgetDescriptor, WidgetMeta } from './interfaces'
+
+export * from './utils'
+export { assignTreeLinks, getDescendants, presort, breadthFirstSearch, deleteUndefinedFromObject } from './utils'
