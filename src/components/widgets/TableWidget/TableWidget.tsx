@@ -1,9 +1,8 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, useCallback, useMemo } from 'react'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 import { Table } from 'antd'
 import { ColumnProps, TableProps, TableRowSelection } from 'antd/es/table'
-import ActionLink from '../../ui/ActionLink/ActionLink'
 import { $do } from '../../../actions/actions'
 import { Store } from '../../../interfaces/store'
 import { PaginationMode, WidgetListField, WidgetTableMeta } from '../../../interfaces/widget'
@@ -20,11 +19,9 @@ import cn from 'classnames'
 import Pagination from '../../ui/Pagination/Pagination'
 import HierarchyTable from '../../../components/HierarchyTable/HierarchyTable'
 import { BcFilter, FilterGroup } from '../../../interfaces/filters'
-import { useTranslation } from 'react-i18next'
 import FullHierarchyTable from '../../../components/FullHierarchyTable/FullHierarchyTable'
-import { parseFilters } from '../../../utils/filters'
-import Select from '../../ui/Select/Select'
 import RowOperationsButton from '../../RowOperations/RowOperationsButton'
+import Header from './components/Header'
 import { useRowMenu } from '../../../hooks/useRowMenu'
 
 type AdditionalAntdTableProps = Partial<Omit<TableProps<DataItem>, 'rowSelection'>>
@@ -44,6 +41,9 @@ export interface TableWidgetOwnProps extends AdditionalAntdTableProps {
 export interface TableWidgetProps extends TableWidgetOwnProps {
     data: DataItem[]
     rowMetaFields: RowMetaField[]
+    /**
+     * @deprecated TODO: Remove 2.0 as it is never used
+     */
     limitBySelf: boolean
     /**
      * @deprecated TODO: Remove in 2.0 in favor of `widgetName`
@@ -69,7 +69,13 @@ export interface TableWidgetProps extends TableWidgetOwnProps {
      * @deprecated TODO: Remove in 2.0.0 as it's moved to RowOperationsMenu
      */
     metaInProgress?: boolean
+    /**
+     * @deprecated TODO: Remove 2.0 as it is never used
+     */
     filters: BcFilter[]
+    /**
+     * @deprecated TODO: Remove 2.0 as it is never used
+     */
     filterGroups: FilterGroup[]
     /**
      * @deprecated TODO: Remove 2.0 as it is never used
@@ -86,8 +92,17 @@ export interface TableWidgetProps extends TableWidgetOwnProps {
      */
     onSelectRow?: (bcName: string, cursor: string) => void
     onSelectCell: (cursor: string, widgetName: string, fieldKey: string) => void
+    /**
+     * @deprecated TODO: Remove 2.0 as it is never used
+     */
     onRemoveFilters: (bcName: string) => void
+    /**
+     * @deprecated TODO: Remove 2.0 as it is never used
+     */
     onApplyFilter: (bcName: string, filter: BcFilter, widgetName?: string) => void
+    /**
+     * @deprecated TODO: Remove 2.0 as it is never used
+     */
     onForceUpdate: (bcName: string) => void
 }
 
@@ -141,16 +156,15 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
         }
     }
     const isAllowEdit = (props.allowEdit ?? true) && !props.meta.options?.readOnly
-    const { t } = useTranslation()
 
-    const processCellClick = React.useCallback(
+    const processCellClick = useCallback(
         (recordId: string, fieldKey: string) => {
             onSelectCell(recordId, widgetMetaName, fieldKey)
         },
         [onSelectCell, widgetMetaName]
     )
 
-    const processedFields: WidgetListField[] = React.useMemo(
+    const processedFields: WidgetListField[] = useMemo(
         () =>
             fields.map(item => {
                 return item.type === FieldType.multivalue ? { ...item, type: FieldType.multivalueHover } : item
@@ -158,7 +172,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
         [fields]
     )
 
-    const columns: Array<ColumnProps<DataItem>> = React.useMemo(() => {
+    const columns: Array<ColumnProps<DataItem>> = useMemo(() => {
         return processedFields
             .filter(item => item.type !== FieldType.hidden && !item.hidden)
             .map(item => {
@@ -217,7 +231,7 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
         selectedCell
     ])
 
-    const resultColumns = React.useMemo(() => {
+    const resultColumns = useMemo(() => {
         const controlColumnsLeft: Array<ColumnProps<DataItem>> = []
         const controlColumnsRight: Array<ColumnProps<DataItem>> = []
         props.controlColumns?.map(item => {
@@ -226,61 +240,10 @@ export const TableWidget: FunctionComponent<TableWidgetProps> = props => {
         return [...controlColumnsLeft, ...columns, ...controlColumnsRight]
     }, [columns, props.controlColumns])
 
-    const [filterGroupName, setFilterGroupName] = React.useState(null)
-    const filtersExist = !!props.filters?.length
-
-    const handleShowAll = React.useCallback(() => {
-        onShowAll(widgetBcName, cursor, null, widgetName)
-    }, [onShowAll, widgetBcName, cursor, widgetName])
-
-    const handleRemoveFilters = React.useCallback(() => {
-        onRemoveFilters(widgetBcName)
-        onForceUpdate(widgetBcName)
-    }, [onRemoveFilters, onForceUpdate, widgetBcName])
-
-    const handleAddFilters = React.useMemo(() => {
-        return (value: string) => {
-            const filterGroup = filterGroups.find(item => item.name === value)
-            const parsedFilters = parseFilters(filterGroup.filters)
-            setFilterGroupName(filterGroup.name)
-            onRemoveFilters(widgetBcName)
-            parsedFilters.forEach(item => onApplyFilter(widgetBcName, item, widgetName))
-            onForceUpdate(widgetBcName)
-        }
-    }, [filterGroups, widgetBcName, widgetName, setFilterGroupName, onRemoveFilters, onApplyFilter, onForceUpdate])
-
-    React.useEffect(() => {
-        if (!filtersExist) {
-            setFilterGroupName(null)
-        }
-    }, [filtersExist])
-
-    const defaultHeader = React.useMemo(() => {
-        return (
-            <div className={styles.filtersContainer}>
-                {!!filterGroups?.length && (
-                    <Select
-                        value={filterGroupName ?? t('Show all').toString()}
-                        onChange={handleAddFilters}
-                        dropdownMatchSelectWidth={false}
-                    >
-                        {filterGroups.map(group => (
-                            <Select.Option key={group.name} value={group.name}>
-                                <span>{group.name}</span>
-                            </Select.Option>
-                        ))}
-                    </Select>
-                )}
-                {filtersExist && <ActionLink onClick={handleRemoveFilters}> {t('Clear all filters')} </ActionLink>}
-                {props.limitBySelf && <ActionLink onClick={handleShowAll}> {t('Show all records')} </ActionLink>}
-            </div>
-        )
-    }, [filterGroups, filterGroupName, filtersExist, props.limitBySelf, t, handleAddFilters, handleRemoveFilters, handleShowAll])
-
     const [operationsRef, parentRef, onRow] = useRowMenu()
     return (
         <div className={styles.tableContainer} ref={parentRef}>
-            {props.header ?? defaultHeader}
+            {props.header ?? <Header bcName={widgetBcName} widgetName={widgetName} />}
             <Table
                 className={cn(styles.table, { [styles.tableWithRowMenu]: props.showRowActions })}
                 columns={resultColumns}
@@ -311,7 +274,13 @@ function mapStateToProps(store: Store, ownProps: TableWidgetOwnProps) {
     return {
         data: store.data[ownProps.meta.bcName],
         rowMetaFields: fields,
+        /**
+         * @deprecated
+         */
         limitBySelf,
+        /**
+         * @deprecated
+         */
         bcName,
         /**
          * @deprecated
@@ -324,7 +293,13 @@ function mapStateToProps(store: Store, ownProps: TableWidgetOwnProps) {
          * @deprecated
          */
         pendingDataItem: null as PendingDataItem,
+        /**
+         * @deprecated
+         */
         filters,
+        /**
+         * @deprecated
+         */
         filterGroups: bc?.filterGroups
     }
 }
@@ -334,6 +309,9 @@ function mapDispatchToProps(dispatch: Dispatch) {
         onSelectCell: (cursor: string, widgetName: string, fieldKey: string) => {
             dispatch($do.selectTableCellInit({ widgetName, rowId: cursor, fieldKey }))
         },
+        /**
+         * @deprecated TODO: Remove in 2.0
+         */
         onShowAll: (bcName: string, cursor: string, route?: Route) => {
             dispatch($do.showAllTableRecordsInit({ bcName, cursor }))
         },
@@ -341,12 +319,21 @@ function mapDispatchToProps(dispatch: Dispatch) {
          * @deprecated TODO: Remove in 2.0
          */
         onDrillDown: null as (widgetName: string, cursor: string, bcName: string, fieldKey: string) => void,
+        /**
+         * @deprecated TODO: Remove in 2.0
+         */
         onRemoveFilters: (bcName: string) => {
             dispatch($do.bcRemoveAllFilters({ bcName }))
         },
+        /**
+         * @deprecated TODO: Remove in 2.0
+         */
         onApplyFilter: (bcName: string, filter: BcFilter, widgetName?: string) => {
             dispatch($do.bcAddFilter({ bcName, filter, widgetName }))
         },
+        /**
+         * @deprecated TODO: Remove in 2.0
+         */
         onForceUpdate: (bcName: string) => {
             dispatch($do.bcForceUpdate({ bcName }))
         }
