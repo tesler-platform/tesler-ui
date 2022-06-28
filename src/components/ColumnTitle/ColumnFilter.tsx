@@ -99,10 +99,17 @@ export function ColumnFilter({ widgetName, widgetMeta, rowMeta, components }: Co
         [visible, isMultivalue, isPickList, fieldMeta, assocWidget, widget, fieldMetaMultivalue, fieldMetaPickListField, dispatch]
     )
 
-    const handleClose = useCallback(() => setVisible(false), [])
+    const handleApply = useCallback(() => {
+        setVisible(false)
+    }, [])
+
+    const handleClose = useCallback(() => {
+        setVisible(false)
+        setValue(undefined)
+    }, [])
 
     const content = components?.popup ?? (
-        <FilterPopup widgetName={widgetName} fieldKey={effectiveFieldMeta.key} value={value} onApply={handleClose} onCancel={handleClose}>
+        <FilterPopup widgetName={widgetName} fieldKey={effectiveFieldMeta.key} value={value} onApply={handleApply} onCancel={handleClose}>
             <FilterField widgetFieldMeta={effectiveFieldMeta} rowFieldMeta={rowMeta} value={value} onChange={setValue} />
         </FilterPopup>
     )
