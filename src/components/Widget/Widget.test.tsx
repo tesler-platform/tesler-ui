@@ -313,3 +313,55 @@ describe('Choose widget', () => {
         expect(wrapper.find('TextWidget').length).toBe(1)
     })
 })
+
+describe('Custom widget debug panel', () => {
+    let store: Store<CoreStore> = null
+
+    const widgetCustomMeta = {
+        id: '1',
+        name: '1',
+        type: 'MyCustom',
+        title: 'MyCustom title',
+        bcName: exampleBcName,
+        position: 1,
+        gridWidth: 1,
+        fields: [] as WidgetField[]
+    }
+
+    function MyCustom() {
+        return <div>custom widget</div>
+    }
+
+    function MyCard({ children }: { children: any }) {
+        return <div>{children}</div>
+    }
+
+    beforeAll(() => {
+        store = mockStore()
+        store.getState().screen.bo.bc[exampleBcName] = {} as BcMetaState
+        store.getState().data[exampleBcName] = [{ id: '11111', vstamp: 1 }]
+        store.getState().session.debugMode = true
+        store.getState().view.widgets = [widgetCustomMeta]
+    })
+
+    it('should show debug panel for custom widget WITHOUT custom card', function () {
+        const wrapper = mount(
+            <Provider store={store}>
+                <Widget meta={widgetCustomMeta} customWidgets={{ MyCustom: MyCustom }} />
+            </Provider>
+        )
+
+        expect(wrapper.find('Memo(DebugPanel)').length).toBe(1)
+    })
+
+    it('should show debug panel for custom widget WITH custom card', function () {
+        const wrapper = mount(
+            <Provider store={store}>
+                <Widget meta={widgetCustomMeta} customWidgets={{ MyCustom: MyCustom }} card={MyCard} />
+            </Provider>
+        )
+
+        expect(wrapper.find('Memo(DebugPanel)').length).toBe(1)
+        expect(wrapper.find('MyCard').length).toBe(1)
+    })
+})

@@ -54,18 +54,6 @@ export const Widget: FunctionComponent<WidgetProps> = props => {
         return <> {chooseWidgetType(props.meta, props.customWidgets, props.children)} </>
     }
 
-    if (customWidget && !isCustomWidget(customWidget)) {
-        if (customWidget.card === null) {
-            return <> {chooseWidgetType(props.meta, props.customWidgets, props.children)} </>
-        }
-
-        if (customWidget.card) {
-            const CustomCard = customWidget.card
-
-            return <CustomCard meta={props.meta}>{chooseWidgetType(props.meta, props.customWidgets, props.children)}</CustomCard>
-        }
-    }
-
     const showSpinner = !!(props.loading && (props.rowMetaExists || props.dataExists))
     const showSkeleton = props.loading && !showSpinner
 
@@ -78,22 +66,33 @@ export const Widget: FunctionComponent<WidgetProps> = props => {
     )
 
     // TODO 2.0.0 delete spinner and skeleton. Spinner and skeleton should be overridden by props.card component
+    const WidgetParts = (
+        <>
+            {showSkeleton && <Skeleton loading paragraph={skeletonParams} />}
+            {!showSkeleton && spinnerElement}
+            {props.debugMode && <DebugPanel widgetMeta={props.meta} />}
+        </>
+    )
+
+    if (customWidget && !isCustomWidget(customWidget)) {
+        if (customWidget.card === null) {
+            return WidgetParts
+        }
+
+        if (customWidget.card) {
+            const CustomCard = customWidget.card
+            return <CustomCard meta={props.meta}>{WidgetParts}</CustomCard>
+        }
+    }
+
     if (props.card) {
         const Card = props.card
-        return (
-            <Card meta={props.meta}>
-                {showSkeleton && <Skeleton loading paragraph={skeletonParams} />}
-                {!showSkeleton && spinnerElement}
-                {props.debugMode && <DebugPanel widgetMeta={props.meta} />}
-            </Card>
-        )
+        return <Card meta={props.meta}>{WidgetParts}</Card>
     }
     return (
         <div className={styles.container} data-widget-type={props.meta.type}>
             <h2 className={styles.title}>{props.meta.title}</h2>
-            {showSkeleton && <Skeleton loading paragraph={skeletonParams} />}
-            {!showSkeleton && spinnerElement}
-            {props.debugMode && <DebugPanel widgetMeta={props.meta} />}
+            {WidgetParts}
         </div>
     )
 }
