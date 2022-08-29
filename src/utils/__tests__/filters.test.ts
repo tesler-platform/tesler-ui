@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { getFilters, getSorters, parseSorters, getFilterType, parseFilters } from '../filters'
+import { getFilters, getFilterType, getSorters, parseFilters, parseSorters } from '../filters'
 import { FieldType } from '../../interfaces/view'
 import { FilterType } from '../../interfaces/filters'
 
@@ -69,6 +69,18 @@ describe('getFilters', () => {
         expect(getFilters(undefined)).toBe(null)
         expect(getFilters(null)).toBe(null)
         expect(getFilters([])).toBe(null)
+    })
+    it("should convert \"range\" into combination of 'greaterOrEqualThan' and 'lessOrEqualThan'", () => {
+        expect(getFilters([{ type: FilterType.range, fieldName: 'test-field', value: [1, 2] }])).toMatchObject({
+            'test-field.greaterOrEqualThan': '1',
+            'test-field.lessOrEqualThan': '2'
+        })
+        expect(getFilters([{ type: FilterType.range, fieldName: 'test-field', value: [1, null] }])).toMatchObject({
+            'test-field.greaterOrEqualThan': '1'
+        })
+        expect(getFilters([{ type: FilterType.range, fieldName: 'test-field', value: [null, 2] }])).toMatchObject({
+            'test-field.lessOrEqualThan': '2'
+        })
     })
 })
 

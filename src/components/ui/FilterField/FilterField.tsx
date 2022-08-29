@@ -23,18 +23,20 @@ import React from 'react'
 import { CheckboxFilter } from '../CheckboxFilter/CheckboxFilter'
 import { DataValue } from '../../../interfaces/data'
 import { FieldType } from '../../../interfaces/view'
-import { Checkbox, Input, Icon, DatePicker } from 'antd'
+import { Checkbox, DatePicker, Icon, Input } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import moment, { Moment } from 'moment'
-import { WidgetListField } from '../../../interfaces/widget'
+import { WidgetListField, WidgetMeta } from '../../../interfaces/widget'
 import { RowMetaField } from '../../../interfaces/rowMeta'
 import { getFormat } from '../DatePickerField/DatePickerField'
+import RangePicker from './components/RangePicker'
 
 export interface ColumnFilterControlProps {
     widgetFieldMeta: WidgetListField
     rowFieldMeta: RowMetaField
     value: DataValue | DataValue[]
     onChange: (value: DataValue | DataValue[]) => void
+    widgetOptions?: WidgetMeta['options']
 }
 
 /**
@@ -64,8 +66,61 @@ export const ColumnFilterControl: React.FC<ColumnFilterControlProps> = props => 
                 />
             )
         }
+        case FieldType.dateTimeWithSeconds:
+            if (props.widgetOptions?.filterDateByRange) {
+                return (
+                    <RangePicker
+                        value={props.value as DataValue[]}
+                        onChange={v => props.onChange(v)}
+                        format={getFormat(false, true)}
+                        showTime={{ format: 'HH:mm:ss' }}
+                    />
+                )
+            }
+            return (
+                <DatePicker
+                    autoFocus
+                    onChange={(date: Moment, dateString: string) => {
+                        props.onChange(date?.toISOString())
+                    }}
+                    value={props.value ? moment(props.value as string, moment.ISO_8601) : null}
+                    format={getFormat()}
+                />
+            )
+
         case FieldType.dateTime:
+            if (props.widgetOptions?.filterDateByRange) {
+                return (
+                    <RangePicker
+                        value={props.value as DataValue[]}
+                        onChange={v => props.onChange(v)}
+                        format={getFormat(true)}
+                        showTime={{ format: 'HH:mm' }}
+                    />
+                )
+            }
+            return (
+                <DatePicker
+                    autoFocus
+                    onChange={(date: Moment, dateString: string) => {
+                        props.onChange(date?.toISOString())
+                    }}
+                    value={props.value ? moment(props.value as string, moment.ISO_8601) : null}
+                    format={getFormat()}
+                />
+            )
+
         case FieldType.date: {
+            if (props.widgetOptions?.filterDateByRange) {
+                return (
+                    <RangePicker
+                        value={props.value as DataValue[]}
+                        onChange={v => props.onChange(v)}
+                        format={getFormat()}
+                        dateOnly={true}
+                    />
+                )
+            }
             return (
                 <DatePicker
                     autoFocus

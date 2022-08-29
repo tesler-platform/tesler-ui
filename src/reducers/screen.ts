@@ -300,9 +300,11 @@ export function screen(state = initialState, action: AnyAction, store: Store): S
         }
         case types.bcAddFilter: {
             const { bcName, filter, widgetName } = action.payload
-            const isDate = store.view.widgets
-                .find(item => item.name === widgetName)
-                ?.fields.find((item: WidgetField) => item.type === FieldType.date && item.key === filter.fieldName)
+            const isDate =
+                store.view.widgets
+                    .find(item => item.name === widgetName)
+                    ?.fields.find((item: WidgetField) => item.type === FieldType.date && item.key === filter.fieldName) &&
+                typeof filter.value === 'string'
             const newFilter = isDate ? { ...filter, value: correctDateFilter(filter.value as string) } : filter
             const prevFilters = state.filters[bcName] || []
             const prevFilter = prevFilters.find(item => item.fieldName === filter.fieldName && item.type === filter.type)

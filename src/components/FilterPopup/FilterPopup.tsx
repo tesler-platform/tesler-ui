@@ -20,9 +20,9 @@
  */
 
 import React, { FormEvent } from 'react'
-import { Form, Button } from 'antd'
+import { Button, Form } from 'antd'
 import styles from './FilterPopup.less'
-import { BcFilter } from '../../interfaces/filters'
+import { BcFilter, FilterType } from '../../interfaces/filters'
 import { getFilterType } from '../../utils/filters'
 import { useDispatch, useSelector } from 'react-redux'
 import { $do } from '../../actions/actions'
@@ -30,12 +30,14 @@ import { Store } from '../../interfaces/store'
 import { WidgetField } from '../../interfaces/widget'
 import { DataValue } from '../../interfaces/data'
 import { useTranslation } from 'react-i18next'
+import { FieldType } from '@tesler-ui/schema'
 
 export interface FilterPopupProps {
     widgetName: string
     fieldKey: string
     value: DataValue | DataValue[]
     children: React.ReactNode
+    fieldType?: FieldType
     onApply?: () => void
     onCancel?: () => void
 }
@@ -64,7 +66,11 @@ export const FilterPopup: React.FC<FilterPopupProps> = props => {
     const handleApply = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const newFilter: BcFilter = {
-            type: getFilterType(widgetMeta.type),
+            type:
+                widget.options?.filterDateByRange &&
+                [FieldType.date, FieldType.dateTime, FieldType.dateTimeWithSeconds].includes(props.fieldType)
+                    ? FilterType.range
+                    : getFilterType(widgetMeta.type),
             value: props.value,
             fieldName: props.fieldKey,
             viewName,
