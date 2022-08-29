@@ -24,6 +24,7 @@ import { WidgetListField } from '../../../interfaces/widget'
 import { FieldType } from '../../../interfaces/view'
 import { RowMetaField } from '../../../interfaces/rowMeta'
 import { CheckboxFilter } from '../CheckboxFilter/CheckboxFilter'
+import RangePicker from './components/RangePicker'
 
 describe('`<ColumnFilterControl />`', () => {
     it('renders `<DatePicker />` for date', () => {
@@ -40,6 +41,23 @@ describe('`<ColumnFilterControl />`', () => {
         const now = moment()
         wrapper.find(DatePicker).invoke('onChange')(now, null)
         expect(onChange).toBeCalledWith(now.toISOString())
+    })
+
+    it('renders `<RangePIcker />` for date', () => {
+        const onChange = jest.fn()
+        const wrapper = mount(
+            <ColumnFilterControl
+                widgetOptions={{ filterDateByRange: true }}
+                widgetFieldMeta={{ ...widgetFieldMeta, type: FieldType.date }}
+                rowFieldMeta={fieldRowMeta}
+                value={null}
+                onChange={onChange}
+            />
+        )
+        expect(wrapper.find(RangePicker)).toHaveLength(1)
+        const now = moment()
+        wrapper.find(RangePicker).invoke('onChange')([now.toISOString(), null])
+        expect(onChange).toBeCalledWith([now.toISOString(), null])
     })
     it('renders `<CheckboxFilter />` for dictionary', () => {
         const onChange = jest.fn()
@@ -101,3 +119,61 @@ const fieldRowMeta: RowMetaField = {
     key: 'key',
     currentValue: null
 }
+
+describe('dateTimeWithSeconds field', () => {
+    it('should render DatePicker', function () {
+        const onChange = jest.fn()
+        const wrapper = mount(
+            <ColumnFilterControl
+                widgetFieldMeta={{ ...widgetFieldMeta, type: FieldType.dateTimeWithSeconds }}
+                rowFieldMeta={fieldRowMeta}
+                value={null}
+                onChange={onChange}
+            />
+        )
+        expect(wrapper.find(DatePicker)).toHaveLength(1)
+    })
+
+    it('should render RangePicker', function () {
+        const onChange = jest.fn()
+        const wrapper = mount(
+            <ColumnFilterControl
+                widgetOptions={{ filterDateByRange: true }}
+                widgetFieldMeta={{ ...widgetFieldMeta, type: FieldType.dateTimeWithSeconds }}
+                rowFieldMeta={fieldRowMeta}
+                value={null}
+                onChange={onChange}
+            />
+        )
+        expect(wrapper.find(RangePicker)).toHaveLength(1)
+    })
+})
+
+describe('dateTime field', () => {
+    it('should render DatePicker', function () {
+        const onChange = jest.fn()
+        const wrapper = mount(
+            <ColumnFilterControl
+                widgetFieldMeta={{ ...widgetFieldMeta, type: FieldType.dateTime }}
+                rowFieldMeta={fieldRowMeta}
+                value={null}
+                onChange={onChange}
+            />
+        )
+        expect(wrapper.find(DatePicker)).toHaveLength(1)
+    })
+
+    it('should render RangePicker', function () {
+        const onChange = jest.fn()
+        const wrapper = mount(
+            <ColumnFilterControl
+                widgetOptions={{ filterDateByRange: true }}
+                widgetFieldMeta={{ ...widgetFieldMeta, type: FieldType.dateTime }}
+                rowFieldMeta={fieldRowMeta}
+                value={null}
+                onChange={onChange}
+            />
+        )
+        expect(wrapper.find(RangePicker)).toHaveLength(1)
+    })
+})

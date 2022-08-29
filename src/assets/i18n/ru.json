@@ -38,6 +38,8 @@
         "Refresh meta": "Обновить мета данные",
         "Save info for developers": "Сохранить информацию для разработчиков",
         "Show meta": "Показать мета данные",
+        "Start date": "Начальная дата",
+        "End date": "Конечная дата",
         "Screen is missing or unavailable for your role": "Экран \"{{screenName}}\" отсутствует или недоступен для вашей роли",
         "View is missing or unavailable for your role": "Панель \"{{viewName}}\" отсутствует или недоступна для вашей роли"
     }

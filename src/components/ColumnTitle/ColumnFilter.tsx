@@ -58,6 +58,7 @@ export function ColumnFilter({ widgetName, widgetMeta, rowMeta, components }: Co
     const bcName = widget?.bcName
     const effectiveFieldMeta = (widget?.fields?.find((item: WidgetListField) => item.key === widgetMeta.filterBy) ??
         widgetMeta) as WidgetListField
+    const widgetOptions = widget?.options
     const filter = useSelector((store: Store) => store.screen.filters[bcName]?.find(item => item.fieldName === effectiveFieldMeta.key))
     const [value, setValue] = React.useState(filter?.value)
     const [visible, setVisible] = React.useState(false)
@@ -109,8 +110,21 @@ export function ColumnFilter({ widgetName, widgetMeta, rowMeta, components }: Co
     }, [])
 
     const content = components?.popup ?? (
-        <FilterPopup widgetName={widgetName} fieldKey={effectiveFieldMeta.key} value={value} onApply={handleApply} onCancel={handleClose}>
-            <FilterField widgetFieldMeta={effectiveFieldMeta} rowFieldMeta={rowMeta} value={value} onChange={setValue} />
+        <FilterPopup
+            widgetName={widgetName}
+            fieldKey={effectiveFieldMeta.key}
+            value={value}
+            onApply={handleApply}
+            onCancel={handleClose}
+            fieldType={effectiveFieldMeta.type}
+        >
+            <FilterField
+                widgetFieldMeta={effectiveFieldMeta}
+                rowFieldMeta={rowMeta}
+                value={value}
+                onChange={setValue}
+                widgetOptions={widgetOptions}
+            />
         </FilterPopup>
     )
 

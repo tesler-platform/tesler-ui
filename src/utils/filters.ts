@@ -25,12 +25,22 @@ export function getFilters(filters: BcFilter[]) {
     }
     const result: Record<string, string> = {}
     filters.forEach(item => {
-        let value = String(item.value)
-        if (Array.isArray(item.value)) {
-            const values = (item.value as DataValue[]).map(val => `"${val}"`)
-            value = `[${values}]`
+        if (item.type === FilterType.range) {
+            const values = item.value as DataValue[]
+            if (values[0]) {
+                result[`${item.fieldName}.${FilterType.greaterOrEqualThan}`] = String(values[0])
+            }
+            if (values[1]) {
+                result[`${item.fieldName}.${FilterType.lessOrEqualThan}`] = String(values[1])
+            }
+        } else {
+            let value = String(item.value)
+            if (Array.isArray(item.value)) {
+                const values = (item.value as DataValue[]).map(val => `"${val}"`)
+                value = `[${values}]`
+            }
+            result[`${item.fieldName}.${item.type}`] = value
         }
-        result[`${item.fieldName}.${item.type}`] = value
     })
     return result
 }
