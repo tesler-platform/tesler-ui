@@ -36,6 +36,8 @@
         "Enter value": "Enter value",
         "Save info for developers": "Save info for developers",
         "Show meta": "Show meta",
+        "Start date": "Start date",
+        "End date": "End date",
         "Screen is missing or unavailable for your role": "Screen {{screenName}} is missing or unavailable for your role",
         "View is missing or unavailable for your role": "View {{viewName}} is missing or unavailable for your role"
     }

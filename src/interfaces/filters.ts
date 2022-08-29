@@ -1,6 +1,10 @@
 import { DataValue } from './data'
 
 export enum FilterType {
+    /**
+     * Transforms into combination of 'greaterOrEqualThan' and 'lessOrEqualThan' (See src/utils/filters.ts)
+     */
+    range = 'range',
     equals = 'equals',
     greaterThan = 'greaterThan',
     lessThan = 'lessThan',
