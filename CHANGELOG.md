@@ -1,3 +1,14 @@
+# Version 1.34.0 (September 4, 2022)
+
+## Features
+
+* The ability to filter dates fields by range ([#710](https://github.com/tesler-platform/tesler-ui/issues/710))
+
+## Fixes
+
+* Displaying a debug panel for custom widgets ([#740](https://github.com/tesler-platform/tesler-ui/issues/740))
+* Removing filters after click on "clear" button ([tesler-demo_#70](https://github.com/tesler-platform/tesler-demo/issues/70))
+
 # Version 1.33.2 (October 28, 2022)
 
 ## Fixes
