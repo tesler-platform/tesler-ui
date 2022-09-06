@@ -10,6 +10,8 @@ import { combineReducers } from '../utils/redux'
  */
 export const mockStore = () => {
     const store = createStore(combineReducers(reducers))
+    const origDispatch = store.dispatch
+    store.dispatch = jest.fn(origDispatch)
     setStoreInstance(store)
     return store
 }

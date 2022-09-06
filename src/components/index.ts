@@ -47,3 +47,4 @@ export { default as ViewNavigationWidget } from './widgets/ViewNavigationWidget/
 export { default as NavigationTabsWidget } from './widgets/NavigationTabsWidget/NavigationTabsWidget'
 // Developer
 export { default as DevToolsPanel } from './DevToolsPanel/DevToolsPanel'
+export { default as WidgetErrorBoundary } from './WidgetErrorBoundary/WidgetErrorBoundary'

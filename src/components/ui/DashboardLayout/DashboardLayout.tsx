@@ -2,6 +2,7 @@ import React from 'react'
 import { Row, Col } from 'antd'
 import { CustomWidgetDescriptor, WidgetMeta } from '../../../interfaces/widget'
 import Widget from '../../Widget/Widget'
+import WidgetErrorBoundary from '../../WidgetErrorBoundary/WidgetErrorBoundary'
 
 export interface DashboardLayoutProps {
     widgets: WidgetMeta[]
@@ -27,12 +28,14 @@ export function DashboardLayout(props: DashboardLayoutProps) {
                 <Row key={rowIndex}>
                     {row.map((widget, colIndex) => (
                         <Col key={colIndex} span={24}>
-                            <Widget
-                                meta={widget}
-                                card={props.card}
-                                customWidgets={props.customWidgets}
-                                customSpinner={props.customSpinner}
-                            />
+                            <WidgetErrorBoundary meta={widget}>
+                                <Widget
+                                    meta={widget}
+                                    card={props.card}
+                                    customWidgets={props.customWidgets}
+                                    customSpinner={props.customSpinner}
+                                />
+                            </WidgetErrorBoundary>
                         </Col>
                     ))}
                 </Row>
