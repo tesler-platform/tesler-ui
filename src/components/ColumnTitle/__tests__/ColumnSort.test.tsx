@@ -78,7 +78,7 @@ describe('`<ColumnSort />`', () => {
         mock.mockRestore()
     })
 
-    it('changes icon after click', () => {
+    xit('changes icon after click', () => {
         const wrapper = mount(
             <redux.Provider store={store}>
                 <ColumnSort widgetName="widget-example" fieldKey="field-example" />

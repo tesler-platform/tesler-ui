@@ -31,6 +31,7 @@ export const refreshMetaEpic: Epic = (action$, store): Observable<any> =>
         const state = store.getState()
         const { router } = state
         const { activeRole } = state.session
+        console.log('refreshMetaEpic')
         return refreshMeta().switchMap(() => {
             return Observable.concat([
                 $do.logoutDone(null),

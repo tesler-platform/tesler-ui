@@ -19,6 +19,7 @@ import { ActionsMap, $do, AnyAction, types, Epic } from '../../actions/actions'
 import { Store } from 'redux'
 import { Store as CoreStore } from '../../interfaces/store'
 import { PopupWidgetTypes, WidgetMeta } from '../../interfaces/widget'
+import { Observable } from 'rxjs'
 
 /**
  * Schedules data fetch for every widget on the view
@@ -33,7 +34,12 @@ import { PopupWidgetTypes, WidgetMeta } from '../../interfaces/widget'
  */
 export const selectView: Epic = (action$, store) =>
     action$.ofType(types.selectView).mergeMap(action => {
-        return selectViewImpl(action, store)
+        try {
+            return selectViewImpl(action, store)
+        } catch (e) {
+            console.error(`selectView Epic:: ${e}`)
+            return Observable.empty()
+        }
     })
 
 /**
