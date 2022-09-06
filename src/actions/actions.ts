@@ -1188,6 +1188,11 @@ export class ActionPayloadTypes {
     refreshMeta: null = z
 
     /**
+     * Refresh meta data (see action above) and reload page
+     */
+    refreshMetaAndReloadPage: null = z
+
+    /**
      * Switch to another user role
      */
     switchRole: {
