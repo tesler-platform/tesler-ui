@@ -1,3 +1,9 @@
+# Version 1.34.1 (September 7, 2022)
+
+## Fixes
+
+* A fallback component is displayed instead of crashed widget ([#745](https://github.com/tesler-platform/tesler-ui/issues/745))
+
 # Version 1.34.0 (September 4, 2022)
 
 ## Features
