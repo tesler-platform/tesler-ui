@@ -28,7 +28,7 @@ export function initHistory() {
     historyObj.listen((loc, action) => {
         const prevState = store.getState().router
         const nextState = parseLocation(historyObj.location)
-        const diff = shallowCompare(prevState, nextState)
+        const diff = shallowCompare(prevState, nextState, ['params'])
         if (diff.length) {
             store.dispatch($do.changeLocation({ location: nextState, action }))
         }
