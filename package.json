@@ -97,7 +97,7 @@
     "html-react-parser": "0.10.0",
     "html2canvas": "1.0.0-rc.7",
     "i18next": "19.0.1",
-    "marked": "0.8.0",
+    "marked": "4.0.10",
     "query-string": "5.1.0",
     "react-i18next": "11.2.5",
     "react-window": "1.8.5",
