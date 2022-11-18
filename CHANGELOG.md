@@ -1,3 +1,9 @@
+# Version 1.34.2 (November 18, 2022)
+
+## Fixes
+
+* URLSearchParams are ignored when comparing locations [#749](https://github.com/tesler-platform/tesler-ui/issues/749)
+
 # Version 1.34.1 (September 7, 2022)
 
 ## Fixes
