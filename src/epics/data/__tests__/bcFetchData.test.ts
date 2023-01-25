@@ -136,7 +136,8 @@ describe('bcFetchDataEpic', () => {
                         keepDelta: undefined,
                         cursorsMap: {
                             bcExample: '9'
-                        }
+                        },
+                        resetChildren: true
                     })
                 )
             )

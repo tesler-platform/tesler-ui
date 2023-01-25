@@ -92,8 +92,11 @@ export const bcSelectRecord: Epic = (action$, store) =>
                 keepDelta: action.payload.keepDelta
             })
         })
+
         return Observable.concat(
-            Observable.of($do.bcChangeCursors({ cursorsMap: { [bcName]: cursor }, keepDelta: action.payload.keepDelta })),
+            Observable.of(
+                $do.bcChangeCursors({ cursorsMap: { [bcName]: cursor }, keepDelta: action.payload.keepDelta, resetChildren: true })
+            ),
             Observable.of($do.bcFetchRowMeta({ widgetName: '', bcName })),
             fetchChildrenBcData
         )

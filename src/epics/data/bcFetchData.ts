@@ -213,12 +213,14 @@ function getCursorChange(data: DataItem[], action: ActionType, prevCursor: strin
     const { bcName } = action.payload
     const { keepDelta } = (action as ActionsMap[typeof types.bcFetchDataRequest]).payload
     const newCursor = data[0]?.id
+    const prevCursorData = data.some(i => i.id === prevCursor)
     const changeCurrentCursor = Observable.of<AnyAction>(
         $do.bcChangeCursors({
             cursorsMap: {
-                [bcName]: data.some(i => i.id === prevCursor) ? prevCursor : newCursor
+                [bcName]: prevCursorData ? prevCursor : newCursor
             },
-            keepDelta: isHierarchy || keepDelta
+            keepDelta: isHierarchy || keepDelta,
+            resetChildren: !prevCursorData
         })
     )
     return changeCurrentCursor
