@@ -28,6 +28,7 @@ import { getFilters, getSorters } from '../../utils/filters'
 import { PopupWidgetTypes, WidgetMeta } from '../../interfaces/widget'
 import { getBcChildren, checkShowCondition } from '../../utils/bc'
 import { BcMetaState } from '../../interfaces/bc'
+import { take } from 'rxjs/operators'
 
 /**
  *
@@ -163,12 +164,12 @@ export function bcFetchDataImpl(
                     }
                 }
                 const dataToCheck = bcName === w.showCondition?.bcName ? response.data : state.data[w.showCondition?.bcName]
-                return checkShowCondition(
-                    w.showCondition,
-                    state.screen.bo.bc[w.showCondition?.bcName]?.cursor,
-                    dataToCheck,
-                    state.view.pendingDataChanges
-                )
+                let cursorChangeValue: AnyAction
+                cursorChange.pipe(take(1)).subscribe(value => (cursorChangeValue = value))
+                const showConditionCursor =
+                    (cursorChange && cursorChangeValue && cursorChangeValue?.payload.cursorsMap[w.showCondition?.bcName]) ||
+                    state.screen.bo.bc[w.showCondition?.bcName]?.cursor
+                return checkShowCondition(w.showCondition, showConditionCursor, dataToCheck, state.view.pendingDataChanges)
             }
 
             const lazyWidget = (!isWidgetVisible(widget) || PopupWidgetTypes.includes(widget.type)) && !parentOfNotLazyWidget
