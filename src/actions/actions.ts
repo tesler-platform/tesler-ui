@@ -585,6 +585,7 @@ export class ActionPayloadTypes {
     bcChangeCursors: {
         cursorsMap: Record<string, string>
         keepDelta?: boolean
+        resetChildren?: boolean
     } = z
 
     /**

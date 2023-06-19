@@ -95,7 +95,7 @@ export function screen(state = initialState, action: AnyAction, store: Store): S
             )
                 .filter(bcName => state.bo.bc[bcName])
                 .forEach(bcName => {
-                    newBcs[bcName] = { ...state.bo.bc[bcName], page: 1 }
+                    newBcs[bcName] = { ...state.bo.bc[bcName] }
                 })
             return {
                 ...state,
@@ -210,6 +210,7 @@ export function screen(state = initialState, action: AnyAction, store: Store): S
         case types.bcChangeCursors: {
             const newCursors: Record<string, BcMetaState> = {}
             const newCache: Record<string, string> = {}
+            const { resetChildren } = action.payload
             Object.entries(action.payload.cursorsMap).forEach(entry => {
                 const [bcName, cursor] = entry
                 newCursors[bcName] = { ...state.bo.bc[bcName], cursor }
@@ -217,12 +218,13 @@ export function screen(state = initialState, action: AnyAction, store: Store): S
             })
             // Also reset cursors of all children of requested BCs
             const changedParents = Object.values(newCursors).map(bc => `${bc.url}/:id`)
-            Object.values(state.bo.bc).forEach(bc => {
-                if (changedParents.some(item => bc.url.includes(item))) {
-                    newCursors[bc.name] = { ...state.bo.bc[bc.name], cursor: null }
-                    newCache[bc.name] = null
-                }
-            })
+            resetChildren &&
+                Object.values(state.bo.bc).forEach(bc => {
+                    if (changedParents.some(item => bc.url.includes(item))) {
+                        newCursors[bc.name] = { ...state.bo.bc[bc.name], cursor: null, page: 1 }
+                        newCache[bc.name] = null
+                    }
+                })
             return {
                 ...state,
                 bo: {
