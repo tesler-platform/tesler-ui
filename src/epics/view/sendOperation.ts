@@ -89,6 +89,7 @@ export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store
     return customAction(screenName, bcUrl, data, context, params)
         .mergeMap(response => {
             const postInvoke = response.postActions[0]
+            const dataItem = response.record
             // TODO: Remove in 2.0.0 in favor of postInvokeConfirm (is this todo needed?)
             const preInvoke = response.preInvoke
             // defaultSaveOperation mean that executed custom autosave and postAction will be ignored
@@ -101,7 +102,7 @@ export function sendOperationEpicImpl(action: ActionsMap['sendOperation'], store
                       )
                     : Observable.empty<never>()
                 : Observable.concat(
-                      Observable.of($do.sendOperationSuccess({ bcName, cursor })),
+                      Observable.of($do.sendOperationSuccess({ bcName, cursor, dataItem })),
                       Observable.of($do.bcForceUpdate({ bcName })),
                       ...postOperationRoutine(widgetName, postInvoke, preInvoke, operationType, bcName)
                   )
