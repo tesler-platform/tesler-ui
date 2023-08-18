@@ -488,6 +488,10 @@ export class ActionPayloadTypes {
          * Cursor which initiated the request
          */
         cursor: string
+        /**
+         * New record with `id` returned by Cxbox API and vstamp = -1 (denoting a record draft)
+         */
+        dataItem?: DataItem
     } = z
 
     /**
